@@ -1,63 +1,140 @@
 import random
+import copy
 
 class Player:
     def __init__(self, username):
         self.username = username
-        self.status = 1 #  1 for ALIVE, 2 for DEAD
+        self.game_context = None
+        self.status = 2 #  2 for ALIVE_ANON, 1 for ALIVE_KNOWN, 0 for DEAD
+        self.character = None
         self.equipment = []
+        self.hp = None
         self.location = None
+        self.modifiers = {}
+
+    def setCharacter(self, character):
+        self.character = character
+        self.hp = self.character.max_hp
+
+    def reveal(self):
+        self.modifiers += self.character.modifiers
+        self.status = 1
+
+    def takeTurn(self):
+        # 1. Roll dice
+        # 2. Move to desired location
+        # 3. Take action
+        # 4. Attack
+
+        raise NotImplementedError
+
+    def drawCard(self, deck):
+        drawn = deck.drawCard()
+        if drawn.force_use:
+            drawn.use()
+
+    def attack(self, other):
+        raise NotImplementedError
+
+    def defend(self, other):
+        raise NotImplementedError
+
+    def move(self, location):
+        self.location = location
 
 
 class Character:
-    def __init__(self, name, allegiance, max_hp, win_cond):
+    def __init__(self, name, allegiance, max_hp, win_cond, modifiers):
         self.name = name
         self.allegiance = allegiance
         self.max_hp = max_hp
         self.win_cond = win_cond
+        self.modifiers = modifiers
 
 
 class GameContext:
-    def __init__(self, players, playable_characters):
+    def __init__(self, players, shadows, hunters, neutrals):
         self.players = players
-        self.playable_characters = playable_characters
+        self.shadows = shadows
+        self.hunters = hunters
+        self.neturals = neutrals
         self.white_cards = Deck(...)
         self.black_cards = Deck(...)
         self.green_cards = Deck(...)
+        self.die4 = Die(4)
+        self.die6 = Die(6)
+        self.modifiers = {}
+
+    def assignRegions():
+        raise NotImplementedError
+
+    def assignCharacters():
+        n_shadows = floor(len(players) - 1)/2)
+        n_hunters = n_shadows
+        n_neutrals = len(players) - (n_shadows + n_hunters)
+
+        for player in self.players:
+            player.game_context = self
+            # TODO assign characters
+            # player.character =
+
+        raise NotImplementedError
+
+    def play():
+        # Single WHILE loop that runs continuously to play the game
+        raise NotImplementedError
 
 
-class Dice:
+class Die:
     def __init__(self, n_sides):
         self.n_sides = n_sides
+        self.state = None
 
     def roll(self):
-        return random.randint(1, n_sides)
+        self.state = random.randint(1, n_sides)
+        return self.state
 
 
 class Deck:
     def __init__(self, cards):
         self.cards = cards
+        self.consumed = []
         self.shuffle()
 
     def shuffle(self):
         random.shuffle(self.cards)
 
     def drawCard(self):
-        drawn = self.cards.pop()
-
-        return drawn
+        if len(self.cards) > 0:
+            drawn = self.cards.pop()
+            self.consumed.append(copy.deepcopy(drawn))
+            return drawn
+        else:
+            self.cards, self.consumed = self.consumed, []
+            self.shuffle()
+            self.drawCard()
 
 
 class Equipment:
-    def __init__(self, name, information):
+    # Immutable
+    def __init__(self, name, description, modifiers):
         self.name = name
-        self.information = information
+        self.description = description
+        self.modifiers = modifiers
 
 class Card:
-    def __init__(self, category, description, information):
+    # Immutable (it might get reshuffled)
+    def __init__(self, category, desc,
+    `                   user_modifiers, target_modifiers, force_use = False):
         self.category = category
-        self.description = description
-        self.information = information
+        self.desc = desc
+        self.user_modifiers = user_modifiers
+        self.target_modifiers = target_modifiers
+        self.force_use = force_use
 
-    def apply(self):
-        # Apply the information on the card to the GameContext
+    def use(self, game_context, user, target):
+        # 1. Apply the modifiers on the card to the user
+        # 2. Apply the modifiers on the card to the target
+
+
         raise NotImplementedError
