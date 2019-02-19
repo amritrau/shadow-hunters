@@ -28,17 +28,6 @@ def test_init():
     d = deck.Deck(cards = [c1, c2])
     assert 1
 
-def test_unique_order():
-    d1 = deck.Deck(cards = [c1, c2])
-    d2 = deck.Deck(cards = [c1, c2])
-
-    # Shuffle `d1` until it is reversed
-    desired_order = (c2, c1)
-    while tuple(d1.cards) != desired_order:
-        d1.shuffle()
-
-    assert(tuple(d1.cards) != tuple(d2.cards))
-
 def test_hashability():
     d1 = deck.Deck(cards = [c1, c2])
     d2 = deck.Deck(cards = [c1, c2])
