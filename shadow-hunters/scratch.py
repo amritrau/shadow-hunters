@@ -5,7 +5,7 @@ class Player:
     def __init__(self, username):
         self.username = username
         self.game_context = None
-        self.status = 2 #  2 for ALIVE_ANON, 1 for ALIVE_KNOWN, 0 for DEAD
+        self.state = 2 #  2 for ALIVE_ANON, 1 for ALIVE_KNOWN, 0 for DEAD
         self.character = None
         self.equipment = []
         self.hp = None
@@ -24,7 +24,7 @@ class Player:
         # 1. Roll dice
         # 2. Move to desired location
         # 3. Take action
-        # 4. Attack
+        # 4. Attack™
 
         raise NotImplementedError
 
@@ -53,11 +53,9 @@ class Character:
 
 
 class GameContext:
-    def __init__(self, players, shadows, hunters, neutrals):
+    def __init__(self, players, characters):
         self.players = players
-        self.shadows = shadows
-        self.hunters = hunters
-        self.neturals = neutrals
+        self.characters = characters
         self.white_cards = Deck(...)
         self.black_cards = Deck(...)
         self.green_cards = Deck(...)
@@ -124,12 +122,11 @@ class Equipment:
 
 class Card:
     # Immutable (it might get reshuffled)
-    def __init__(self, category, desc,
-    `                   user_modifiers, target_modifiers, force_use = False):
-        self.category = category
+    def __init__(self, category, desc, user_mods, target_mods, force_use):
+        self.color = color
         self.desc = desc
-        self.user_modifiers = user_modifiers
-        self.target_modifiers = target_modifiers
+        self.user_modifiers = user_mods
+        self.target_modifiers = target_mods
         self.force_use = force_use
 
     def use(self, game_context, user, target):
