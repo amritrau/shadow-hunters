@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Shadow Hunters Chat</title>
+    </head>
+    <body>
+        <div id="chatbox" style="width:500px; height:800px; border:1px solid; padding:10px; box-shadow:5px 10px #888888;">
+            <div id="message_holder" style="overflow:scroll; width:500px; height:750px;"></div><br>
+            <form id="chat">
+                <input type="text" id="message" placeholder="message"/>
+                <input type="submit" value="Send"/>
+            </form>
+        </div>
+        <div id="game" style="position:absolute; left:550px; top:25px;">
+            <form id="start">
+                <input type="submit" value="Start Game"/>
+            </form>
+            <form id="attack">
+                <input type="text" id="target" placeholder="type a player..."/>
+                <input type="submit" value="Attack!"/>
+            </form>
+            <form id="move">
+                <input type="text" id="area" placeholder="type an area..."/>
+                <input type="submit" value="Move to area"/>
+            </form>
+            <form id="roll">
+                <input type="submit" value="Roll the dice!"/>
+            </form>
+        </div>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
+        <script> var usrctx = {{ context|tojson }}; </script>
+        <script src={{ url_for("static", filename="socket.js") }}></script>
+    </body>
+</html>
