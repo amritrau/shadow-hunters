@@ -1,4 +1,6 @@
 import random
+import copy
+
 from card import Card
 # deck.py
 # Implements the Deck object.
@@ -13,7 +15,7 @@ class Deck:
         if not isinstance(cards, list):
             raise ValueError("cards must be a list.")
 
-        self.cards = cards
+        self.cards = cards  # note that cards are ordered [bottom, ... top]
 
         # Make sure every card in self.cards is a Card object
         for c in self.cards:
