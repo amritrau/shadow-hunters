@@ -58,6 +58,7 @@ var GameBoard = new Phaser.Class ({
         this.infoBox.data.set("name", "NAME"); //will be a call to the backend
         this.infoBox.data.set("team", "S/H/N"); //will be a call to the backend
         this.infoBox.data.set("win", "Win condition will appear here"); //will be a call to the backend
+	this.infoBox.data.set("special", "special ability"); //will be a call to the backend
 
         //create the text variables
         var text = this.add.text(10, 470, '', { font: '12px Arial', fill: '#FFFFFF', wordWrap: { width: 150, useAdvancedWrap: true }});
@@ -66,7 +67,8 @@ var GameBoard = new Phaser.Class ({
         //set the text for inside of the box
         text.setText([
             'Team: ' + this.infoBox.data.get('team'),
-            'Win Condition: ' + this.infoBox.data.get('win')
+            'Win Condition: ' + this.infoBox.data.get('win'),
+		'Special Ability: ' + this.infoBox.data.get('special')
         ]);
 
         //align the text inside of our information box
