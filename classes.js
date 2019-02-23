@@ -55,30 +55,30 @@ var GameBoard = new Phaser.Class ({
         //this adds our background image. the x, y coordinates provided are the center of the canvas
         this.add.image(400, 300, 'sky');
 
-        this.add.image(700,20, '14');
-        this.add.image(700,60, '13');
-        this.add.image(700,100, '12');
-        this.add.image(700,140, '11');
-        this.add.image(700,180, '10');
-        this.add.image(700,220, '9');
-        this.add.image(700,260, '8');
-        this.add.image(700,300, '7');
-        this.add.image(700,340, '6');
-        this.add.image(700,380, '5');
-        this.add.image(700,420, '4');
-        this.add.image(700,460, '3');
-        this.add.image(700,500, '2');
-        this.add.image(700,540, '1');
-        this.add.image(700,580, '0');
+        this.add.image(900,20, '14');
+        this.add.image(900,60, '13');
+        this.add.image(900,100, '12');
+        this.add.image(900,140, '11');
+        this.add.image(900,180, '10');
+        this.add.image(900,220, '9');
+        this.add.image(900,260, '8');
+        this.add.image(900,300, '7');
+        this.add.image(900,340, '6');
+        this.add.image(900,380, '5');
+        this.add.image(900,420, '4');
+        this.add.image(900,460, '3');
+        this.add.image(900,500, '2');
+        this.add.image(900,540, '1');
+        this.add.image(900,580, '0');
 
 
-        //this.player = this.add.sprite(100, 450, 'dude');
-        //this.player.name = "player1";
+       // this.player = this.add.sprite(100, 450, 'dude');
+       // this.player.name = "player1";
 
-        this.makeBox();
-        this.block = this.add.image(this.player.x +20, this.player.y, "text");
-        this.block.setVisible(false);
-        this.player.on('clicked', this.clickHandler, this.block);
+        //this.makeBox();
+       // this.block = this.add.image(this.player.x +20, this.player.y, "text");
+       // this.block.setVisible(false);
+       // this.player.on('clicked', this.clickHandler, this.block);
 
 
 
@@ -136,7 +136,7 @@ var GameBoard = new Phaser.Class ({
     //the makePlayer function is what creates our sprite and adds him to the board.
 
     makePlayer: function () {
-        var sprite = this.add.sprite(300, 450, 'dude');
+        var sprite = this.add.sprite(300, 400, 'dude');
 
         //our player's name
         sprite.name = "player1";
@@ -169,7 +169,7 @@ var GameBoard = new Phaser.Class ({
 //create game configurations
 var config = {
     type: Phaser.CANVAS,
-    width: 800,
+    width: 1066,
     height: 600,
     pixelArt: true,
     parent: 'game',
