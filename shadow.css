@@ -1,0 +1,48 @@
+body {
+font-family: Century Gothic, Arial;
+background-color: #CCCCCC;
+margin: 0px auto;
+text-align: center;
+}
+.container {
+/* background-color: #999999; */
+margin: auto;
+width: 1000px;
+height: 1200px;
+
+}
+.header {
+font-size: 22px;
+background-color: #999999;
+border: 1px dashed #666666;
+color: #444444;
+width: 800px;
+font-size: 14px;
+text-align: center;
+margin: 10px auto 0px auto;
+}
+
+#title {
+color: #444444;
+font-size: 48px;
+text-align: center;
+margin: 10px auto 0px auto;
+border-bottom: 10px solid #4b3868;
+}
+
+
+canvas {
+padding: 20px;
+margin: auto;
+}
+
+#footer {
+clear:both;
+margin-top: 10px;
+border-top: 5px solid #4b3868;
+padding: 20px 0px;
+font-size: 80%;
+text-align:center;
+
+
+}
