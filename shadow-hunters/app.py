@@ -24,14 +24,12 @@ def after_request(response):
 connections = {}
 rooms = {}
 get_sid = {}
-s_color = 'rgb(37,25,64)'
-answer_bin = {
+answer_bins = {
     'answered': False,
     'sid': '',
     'form': '',
     'data': {}
 }
-
 
 # APP ROUTES
 
@@ -57,10 +55,11 @@ def room(methods=['GET','POST']):
 
         # don't let someone in if there's a game in progress in the room
         if room_id in rooms and rooms[room_id] == 'GAME':
+            # TODO: flash that the room is in game
             return redirect('/')
         else:
             rooms[room_id] = 'LOBBY'
-
+        
         # send them to join the room!
         return render_template('room.html', context={ 'name': username, 'room_id': room_id })
     else:
@@ -93,8 +92,8 @@ def play(room_id, players):
                 server_msg(player+' is selecting an area...', room_id)
                 data = {'options': ['Weird Woods', 'Underworld Gate', 'Hermit\'s Cabin', 'Church', 'Cemetery', 'Erstwhile Altar']}
                 ask('select', data, player, room_id)
-                server_update('select', {'action': 'move', 'value': answer_bin['data']['value']}, room_id)
-                server_msg(player+' moves to '+answer_bin['data']['value']+'!', room_id)
+                server_update('select', {'action': 'move', 'value': answer_bins[room_id]['data']['value']}, room_id)
+                server_msg(player+' moves to '+answer_bins[room_id]['data']['value']+'!', room_id)
             else:
                 # TODO: GENERALIZE TO WORK WITH EVERY AREA (NOT JUST CHURCH)
                 data = {'options': ['Move to the Church!']}
@@ -105,7 +104,7 @@ def play(room_id, players):
             # yesno to take area action
             data = {'options': ['Perform area action', 'Decline']}
             ask('yesno', data, player, room_id)
-            if answer_bin['data']['value'] != 'Decline':
+            if answer_bins[room_id]['data']['value'] != 'Decline':
                 # TODO: PERFORM AREA ACTION, UPDATE GAME STATE, SEND UPDATE TO CLIENT
                 server_update('yesno', {'action': 'area', 'value': 'TODO'}, room_id)
                 server_msg(player+' performed their area action!', room_id)
@@ -121,8 +120,8 @@ def play(room_id, players):
             server_update('select', {}, room_id)
            
             # if attacking, roll for damage 
-            if answer_bin['data']['value'] != 'Decline':
-                target = answer_bin['data']['value']
+            if answer_bins[room_id]['data']['value'] != 'Decline':
+                target = answer_bins[room_id]['data']['value']
                 server_msg(player+' is attacking '+target+'!', room_id)
                 data = {'options': ['Roll for damage!']}
                 ask('confirm', data, player, room_id)
@@ -142,18 +141,18 @@ def ask(form, data, player, room_id):
     sid = get_sid[(player, room_id)]
     data['form'] = form
     socketio.emit('ask', data, room=sid)
-    while not answer_bin['answered']:
-        while not answer_bin['answered']:
+    while not answer_bins[room_id]['answered']:
+        while not answer_bins[room_id]['answered']:
             socketio.sleep(1)
         # validate answer came from correct person/token blah blah
         # if something is wrong with the answer, mark answered as false again 
-        if answer_bin['sid'] != sid or answer_bin['form'] != form:
-            answer_bin['answered'] = False
-    answer_bin['answered'] = False
+        if answer_bins[room_id]['sid'] != sid or answer_bins[room_id]['form'] != form:
+            answer_bins[room_id]['answered'] = False
+    answer_bins[room_id]['answered'] = False
 
 # send a gameplay update message to all players in a room
 def server_msg(data, room_id):
-    socketio.emit('message', {'data': data, 'color': s_color}, room=room_id)
+    socketio.emit('message', {'data': data, 'color': 'rgb(37,25,64)'}, room=room_id)
     socketio.sleep(1)
 
 def server_update(form, data, room_id):
@@ -173,15 +172,21 @@ def on_join(json):
     get_sid[(name, room_id)] = request.sid
     connections[request.sid] = { 'name': name, 'room_id': room_id }
     connections[request.sid]['color'] = 'rgb('+str(randint(0,150))+','+str(randint(0,150))+','+str(randint(0,150))+')'
-    socketio.emit('message', {'data': name+' has joined Shadow Hunters Room: '+room_id, 'color': s_color}, room=room_id)
+    socketio.emit('message', {'data': name+' has joined Shadow Hunters Room: '+room_id, 'color': 'rgb(37,25,64)'}, room=room_id)
     join_room(room_id)
-    socketio.emit('message', {'data': 'Welcome to Shadow Hunters Room: '+room_id, 'color': s_color}, room=request.sid)
+    socketio.emit('message', {'data': 'Welcome to Shadow Hunters Room: '+room_id, 'color': 'rgb(37,25,64)'}, room=request.sid)
 
 # begin play when someone hits 'play'
 @socketio.on('start')
 def start_game():
     room_id = connections[request.sid]['room_id']
     rooms[room_id] = 'GAME'
+    answer_bins[room_id] = {
+        'answered': False,
+        'sid': '',
+        'form': '',
+        'data': {}
+    }
     players = [x['name'] for x in connections.values() if x['room_id'] == room_id] 
     # TODO: CREATE GAME CONTEXT AND PERFORM SETUP HERE
     socketio.emit('game_start', {'playerdata': players}, room=room_id)
@@ -191,10 +196,11 @@ def start_game():
 # receive and validate answer to an ask
 @socketio.on('answer')
 def receive_answer(json):
-    answer_bin['form'] = json.pop('form', None);
-    answer_bin['data'] = json
-    answer_bin['sid'] = request.sid
-    answer_bin['answered'] = True;
+    room_id = connections[request.sid]['room_id']
+    answer_bins[room_id]['form'] = json.pop('form', None);
+    answer_bins[room_id]['data'] = json
+    answer_bins[room_id]['sid'] = request.sid
+    answer_bins[room_id]['answered'] = True;
 
 # post a message to the chat
 @socketio.on('post_message')
@@ -209,7 +215,7 @@ def message(msg):
 def disconnect():
     name = connections[request.sid]['name']
     room_id = connections[request.sid]['room_id']
-    socketio.emit('message', {'data': name+' has left the room', 'color': s_color}, room=room_id)
+    socketio.emit('message', {'data': name+' has left the room', 'color': 'rgb(37,25,64)'}, room=room_id)
     connections.pop(request.sid, None)
 
 if __name__ == '__main__':
