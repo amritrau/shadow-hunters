@@ -35,10 +35,13 @@ class GameContext:
         Game loop
         """
 
+        raise NotImplementedError
+
         while True:
             # TODO Game action here
-            raise NotImplementedError
-
+            for player in self.players:
+                if player.state > 0:  # Alive
+                    player.takeTurn()
 
             winners = self.checkWinConditions()
             if winners:
