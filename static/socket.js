@@ -3,6 +3,13 @@
 
 // Initial connection
 var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+$('document').ready(function(){
+    $('#confirm').hide();
+    $('#yesno').hide();
+    $('#select').hide();
+});
+
 socket.on('connect', function() {
     
     // User joins the room
@@ -23,35 +30,20 @@ socket.on('connect', function() {
     });
 
     // In-game form response setup
-    var roll_form = $('#roll').on('submit', function(e) {
+    var confirm_form = $('#confirm').on('submit', function(e) {
         e.preventDefault();
-        socket.emit('answer', { 'value': '5' });
-        $('#roll').hide();
-        $('#wait').show();
+        socket.emit('answer', { 'form': 'confirm', 'value': $('#confirm_fields').val() });
     });
 
-    var attack_form = $('#attack').on('submit', function(e) {
+    var yesno_form = $('#yesno').on('submit', function(e) {
         e.preventDefault();
-        var user_input = $('#target').val();
-        socket.emit('answer', { 'value': user_input });
-        $('#target').val('').focus();
-        $('#attack').hide();
-        $('#wait').show();
+        socket.emit('answer', { 'form': 'yesno', 'value': $('#yesno_fields').val() });
     });
 
-    var move_form = $('#move').on('submit', function(e) {
+    var select_form = $('#select').on('submit', function(e) {
         e.preventDefault();
-        var user_input = $('#area').val();
-        socket.emit('answer', { 'value': user_input });
-        $('#area').val('').focus();
-        $('#move').hide();
-        $('#wait').show();
+        socket.emit('answer', { 'form': 'select', 'value': $('#select_fields').val() });
     });
-
-    $('#roll').hide();
-    $('#attack').hide();
-    $('#move').hide();
-
 });
 
 
@@ -76,15 +68,29 @@ socket.on('message', function(msg) {
 });
 
 // Receive the signal to start the game
-socket.on('game_start', function(game_data) {
+socket.on('game_start', function(data) {
     $('#start').remove();
-    // SET UP GAME INTERFACE BASED ON GAME_DATA HERE
+    // TODO: SET UP INITIAL UI BASED ON GAME_DATA HERE
     var html = '<p id="wait">Waiting...</p>';
     $('#game').append(html);
 });
 
+// Receive a game state update
+socket.on('update', function(data) {
+    $('#'+data.form).hide();
+    $('#'+data.form+'_fields').empty();
+    // TODO: UPDATE UI TO REFLECT UPDATE
+    $('#wait').show();
+});
+
 // Receive an ask
-socket.on('ask', function(ask_data) {
+socket.on('ask', function(data) {
     $('#wait').hide();
-    $('#'+ask_data.type).show();
+    var option = '';
+    for (var i = 0; i < data.options.length; i++) 
+    {
+        option += '<option value="'+data.options[i]+'">'+data.options[i]+'</option>';
+    }
+    $('#'+data.form+'_fields').append(option);
+    $('#'+data.form).show();
 });

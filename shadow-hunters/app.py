@@ -24,10 +24,13 @@ def after_request(response):
 connections = {}
 rooms = {}
 get_sid = {}
-
 s_color = 'rgb(37,25,64)'
-answered = False
-answer_bin = {}
+answer_bin = {
+    'answered': False,
+    'sid': '',
+    'form': '',
+    'data': {}
+}
 
 
 # APP ROUTES
@@ -69,56 +72,84 @@ def room(methods=['GET','POST']):
 
 # gameplay loop
 def play(room_id, players):
-    for player in players:
+    game_over = False
+    while not game_over:
+        for player in players:
 
-        # announce the turn
-        server_msg('It\'s '+player+'\'s turn!', room_id)
+            # announce player
+            server_msg('It\'s '+player+'\'s turn!', room_id)
 
-        # options about the ask (i.e. if the ask is to choose a player, 
-        # should have which players you can pick). example below.
-        # these should be set before every ask, based on the current
-        # game state.
-        options = {'PLAYER': ['gia', 'joanna', 'vishal'],
-                   'AREA': ['WEIRD WOODS', 'pleasure island']}
+            # roll for movement
+            server_msg(player+' is rolling for movement...', room_id)
+            data = {'options': ['Roll for movement!']}
+            ask('confirm', data, player, room_id)
+            # TODO: GET ACTUAL ROLL FROM DICE
+            roll_result = randint(6,7)
+            server_update('confirm', {'action': 'roll', 'value': roll_result}, room_id)
+            server_msg(player+' rolled a '+str(roll_result)+'!', room_id)
 
-        # example of intelligence
-        options['PLAYER'].remove(player)
-
-        # simple garbage game loop
-
-        # roll for movement
-        server_msg(player+' is rolling...', room_id)
-        ask(player, room_id, "roll", options)
-        server_msg(player+' rolled a '+answer_bin['value']+'!', room_id)
-
-        # pick an area even though you don't actually do this
-        server_msg(player+' is selecting an area...', room_id)
-        ask(player, room_id, "move", options)
-        server_msg(player+' moves to '+answer_bin['value']+'!', room_id)
-        
-        # attack someone!
-        server_msg(player+' is picking who to attack...', room_id)
-        ask(player, room_id, "attack", options)
-        server_msg(player+' attacks '+answer_bin['value']+'!', room_id)
+            # select area if a 7 was rolled, else confirm to go to area rolled
+            if roll_result == 7:
+                server_msg(player+' is selecting an area...', room_id)
+                data = {'options': ['Weird Woods', 'Underworld Gate', 'Hermit\'s Cabin', 'Church', 'Cemetery', 'Erstwhile Altar']}
+                ask('select', data, player, room_id)
+                server_update('select', {'action': 'move', 'value': answer_bin['contents']['value']]}, room_id)
+                server_msg(player+' moves to '+answer_bin['contents']['value']+'!', room_id)
+            else:
+                # TODO: GENERALIZE TO WORK WITH EVERY AREA (NOT JUST CHURCH)
+                data = {'options': ['Move to the Church!']}
+                ask('confirm', data, player, room_id)
+                server_update('confirm', {'action': 'move', 'value': 'Church'}, room_id)
+                server_msg(player+' moves to the Church!', room_id)
+ 
+            # yesno to take area action
+            data = {'options': ['Perform area action', 'Decline']}
+            ask('yesno', data, player, room_id)
+            if answer_bin['contents']['value'] != 'Decline':
+                # TODO: PERFORM AREA ACTION, UPDATE GAME STATE, SEND UPDATE TO CLIENT
+                server_update('yesno', {'action': 'area', 'value': 'TODO'}, room_id)
+                server_msg(player+' performed their area action!', room_id)
+            else:
+                server_update('yesno', {}, room_id)
+                server_msg(player+' declined to perform their area action.', room_id)
+ 
+            # select target to attack
+            server_msg(player+' is picking who to attack...', room_id)
+            # TODO: GET ATTACKABLE PLAYERS FROM GAME STATE
+            data = {'options': [x for x in players if x != player] + ['Decline']}
+            ask('select', data, player, room_id)
+            server_update('select', {}, room_id)
+           
+            # if attacking, roll for damage 
+            if answer_bin['contents']['value'] != 'Decline':
+                server_msg(player+' is attacking '+answer_bin['contents']['value']+'!', room_id)
+                data = {'options': ['Roll for damage!']}
+                ask('confirm', data, player, room_id)
+            else:
+                server_msg(player+' declines to attack.', room_id)
 
 # request an action from a specific player in a room
-def ask(player, room_id, ask_type, options):
-    global answered, answer_bin
+def ask(form, data, player, room_id):
     sid = get_sid[(player, room_id)]
-    options['type'] = ask_type
-    socketio.emit('ask', options, room=sid)
-    while not answered:
-        while not answered:
+    data['form'] = form
+    socketio.emit('ask', data, room=sid)
+    while not answer_bin['answered']:
+        while not answer_bin['answered']:
             socketio.sleep(1)
         # validate answer came from correct person/token blah blah
         # if something is wrong with the answer, mark answered as false again 
-        if answer_bin['sid'] != sid:
-            answered = False
-    answered = False
+        if answer_bin['sid'] != sid or answer_bin['form'] != form:
+            answer_bin['answered'] = False
+    answer_bin['answered'] = False
 
 # send a gameplay update message to all players in a room
-def server_msg(contents, room_id):
-    socketio.emit('message', {'contents': contents, 'color': s_color}, room=room_id)
+def server_msg(data, room_id):
+    socketio.emit('message', {'data': data, 'color': s_color}, room=room_id)
+    socketio.sleep(1)
+
+def server_update(form, data, room_id):
+    data['form'] = form
+    socketio.emit('update', data, room=room_id)
     socketio.sleep(1)
 
     
@@ -143,7 +174,7 @@ def start_game():
     room_id = connections[request.sid]['room_id']
     rooms[room_id] = 'GAME'
     players = [x['name'] for x in connections.values() if x['room_id'] == room_id] 
-    # CREATE GAME CONTEXT AND PERFORM SETUP HERE
+    # TODO: CREATE GAME CONTEXT AND PERFORM SETUP HERE
     socketio.emit('game_start', {'playerdata': players}, room=room_id)
     socketio.sleep(1)
     play(room_id, players)
@@ -151,10 +182,10 @@ def start_game():
 # receive and validate answer to an ask
 @socketio.on('answer')
 def receive_answer(json):
-    global answered, answer_bin
-    answer_bin = json
+    answer_bin['form'] = json.pop('form', None);
+    answer_bin['contents'] = json
     answer_bin['sid'] = request.sid
-    answered = True;
+    answer_bin['answered'] = True;
 
 # post a message to the chat
 @socketio.on('post_message')
