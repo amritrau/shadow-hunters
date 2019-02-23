@@ -93,8 +93,8 @@ def play(room_id, players):
                 server_msg(player+' is selecting an area...', room_id)
                 data = {'options': ['Weird Woods', 'Underworld Gate', 'Hermit\'s Cabin', 'Church', 'Cemetery', 'Erstwhile Altar']}
                 ask('select', data, player, room_id)
-                server_update('select', {'action': 'move', 'value': answer_bin['contents']['value']]}, room_id)
-                server_msg(player+' moves to '+answer_bin['contents']['value']+'!', room_id)
+                server_update('select', {'action': 'move', 'value': answer_bin['data']['value']}, room_id)
+                server_msg(player+' moves to '+answer_bin['data']['value']+'!', room_id)
             else:
                 # TODO: GENERALIZE TO WORK WITH EVERY AREA (NOT JUST CHURCH)
                 data = {'options': ['Move to the Church!']}
@@ -105,7 +105,7 @@ def play(room_id, players):
             # yesno to take area action
             data = {'options': ['Perform area action', 'Decline']}
             ask('yesno', data, player, room_id)
-            if answer_bin['contents']['value'] != 'Decline':
+            if answer_bin['data']['value'] != 'Decline':
                 # TODO: PERFORM AREA ACTION, UPDATE GAME STATE, SEND UPDATE TO CLIENT
                 server_update('yesno', {'action': 'area', 'value': 'TODO'}, room_id)
                 server_msg(player+' performed their area action!', room_id)
@@ -121,10 +121,19 @@ def play(room_id, players):
             server_update('select', {}, room_id)
            
             # if attacking, roll for damage 
-            if answer_bin['contents']['value'] != 'Decline':
-                server_msg(player+' is attacking '+answer_bin['contents']['value']+'!', room_id)
+            if answer_bin['data']['value'] != 'Decline':
+                target = answer_bin['data']['value']
+                server_msg(player+' is attacking '+target+'!', room_id)
                 data = {'options': ['Roll for damage!']}
                 ask('confirm', data, player, room_id)
+                # TODO: GET ACTUAL ROLL FROM DICE
+                roll_result = randint(0,5)
+                server_update('confirm', {'action': 'roll', 'value': roll_result}, room_id)
+                server_msg(player+' rolled a '+str(roll_result)+'!', room_id)
+                # TODO: GET ACTUAL DAMAGE DEALT FROM GAME STATE
+                damage_dealt = roll_result
+                server_update('none', {'action': 'damage', 'player': target, 'value': damage_dealt}, room_id)
+                server_msg(player+' hit '+target+' for '+str(damage_dealt)+' damage!', room_id)
             else:
                 server_msg(player+' declines to attack.', room_id)
 
@@ -164,9 +173,9 @@ def on_join(json):
     get_sid[(name, room_id)] = request.sid
     connections[request.sid] = { 'name': name, 'room_id': room_id }
     connections[request.sid]['color'] = 'rgb('+str(randint(0,150))+','+str(randint(0,150))+','+str(randint(0,150))+')'
-    socketio.emit('message', {'contents': name+' has joined Shadow Hunters Room: '+room_id, 'color': s_color}, room=room_id)
+    socketio.emit('message', {'data': name+' has joined Shadow Hunters Room: '+room_id, 'color': s_color}, room=room_id)
     join_room(room_id)
-    socketio.emit('message', {'contents': 'Welcome to Shadow Hunters Room: '+room_id, 'color': s_color}, room=request.sid)
+    socketio.emit('message', {'data': 'Welcome to Shadow Hunters Room: '+room_id, 'color': s_color}, room=request.sid)
 
 # begin play when someone hits 'play'
 @socketio.on('start')
@@ -183,7 +192,7 @@ def start_game():
 @socketio.on('answer')
 def receive_answer(json):
     answer_bin['form'] = json.pop('form', None);
-    answer_bin['contents'] = json
+    answer_bin['data'] = json
     answer_bin['sid'] = request.sid
     answer_bin['answered'] = True;
 
@@ -200,7 +209,7 @@ def message(msg):
 def disconnect():
     name = connections[request.sid]['name']
     room_id = connections[request.sid]['room_id']
-    socketio.emit('message', {'contents': name+' has left the room', 'color': s_color}, room=room_id)
+    socketio.emit('message', {'data': name+' has left the room', 'color': s_color}, room=room_id)
     connections.pop(request.sid, None)
 
 if __name__ == '__main__':

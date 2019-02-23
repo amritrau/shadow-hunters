@@ -4,7 +4,7 @@
 // Initial connection
 var socket = io.connect('http://' + document.domain + ':' + location.port);
 
-$('document').ready(function(){
+$('document').ready(function() {
     $('#confirm').hide();
     $('#yesno').hide();
     $('#select').hide();
@@ -19,7 +19,7 @@ socket.on('connect', function() {
     var chat_form = $('#chat').on('submit', function(e) {
         e.preventDefault();
         var user_input = $('#message').val();
-        socket.emit('post_message', { 'contents': user_input });
+        socket.emit('post_message', { 'data': user_input });
         $('#message').val('').focus();
     });
 
@@ -29,7 +29,17 @@ socket.on('connect', function() {
         socket.emit('start');
     });
 
-    // In-game form response setup
+    // Generalized form setup PROTOTYPE
+    /*
+    var form_ids = ['confirm', 'yesno', 'select'];
+    for (var i = 0; i < form_ids.length; i++)
+    {
+        $('#'+form_ids[i]).on('submit', function (e) {
+            e.preventDefault();
+            socket.emit('answer', { 'form': form_ids[i], 'value': $('#'+form_ids[i]+'_fields').val() });
+        });
+    }
+    */
     var confirm_form = $('#confirm').on('submit', function(e) {
         e.preventDefault();
         socket.emit('answer', { 'form': 'confirm', 'value': $('#confirm_fields').val() });
@@ -56,12 +66,12 @@ socket.on('message', function(msg) {
     if(typeof msg.name !== 'undefined')
     {
         // If there's a user associated with the message, it comes from them
-        html += msg.name+'</b> '+msg.contents+'</p>';
+        html += msg.name+'</b> '+msg.data+'</p>';
     }
     else
     {
         // If there's no user associated with the message, it comes from the server
-        html += msg.contents+'</b></p>';
+        html += msg.data+'</b></p>';
     }
     $('#message_holder').append(html);
     $("#message_holder").scrollTop($("#message_holder")[0].scrollHeight);
