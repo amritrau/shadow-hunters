@@ -8,7 +8,7 @@ text-align: center;
 /* background-color: #999999; */
 margin: auto;
 width: 1000px;
-height: 1200px;
+height: 1600px;
 
 }
 .header {
@@ -30,6 +30,18 @@ margin: 10px auto 0px auto;
 border-bottom: 10px solid #4b3868;
 }
 
+#chatbox {
+    width:1066px;
+    height: 200px;
+    box-shadow:5px 10px #888888;
+    background-color: #FFFFFF;
+}
+
+#message_holder {
+    overflow:scroll;
+    width: 1066px;
+    height: 150px;
+}
 
 canvas {
 padding: 20px;
