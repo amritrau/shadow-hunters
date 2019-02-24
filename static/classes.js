@@ -21,33 +21,33 @@ var GameBoard = new Phaser.Class ({
 
     //the preload function is where all images that will be used in the game are loaded into
     preload: function () {
-        this.load.image('sky', 'assets/sky.png');
-        this.load.image("customTip", "assets/customTip.png");
+        this.load.image('sky', '/static/assets/sky.png');
+        this.load.image("customTip", "/static/assets/customTip.png");
         this.load.spritesheet('dude',
-            'assets/dude.png',
+            '/static/assets/dude.png',
             { frameWidth: 32, frameHeight: 48 }
         );
-        this.load.image('0', 'assets/zero.png');
-        this.load.image('1', 'assets/one.png');
-        this.load.image('2', 'assets/two.png');
-        this.load.image('3', 'assets/three.png');
-        this.load.image('4', 'assets/four.png');
-        this.load.image('5', 'assets/five.png');
-        this.load.image('6', 'assets/six.png');
-        this.load.image('7', 'assets/seven.png');
-        this.load.image('8', 'assets/eight.png');
-        this.load.image('9', 'assets/nine.png');
-        this.load.image('10', 'assets/ten.png');
-        this.load.image('11', 'assets/eleven.png');
-        this.load.image('12', 'assets/twelve.png');
-        this.load.image('13', 'assets/thirteen.png');
-        this.load.image('14', 'assets/fourteen.png');
-        this.load.image('text', 'assets/text.png');
+        this.load.image('0', '/static/assets/zero.png');
+        this.load.image('1', '/static/assets/one.png');
+        this.load.image('2', '/static/assets/two.png');
+        this.load.image('3', '/static/assets/three.png');
+        this.load.image('4', '/static/assets/four.png');
+        this.load.image('5', '/static/assets/five.png');
+        this.load.image('6', '/static/assets/six.png');
+        this.load.image('7', '/static/assets/seven.png');
+        this.load.image('8', '/static/assets/eight.png');
+        this.load.image('9', '/static/assets/nine.png');
+        this.load.image('10', '/static/assets/ten.png');
+        this.load.image('11', '/static/assets/eleven.png');
+        this.load.image('12', '/static/assets/twelve.png');
+        this.load.image('13', '/static/assets/thirteen.png');
+        this.load.image('14', '/static/assets/fourteen.png');
+        this.load.image('text', '/static/assets/text.png');
 
 
 
 
-        this.load.image('box', 'assets/box.png');
+        this.load.image('box', '/static/assets/box.png');
     },
 
     //the create function is where everything is added to the canvas
@@ -172,7 +172,7 @@ var config = {
     width: 1066,
     height: 600,
     pixelArt: true,
-    parent: 'game',
+    parent: 'board',
     scene: [ GameBoard ]
 };
 
