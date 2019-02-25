@@ -135,6 +135,8 @@ class Player:
         drawn = deck.drawCard()
         if drawn.force_use:
             drawn.use()
+        if drawn.is_equipment:
+            self.equipment.append(drawn)
 
     def attack(self, other, amount):
         # TODO amount --> modifier1 --> modifier2 --> amount'
