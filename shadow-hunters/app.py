@@ -5,6 +5,7 @@ from time import sleep
 import os
 
 from game_context import GameContext
+from player import Player
 import cli
 
 # basic app setup
@@ -86,10 +87,10 @@ def play(room_id, players):
             ask_h = lambda x, y, z: ask(x, y, z, room_id),
             update_h = lambda x, y: server_update(x, y, room_id)
         )
-        
+
     ##### FOR TESTING PURPOSES ONLY ########################
     ##### SEND A DICTIONARY WITH CHARACTER INFO ACROSS #####
-    data = gc.characters[0].__dict__
+    data = str(gc.characters[0].__dict__)
     socketio.emit('test-message', data, room = room_id)
     ##### DELETE THIS WHEN DONE TESTING ####################
     ##### END TESTING PURPOSES ONLY ########################

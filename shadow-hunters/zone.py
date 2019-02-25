@@ -15,6 +15,6 @@ class Zone:
         self.areas = areas
 
         # Make sure every area in self.areas is an Area object
-        for c in self.cards:
+        for c in self.areas:
             if not isinstance(c, Area):
                 raise ValueError("One or more cards is not a Card object.")

@@ -10,6 +10,7 @@ class GameContext:
 
         # Instantiate gameplay objects
         self.players = players
+        self.characters = characters
         self.black_cards = black_cards
         self.white_cards = white_cards
         self.green_cards = green_cards
@@ -28,15 +29,16 @@ class GameContext:
 
         # Randomly shuffle areas across zones
         random.shuffle(areas)
-        self.zones = [zone.Zone([areas.pop(), areas.pop()] for i in range(3)]
+        self.zones = [Zone([areas.pop(), areas.pop()]) for i in range(3)]
         for z in self.zones:
             for a in z.areas:
                 a.zone = z
 
-        # Randomly assign characters
+        # Randomly assign characters and point game context
         random.shuffle(characters)
         for player in self.players:
             player.character = characters.pop()
+            player.gc = self
 
 
     def checkWinConditions(self):

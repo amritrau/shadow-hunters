@@ -19,10 +19,10 @@ class Player:
 
     def takeTurn(self):
         # Announce player
-        self.gc.tell_h("It's %s's turn!".format(self.user_id))
+        self.gc.tell_h("It's {}'s turn!".format(self.user_id))
 
         # Roll dice
-        self.gc.tell_h("%s is rolling for movement...")
+        self.gc.tell_h("{} is rolling for movement...".format(self.user_id))
         data = {'options': ['Roll for movement!']}
         self.gc.ask_h('confirm', data, self.user_id)
 
@@ -31,14 +31,18 @@ class Player:
         roll_result = roll_result_4 + roll_result_6
 
         self.gc.update_h('confirm', {'action': 'roll', 'value': (roll_result_4, roll_result_6)})
-        self.gc.tell_h("%s rolled %s + %s = %s!".format(self.user_id, roll_result_4, roll_result_6, roll_result))
+        self.gc.tell_h("{} rolled {} + {} = {}!".format(self.user_id, roll_result_4, roll_result_6, roll_result))
 
         # Move to desired location
         if roll_result == 7:
             # Select an area
-            self.gc.tell_h("%s is selecting an area...")
+            self.gc.tell_h("{} is selecting an area...".format(self.user_id))
+            area_options = []
+            for z in self.gc.zones:  # TODO again, shameful
+                for a in z.areas:
+                    area_options.append(a.name)
             data = {
-                'options': [a.name for a in z.areas for z in self.gc.zones]
+                'options': area_options
             }
             # TODO Will not work until #12 is resolved
             destination = self.gc.ask_h('select', data, self.user_id)
@@ -48,13 +52,18 @@ class Player:
 
         else:
             # Get Area from roll
-            destination_Area = [a for a in z.areas for z in self.gc.zones if roll_result in a.domain][0]  # TODO this is shameful
+            destination_Area = None # TODO this is shameful
+            for z in self.gc.zones:
+                for a in z.areas:
+                    if roll_result in a.domain:
+                        destination_Area = a
+            # destination_Area = [(a for a in z.areas for z in self.gc.zones if roll_result in a.domain][0]
 
             # Get string from Area
             destination = destination_Area.name
 
         self.gc.update_h('select', {'action': 'move', 'value': destination})
-        self.gc.tell_h("%s moves to %s!".format(self.user_id, destination))
+        self.gc.tell_h("{} moves to {}!".format(self.user_id, destination))
         self.move(destination_Area)
 
         # Take action
@@ -66,29 +75,34 @@ class Player:
             # TODO Update game state
             self.gc.update_h('yesno', {'action': 'area', 'value': 'TODO'})
             self.gc.tell_h(
-                '%s performed their area action!'.format(self.user_id)
+                '{} performed their area action!'.format(self.user_id)
             )
         else:
             self.gc.update_h('yesno', {})
             self.gc.tell_h(
-                '%s declined to perform their area action.'.format(self.user_id)
+                '{} declined to perform their area action.'.format(self.user_id)
             )
 
         # Attack
-        self.gc.tell_h("%s is picking whom to attack...".format(self.user_id))
+        self.gc.tell_h("{} is picking whom to attack...".format(self.user_id))
         targets = [
-            p for p in players if (p.location == self.location and p != self)
+            p for p in self.gc.players if (p.location == self.location and p != self)
         ]
         data = {'options': targets + ['Decline']}
+
+        # TODO This fails until issue #12 is fixed
         answer = self.gc.ask_h('select', data, self.user_id)
+        # End failure
+
         self.gc.update_h('select', {})
 
         if answer != 'Decline':
             target = answer
-            target_Player = [p for p in self.gc.players if p.user_id == target]
-            self.gc.tell_h("%s is attacking %s!".format(self.user_id, target))
+            target_Player = [p for p in self.gc.players if p.user_id == target]  # TODO Amrit do you even know Python
+            target_Player = target_Player[0]
+            self.gc.tell_h("{} is attacking {}!".format(self.user_id, target))
             data = {'options': ['Roll for damage!']}
-            ask('confirm', data, self.user_id)
+            self.gc.ask_h('confirm', data, self.user_id)
 
             roll_result_4 = self.gc.die4.roll()
             roll_result_6 = self.gc.die6.roll()
@@ -104,7 +118,8 @@ class Player:
                 }
             )
             self.gc.tell_h(
-                "%s rolled a %s - %s = %s!".format(
+                "{} rolled a {} - {} = {}!".format(
+                    self.user_id,
                     max(roll_result_6, roll_result_4),
                     min(roll_result_6, roll_result_4),
                     roll_result
@@ -121,15 +136,15 @@ class Player:
                 }
             )
             self.gc.tell_h(
-                "%s hit %s for %s damage!".format(
+                "{} hit {} for {} damage!".format(
                     self.user_id, target, damage_dealt
                 )
             )
         else:
-            self.gc.tell_h("%s declined to attack.".format(self.user_id))
+            self.gc.tell_h("{} declined to attack.".format(self.user_id))
 
         # Turn is over
-        self.gc.tell_h("%s's turn is over.".format(self.user_id))
+        self.gc.tell_h("{}'s turn is over.".format(self.user_id))
 
     def drawCard(self, deck):
         drawn = deck.drawCard()

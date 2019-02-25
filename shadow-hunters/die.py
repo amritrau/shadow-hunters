@@ -9,5 +9,5 @@ class Die:
         self.state = None
 
     def roll(self):
-        self.state = random.randint(1, n_sides)
+        self.state = random.randint(1, self.n_sides)
         return self.state
