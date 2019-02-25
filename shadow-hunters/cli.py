@@ -4,6 +4,8 @@ import card, deck
 # Provides a CLI to the game.
 # For now -- run with python -i cli.py
 
+# TODO Hermit cards, Characters, and Areas
+
 # Initialize cards and decks
 WHITE_CARDS = [
     card.Card(
@@ -139,3 +141,4 @@ BLACK_CARDS = [
 
 WHITE_DECK = deck.Deck(cards = WHITE_CARDS)
 BLACK_DECK = deck.Deck(cards = BLACK_CARDS)
+GREEN_DECK = deck.Deck(cards = [])
