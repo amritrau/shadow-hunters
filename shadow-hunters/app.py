@@ -75,19 +75,25 @@ def room(methods=['GET','POST']):
 # gameplay loop
 def play(room_id, players):
     players = [Player(user_id) for user_id in players]
-    characters = []  # TODO Initialize characters in cli.py
-    areas = [] # TODO Initialize areas in cli.py
     gc = GameContext(
             players = players,
-            characters = characters,
+            characters = cli.CHARACTERS,
             black_cards = cli.BLACK_DECK,
             white_cards = cli.WHITE_DECK,
             green_cards = cli.GREEN_DECK,
-            areas = areas,
+            areas = cli.AREAS,
             tell_h = lambda x: server_msg(x, room_id),
             ask_h = lambda x, y, z: ask(x, y, z, room_id),
             update_h = lambda x, y: server_update(x, y, room_id)
         )
+        
+    ##### FOR TESTING PURPOSES ONLY ########################
+    ##### SEND A DICTIONARY WITH CHARACTER INFO ACROSS #####
+    data = gc.characters[0].__dict__
+    socketio.emit('test-message', data, room = room_id)
+    ##### DELETE THIS WHEN DONE TESTING ####################
+    ##### END TESTING PURPOSES ONLY ########################
+
     winners = gc.play()
 
 # request an action from a specific player in a room
