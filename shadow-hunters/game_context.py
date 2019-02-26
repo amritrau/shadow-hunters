@@ -42,7 +42,7 @@ class GameContext:
 
 
     def checkWinConditions(self):
-        return [p for p in self.players if p.win_cond()]
+        return [p for p in self.players if p.character.win_cond()]
 
     def play(self):
         while True:
