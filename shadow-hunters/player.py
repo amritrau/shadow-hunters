@@ -45,7 +45,7 @@ class Player:
                 'options': area_options
             }
             # TODO Will not work until #12 is resolved
-            destination = self.gc.ask_h('select', data, self.user_id)
+            destination = self.gc.ask_h('select', data, self.user_id)['value']
 
             # Get Area object from area name
             destination_Area = [a for a in z.areas for z in self.gc.zones if a.name == destination][0]  # TODO fix this garbage
@@ -69,7 +69,7 @@ class Player:
         # Take action
         data = {'options': ['Perform area action', 'Decline']}
         # TODO Won't work until #12 fixed
-        answer = self.gc.ask_h('yesno', data, self.user_id)
+        answer = self.gc.ask_h('yesno', data, self.user_id)['value']
         if answer != 'Decline':
             # TODO Perform area action
             # TODO Update game state
@@ -91,7 +91,7 @@ class Player:
         data = {'options': targets + ['Decline']}
 
         # TODO This fails until issue #12 is fixed
-        answer = self.gc.ask_h('select', data, self.user_id)
+        answer = self.gc.ask_h('select', data, self.user_id)['value']
         # End failure
 
         self.gc.update_h('select', {})

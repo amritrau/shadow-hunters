@@ -91,7 +91,7 @@ def play(room_id, players):
     ##### FOR TESTING PURPOSES ONLY ########################
     ##### SEND A DICTIONARY WITH CHARACTER INFO ACROSS #####
     data = str(gc.characters[0].__dict__)
-    socketio.emit('test-message', data, room = room_id)
+    socketio.emit('game_start', data, room = room_id)
     ##### DELETE THIS WHEN DONE TESTING ####################
     ##### END TESTING PURPOSES ONLY ########################
 
@@ -111,6 +111,7 @@ def ask(form, data, player, room_id):
         if answer_bins[room_id]['sid'] != sid or answer_bins[room_id]['form'] != form:
             answer_bins[room_id]['answered'] = False
     answer_bins[room_id]['answered'] = False
+    return answer_bins[room_id]['data']
 
 # send a gameplay update message to all players in a room
 # TODO Consider moving this to separate file
@@ -152,7 +153,6 @@ def start_game():
         'data': {}
     }
     players = [x['name'] for x in connections.values() if x['room_id'] == room_id]
-    socketio.emit('game_start', {'playerdata': players}, room=room_id)
     socketio.sleep(1)
     play(room_id, players)
 
