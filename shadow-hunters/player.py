@@ -48,7 +48,12 @@ class Player:
             destination = self.gc.ask_h('select', data, self.user_id)['value']
 
             # Get Area object from area name
-            destination_Area = [a for a in z.areas for z in self.gc.zones if a.name == destination][0]  # TODO fix this garbage
+            # destination_Area = [a for a in z.areas for z in self.gc.zones if a.name == destination][0]  # TODO fix this garbage
+            destination_Area = None
+            for z in self.gc.zone:
+                for a in z.areas:
+                    if a.name == destination:
+                        destination_Area = a
 
         else:
             # Get Area from roll
