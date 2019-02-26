@@ -11,6 +11,7 @@ class Player:
 
     def setCharacter(self, character):
         self.character = character
+        self.win_cond = win_cond
         self.hp = self.character.max_hp
 
     def reveal(self):
