@@ -155,7 +155,7 @@ class Player:
             self.equipment.append(drawn)
 
     def attack(self, other, amount):
-        for eq in equipment:
+        for eq in self.equipment:
             amount = eq.use(True, amount) # Compose each of these functions
             # "True" argument refers to is_attack
 
