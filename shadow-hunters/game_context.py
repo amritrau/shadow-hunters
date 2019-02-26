@@ -37,7 +37,7 @@ class GameContext:
         # Randomly assign characters and point game context
         random.shuffle(characters)
         for player in self.players:
-            player.character = characters.pop()
+            player.setCharacter(characters.pop())
             player.gc = self
 
 
