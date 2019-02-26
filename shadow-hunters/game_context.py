@@ -41,19 +41,20 @@ class GameContext:
             player.gc = self
 
 
+    def getLivePlayers(self):
+        return [p in self.players if p.state > 0]
+
     def checkWinConditions(self):
         return [p for p in self.players if p.character.win_cond()]
 
     def play(self):
         while True:
-            for player in self.players:
-                if player.state > 0:  # Alive
+            for player in self.getLivePlayers():
                     player.takeTurn()
-
-                winners = self.checkWinConditions()
-                if len(winners):
-                    self.tell_h("Players {} won".format(winners))
-                    return winners
+                    winners = self.checkWinConditions()
+                    if len(winners):
+                        self.tell_h("Players {} won".format(winners))
+                        return winners
 
     def dump(self):
         """

@@ -44,11 +44,9 @@ class Player:
             data = {
                 'options': area_options
             }
-            # TODO Will not work until #12 is resolved
             destination = self.gc.ask_h('select', data, self.user_id)['value']
 
             # Get Area object from area name
-            # destination_Area = [a for a in z.areas for z in self.gc.zones if a.name == destination][0]  # TODO fix this garbage
             destination_Area = None
             for z in self.gc.zones:
                 for a in z.areas:
@@ -62,7 +60,6 @@ class Player:
                 for a in z.areas:
                     if roll_result in a.domain:
                         destination_Area = a
-            # destination_Area = [(a for a in z.areas for z in self.gc.zones if roll_result in a.domain][0]
 
             # Get string from Area
             destination = destination_Area.name
@@ -73,7 +70,7 @@ class Player:
 
         # Take action
         data = {'options': ['Perform area action', 'Decline']}
-        # TODO Won't work until #12 fixed
+
         answer = self.gc.ask_h('yesno', data, self.user_id)['value']
         if answer != 'Decline':
             # TODO Perform area action
@@ -90,21 +87,17 @@ class Player:
 
         # Attack
         self.gc.tell_h("{} is picking whom to attack...".format(self.user_id))
-        live_players = [p for p in self.gc.players if p.location]
+        live_players = [p for p in self.gc.getLivePlayers() if p.location]
         targets = [
             p for p in live_players if (p.location.zone == self.location.zone and p != self)
         ]
         data = {'options': [t.user_id for t in targets] + ['Decline']}
-
-        # TODO This fails until issue #12 is fixed
         answer = self.gc.ask_h('select', data, self.user_id)['value']
-        # End failure
-
         self.gc.update_h('select', {})
 
         if answer != 'Decline':
             target = answer
-            target_Player = [p for p in self.gc.players if p.user_id == target]  # TODO Amrit do you even know Python
+            target_Player = [p for p in self.gc.getLivePlayers() if p.user_id == target]  # TODO Amrit do you even know Python
             target_Player = target_Player[0]
             self.gc.tell_h("{} is attacking {}!".format(self.user_id, target))
             data = {'options': ['Roll for damage!']}
@@ -173,6 +166,12 @@ class Player:
             # "False" argument refers to is_attack
         dealt = amount
         self.hp -= dealt
+        self.hp = max(self.hp, 0)
+
+        # Check death
+        if self.hp == 0:
+            self.state = 0  # DEAD state
+
         return dealt
 
     def move(self, location):
