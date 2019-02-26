@@ -85,8 +85,9 @@ class Player:
 
         # Attack
         self.gc.tell_h("{} is picking whom to attack...".format(self.user_id))
+        live_players = [p for p in self.gc.players if p.location]
         targets = [
-            p for p in self.gc.players if (p.location.zone == self.location.zone and p != self)
+            p for p in live_players if (p.location.zone == self.location.zone and p != self)
         ]
         data = {'options': targets + ['Decline']}
 
