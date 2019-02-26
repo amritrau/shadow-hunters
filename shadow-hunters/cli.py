@@ -199,7 +199,7 @@ AREAS = [
         name = "Hermit's Cabin",
         desc = "You may draw a Hermit Card.",
         domain = [2, 3],
-        action = lambda gc, player: 0# lambda gc, player: player.drawCard(gc.green_cards),
+        action = lambda gc, player: 0, # lambda gc, player: player.drawCard(gc.green_cards),
         resource_id = "hermits-cabin"
     ),
     area.Area(

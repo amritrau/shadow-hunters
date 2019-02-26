@@ -42,7 +42,7 @@ class GameContext:
 
 
     def getLivePlayers(self):
-        return [p in self.players if p.state > 0]
+        return [p for p in self.players if p.state > 0]
 
     def checkWinConditions(self):
         return [p for p in self.players if p.character.win_cond()]
