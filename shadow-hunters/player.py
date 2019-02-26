@@ -163,7 +163,7 @@ class Player:
         return dealt
 
     def defend(self, other, amount):
-        for eq in equipment:
+        for eq in self.equipment:
             amount = eq.use(False, amount) # Compose each of these functions
             # "False" argument refers to is_attack
         dealt = amount
