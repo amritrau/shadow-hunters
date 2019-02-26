@@ -89,7 +89,7 @@ class Player:
         targets = [
             p for p in live_players if (p.location.zone == self.location.zone and p != self)
         ]
-        data = {'options': targets + ['Decline']}
+        data = {'options': [t.user_id for t in targets] + ['Decline']}
 
         # TODO This fails until issue #12 is fixed
         answer = self.gc.ask_h('select', data, self.user_id)['value']
