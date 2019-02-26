@@ -86,7 +86,7 @@ class Player:
         # Attack
         self.gc.tell_h("{} is picking whom to attack...".format(self.user_id))
         targets = [
-            p for p in self.gc.players if (p.location == self.location and p != self)
+            p for p in self.gc.players if (p.location.zone == self.location.zone and p != self)
         ]
         data = {'options': targets + ['Decline']}
 
@@ -154,13 +154,18 @@ class Player:
             self.equipment.append(drawn)
 
     def attack(self, other, amount):
-        # TODO amount --> modifier1 --> modifier2 --> amount'
+        for eq in equipment:
+            amount = eq.use(True, amount) # Compose each of these functions
+            # "True" argument refers to is_attack
+
         dealt = other.defend(self, amount)
         return dealt
 
     def defend(self, other, amount):
-        # TODO amount --> modifier1 --> modifier2 --> amount'
-        dealt = amount  # implement above
+        for eq in equipment:
+            amount = eq.use(False, amount) # Compose each of these functions
+            # "False" argument refers to is_attack
+        dealt = amount
         self.hp -= dealt
         return dealt
 

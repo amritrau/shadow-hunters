@@ -15,7 +15,7 @@ WHITE_CARDS = [
         holder = None,
         is_equip = True,
         force_use = False,
-        use = lambda: 0  # TODO
+        use = lambda is_attack, amt: amt - 1  # applies to both attack and defend
     ),
     card.Card(
         title = "Flare of Judgement",
@@ -63,7 +63,7 @@ BLACK_CARDS = [
         holder = None,
         is_equip = True,
         force_use = False,
-        use = lambda: 0  # TODO
+        use = lambda is_attack, amt: amt + is_attack  # if we're attacking give 1 point extra
     ),
     card.Card(
         title = "Chainsaw",
@@ -72,7 +72,7 @@ BLACK_CARDS = [
         holder = None,
         is_equip = True,
         force_use = False,
-        use = lambda: 0  # TODO
+        use = lambda is_attack, amt: amt + is_attack
     ),
     card.Card(
         title = "Rusted Broad Axe",
@@ -81,7 +81,7 @@ BLACK_CARDS = [
         holder = None,
         is_equip = True,
         force_use = False,
-        use = lambda: 0  # TODO
+        use = lambda is_attack, amt: amt + is_attack
     ),
     card.Card(
         title = "Moody Goblin",
