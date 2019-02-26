@@ -50,10 +50,10 @@ class GameContext:
                 if player.state > 0:  # Alive
                     player.takeTurn()
 
-            winners = self.checkWinConditions()
-            if len(winners):
-                self.tell_h("Players {} won".format(winners))
-                return winners
+                winners = self.checkWinConditions()
+                if len(winners):
+                    self.tell_h("Players {} won".format(winners))
+                    return winners
 
     def dump(self):
         """
