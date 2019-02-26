@@ -74,6 +74,8 @@ class Player:
         answer = self.gc.ask_h('yesno', data, self.user_id)['value']
         if answer != 'Decline':
             # TODO Perform area action
+            self.location.action(self.gc, self)
+
             # TODO Update game state
             self.gc.update_h('yesno', {'action': 'area', 'value': 'TODO'})
             self.gc.tell_h(
@@ -147,9 +149,12 @@ class Player:
 
     def drawCard(self, deck):
         drawn = deck.drawCard()
+        self.gc.tell_h("{} drew {}!".format(self.user_id, drawn.title))
         if drawn.force_use:
+            self.gc.tell_h("{} was forced to use {}.".format(self.user_id, drawn.title))
             drawn.use()
         if drawn.is_equipment:
+            self.gc.tell_h("{} added {} to their arsenal!".format(self.user_id, drawn.title))
             self.equipment.append(drawn)
 
     def attack(self, other, amount):
