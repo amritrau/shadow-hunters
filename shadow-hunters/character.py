@@ -7,6 +7,6 @@ class Character:
         self.alleg = alleg
         self.max_hp = max_hp
         self.win_cond = win_cond
-        self.win_cond = win_cond_desc
+        self.win_cond_desc = win_cond_desc
         self.special = special
         self.resource_id = resource_id
