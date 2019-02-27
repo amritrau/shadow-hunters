@@ -42,11 +42,11 @@ def use_moody_goblin(args):
         target = args['self'].gc.ask_h('select', data, args['self'].user_id)['value']
         args['self'].gc.update_h('select', {})
         target_Player = [p for p in args['self'].gc.getLivePlayers() if p.user_id == target][0]
-
-        data = {'options': [str(eq) for eq in target_Player.equipment]}
+        assert(len(target_Player.equipment) > 0)  # TODO For testing purposes
+        data = {'options': [eq.title for eq in target_Player.equipment]}
         equip = args['self'].gc.ask_h('select', data, args['self'].user_id)['value']
         args['self'].gc.update_h('select', {})
-        equip_Equipment = [eq for eq in target_Player.equipment if str(eq) == equip][0]
+        equip_Equipment = [eq for eq in target_Player.equipment if eq.title == equip][0]
 
         i = target_Player.equipment.index(equip_Equipment)
         equip_Equipment = target_Player.equipment.pop(i)
