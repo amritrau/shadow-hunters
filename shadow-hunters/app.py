@@ -77,7 +77,7 @@ def room(methods=['GET','POST']):
 
 # gameplay loop
 def play(room_id, players):
-    players = [Player(user_id) for user_id in players]
+    players = [Player(user_id, socket_id = get_sid[(user_id, room_id)]) for user_id in players]
     gc = GameContext(
             players = players,
             characters = cli.CHARACTERS,
@@ -86,6 +86,7 @@ def play(room_id, players):
             green_cards = cli.GREEN_DECK,
             areas = cli.AREAS,
             tell_h = lambda x: server_msg(x, room_id),
+            direct_h = lambda x, sid: server_msg(x, sid),
             ask_h = lambda x, y, z: ask(x, y, z, room_id),
             update_h = lambda x, y: server_update(x, y, room_id)
         )

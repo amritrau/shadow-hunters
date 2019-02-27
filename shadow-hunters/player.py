@@ -1,8 +1,9 @@
 import cli
 
 class Player:
-    def __init__(self, user_id):
+    def __init__(self, user_id, socket_id):
         self.user_id = user_id
+        self.socket_id = socket_id
         self.gc = None # game context (abbreviated for convenience)
         self.state = 2 #  2 for ALIVE_ANON, 1 for ALIVE_KNOWN, 0 for DEAD
         self.character = None
@@ -89,6 +90,10 @@ class Player:
                 '{} declined to perform their area action.'.format(self.user_id)
             )
 
+        # Someone could have died here, so check win conditions
+        if self.gc.checkWinConditions(tell = False):
+            return  # let the win conditions check in GameContext.play() handle
+
         # Attack
         self.gc.tell_h("{} is picking whom to attack...".format(self.user_id))
         live_players = [p for p in self.gc.getLivePlayers() if p.location]
@@ -152,6 +157,7 @@ class Player:
     def drawCard(self, deck):
         drawn = deck.drawCard()
         self.gc.tell_h("{} drew {}!".format(self.user_id, drawn.title))
+        self.gc.direct_h("{}: {}".format(drawn.title, drawn.desc), self.socket_id)
         if drawn.force_use:
             self.gc.tell_h("{} used {}!".format(self.user_id, drawn.title))
             args = {'self': self}
