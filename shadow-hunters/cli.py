@@ -36,7 +36,7 @@ def use_first_aid(args):
     [p for p in args['self'].gc.getLivePlayers() if p.user_id == target][0].setHP(7)
 
 def use_moody_goblin(args):
-    players_w_items = [p for p in args['self'].gc.getLivePlayers() if len(p.equipment)]
+    players_w_items = [p for p in args['self'].gc.getLivePlayers() if (len(p.equipment) and p != args['self'])]
     if len(players_w_items):
         data = {'options': [p.user_id for p in args['self'].gc.getLivePlayers()]}
         target = args['self'].gc.ask_h('select', data, args['self'].user_id)['value']
@@ -119,7 +119,7 @@ BLACK_CARDS = [
         holder = None,
         is_equip = True,
         force_use = False,
-        use = lambda is_attack, amt: amt + is_attack  # if we're attacking give 1 point extra
+        use = lambda is_attack, amt: amt + is_attack if amt else amt # if we're attacking give 1 point extra
     ),
     card.Card(
         title = "Chainsaw",
@@ -128,7 +128,7 @@ BLACK_CARDS = [
         holder = None,
         is_equip = True,
         force_use = False,
-        use = lambda is_attack, amt: amt + is_attack
+        use = lambda is_attack, amt: amt + is_attack if amt else amt
     ),
     card.Card(
         title = "Rusted Broad Axe",
@@ -137,7 +137,7 @@ BLACK_CARDS = [
         holder = None,
         is_equip = True,
         force_use = False,
-        use = lambda is_attack, amt: amt + is_attack
+        use = lambda is_attack, amt: amt + is_attack if amt else amt
     ),
     card.Card(
         title = "Moody Goblin",
@@ -293,7 +293,7 @@ def weird_woods_action(gc, player):
 def erstwhile_altar_action(gc, player):
     # TODO Only show players with equipment
     # TODO Handle case: nobody has any equipment
-    players_w_items = [p for p in gc.getLivePlayers() if len(p.equipment)]
+    players_w_items = [p for p in gc.getLivePlayers() if (len(p.equipment) and p != player)]
     if len(players_w_items):
         data = {'options': [p.user_id for p in players_w_items]}
         target = gc.ask_h('select', data, player.user_id)['value']
@@ -303,13 +303,13 @@ def erstwhile_altar_action(gc, player):
         data = {'options': [eq.title for eq in target_Player.equipment]}
         equip = gc.ask_h('select', data, player.user_id)['value']
         gc.update_h('select', {})
-        equip_Equipment = [eq for eq in target_Player.equipment if eq.name == equip][0]
+        equip_Equipment = [eq for eq in target_Player.equipment if eq.title == equip][0]
 
         i = target_Player.equipment.index(equip_Equipment)
         equip_Equipment = target_Player.equipment.pop(i)
         player.equipment.append(equip_Equipment)
         equip_Equipment.holder = player
-        gc.tell_h("{} stole {}'s {}!".format(player.user_id, target_Player.user_id, equip_Equipment.name))
+        gc.tell_h("{} stole {}'s {}!".format(player.user_id, target_Player.user_id, equip_Equipment.title))
     else:
         gc.tell_h("Nobody has any items for {} to steal.".format(player.user_id))
 
