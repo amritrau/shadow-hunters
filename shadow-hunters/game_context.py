@@ -69,7 +69,7 @@ class GameContext:
                         else:
                             for i in range(len(winner_names) - 1, 0, -1):
                                 if i == len(winner_names) - 1:
-                                    winner_str += " and {}" + winner_names.pop(i)
+                                    winner_str += " and " + winner_names.pop(i)
                                 elif i == len(winner_names) - 2:
                                     winner_str += winner_names.pop(i)
                                 else:
