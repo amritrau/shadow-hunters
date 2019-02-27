@@ -197,12 +197,24 @@ GREEN_DECK = deck.Deck(cards = [])
 
 
 # Initialize characters
+def shadow_win_cond(gc, player):
+    no_living_hunters = len([p for p in gc.getLivePlayers() if p.character.alleg == 2]) == 0
+    neutrals_dead_3 = len([p for p in gc.getDeadPlayers() if p.character.alleg == 1]) >= 3
+    return no_living_hunters or neutrals_dead_3
+
+def hunter_win_cond(gc, player):
+    no_living_shadows = len([p for p in gc.getLivePlayers() if p.character.alleg == 0]) == 0
+    return no_living_shadows
+
+def allie_win_cond(gc, player):
+    return (player in gc.getLivePlayers()) and gc.game_over
+
 CHARACTERS = [
     character.Character(
         name = "Valkyrie",
         alleg = 0,  # Shadow
         max_hp = 13,
-        win_cond = lambda: 0,  # TODO
+        win_cond = shadow_win_cond,
         win_cond_desc = "All the Hunter characters are dead or 3 Neutral characters are dead",
         special = lambda: 0,  # TODO
         resource_id = "valkyrie"
@@ -211,7 +223,7 @@ CHARACTERS = [
         name = "Vampire",
         alleg = 0,  # Shadow
         max_hp = 13,
-        win_cond = lambda: 0,  # TODO
+        win_cond = shadow_win_cond,
         win_cond_desc = "All the Hunter characters are dead or 3 Neutral characters are dead",
         special = lambda: 0,  # TODO
         resource_id = "vampire"
@@ -220,7 +232,7 @@ CHARACTERS = [
         name = "Allie",
         alleg = 1,  # Neutral
         max_hp = 8,
-        win_cond = lambda: 0,  # TODO
+        win_cond = allie_win_cond,
         win_cond_desc = "You're not dead when the game is over",
         special = lambda: 0,  # TODO
         resource_id = "allie"

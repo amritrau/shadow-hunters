@@ -15,6 +15,9 @@ class GameContext:
         self.white_cards = white_cards
         self.green_cards = green_cards
 
+        # Instantiate status
+        self.game_over = False
+
         # Instantiate message handlers
         self.tell_h = tell_h
         self.ask_h = ask_h
@@ -44,8 +47,11 @@ class GameContext:
     def getLivePlayers(self):
         return [p for p in self.players if p.state > 0]
 
+    def getDeadPlayers(self):
+        return [p for p in self.players if p.state == 0]
+
     def checkWinConditions(self):
-        return [p for p in self.getLivePlayers() if p.character.win_cond()]
+        return [p for p in self.getLivePlayers() if p.character.win_cond(self, p)]
 
     def play(self):
         while True:
@@ -53,6 +59,8 @@ class GameContext:
                     player.takeTurn()
                     winners = self.checkWinConditions()
                     if len(winners):
+                        self.game_over = True
+                        winners = self.checkWinConditions()  # Hack to collect Allie
                         self.tell_h("Players {} won".format(winners))
                         return winners
 
