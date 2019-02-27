@@ -49,8 +49,8 @@ def use_moody_goblin(args):
     i = target_Player.equipment.index(equip_Equipment)
     equip_Equipment = target_Player.equipment.pop(i)
     args['self'].equipment.append(equip_Equipment)
-    equip_Equipment.holder = player
-    args['self'].gc.tell_h("{} stole {}'s {}!".format(player.user_id, target_Player.user_id, equip_Equipment.name))
+    equip_Equipment.holder = args['self']
+    args['self'].gc.tell_h("{} stole {}'s {}!".format(args['self'].user_id, target_Player.user_id, equip_Equipment.name))
 
 ##################
 
