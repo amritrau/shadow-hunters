@@ -300,7 +300,7 @@ def erstwhile_altar_action(gc, player):
         gc.update_h('select', {})
         target_Player = [p for p in players_w_items if p.user_id == target][0]
 
-        data = {'options': [eq.name for eq in target_Player.equipment]}
+        data = {'options': [eq.title for eq in target_Player.equipment]}
         equip = gc.ask_h('select', data, player.user_id)['value']
         gc.update_h('select', {})
         equip_Equipment = [eq for eq in target_Player.equipment if eq.name == equip][0]
