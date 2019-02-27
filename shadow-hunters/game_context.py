@@ -61,21 +61,8 @@ class GameContext:
                     if len(winners):
                         self.game_over = True
                         winners = self.checkWinConditions()  # Hack to collect Allie
-                        winner_names = [w.user_id for w in winners]
-                        winner_str = ""
-
-                        if len(winners) == 1:
-                            winner_str += winner_names.pop()
-                        else:
-                            for i in range(len(winner_names) - 1, 0, -1):
-                                if i == len(winner_names) - 1:
-                                    winner_str += " and " + winner_names.pop(i)
-                                elif i == len(winner_names) - 2:
-                                    winner_str += winner_names.pop(i)
-                                else:
-                                    winner_str += winner_names.pop(i) + ", "
-
-                        self.tell_h("{} won!".format(winner_str))
+                        for w in winners:
+                            self.tell_h("{} ({}: {}) won! {}".format(w.user_id, w.character.alleg, w.character.name, w.character.win_cond_desc))
                         return winners
 
     def dump(self):
