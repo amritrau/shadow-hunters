@@ -285,6 +285,8 @@ def weird_woods_action(gc, player):
         target_Player.moveHP(-2)
 
 def erstwhile_altar_action(gc, player):
+    # TODO Only show players with items
+    # TODO Handle case: nobody has any items
     data = {'options': [p.user_id for p in gc.getLivePlayers()]}
     target = gc.ask_h('select', data, player.user_id)['value']
     gc.update_h('select', {})
