@@ -241,7 +241,7 @@ CHARACTERS = [
         name = "George",
         alleg = 2,  # Hunter
         max_hp = 14,
-        win_cond = lambda: 0,  # TODO
+        win_cond = hunter_win_cond,
         win_cond_desc = "All the Shadow characters are dead",
         special = lambda: 0,  # TODO
         resource_id = "george"
@@ -250,7 +250,7 @@ CHARACTERS = [
         name = "Fu-ka",
         alleg = 2,  # Hunter
         max_hp = 12,
-        win_cond = lambda: 0,  # TODO
+        win_cond = hunter_win_cond,
         win_cond_desc = "All the Shadow characters are dead",
         special = lambda: 0,  # TODO
         resource_id = "fu-ka"
@@ -285,23 +285,27 @@ def weird_woods_action(gc, player):
         target_Player.moveHP(-2)
 
 def erstwhile_altar_action(gc, player):
-    # TODO Only show players with items
-    # TODO Handle case: nobody has any items
-    data = {'options': [p.user_id for p in gc.getLivePlayers()]}
-    target = gc.ask_h('select', data, player.user_id)['value']
-    gc.update_h('select', {})
-    target_Player = [p for p in gc.getLivePlayers() if p.user_id == target][0]
+    # TODO Only show players with equipment
+    # TODO Handle case: nobody has any equipment
+    players_w_items = [p for p in gc.getLivePlayers() if len(p.equipment)]
+    if len(players_w_items):
+        data = {'options': [p.user_id for p in players_w_items]}
+        target = gc.ask_h('select', data, player.user_id)['value']
+        gc.update_h('select', {})
+        target_Player = [p for p in players_w_items if p.user_id == target][0]
 
-    data = {'options': [str(eq) for eq in target_Player.equipment]}
-    equip = gc.ask_h('select', data, player.user_id)['value']
-    gc.update_h('select', {})
-    equip_Equipment = [eq for eq in target_Player.equipment if str(eq) == equip][0]
+        data = {'options': [eq.name for eq in target_Player.equipment]}
+        equip = gc.ask_h('select', data, player.user_id)['value']
+        gc.update_h('select', {})
+        equip_Equipment = [eq for eq in target_Player.equipment if eq.name == equip][0]
 
-    i = target_Player.equipment.index(equip_Equipment)
-    equip_Equipment = target_Player.equipment.pop(i)
-    player.equipment.append(equip_Equipment)
-    equip_Equipment.holder = player
-    gc.tell_h("{} stole {}'s {}!".format(player.user_id, target_Player.user_id, equip_Equipment.name))
+        i = target_Player.equipment.index(equip_Equipment)
+        equip_Equipment = target_Player.equipment.pop(i)
+        player.equipment.append(equip_Equipment)
+        equip_Equipment.holder = player
+        gc.tell_h("{} stole {}'s {}!".format(player.user_id, target_Player.user_id, equip_Equipment.name))
+    else:
+        gc.tell_h("Nobody has any items for {} to steal.".format(player.user_id))
 
 #########
 
