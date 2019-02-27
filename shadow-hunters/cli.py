@@ -36,21 +36,25 @@ def use_first_aid(args):
     [p for p in args['self'].gc.getLivePlayers() if p.user_id == target][0].setHP(7)
 
 def use_moody_goblin(args):
-    data = {'options': [p.user_id for p in args['self'].gc.getLivePlayers()]}
-    target = args['self'].gc.ask_h('select', data, args['self'].user_id)['value']
-    args['self'].gc.update_h('select', {})
-    target_Player = [p for p in args['self'].gc.getLivePlayers() if p.user_id == target][0]
+    players_w_items = [p for p in args['self'].gc.getLivePlayers() if len(p.equipment)]
+    if len(players_w_items):
+        data = {'options': [p.user_id for p in args['self'].gc.getLivePlayers()]}
+        target = args['self'].gc.ask_h('select', data, args['self'].user_id)['value']
+        args['self'].gc.update_h('select', {})
+        target_Player = [p for p in args['self'].gc.getLivePlayers() if p.user_id == target][0]
 
-    data = {'options': [str(eq) for eq in target_Player.equipment]}
-    equip = args['self'].gc.ask_h('select', data, args['self'].user_id)['value']
-    args['self'].gc.update_h('select', {})
-    equip_Equipment = [eq for eq in target_Player.equipment if str(eq) == equip][0]
+        data = {'options': [str(eq) for eq in target_Player.equipment]}
+        equip = args['self'].gc.ask_h('select', data, args['self'].user_id)['value']
+        args['self'].gc.update_h('select', {})
+        equip_Equipment = [eq for eq in target_Player.equipment if str(eq) == equip][0]
 
-    i = target_Player.equipment.index(equip_Equipment)
-    equip_Equipment = target_Player.equipment.pop(i)
-    args['self'].equipment.append(equip_Equipment)
-    equip_Equipment.holder = args['self']
-    args['self'].gc.tell_h("{} stole {}'s {}!".format(args['self'].user_id, target_Player.user_id, equip_Equipment.name))
+        i = target_Player.equipment.index(equip_Equipment)
+        equip_Equipment = target_Player.equipment.pop(i)
+        args['self'].equipment.append(equip_Equipment)
+        equip_Equipment.holder = args['self']
+        args['self'].gc.tell_h("{} stole {}'s {}!".format(args['self'].user_id, target_Player.user_id, equip_Equipment.name))
+    else:
+        args['self'].gc.tell_h("Nobody has any items for {} to steal.".format(args['self'].user_id))
 
 ##################
 
@@ -67,7 +71,7 @@ WHITE_CARDS = [
         holder = None,
         is_equip = True,
         force_use = False,
-        use = lambda is_attack, amt: amt - 1  # applies to both attack and defend
+        use = lambda is_attack, amt: max(0, amt - 1)  # applies to both attack and defend
     ),
     card.Card(
         title = "Flare of Judgement",
@@ -198,12 +202,14 @@ GREEN_DECK = deck.Deck(cards = [])
 
 # Initialize characters
 def shadow_win_cond(gc, player):
-    no_living_hunters = len([p for p in gc.getLivePlayers() if p.character.alleg == 2]) == 0
-    neutrals_dead_3 = len([p for p in gc.getDeadPlayers() if p.character.alleg == 1]) >= 3
+    no_living_hunters = (len([p for p in gc.getLivePlayers() if p.character.alleg == 2]) == 0)
+    neutrals_dead_3 = (len([p for p in gc.getDeadPlayers() if p.character.alleg == 1]) >= 3)
+    print("Living hunters:", [p for p in gc.getLivePlayers() if p.character.alleg == 2])
     return no_living_hunters or neutrals_dead_3
 
 def hunter_win_cond(gc, player):
-    no_living_shadows = len([p for p in gc.getLivePlayers() if p.character.alleg == 0]) == 0
+    no_living_shadows = (len([p for p in gc.getLivePlayers() if p.character.alleg == 0]) == 0)
+    print("Living shadows:", [p for p in gc.getLivePlayers() if p.character.alleg == 0])
     return no_living_shadows
 
 def allie_win_cond(gc, player):

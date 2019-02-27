@@ -153,7 +153,7 @@ class Player:
         drawn = deck.drawCard()
         self.gc.tell_h("{} drew {}!".format(self.user_id, drawn.title))
         if drawn.force_use:
-            self.gc.tell_h("{} was forced to use {}.".format(self.user_id, drawn.title))
+            self.gc.tell_h("{} used {}!".format(self.user_id, drawn.title))
             args = {'self': self}
             drawn.use(args)
         if drawn.is_equipment:

@@ -51,7 +51,7 @@ class GameContext:
         return [p for p in self.players if p.state == 0]
 
     def checkWinConditions(self):
-        return [p for p in self.getLivePlayers() if p.character.win_cond(self, p)]
+        return [p for p in self.players if p.character.win_cond(self, p)]
 
     def play(self):
         while True:
@@ -61,7 +61,7 @@ class GameContext:
                     if len(winners):
                         self.game_over = True
                         winners = self.checkWinConditions()  # Hack to collect Allie
-                        self.tell_h("Players {} won".format(winners))
+                        self.tell_h("Players {} won".format([w.user_id for w in winners]))
                         return winners
 
     def dump(self):
