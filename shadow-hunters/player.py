@@ -1,3 +1,5 @@
+import cli
+
 class Player:
     def __init__(self, user_id):
         self.user_id = user_id
@@ -69,15 +71,15 @@ class Player:
         self.move(destination_Area)
 
         # Take action
-        data = {'options': ['Perform area action', 'Decline']}
+        data = {'options': [destination_Area.desc, 'Decline']}
 
         answer = self.gc.ask_h('yesno', data, self.user_id)['value']
         if answer != 'Decline':
+            # TODO Update game state
+            # self.gc.update_h('yesno', {'action': 'area', 'value': 'TODO'})
+            self.gc.update_h('yesno', {})
             # TODO Perform area action
             self.location.action(self.gc, self)
-
-            # TODO Update game state
-            self.gc.update_h('yesno', {'action': 'area', 'value': 'TODO'})
             self.gc.tell_h(
                 '{} performed their area action!'.format(self.user_id)
             )
@@ -152,7 +154,8 @@ class Player:
         self.gc.tell_h("{} drew {}!".format(self.user_id, drawn.title))
         if drawn.force_use:
             self.gc.tell_h("{} was forced to use {}.".format(self.user_id, drawn.title))
-            drawn.use()
+            args = {'self': self}
+            drawn.use(args)
         if drawn.is_equipment:
             self.gc.tell_h("{} added {} to their arsenal!".format(self.user_id, drawn.title))
             self.equipment.append(drawn)
@@ -170,14 +173,25 @@ class Player:
             amount = eq.use(False, amount) # Compose each of these functions
             # "False" argument refers to is_attack
         dealt = amount
-        self.hp -= dealt
-        self.hp = max(self.hp, 0)
+        self.moveHP(-dealt)
+        return dealt
 
-        # Check death
+    def moveHP(self, hp_change):
+        self.hp = min(self.hp + hp_change, self.character.max_hp)
+        self.hp = max(0, self.hp)
+        self.checkDeath()
+        return self.hp
+
+    def setHP(self, hp):
+        self.hp = hp
+        self.checkDeath()
+
+    def checkDeath(self):
         if self.hp == 0:
             self.state = 0  # DEAD state
-
-        return dealt
+            self.gc.tell_h("{} ({}: {}) died!".format(self.user_id, cli.ALLEGIANCE_MAP[self.character.allegiance], self.character.name))
+        else: ## TODO Remove when not debugging
+            self.gc.tell_h("{}'s HP was set to {}!".format(self.user_id, self.hp))
 
     def move(self, location):
         # TODO What checks do we need here?

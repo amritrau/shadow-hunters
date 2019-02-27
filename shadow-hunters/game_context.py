@@ -45,7 +45,7 @@ class GameContext:
         return [p for p in self.players if p.state > 0]
 
     def checkWinConditions(self):
-        return [p for p in self.players if p.character.win_cond()]
+        return [p for p in self.getLivePlayers() if p.character.win_cond()]
 
     def play(self):
         while True:
