@@ -240,7 +240,7 @@ def hermit_blackmail(args):
     else:
         target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
         data = {'options': ['Do nothing']}
-        self.gc.ask_h('yesno', data, self.user_id)['value']
+        target.gc.ask_h('yesno', data, target.user_id)['value']
         target.gc.update_h('select', {})
         target.gc.tell_h("{} did nothing.".format(target.user_id))
 
@@ -273,7 +273,7 @@ def hermit_greed(args):
     else:
         target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
         data = {'options': ['Do nothing']}
-        self.gc.ask_h('yesno', data, self.user_id)['value']
+        target.gc.ask_h('yesno', data, target.user_id)['value']
         target.gc.update_h('select', {})
         target.gc.tell_h("{} did nothing.".format(target.user_id))
 
@@ -306,7 +306,7 @@ def hermit_anger(args):
     else:
         target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
         data = {'options': ['Do nothing']}
-        self.gc.ask_h('yesno', data, self.user_id)['value']
+        target.gc.ask_h('yesno', data, target.user_id)['value']
         target.gc.update_h('select', {})
         target.gc.tell_h("{} did nothing.".format(target.user_id))
 
@@ -327,7 +327,7 @@ def hermit_slap(args):
     else:
         target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
         data = {'options': ['Do nothing']}
-        self.gc.ask_h('yesno', data, self.user_id)['value']
+        target.gc.ask_h('yesno', data, target.user_id)['value']
         target.gc.update_h('select', {})
         target.gc.tell_h("{} did nothing.".format(target.user_id))
 
@@ -348,7 +348,7 @@ def hermit_spell(args):
     else:
         target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
         data = {'options': ['Do nothing']}
-        self.gc.ask_h('yesno', data, self.user_id)['value']
+        target.gc.ask_h('yesno', data, target.user_id)['value']
         target.gc.update_h('select', {})
         target.gc.tell_h("{} did nothing.".format(target.user_id))
 
@@ -369,7 +369,7 @@ def hermit_exorcism(args):
     else:
         target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
         data = {'options': ['Do nothing']}
-        self.gc.ask_h('yesno', data, self.user_id)['value']
+        target.gc.ask_h('yesno', data, target.user_id)['value']
         target.gc.update_h('select', {})
         target.gc.tell_h("{} did nothing.".format(target.user_id))
 
@@ -396,7 +396,7 @@ def hermit_nurturance(args):
     else:
         target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
         data = {'options': ['Do nothing']}
-        self.gc.ask_h('yesno', data, self.user_id)['value']
+        target.gc.ask_h('yesno', data, target.user_id)['value']
         target.gc.update_h('select', {})
         target.gc.tell_h("{} did nothing.".format(target.user_id))
 
@@ -423,7 +423,7 @@ def hermit_aid(args):
     else:
         target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
         data = {'options': ['Do nothing']}
-        self.gc.ask_h('yesno', data, self.user_id)['value']
+        target.gc.ask_h('yesno', data, target.user_id)['value']
         target.gc.update_h('select', {})
         target.gc.tell_h("{} did nothing.".format(target.user_id))
 
@@ -450,7 +450,7 @@ def hermit_fiddle(args):
     else:
         target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
         data = {'options': ['Do nothing']}
-        self.gc.ask_h('yesno', data, self.user_id)['value']
+        target.gc.ask_h('yesno', data, target.user_id)['value']
         target.gc.update_h('select', {})
         target.gc.tell_h("{} did nothing.".format(target.user_id))
 
