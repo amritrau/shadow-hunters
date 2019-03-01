@@ -93,11 +93,17 @@ def start_game(room_id, players):
 
     ##### FOR TESTING PURPOSES ONLY ########################
     ##### SEND A DICTIONARY WITH CHARACTER INFO ACROSS #####
-    data = str(gc.characters[0].__dict__)
+    data = {
+        'name': 'George',
+        'alleg': 2,
+        'max_hp': 14,
+        'win_cond_desc': 'All the Shadow characters are dead',
+        'special': 'None'
+    }
     socketio.emit('game_start', data, room = room_id)
     ##### DELETE THIS WHEN DONE TESTING ####################
     ##### END TESTING PURPOSES ONLY ########################
-    
+
     # Initiate gameplay loop
     winners = gc.play()
 
@@ -139,7 +145,7 @@ def server_update(form, data, room_id):
 
 @socketio.on('start')
 def on_start():
-    
+
     # Mark game as in progress so no one else can start/join it
     room_id = connections[request.sid]['room_id']
     if rooms[room_id] == 'GAME':
@@ -161,7 +167,7 @@ def on_start():
 
 @socketio.on('answer')
 def on_answer(json):
-    
+
     # Make sure an answer isn't being processed
     room_id = connections[request.sid]['room_id']
     if answer_bins[room_id]['answered']:
@@ -194,7 +200,7 @@ def on_join(json):
     # Emit join message to other players
     data = {'data': name+' has joined Shadow Hunters Room: '+room_id, 'color': S_COLOR}
     socketio.emit('message', data, room=room_id)
-    
+
     # Join room
     join_room(room_id)
 

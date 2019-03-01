@@ -12,21 +12,20 @@ var WaitingRoom = new Phaser.Class ({
     },
 
     create: function () {
+        var self = this;
+
+        //this resizes the background image to fit into our canvas
         var background = this.add.image(533, 300, 'background');
         background.displayWidth = this.sys.canvas.width;
         background.displayHeight = this.sys.canvas.height;
 
-        this.input.keyboard.once('keyup_ONE', function () {
-
-            this.scene.start('board', { });
-
-        }, this);
-
-        this.events.on('shutdown', this.shutdown, this);
-    },
-
-    shutdown: function () {
-        this.input.keyboard.shutdown();
+        //SOCKET CALL! if game start button pressed, then we switch scenes and go to the game board
+        socket.on("game_start", function (data) {
+            $('#start').remove();
+            var html = '<p id="wait">Waiting...</p>';
+            $('#game').append(html);
+            self.scene.start('board', data);
+        });
     }
 });
 
@@ -49,6 +48,15 @@ var GameBoard = new Phaser.Class ({
         this.charInfo;
         this.infoBox;
 
+    },
+
+    //function to initialize the data sent into gameboard from waiting room
+    init: function (data)
+    {
+        this.charInfo = data;
+        console.log(this.charInfo);
+        console.log(typeof this.charInfo);
+        console.log(this.charInfo.name);
     },
 
     //the preload function is where all images that will be used in the game are loaded into
@@ -135,12 +143,22 @@ var GameBoard = new Phaser.Class ({
         //create the information box for the bottom left corner
         this.infoBox = this.add.image(75, 525, 'box');
 
+        //amrit sets character allegance to a number. we convert it to a team
+        if(this.charInfo.alleg == 0){
+            this.charInfo.alleg = "Neutral";
+        }
+        else if (this.charInfo.alleg == 1) {
+            this.charInfo.alleg = "Shadow";
+        }
+        else {
+            this.charInfo.alleg = "Hunter";
+        }
         //enable data to be stored in this box. I'm not sure if this is necessary; if it isn't we can delete these set lines below
         this.infoBox.setDataEnabled();
-        this.infoBox.data.set("name", "NAME"); //will be a call to the backend
-        this.infoBox.data.set("team", "S/H/N"); //will be a call to the backend
-        this.infoBox.data.set("win", "Win condition will appear here"); //will be a call to the backend
-	this.infoBox.data.set("special", "special ability"); //will be a call to the backend
+        this.infoBox.data.set("name", this.charInfo.name);
+        this.infoBox.data.set("team", this.charInfo.alleg);
+        this.infoBox.data.set("win", this.charInfo.win_cond_desc);
+	this.infoBox.data.set("special", this.charInfo.special);
 
         //create the text variables
         var text = this.add.text(10, 470, '', { font: '12px Arial', fill: '#FFFFFF', wordWrap: { width: 150, useAdvancedWrap: true }});
@@ -149,8 +167,8 @@ var GameBoard = new Phaser.Class ({
         //set the text for inside of the box
         text.setText([
             'Team: ' + this.infoBox.data.get('team'),
-            'Win Condition: ' + this.infoBox.data.get('win'),
-		'Special Ability: ' + this.infoBox.data.get('special')
+            'Win Condition: ' + this.infoBox.data.get('win') + '\n',
+            'Special Ability: ' + this.infoBox.data.get('special')
         ]);
 
         //align the text inside of our information box
@@ -168,7 +186,6 @@ var GameBoard = new Phaser.Class ({
 
 
     //the makePlayer function is what creates our sprite and adds him to the board.
-
     makePlayer: function () {
         var sprite = this.add.sprite(300, 400, 'dude');
 
