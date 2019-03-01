@@ -1,6 +1,9 @@
+import cli
+
 class Player:
-    def __init__(self, user_id):
+    def __init__(self, user_id, socket_id):
         self.user_id = user_id
+        self.socket_id = socket_id
         self.gc = None # game context (abbreviated for convenience)
         self.state = 2 #  2 for ALIVE_ANON, 1 for ALIVE_KNOWN, 0 for DEAD
         self.character = None
@@ -44,11 +47,9 @@ class Player:
             data = {
                 'options': area_options
             }
-            # TODO Will not work until #12 is resolved
             destination = self.gc.ask_h('select', data, self.user_id)['value']
 
             # Get Area object from area name
-            # destination_Area = [a for a in z.areas for z in self.gc.zones if a.name == destination][0]  # TODO fix this garbage
             destination_Area = None
             for z in self.gc.zones:
                 for a in z.areas:
@@ -62,7 +63,6 @@ class Player:
                 for a in z.areas:
                     if roll_result in a.domain:
                         destination_Area = a
-            # destination_Area = [(a for a in z.areas for z in self.gc.zones if roll_result in a.domain][0]
 
             # Get string from Area
             destination = destination_Area.name
@@ -72,13 +72,15 @@ class Player:
         self.move(destination_Area)
 
         # Take action
-        data = {'options': ['Perform area action', 'Decline']}
-        # TODO Won't work until #12 fixed
+        data = {'options': [destination_Area.desc, 'Decline']}
+
         answer = self.gc.ask_h('yesno', data, self.user_id)['value']
         if answer != 'Decline':
-            # TODO Perform area action
             # TODO Update game state
-            self.gc.update_h('yesno', {'action': 'area', 'value': 'TODO'})
+            # self.gc.update_h('yesno', {'action': 'area', 'value': 'TODO'})
+            self.gc.update_h('yesno', {})
+            # TODO Perform area action
+            self.location.action(self.gc, self)
             self.gc.tell_h(
                 '{} performed their area action!'.format(self.user_id)
             )
@@ -88,23 +90,23 @@ class Player:
                 '{} declined to perform their area action.'.format(self.user_id)
             )
 
+        # Someone could have died here, so check win conditions
+        if self.gc.checkWinConditions(tell = False):
+            return  # let the win conditions check in GameContext.play() handle
+
         # Attack
         self.gc.tell_h("{} is picking whom to attack...".format(self.user_id))
-        live_players = [p for p in self.gc.players if p.location]
+        live_players = [p for p in self.gc.getLivePlayers() if p.location]
         targets = [
             p for p in live_players if (p.location.zone == self.location.zone and p != self)
         ]
         data = {'options': [t.user_id for t in targets] + ['Decline']}
-
-        # TODO This fails until issue #12 is fixed
         answer = self.gc.ask_h('select', data, self.user_id)['value']
-        # End failure
-
         self.gc.update_h('select', {})
 
         if answer != 'Decline':
             target = answer
-            target_Player = [p for p in self.gc.players if p.user_id == target]  # TODO Amrit do you even know Python
+            target_Player = [p for p in self.gc.getLivePlayers() if p.user_id == target]  # TODO Amrit do you even know Python
             target_Player = target_Player[0]
             self.gc.tell_h("{} is attacking {}!".format(self.user_id, target))
             data = {'options': ['Roll for damage!']}
@@ -154,9 +156,14 @@ class Player:
 
     def drawCard(self, deck):
         drawn = deck.drawCard()
+        self.gc.tell_h("{} drew {}!".format(self.user_id, drawn.title))
+        self.gc.direct_h("{}: {}".format(drawn.title, drawn.desc), self.socket_id)
         if drawn.force_use:
-            drawn.use()
+            self.gc.tell_h("{} used {}!".format(self.user_id, drawn.title))
+            args = {'self': self}
+            drawn.use(args)
         if drawn.is_equipment:
+            self.gc.tell_h("{} added {} to their arsenal!".format(self.user_id, drawn.title))
             self.equipment.append(drawn)
 
     def attack(self, other, amount):
@@ -172,8 +179,25 @@ class Player:
             amount = eq.use(False, amount) # Compose each of these functions
             # "False" argument refers to is_attack
         dealt = amount
-        self.hp -= dealt
+        self.moveHP(-dealt)
         return dealt
+
+    def moveHP(self, hp_change):
+        self.hp = min(self.hp + hp_change, self.character.max_hp)
+        self.hp = max(0, self.hp)
+        self.checkDeath()
+        return self.hp
+
+    def setHP(self, hp):
+        self.hp = hp
+        self.checkDeath()
+
+    def checkDeath(self):
+        if self.hp == 0:
+            self.state = 0  # DEAD state
+            self.gc.tell_h("{} ({}: {}) died!".format(self.user_id, cli.ALLEGIANCE_MAP[self.character.alleg], self.character.name))
+        else: ## TODO Remove when not debugging
+            self.gc.tell_h("{}'s HP was set to {}!".format(self.user_id, self.hp))
 
     def move(self, location):
         # TODO What checks do we need here?

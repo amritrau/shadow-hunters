@@ -8,6 +8,8 @@ from game_context import GameContext
 from player import Player
 import cli
 
+SOCKET_SLEEP = 0.25
+
 # basic app setup
 template_dir = os.path.abspath('./templates')
 static_dir = os.path.abspath('./static')
@@ -75,7 +77,7 @@ def room(methods=['GET','POST']):
 
 # gameplay loop
 def play(room_id, players):
-    players = [Player(user_id) for user_id in players]
+    players = [Player(user_id, socket_id = get_sid[(user_id, room_id)]) for user_id in players]
     gc = GameContext(
             players = players,
             characters = cli.CHARACTERS,
@@ -84,6 +86,7 @@ def play(room_id, players):
             green_cards = cli.GREEN_DECK,
             areas = cli.AREAS,
             tell_h = lambda x: server_msg(x, room_id),
+            direct_h = lambda x, sid: server_msg(x, sid),
             ask_h = lambda x, y, z: ask(x, y, z, room_id),
             update_h = lambda x, y: server_update(x, y, room_id)
         )
@@ -105,7 +108,7 @@ def ask(form, data, player, room_id):
     socketio.emit('ask', data, room=sid)
     while not answer_bins[room_id]['answered']:
         while not answer_bins[room_id]['answered']:
-            socketio.sleep(1)
+            socketio.sleep(SOCKET_SLEEP)
         # validate answer came from correct person/token blah blah
         # if something is wrong with the answer, mark answered as false again
         if answer_bins[room_id]['sid'] != sid or answer_bins[room_id]['form'] != form:
@@ -117,13 +120,13 @@ def ask(form, data, player, room_id):
 # TODO Consider moving this to separate file
 def server_msg(data, room_id):
     socketio.emit('message', {'data': data, 'color': 'rgb(37,25,64)'}, room=room_id)
-    socketio.sleep(1)
+    socketio.sleep(SOCKET_SLEEP)
 
 # TODO Consider moving this to separate file
 def server_update(form, data, room_id):
     data['form'] = form
     socketio.emit('update', data, room=room_id)
-    socketio.sleep(1)
+    socketio.sleep(SOCKET_SLEEP)
 
 
 # SOCKET STUFF
@@ -155,7 +158,7 @@ def start_game():
         'data': {}
     }
     players = [x['name'] for x in connections.values() if x['room_id'] == room_id]
-    socketio.sleep(1)
+    socketio.sleep(SOCKET_SLEEP)
     play(room_id, players)
 
 # receive and validate answer to an ask
