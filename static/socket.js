@@ -1,6 +1,3 @@
-// EMISSION EVENTS
-
-
 // Initial connection
 var socket = io.connect('http://' + document.domain + ':' + location.port);
 
@@ -19,7 +16,7 @@ socket.on('connect', function() {
     var chat_form = $('#chat').on('submit', function(e) {
         e.preventDefault();
         var user_input = $('#message').val();
-        socket.emit('post_message', { 'data': user_input });
+        socket.emit('message', { 'data': user_input });
         $('#message').val('').focus();
     });
 
@@ -29,7 +26,7 @@ socket.on('connect', function() {
         socket.emit('start');
     });
 
-    // Generalized form setup PROTOTYPE
+    // Generalized form setup PROTOTYPE (couldnt get it to work)
     /*
     var form_ids = ['confirm', 'yesno', 'select'];
     for (var i = 0; i < form_ids.length; i++)
@@ -55,10 +52,6 @@ socket.on('connect', function() {
         socket.emit('answer', { 'form': 'select', 'value': $('#select_fields').val() });
     });
 });
-
-
-// RECEPTION EVENTS
-
 
 // Receive a message and add it to the chat
 socket.on('message', function(msg) {
