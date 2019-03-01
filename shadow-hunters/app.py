@@ -1,4 +1,4 @@
-from flask import Flask, render_template, url_for, redirect, request
+from flask import Flask, render_template, url_for, redirect, request, flash
 from flask_socketio import SocketIO, join_room, leave_room
 from random import randint
 from time import sleep
@@ -7,8 +7,6 @@ import os
 from game_context import GameContext
 from player import Player
 import cli
-
-SOCKET_SLEEP = 0.25
 
 # basic app setup
 template_dir = os.path.abspath('./templates')
@@ -27,6 +25,7 @@ def after_request(response):
     return response
 
 # global vars
+SOCKET_SLEEP = 0.25
 connections = {}
 rooms = {}
 get_sid = {}
@@ -39,7 +38,6 @@ answer_bins = {
 
 # APP ROUTES
 
-
 # page to join a room
 @app.route('/')
 def join():
@@ -51,29 +49,29 @@ def room(methods=['GET','POST']):
     if request.method == 'POST':
 
         # form validation
-        username = ''
-        room_id = ''
-        try:
-            username = request.form.get('username')
-            room_id = request.form.get('room_id')
-        except:
+        username = request.form.get('username').strip()
+        room_id = request.form.get('room_id').strip()
+        if not username or not room_id:
+            flash("Please enter a username and room")
             return redirect('/')
 
         # don't let someone in if there's a game in progress in the room
         if room_id in rooms and rooms[room_id] == 'GAME':
-            # TODO flash that the room is in game
+            flash("This room is already in game")
             return redirect('/')
-        else:
-            rooms[room_id] = 'LOBBY'
+
+        # don't let someone enter a room with the same name as someone else
+        if (username, room_id) in get_sid:
+            flash("Someone in the room has taken your username")
+            return redirect('/')
 
         # send them to join the room!
+        rooms[room_id] = 'LOBBY'
         return render_template('room.html', context={ 'name': username, 'room_id': room_id })
     else:
         return redirect('/')
 
-
 # GAME STUFF
-
 
 # gameplay loop
 def play(room_id, players):
@@ -128,9 +126,7 @@ def server_update(form, data, room_id):
     socketio.emit('update', data, room=room_id)
     socketio.sleep(SOCKET_SLEEP)
 
-
 # SOCKET STUFF
-
 
 # join message
 @socketio.on('join')

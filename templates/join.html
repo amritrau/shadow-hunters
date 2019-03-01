@@ -4,6 +4,15 @@
         <title>Shadow Hunters Chat</title>
     </head>
     <body>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class=flashes>
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
     <div style="width: 500px; border: 1px solid; padding: 10px; box-shadow: 5px 10px #888888;">
     <form action="/room" method="POST">
         <div><b style="color: #3f2b6d">Enter your name to join the Shadow Hunters chat room!</b></div>
