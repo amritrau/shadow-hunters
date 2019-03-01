@@ -5,6 +5,7 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
         <script> var usrctx = {{ context|tojson }}; </script>
+        <script> var socket; </script>
         <script src={{ url_for("static", filename="classes.js") }}></script>
         <script src={{ url_for("static", filename="socket.js") }}></script>
         <link rel= "stylesheet" type= "text/css" href= {{ url_for('static',filename='styles/shadow.css') }}>
@@ -14,7 +15,7 @@
             Shadow Hunters
         </div>
         <div class="container">
-            <div id="board" style="display: none;"></div>
+            <div id="board"></div>
             <div id="chatbox">
                 <div id="message_holder"></div><br>
                 <form id="chat">

@@ -1,10 +1,41 @@
+// this is the scene that will be used in the waiting room, i.e. before the game starts
+var WaitingRoom = new Phaser.Class ({
+    Extends: Phaser.Scene,
+
+    initialize:
+
+    function Room () {
+        Phaser.Scene.call(this, {key: 'menu'});
+    },
+    preload: function () {
+        this.load.image('background', '/static/assets/background.jpg');
+    },
+
+    create: function () {
+        var self = this;
+
+        //this resizes the background image to fit into our canvas
+        var background = this.add.image(533, 300, 'background');
+        background.displayWidth = this.sys.canvas.width;
+        background.displayHeight = this.sys.canvas.height;
+
+        //SOCKET CALL! if game start button pressed, then we switch scenes and go to the game board
+        socket.on("game_start", function (data) {
+            $('#start').remove();
+            var html = '<p id="wait">Waiting...</p>';
+            $('#game').append(html);
+            self.scene.start('board', data);
+        });
+    }
+});
+
+//gameboard scene: this is the actual canvas for the game!
 var GameBoard = new Phaser.Class ({
     Extends: Phaser.Scene,
 
     initialize:
 
-    function Board ()
-    {
+    function Board () {
         // this names the scene we are in
         Phaser.Scene.call(this, { key: 'board' });
 
@@ -19,10 +50,19 @@ var GameBoard = new Phaser.Class ({
 
     },
 
+    //function to initialize the data sent into gameboard from waiting room
+    init: function (data)
+    {
+        this.charInfo = data;
+        console.log(this.charInfo);
+        console.log(typeof this.charInfo);
+        console.log(this.charInfo.name);
+    },
+
     //the preload function is where all images that will be used in the game are loaded into
     preload: function () {
-        this.load.image('background', 'https://s3.amazonaws.com/shadowhunters.gfxresources/background.jpg');
-        this.load.image('customTip', '/static/assets/customTip.png');
+        this.load.image('background', '/static/assets/background.jpg');
+        this.load.image("customTip", "/static/assets/customTip.png");
         this.load.spritesheet('dude',
             '/static/assets/dude.png',
             { frameWidth: 32, frameHeight: 48 }
@@ -53,23 +93,25 @@ var GameBoard = new Phaser.Class ({
     //the create function is where everything is added to the canvas
     create: function () {
         //this adds our background image. the x, y coordinates provided are the center of the canvas
-        this.add.image(400, 300, 'background');
+        var background = this.add.image(533, 300, 'background');
+        background.displayWidth = this.sys.canvas.width;
+        background.displayHeight = this.sys.canvas.height;
 
-        this.add.image(900,20, '14');
-        this.add.image(900,60, '13');
-        this.add.image(900,100, '12');
-        this.add.image(900,140, '11');
-        this.add.image(900,180, '10');
-        this.add.image(900,220, '9');
-        this.add.image(900,260, '8');
-        this.add.image(900,300, '7');
-        this.add.image(900,340, '6');
-        this.add.image(900,380, '5');
-        this.add.image(900,420, '4');
-        this.add.image(900,460, '3');
-        this.add.image(900,500, '2');
-        this.add.image(900,540, '1');
-        this.add.image(900,580, '0');
+        this.add.image(970,20, '14');
+        this.add.image(970,60, '13');
+        this.add.image(970,100, '12');
+        this.add.image(970,140, '11');
+        this.add.image(970,180, '10');
+        this.add.image(970,220, '9');
+        this.add.image(970,260, '8');
+        this.add.image(970,300, '7');
+        this.add.image(970,340, '6');
+        this.add.image(970,380, '5');
+        this.add.image(970,420, '4');
+        this.add.image(970,460, '3');
+        this.add.image(970,500, '2');
+        this.add.image(970,540, '1');
+        this.add.image(970,580, '0');
 
 
        // this.player = this.add.sprite(100, 450, 'dude');
@@ -101,12 +143,22 @@ var GameBoard = new Phaser.Class ({
         //create the information box for the bottom left corner
         this.infoBox = this.add.image(75, 525, 'box');
 
+        //amrit sets character allegance to a number. we convert it to a team
+        if(this.charInfo.alleg == 0){
+            this.charInfo.alleg = "Neutral";
+        }
+        else if (this.charInfo.alleg == 1) {
+            this.charInfo.alleg = "Shadow";
+        }
+        else {
+            this.charInfo.alleg = "Hunter";
+        }
         //enable data to be stored in this box. I'm not sure if this is necessary; if it isn't we can delete these set lines below
         this.infoBox.setDataEnabled();
-        this.infoBox.data.set("name", "NAME"); //will be a call to the backend
-        this.infoBox.data.set("team", "S/H/N"); //will be a call to the backend
-        this.infoBox.data.set("win", "Win condition will appear here"); //will be a call to the backend
-	this.infoBox.data.set("special", "special ability"); //will be a call to the backend
+        this.infoBox.data.set("name", this.charInfo.name);
+        this.infoBox.data.set("team", this.charInfo.alleg);
+        this.infoBox.data.set("win", this.charInfo.win_cond_desc);
+	this.infoBox.data.set("special", this.charInfo.special);
 
         //create the text variables
         var text = this.add.text(10, 470, '', { font: '12px Arial', fill: '#FFFFFF', wordWrap: { width: 150, useAdvancedWrap: true }});
@@ -115,8 +167,8 @@ var GameBoard = new Phaser.Class ({
         //set the text for inside of the box
         text.setText([
             'Team: ' + this.infoBox.data.get('team'),
-            'Win Condition: ' + this.infoBox.data.get('win'),
-		'Special Ability: ' + this.infoBox.data.get('special')
+            'Win Condition: ' + this.infoBox.data.get('win') + '\n',
+            'Special Ability: ' + this.infoBox.data.get('special')
         ]);
 
         //align the text inside of our information box
@@ -134,7 +186,6 @@ var GameBoard = new Phaser.Class ({
 
 
     //the makePlayer function is what creates our sprite and adds him to the board.
-
     makePlayer: function () {
         var sprite = this.add.sprite(300, 400, 'dude');
 
@@ -173,7 +224,7 @@ var config = {
     height: 600,
     pixelArt: true,
     parent: 'board',
-    scene: [ GameBoard ]
+    scene: [ WaitingRoom, GameBoard ]
 };
 
 //this starts the game
