@@ -241,7 +241,7 @@ def hermit_blackmail(args):
         target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
         data = {'options': ['Do nothing']}
         target.gc.ask_h('yesno', data, target.user_id)['value']
-        target.gc.update_h('select', {})
+        target.gc.update_h('yesno', {})
         target.gc.tell_h("{} did nothing.".format(target.user_id))
 
 def hermit_greed(args):
@@ -274,7 +274,7 @@ def hermit_greed(args):
         target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
         data = {'options': ['Do nothing']}
         target.gc.ask_h('yesno', data, target.user_id)['value']
-        target.gc.update_h('select', {})
+        target.gc.update_h('yesno', {})
         target.gc.tell_h("{} did nothing.".format(target.user_id))
 
 def hermit_anger(args):
@@ -307,7 +307,7 @@ def hermit_anger(args):
         target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
         data = {'options': ['Do nothing']}
         target.gc.ask_h('yesno', data, target.user_id)['value']
-        target.gc.update_h('select', {})
+        target.gc.update_h('yesno', {})
         target.gc.tell_h("{} did nothing.".format(target.user_id))
 
 def hermit_slap(args):
@@ -328,7 +328,7 @@ def hermit_slap(args):
         target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
         data = {'options': ['Do nothing']}
         target.gc.ask_h('yesno', data, target.user_id)['value']
-        target.gc.update_h('select', {})
+        target.gc.update_h('yesno', {})
         target.gc.tell_h("{} did nothing.".format(target.user_id))
 
 def hermit_spell(args):
@@ -349,7 +349,7 @@ def hermit_spell(args):
         target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
         data = {'options': ['Do nothing']}
         target.gc.ask_h('yesno', data, target.user_id)['value']
-        target.gc.update_h('select', {})
+        target.gc.update_h('yesno', {})
         target.gc.tell_h("{} did nothing.".format(target.user_id))
 
 def hermit_exorcism(args):
@@ -370,7 +370,7 @@ def hermit_exorcism(args):
         target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
         data = {'options': ['Do nothing']}
         target.gc.ask_h('yesno', data, target.user_id)['value']
-        target.gc.update_h('select', {})
+        target.gc.update_h('yesno', {})
         target.gc.tell_h("{} did nothing.".format(target.user_id))
 
 def hermit_nurturance(args):
@@ -397,7 +397,7 @@ def hermit_nurturance(args):
         target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
         data = {'options': ['Do nothing']}
         target.gc.ask_h('yesno', data, target.user_id)['value']
-        target.gc.update_h('select', {})
+        target.gc.update_h('yesno', {})
         target.gc.tell_h("{} did nothing.".format(target.user_id))
 
 def hermit_aid(args):
@@ -424,7 +424,7 @@ def hermit_aid(args):
         target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
         data = {'options': ['Do nothing']}
         target.gc.ask_h('yesno', data, target.user_id)['value']
-        target.gc.update_h('select', {})
+        target.gc.update_h('yesno', {})
         target.gc.tell_h("{} did nothing.".format(target.user_id))
 
 def hermit_fiddle(args):
@@ -451,7 +451,7 @@ def hermit_fiddle(args):
         target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
         data = {'options': ['Do nothing']}
         target.gc.ask_h('yesno', data, target.user_id)['value']
-        target.gc.update_h('select', {})
+        target.gc.update_h('yesno', {})
         target.gc.tell_h("{} did nothing.".format(target.user_id))
 
 
