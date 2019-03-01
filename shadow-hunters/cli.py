@@ -578,9 +578,9 @@ class ElementFactory:
                 use = hermit_fiddle
             )
         ]
-        WHITE_DECK = deck.Deck(cards = WHITE_CARDS)
-        BLACK_DECK = deck.Deck(cards = BLACK_CARDS)
-        GREEN_DECK = deck.Deck(cards = GREEN_CARDS)
+        self.WHITE_DECK = deck.Deck(cards = WHITE_CARDS)
+        self.BLACK_DECK = deck.Deck(cards = BLACK_CARDS)
+        self.GREEN_DECK = deck.Deck(cards = GREEN_CARDS)
 
 
         # Initialize characters
@@ -598,7 +598,7 @@ class ElementFactory:
         def allie_win_cond(gc, player):
             return (player in gc.getLivePlayers()) and gc.game_over
 
-        CHARACTERS = [
+        self.CHARACTERS = [
             character.Character(
                 name = "Valkyrie",
                 alleg = 0,  # Shadow
@@ -699,7 +699,7 @@ class ElementFactory:
         #########
 
         # Initialize areas
-        AREAS = [
+        self.AREAS = [
             area.Area(
                 name = "Hermit's Cabin",
                 desc = "You may draw a Hermit Card.",
