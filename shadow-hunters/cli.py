@@ -71,7 +71,7 @@ WHITE_CARDS = [
         holder = None,
         is_equip = True,
         force_use = False,
-        use = lambda is_attack, amt: max(0, amt - 1)  # applies to both attack and defend
+        use = lambda is_attack, amt, orig_amount: max(0, amt - 1)  # applies to both attack and defend
     ),
     card.Card(
         title = "Flare of Judgement",
@@ -119,7 +119,7 @@ BLACK_CARDS = [
         holder = None,
         is_equip = True,
         force_use = False,
-        use = lambda is_attack, amt: amt + is_attack if amt else amt # if we're attacking give 1 point extra
+        use = lambda is_attack, amt, orig: amt + is_attack if orig else 0 # if we're attacking give 1 point extra
     ),
     card.Card(
         title = "Chainsaw",
@@ -128,7 +128,7 @@ BLACK_CARDS = [
         holder = None,
         is_equip = True,
         force_use = False,
-        use = lambda is_attack, amt: amt + is_attack if amt else amt
+        use = lambda is_attack, amt, orig: amt + is_attack if orig else 0
     ),
     card.Card(
         title = "Rusted Broad Axe",
@@ -137,7 +137,7 @@ BLACK_CARDS = [
         holder = None,
         is_equip = True,
         force_use = False,
-        use = lambda is_attack, amt: amt + is_attack if amt else amt
+        use = lambda is_attack, amt, orig: amt + is_attack if orig else 0
     ),
     card.Card(
         title = "Moody Goblin",

@@ -167,8 +167,9 @@ class Player:
             self.equipment.append(drawn)
 
     def attack(self, other, amount):
+        orig_amount = amount
         for eq in self.equipment:
-            amount = eq.use(True, amount) # Compose each of these functions
+            amount = eq.use(True, amount, orig_amount) # Compose each of these functions
             # "True" argument refers to is_attack
 
         dealt = other.defend(self, amount)
