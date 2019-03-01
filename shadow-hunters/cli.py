@@ -17,7 +17,7 @@ CARD_COLOR_MAP = {
 }
 
 class ElementFactory:
-    def __init__():
+    def __init__(self):
         # Initialize all game elements
         #####
         # TODO For the following functions, insert descriptive tell_h()'s
