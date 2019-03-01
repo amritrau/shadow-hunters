@@ -79,13 +79,14 @@ def start_game(room_id, players):
 
     # Initialize players and game context
     players = [Player(user_id, socket_id = get_sid[(user_id, room_id)]) for user_id in players]
+    ef = cli.ElementFactory()
     gc = GameContext(
             players = players,
-            characters = cli.CHARACTERS,
-            black_cards = cli.BLACK_DECK,
-            white_cards = cli.WHITE_DECK,
-            green_cards = cli.GREEN_DECK,
-            areas = cli.AREAS,
+            characters = ef.CHARACTERS,
+            black_cards = ef.BLACK_DECK,
+            white_cards = ef.WHITE_DECK,
+            green_cards = ef.GREEN_DECK,
+            areas = ef.AREAS,
             tell_h = lambda x: server_msg(x, room_id),
             direct_h = lambda x, sid: server_msg(x, sid),
             ask_h = lambda x, y, z: server_ask(x, y, z, room_id),
