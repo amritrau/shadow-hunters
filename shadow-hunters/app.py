@@ -3,6 +3,7 @@ from flask_socketio import SocketIO, join_room, leave_room
 from random import randint
 from time import sleep
 import os
+from pprint import pprint  # TODO FOR TESTING PURPOSES ONLY, REMOVE!
 
 from game_context import GameContext
 from player import Player
@@ -91,18 +92,16 @@ def start_game(room_id, players):
             update_h = lambda x, y: server_update(x, y, room_id)
         )
 
-    ##### FOR TESTING PURPOSES ONLY ########################
-    ##### SEND A DICTIONARY WITH CHARACTER INFO ACROSS #####
-    data = {
-        'name': 'George',
-        'alleg': 2,
-        'max_hp': 14,
-        'win_cond_desc': 'All the Shadow characters are dead',
-        'special': 'None'
-    }
-    socketio.emit('game_start', data, room = room_id)
-    ##### DELETE THIS WHEN DONE TESTING ####################
-    ##### END TESTING PURPOSES ONLY ########################
+    # gc.dump() can be called at any time to return a tuple of public,
+    # private state. The public state is a self-explanatory dictionary; the
+    # private state is keyed by socket_id (not by user_id!). This makes it
+    # easier to send messages individually.
+
+    # Send public and private game states across
+    public_state, private_state = gc.dump()
+    socketio.emit('game_start', public_state, room = room_id)
+    for k in private_state:
+        socketio.emit('game_start', private_state[k], room = k)
 
     # Initiate gameplay loop
     winners = gc.play()

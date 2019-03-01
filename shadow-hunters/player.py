@@ -202,3 +202,14 @@ class Player:
     def move(self, location):
         # TODO What checks do we need here?
         self.location = location
+
+    def dump(self):
+        return {
+            'user_id': self.user_id,
+            'socket_id': self.socket_id,
+            'state': self.state,
+            'equipment': [eq.dump() for eq in self.equipment],
+            'hp': self.hp,
+            'location': str(self.location),  # handles location == None case
+            'character': self.character.dump()
+        }

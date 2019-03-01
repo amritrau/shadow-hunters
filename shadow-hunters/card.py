@@ -14,5 +14,8 @@ class Card:
         self.force_use = force_use
         self.use = use
 
-    def __str__(self):
-        return "{}\n{}\n{}".format(self.title, '='*len(self.title), self.desc)
+    def dump(self):
+        return {
+            'title': eq.title,
+            'desc': eq.desc
+        }
