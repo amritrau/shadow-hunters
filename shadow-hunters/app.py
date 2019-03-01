@@ -145,6 +145,8 @@ def on_join(json):
 @socketio.on('start')
 def start_game():
     room_id = connections[request.sid]['room_id']
+    if rooms[room_id] == 'GAME':
+        return
     rooms[room_id] = 'GAME'
     answer_bins[room_id] = {
         'answered': False,
