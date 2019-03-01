@@ -1,10 +1,42 @@
+// this is the scene that will be used in the waiting room, i.e. before the game starts
+var WaitingRoom = new Phaser.Class ({
+    Extends: Phaser.Scene,
+
+    initialize:
+
+    function Room () {
+        Phaser.Scene.call(this, {key: 'menu'});
+    },
+    preload: function () {
+        this.load.image('background', '/static/assets/background.jpg');
+    },
+
+    create: function () {
+        var background = this.add.image(533, 300, 'background');
+        background.displayWidth = this.sys.canvas.width;
+        background.displayHeight = this.sys.canvas.height;
+
+        this.input.keyboard.once('keyup_ONE', function () {
+
+            this.scene.start('board', { });
+
+        }, this);
+
+        this.events.on('shutdown', this.shutdown, this);
+    },
+
+    shutdown: function () {
+        this.input.keyboard.shutdown();
+    }
+});
+
+//gameboard scene: this is the actual canvas for the game!
 var GameBoard = new Phaser.Class ({
     Extends: Phaser.Scene,
 
     initialize:
 
-    function Board ()
-    {
+    function Board () {
         // this names the scene we are in
         Phaser.Scene.call(this, { key: 'board' });
 
@@ -21,7 +53,7 @@ var GameBoard = new Phaser.Class ({
 
     //the preload function is where all images that will be used in the game are loaded into
     preload: function () {
-        this.load.image('sky', '/static/assets/sky.png');
+        this.load.image('background', '/static/assets/background.jpg');
         this.load.image("customTip", "/static/assets/customTip.png");
         this.load.spritesheet('dude',
             '/static/assets/dude.png',
@@ -53,23 +85,25 @@ var GameBoard = new Phaser.Class ({
     //the create function is where everything is added to the canvas
     create: function () {
         //this adds our background image. the x, y coordinates provided are the center of the canvas
-        this.add.image(400, 300, 'sky');
+        var background = this.add.image(533, 300, 'background');
+        background.displayWidth = this.sys.canvas.width;
+        background.displayHeight = this.sys.canvas.height;
 
-        this.add.image(900,20, '14');
-        this.add.image(900,60, '13');
-        this.add.image(900,100, '12');
-        this.add.image(900,140, '11');
-        this.add.image(900,180, '10');
-        this.add.image(900,220, '9');
-        this.add.image(900,260, '8');
-        this.add.image(900,300, '7');
-        this.add.image(900,340, '6');
-        this.add.image(900,380, '5');
-        this.add.image(900,420, '4');
-        this.add.image(900,460, '3');
-        this.add.image(900,500, '2');
-        this.add.image(900,540, '1');
-        this.add.image(900,580, '0');
+        this.add.image(970,20, '14');
+        this.add.image(970,60, '13');
+        this.add.image(970,100, '12');
+        this.add.image(970,140, '11');
+        this.add.image(970,180, '10');
+        this.add.image(970,220, '9');
+        this.add.image(970,260, '8');
+        this.add.image(970,300, '7');
+        this.add.image(970,340, '6');
+        this.add.image(970,380, '5');
+        this.add.image(970,420, '4');
+        this.add.image(970,460, '3');
+        this.add.image(970,500, '2');
+        this.add.image(970,540, '1');
+        this.add.image(970,580, '0');
 
 
        // this.player = this.add.sprite(100, 450, 'dude');
@@ -173,7 +207,7 @@ var config = {
     height: 600,
     pixelArt: true,
     parent: 'board',
-    scene: [ GameBoard ]
+    scene: [ WaitingRoom, GameBoard ]
 };
 
 //this starts the game
