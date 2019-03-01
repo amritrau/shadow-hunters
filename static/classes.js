@@ -21,8 +21,8 @@ var GameBoard = new Phaser.Class ({
 
     //the preload function is where all images that will be used in the game are loaded into
     preload: function () {
-        this.load.image('sky', '/static/assets/sky.png');
-        this.load.image("customTip", "/static/assets/customTip.png");
+        this.load.image('background', 'https://s3.amazonaws.com/shadowhunters.gfxresources/background.jpg');
+        this.load.image('customTip', '/static/assets/customTip.png');
         this.load.spritesheet('dude',
             '/static/assets/dude.png',
             { frameWidth: 32, frameHeight: 48 }
@@ -53,7 +53,7 @@ var GameBoard = new Phaser.Class ({
     //the create function is where everything is added to the canvas
     create: function () {
         //this adds our background image. the x, y coordinates provided are the center of the canvas
-        this.add.image(400, 300, 'sky');
+        this.add.image(400, 300, 'background');
 
         this.add.image(900,20, '14');
         this.add.image(900,60, '13');
