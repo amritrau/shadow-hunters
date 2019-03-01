@@ -18,3 +18,6 @@ class Zone:
         for c in self.areas:
             if not isinstance(c, Area):
                 raise ValueError("One or more cards is not a Card object.")
+
+    def dump(self):
+        return [a.dump() for a in self.areas]

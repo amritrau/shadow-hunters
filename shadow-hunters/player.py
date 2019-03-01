@@ -8,13 +8,12 @@ class Player:
         self.state = 2 #  2 for ALIVE_ANON, 1 for ALIVE_KNOWN, 0 for DEAD
         self.character = None
         self.equipment = []
-        self.hp = None
+        self.hp = 0
         self.location = None
         self.modifiers = {}
 
     def setCharacter(self, character):
         self.character = character
-        self.hp = self.character.max_hp
 
     def reveal(self):
         # self.character.special()
@@ -184,7 +183,7 @@ class Player:
         return dealt
 
     def moveHP(self, hp_change):
-        self.hp = min(self.hp + hp_change, self.character.max_hp)
+        self.hp = min(self.hp - hp_change, self.character.max_hp)
         self.hp = max(0, self.hp)
         self.checkDeath()
         return self.hp
@@ -194,7 +193,7 @@ class Player:
         self.checkDeath()
 
     def checkDeath(self):
-        if self.hp == 0:
+        if self.hp == self.character.max_hp:
             self.state = 0  # DEAD state
             self.gc.tell_h("{} ({}: {}) died!".format(self.user_id, cli.ALLEGIANCE_MAP[self.character.alleg], self.character.name))
         else: ## TODO Remove when not debugging
@@ -203,3 +202,14 @@ class Player:
     def move(self, location):
         # TODO What checks do we need here?
         self.location = location
+
+    def dump(self):
+        return {
+            'user_id': self.user_id,
+            'socket_id': self.socket_id,
+            'state': self.state,
+            'equipment': [eq.dump() for eq in self.equipment],
+            'hp': self.hp,
+            'location': str(self.location),  # handles location == None case
+            'character': self.character.dump()
+        }

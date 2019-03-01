@@ -9,3 +9,13 @@ class Area:
         self.domain = domain
         self.action = action
         self.resource_id = resource_id
+
+    def dump(self):
+        return {
+            'name': self.name,
+            'desc': self.desc,
+            'domain': str(self.domain)
+        }
+
+    def __str__(self):
+        return str(self.dump())
