@@ -1,4 +1,5 @@
 import random
+import copy
 
 from die import Die
 from zone import Zone
@@ -79,8 +80,20 @@ class GameContext:
                         return winners
 
     def dump(self):
-        """
-        Return the full GameContext in JSON for debugging
-        """
-        raise NotImplementedError
-        return ""
+        public_zones = [z.dump() for z in self.zones]
+        private_players = {p.socket_id: p.dump() for p in self.players}
+        public_players = copy.deepcopy(private_players)
+
+        # Hide character information if player hasn't revealed themselves
+        for k,v in public_players.items():
+            if public_players[k]['state'] == 2:
+                public_players[k]['character'] = {}
+
+        public_state = {
+            'zones': public_zones,
+            'players': public_players
+        }
+        private_state = private_players
+
+
+        return public_state, private_state
