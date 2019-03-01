@@ -157,7 +157,7 @@ class Player:
     def drawCard(self, deck):
         drawn = deck.drawCard()
         self.gc.tell_h("{} drew {}!".format(self.user_id, drawn.title))
-        self.gc.direct_h("{}: {}".format(drawn.title, drawn.desc), self.socket_id)
+        self.gc.direct_h("Card ({}): {}".format(drawn.title, drawn.desc), self.socket_id)
         if drawn.force_use:
             self.gc.tell_h("{} used {}!".format(self.user_id, drawn.title))
             args = {'self': self}
