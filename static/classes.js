@@ -44,7 +44,7 @@ var GameBoard = new Phaser.Class ({
 
         //this is where all of the objects specific to our scene will appear
         this.player;
-        this.otherPlayersInfo;
+        this.allPlayersInfo;
         this.otherPlayers = [];
         this.tip;
         this.gameData;
@@ -58,15 +58,15 @@ var GameBoard = new Phaser.Class ({
     {
         this.gameData = data;
         this.charInfo = this.gameData.private.character;
-        this.otherPlayersInfo = this.gameData.public.players;
-        console.log(this.charInfo);
+        this.allPlayersInfo = this.gameData.public.players;
+        // console.log(this.charInfo);
         // console.log(typeof this.charInfo);
         // console.log(this.gameData.public);
         // console.log(this.gameData.public.players);
         // var key = Object.keys(this.otherPlayersInfo)[0];
         // console.log(this.otherPlayersInfo[key].user_id);
         // console.log(Object.keys(this.otherPlayersInfo).length);
-        console.log(this.gameData.private);
+        // console.log(this.gameData.private);
     },
 
     //the preload function is where all images that will be used in the game are loaded into
@@ -129,28 +129,25 @@ var GameBoard = new Phaser.Class ({
        // this.player.on('clicked', this.clickHandler, this.block);
 
        //this loop creates all players: self and enemies.
-        var nPlayers = Object.keys(this.otherPlayersInfo).length;
+        var nPlayers = Object.keys(this.allPlayersInfo).length;
         var count = 0;
         for(var i = 0; i < nPlayers; i++) {
             console.log("in for loop");
-            var key = Object.keys(this.otherPlayersInfo)[i];
-            console.log(this.otherPlayersInfo[key].user_id);
+            var key = Object.keys(this.allPlayersInfo)[i];
+            console.log(this.allPlayersInfo[key].user_id);
             console.log(this.gameData.private.user_id);
-            if(this.otherPlayersInfo[key].user_id === this.gameData.private.user_id) {
-                this.player = this.makePlayer(this.otherPlayersInfo[key].user_id, this.otherPlayersInfo[key], 300 + 20*i, 400);
+            if(this.allPlayersInfo[key].user_id === this.gameData.private.user_id) {
+                this.player = this.makePlayer(this.allPlayersInfo[key].user_id, this.allPlayersInfo[key], 300 + 20*i, 400);
                 this.player.on('clicked', this.clickHandler, this.player);
                 console.log(this.player.name);
             }
             else {
-                this.otherPlayers[count] = this.makePlayer(this.otherPlayersInfo[key].user_id, this.otherPlayersInfo[key], 300 + 20*i, 400);
+                this.otherPlayers[count] = this.makePlayer(this.allPlayersInfo[key].user_id, this.allPlayersInfo[key], 300 + 20*i, 400);
                 this.otherPlayers[count].on('clicked', this.clickHandler, this.otherPlayers[i-1]);
                 count++;
             }
             //this.otherPlayers[i] = this.add.sprite(this.player.x + 10*i, this.player.y, "dude");
         }
-
-        //this sets the player to reveal the box when he is clicked
-        //this.player.on('clicked', this.clickHandler, this.player);
 
         //this is what makes the box appear when character is clocked. See function clickHandler below
         this.input.on('gameobjectup', function (pointer, gameObject) {
