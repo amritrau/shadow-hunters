@@ -59,14 +59,14 @@ var GameBoard = new Phaser.Class ({
         this.gameData = data;
         this.charInfo = this.gameData.private.character;
         this.otherPlayersInfo = this.gameData.public.players;
-        // console.log(this.charInfo);
+        console.log(this.charInfo);
         // console.log(typeof this.charInfo);
         // console.log(this.gameData.public);
-        console.log(this.gameData.public.players);
-        var key = Object.keys(this.otherPlayersInfo)[0];
-        console.log(this.otherPlayersInfo[key].user_id);
+        // console.log(this.gameData.public.players);
+        // var key = Object.keys(this.otherPlayersInfo)[0];
+        // console.log(this.otherPlayersInfo[key].user_id);
         // console.log(Object.keys(this.otherPlayersInfo).length);
-        // console.log(this.gameData.private);
+        console.log(this.gameData.private);
     },
 
     //the preload function is where all images that will be used in the game are loaded into
@@ -128,17 +128,23 @@ var GameBoard = new Phaser.Class ({
        // this.block.setVisible(false);
        // this.player.on('clicked', this.clickHandler, this.block);
 
+       //this loop creates all players: self and enemies.
         var nPlayers = Object.keys(this.otherPlayersInfo).length;
-
+        var count = 0;
         for(var i = 0; i < nPlayers; i++) {
+            console.log("in for loop");
             var key = Object.keys(this.otherPlayersInfo)[i];
-            if(i == 0) {
-                this.player = this.makePlayer(this.otherPlayersInfo[key].user_id, this.otherPlayersInfo[key], 300, 400);
+            console.log(this.otherPlayersInfo[key].user_id);
+            console.log(this.gameData.private.user_id);
+            if(this.otherPlayersInfo[key].user_id === this.gameData.private.user_id) {
+                this.player = this.makePlayer(this.otherPlayersInfo[key].user_id, this.otherPlayersInfo[key], 300 + 20*i, 400);
                 this.player.on('clicked', this.clickHandler, this.player);
+                console.log(this.player.name);
             }
             else {
-                this.otherPlayers[i-1] = this.makePlayer(this.otherPlayersInfo[key].user_id, this.otherPlayersInfo[key], 300 + 20*i, 400);
-                this.otherPlayers[i-1].on('clicked', this.clickHandler, this.otherPlayers[i-1]);
+                this.otherPlayers[count] = this.makePlayer(this.otherPlayersInfo[key].user_id, this.otherPlayersInfo[key], 300 + 20*i, 400);
+                this.otherPlayers[count].on('clicked', this.clickHandler, this.otherPlayers[i-1]);
+                count++;
             }
             //this.otherPlayers[i] = this.add.sprite(this.player.x + 10*i, this.player.y, "dude");
         }
@@ -213,7 +219,7 @@ var GameBoard = new Phaser.Class ({
         sprite.displayInfo.setText([
             "Player: " + sprite.name,
             "Equipment: " + sprite.info.equipment,
-            "Current HP: " + sprite.info.hp,
+            "Current Damage: " + sprite.info.hp,
             "Location: " + sprite.info.location
         ]);
         sprite.displayInfo.setVisible(false);
