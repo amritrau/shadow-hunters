@@ -66,7 +66,7 @@ class Player:
             # Get string from Area
             destination = destination_Area.name
 
-        self.gc.update_h('select', {'action': 'move', 'value': destination})
+        self.gc.update_h('select', {'action': 'move', 'value': destination, 'player': self.user_id})
         self.gc.tell_h("{} moves to {}!".format(self.user_id, destination))
         self.move(destination_Area)
 

@@ -45,6 +45,7 @@ var GameBoard = new Phaser.Class ({
         //this is where all of the objects specific to our scene will appear
         this.player;
         this.allPlayersInfo;
+        this.nPlayers;
         this.otherPlayers = [];
         this.tip;
         this.gameData;
@@ -102,6 +103,7 @@ var GameBoard = new Phaser.Class ({
 
     //the create function is where everything is added to the canvas
     create: function () {
+        var self = this;
         //this adds our background image. the x, y coordinates provided are the center of the canvas
         var background = this.add.image(533, 300, 'background');
         background.displayWidth = this.sys.canvas.width;
@@ -129,9 +131,9 @@ var GameBoard = new Phaser.Class ({
        // this.player.on('clicked', this.clickHandler, this.block);
 
        //this loop creates all players: self and enemies.
-        var nPlayers = Object.keys(this.allPlayersInfo).length;
+        this.nPlayers = Object.keys(this.allPlayersInfo).length;
         var count = 0;
-        for(var i = 0; i < nPlayers; i++) {
+        for(var i = 0; i < this.nPlayers; i++) {
             console.log("in for loop");
             var key = Object.keys(this.allPlayersInfo)[i];
             console.log(this.allPlayersInfo[key].user_id);
@@ -189,6 +191,27 @@ var GameBoard = new Phaser.Class ({
         Phaser.Display.Align.In.TopCenter(name, this.infoBox);
         Phaser.Display.Align.In.TopLeft(text, this.add.zone(70, 545, 130, 130));
 
+        socket.on('update', function(data) {
+            $('#'+data.form).hide();
+            $('#'+data.form+'_fields').empty();
+            // TODO: UPDATE UI TO REFLECT UPDATE
+            if(data.action === "move") {
+                console.log(data);
+                if(data.player === self.player.name) {
+                    self.updatePlayer(self.player, data.action, data.value);
+                }
+                else{
+                    for(var i = 0; i < self.nPlayers - 1; i++){
+                        if(data.player === self.otherPlayers[i].name) {
+                            self.updatePlayer(self.otherPlayers[i], data.action, data.value);
+                            break;
+                        }
+                    }
+                }
+            }
+            $('#wait').show();
+        });
+
     },
 
     makeBox: function() {
@@ -225,6 +248,21 @@ var GameBoard = new Phaser.Class ({
         sprite.setInteractive();
 
         return sprite;
+    },
+
+    //updates information about each player
+    updatePlayer: function (player, action_type, change) {
+        if(action_type === "move") {
+            player.info.location = change;
+            console.log("in updatePlayer function: action type is move");
+            console.log("in updatePlayer: location is ", change);
+            player.displayInfo.setText([
+                "Player: " + player.name,
+                "Equipment: " + player.info.equipment,
+                "Current Damage: " + player.info.hp,
+                "Location: " + player.info.location
+            ]);
+        }
     },
 
     //if player clicked and box is visible, make invisible. if box is invisible, make visible

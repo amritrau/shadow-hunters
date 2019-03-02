@@ -79,12 +79,12 @@ socket.on('message', function(msg) {
 // });
 
 // Receive a game state update
-socket.on('update', function(data) {
-    $('#'+data.form).hide();
-    $('#'+data.form+'_fields').empty();
-    // TODO: UPDATE UI TO REFLECT UPDATE
-    $('#wait').show();
-});
+// socket.on('update', function(data) {
+//     $('#'+data.form).hide();
+//     $('#'+data.form+'_fields').empty();
+//     // TODO: UPDATE UI TO REFLECT UPDATE
+//     $('#wait').show();
+// });
 
 // Receive an ask
 socket.on('ask', function(data) {
