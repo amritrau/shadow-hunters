@@ -44,6 +44,8 @@ var GameBoard = new Phaser.Class ({
 
         //this is where all of the objects specific to our scene will appear
         this.player;
+        this.otherPlayersInfo;
+        this.otherPlayers = [];
         this.tip;
         this.gameData;
         this.charInfo;
@@ -56,12 +58,15 @@ var GameBoard = new Phaser.Class ({
     {
         this.gameData = data;
         this.charInfo = this.gameData.private.character;
-        console.log(this.charInfo);
+        this.otherPlayersInfo = this.gameData.public.players;
+        // console.log(this.charInfo);
         // console.log(typeof this.charInfo);
-        console.log(this.gameData.public);
+        // console.log(this.gameData.public);
         console.log(this.gameData.public.players);
-        console.log(this.gameData.private);
-        //console.log(this.charInfo);
+        var key = Object.keys(this.otherPlayersInfo)[0];
+        console.log(this.otherPlayersInfo[key].user_id);
+        // console.log(Object.keys(this.otherPlayersInfo).length);
+        // console.log(this.gameData.private);
     },
 
     //the preload function is where all images that will be used in the game are loaded into
@@ -118,27 +123,28 @@ var GameBoard = new Phaser.Class ({
         this.add.image(970,540, '1');
         this.add.image(970,580, '0');
 
-
-       // this.player = this.add.sprite(100, 450, 'dude');
-       // this.player.name = "player1";
-
         //this.makeBox();
        // this.block = this.add.image(this.player.x +20, this.player.y, "text");
        // this.block.setVisible(false);
        // this.player.on('clicked', this.clickHandler, this.block);
 
+        var nPlayers = Object.keys(this.otherPlayersInfo).length;
 
-
-        //call our makePlayer() function
-
-        this.makePlayer();
-
-        //create the click information for our character
-        this.player.infoBox = this.add.image(this.player.x, this.player.y -60, "customTip");
-        this.player.infoBox.setVisible(false);
+        for(var i = 0; i < nPlayers; i++) {
+            var key = Object.keys(this.otherPlayersInfo)[i];
+            if(i == 0) {
+                this.player = this.makePlayer(this.otherPlayersInfo[key].user_id, this.otherPlayersInfo[key], 300, 400);
+                this.player.on('clicked', this.clickHandler, this.player);
+            }
+            else {
+                this.otherPlayers[i-1] = this.makePlayer(this.otherPlayersInfo[key].user_id, this.otherPlayersInfo[key], 300 + 20*i, 400);
+                this.otherPlayers[i-1].on('clicked', this.clickHandler, this.otherPlayers[i-1]);
+            }
+            //this.otherPlayers[i] = this.add.sprite(this.player.x + 10*i, this.player.y, "dude");
+        }
 
         //this sets the player to reveal the box when he is clicked
-        this.player.on('clicked', this.clickHandler, this.player.infoBox);
+        //this.player.on('clicked', this.clickHandler, this.player);
 
         //this is what makes the box appear when character is clocked. See function clickHandler below
         this.input.on('gameobjectup', function (pointer, gameObject) {
@@ -191,33 +197,45 @@ var GameBoard = new Phaser.Class ({
 
 
     //the makePlayer function is what creates our sprite and adds him to the board.
-    makePlayer: function () {
-        var sprite = this.add.sprite(300, 400, 'dude');
+    makePlayer: function (name, data, locx, locy) {
+        var sprite = this.add.sprite(locx, locy, 'dude');
 
         //our player's name
-        sprite.name = "player1";
+        sprite.name = name;
 
         //this is the information that will appear inside of the info box
-        sprite.info = "eek";
+        sprite.info = data;
 
         //this creates the infobox, i.e. the box that will appear when we click on him.
-        sprite.infoBox;
+        sprite.infoBox = this.add.image(sprite.x, sprite.y -60, "customTip");
+        sprite.infoBox.setVisible(false);
+        sprite.displayInfo = this.add.text(sprite.infoBox.x - 120, sprite.infoBox.y - 40, " ", { font: '12px Arial', fill: '#FFFFFF', wordWrap: { width: 150, useAdvancedWrap: true }});
+        sprite.displayInfo.setText([
+            "Player: " + sprite.name,
+            "Equipment: " + sprite.info.equipment,
+            "Current HP: " + sprite.info.hp,
+            "Location: " + sprite.info.location
+        ]);
+        sprite.displayInfo.setVisible(false);
 
         //this makes the sprite interactive so that we can click on him
         sprite.setInteractive();
-        this.player = sprite;
+
+        return sprite;
     },
 
     //if player clicked and box is visible, make invisible. if box is invisible, make visible
-    clickHandler: function (box)
+    clickHandler: function (player)
     {
-        if(this.visible == false)
+        if(this.infoBox.visible == false)
         {
-            this.setVisible(true);
+            this.infoBox.setVisible(true);
+            this.displayInfo.setVisible(true);
         }
         else
         {
-            this.setVisible(false);
+            this.infoBox.setVisible(false);
+            this.displayInfo.setVisible(false);
         }
     }
 });
