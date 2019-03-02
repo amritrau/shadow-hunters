@@ -8,10 +8,10 @@ $('document').ready(function() {
 });
 
 socket.on('connect', function() {
-    
+
     // User joins the room
     socket.emit('join', { name: usrctx.name, room_id: usrctx.room_id } );
-	
+
     // Set up message posting with button presses
     var chat_form = $('#chat').on('submit', function(e) {
         e.preventDefault();
@@ -71,12 +71,12 @@ socket.on('message', function(msg) {
 });
 
 // Receive the signal to start the game
-socket.on('game_start', function(data) {
-    $('#start').remove();
-    // TODO: SET UP INITIAL UI BASED ON GAME_DATA HERE
-    var html = '<p id="wait">Waiting...</p>';
-    $('#game').append(html);
-});
+// socket.on('game_start', function(data) {
+//     $('#start').remove();
+//     // TODO: SET UP INITIAL UI BASED ON GAME_DATA HERE
+//     var html = '<p id="wait">Waiting...</p>';
+//     $('#game').append(html);
+// });
 
 // Receive a game state update
 socket.on('update', function(data) {
@@ -90,7 +90,7 @@ socket.on('update', function(data) {
 socket.on('ask', function(data) {
     $('#wait').hide();
     var option = '';
-    for (var i = 0; i < data.options.length; i++) 
+    for (var i = 0; i < data.options.length; i++)
     {
         option += '<option value="'+data.options[i]+'">'+data.options[i]+'</option>';
     }

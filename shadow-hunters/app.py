@@ -3,6 +3,7 @@ from flask_socketio import SocketIO, join_room, leave_room
 from random import randint
 from time import sleep
 import os
+from pprint import pprint  # TODO FOR TESTING PURPOSES ONLY, REMOVE!
 
 from game_context import GameContext
 from player import Player
@@ -78,26 +79,32 @@ def start_game(room_id, players):
 
     # Initialize players and game context
     players = [Player(user_id, socket_id = get_sid[(user_id, room_id)]) for user_id in players]
+    ef = cli.ElementFactory()
     gc = GameContext(
             players = players,
-            characters = cli.CHARACTERS,
-            black_cards = cli.BLACK_DECK,
-            white_cards = cli.WHITE_DECK,
-            green_cards = cli.GREEN_DECK,
-            areas = cli.AREAS,
+            characters = ef.CHARACTERS,
+            black_cards = ef.BLACK_DECK,
+            white_cards = ef.WHITE_DECK,
+            green_cards = ef.GREEN_DECK,
+            areas = ef.AREAS,
             tell_h = lambda x: server_msg(x, room_id),
             direct_h = lambda x, sid: server_msg(x, sid),
             ask_h = lambda x, y, z: server_ask(x, y, z, room_id),
             update_h = lambda x, y: server_update(x, y, room_id)
         )
 
-    ##### FOR TESTING PURPOSES ONLY ########################
-    ##### SEND A DICTIONARY WITH CHARACTER INFO ACROSS #####
-    data = str(gc.characters[0].__dict__)
-    socketio.emit('game_start', data, room = room_id)
-    ##### DELETE THIS WHEN DONE TESTING ####################
-    ##### END TESTING PURPOSES ONLY ########################
-    
+    # gc.dump() can be called at any time to return a tuple of public,
+    # private state. The public state is a self-explanatory dictionary; the
+    # private state is keyed by socket_id (not by user_id!). This makes it
+    # easier to send messages individually.
+
+    # Send public and private game states across
+    public_state, private_state = gc.dump()
+    # socketio.emit('game_start', public_state, room = room_id)
+    for k in private_state:
+        data = {'public': public_state, 'private': private_state[k]}
+        socketio.emit('game_start', data, room = k)
+
     # Initiate gameplay loop
     winners = gc.play()
 
@@ -139,7 +146,7 @@ def server_update(form, data, room_id):
 
 @socketio.on('start')
 def on_start():
-    
+
     # Mark game as in progress so no one else can start/join it
     room_id = connections[request.sid]['room_id']
     if rooms[room_id] == 'GAME':
@@ -161,7 +168,7 @@ def on_start():
 
 @socketio.on('answer')
 def on_answer(json):
-    
+
     # Make sure an answer isn't being processed
     room_id = connections[request.sid]['room_id']
     if answer_bins[room_id]['answered']:
@@ -194,7 +201,7 @@ def on_join(json):
     # Emit join message to other players
     data = {'data': name+' has joined Shadow Hunters Room: '+room_id, 'color': S_COLOR}
     socketio.emit('message', data, room=room_id)
-    
+
     # Join room
     join_room(room_id)
 
