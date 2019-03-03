@@ -26,5 +26,6 @@ def test_game():
             update_h = lambda x, y: 0
         )
         winners = gc.play()
+        print("GAME OVER - Winners: ", winners)
         assert winners
     assert 1
