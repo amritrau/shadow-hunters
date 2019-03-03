@@ -75,7 +75,7 @@ class ElementFactory:
                 holder = None,
                 is_equip = True,
                 force_use = False,
-                use = lambda is_attack, amt: max(0, amt - 1)  # applies to both attack and defend
+                use = lambda is_attack, successful, amt: max(0, amt - 1) # applies to both attack and defend
             ),
             card.Card(
                 title = "Flare of Judgement",
@@ -123,7 +123,7 @@ class ElementFactory:
                 holder = None,
                 is_equip = True,
                 force_use = False,
-                use = lambda is_attack, amt: amt + is_attack if amt else amt # if we're attacking give 1 point extra
+                use = lambda is_attack, succesful, amt: amt + 1 if (is_attack and successful) else amt
             ),
             card.Card(
                 title = "Chainsaw",
@@ -132,7 +132,7 @@ class ElementFactory:
                 holder = None,
                 is_equip = True,
                 force_use = False,
-                use = lambda is_attack, amt: amt + is_attack if amt else amt
+                use = lambda is_attack, succesful, amt: amt + 1 if (is_attack and successful) else amt 
             ),
             card.Card(
                 title = "Rusted Broad Axe",
@@ -141,7 +141,7 @@ class ElementFactory:
                 holder = None,
                 is_equip = True,
                 force_use = False,
-                use = lambda is_attack, amt: amt + is_attack if amt else amt
+                use = lambda is_attack, succesful, amt: amt + 1 if (is_attack and successful) else amt
             ),
             card.Card(
                 title = "Moody Goblin",

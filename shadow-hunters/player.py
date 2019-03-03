@@ -166,18 +166,20 @@ class Player:
             self.equipment.append(drawn)
 
     def attack(self, other, amount):
-        orig_amount = amount
+        is_attack = True
+        successful = (amount != 0)
         for eq in self.equipment:
-            amount = eq.use(True, amount, orig_amount) # Compose each of these functions
-            # "True" argument refers to is_attack
+            amount = eq.use(is_attack, successful, amount) # Compose each of these functions
 
         dealt = other.defend(self, amount)
         return dealt
 
     def defend(self, other, amount):
+        is_attack = False
+        successful = False # irrelevant for defend
         for eq in self.equipment:
-            amount = eq.use(False, amount) # Compose each of these functions
-            # "False" argument refers to is_attack
+            amount = eq.use(is_attack, successful, amount) # Compose each of these functions
+        
         dealt = amount
         self.moveHP(-dealt)
         return dealt
