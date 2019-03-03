@@ -22,7 +22,7 @@ def test_game():
             areas = ef.AREAS,
             tell_h = lambda x: 0,
             direct_h = lambda x, sid: 0,
-            ask_h = lambda x, y, z: random.choice(y['options']),
+            ask_h = lambda x, y, z: { 'value': random.choice(y['options']) }
             update_h = lambda x, y: 0
         )
         winners = gc.play()
