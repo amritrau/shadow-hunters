@@ -10,7 +10,7 @@ import cli
 
 def test_game():
     player_names = ['Amrit', 'Max', 'Gia', 'Joanna', 'Vishal']
-    for _ in range(100):
+    for _ in range(10000):
         players = [player.Player(user_id, socket_id='unused') for user_id in player_names]
         ef = cli.ElementFactory()
         gc = game_context.GameContext(
