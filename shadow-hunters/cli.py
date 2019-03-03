@@ -42,7 +42,7 @@ class ElementFactory:
         def use_moody_goblin(args):
             players_w_items = [p for p in args['self'].gc.getLivePlayers() if (len(p.equipment) and p != args['self'])]
             if len(players_w_items):
-                data = {'options': [p.user_id for p in args['self'].gc.getLivePlayers()]}
+                data = {'options': [p.user_id for p in players_w_items]}
                 target = args['self'].gc.ask_h('select', data, args['self'].user_id)['value']
                 args['self'].gc.update_h('select', {})
                 target_Player = [p for p in args['self'].gc.getLivePlayers() if p.user_id == target][0]
