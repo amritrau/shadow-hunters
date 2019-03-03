@@ -6,3 +6,15 @@ import game_context
 
 def test_init():
     assert 1
+
+def test_getLivePlayers():
+    assert 1
+
+def test_getDeadPlayers():
+    assert 1
+
+def test_checkWinConditions():
+    assert 1
+
+def test_play():
+    assert 1
