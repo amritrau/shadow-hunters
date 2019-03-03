@@ -1,8 +1,8 @@
 import pytest
 import random
 
-from game_context import gameContext
-from player import Player
+import game_context
+import player
 import cli
 
 # test_gameplay.py
@@ -10,10 +10,10 @@ import cli
 
 def test_game():
     player_names = ['Amrit', 'Max', 'Gia', 'Joanna', 'Vishal']
-    players = [Player(user_id, socket_id='unused') for user_id in player_names]
+    players = [player.Player(user_id, socket_id='unused') for user_id in player_names]
     for _ in range(100):
         ef = cli.ElementFactory()
-        gc = GameContext(
+        gc = game_context.GameContext(
             players = players,
             characters = ef.CHARACTERS,
             black_cards = ef.BLACK_DECK,
