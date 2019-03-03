@@ -123,7 +123,7 @@ class ElementFactory:
                 holder = None,
                 is_equip = True,
                 force_use = False,
-                use = lambda is_attack, succesful, amt: amt + 1 if (is_attack and successful) else amt
+                use = lambda is_attack, successful, amt: amt + 1 if (is_attack and successful) else amt
             ),
             card.Card(
                 title = "Chainsaw",
@@ -132,7 +132,7 @@ class ElementFactory:
                 holder = None,
                 is_equip = True,
                 force_use = False,
-                use = lambda is_attack, succesful, amt: amt + 1 if (is_attack and successful) else amt 
+                use = lambda is_attack, successful, amt: amt + 1 if (is_attack and successful) else amt 
             ),
             card.Card(
                 title = "Rusted Broad Axe",
@@ -141,7 +141,7 @@ class ElementFactory:
                 holder = None,
                 is_equip = True,
                 force_use = False,
-                use = lambda is_attack, succesful, amt: amt + 1 if (is_attack and successful) else amt
+                use = lambda is_attack, successful, amt: amt + 1 if (is_attack and successful) else amt
             ),
             card.Card(
                 title = "Moody Goblin",
