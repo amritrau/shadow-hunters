@@ -4,7 +4,7 @@ import random
 import game_context
 import player
 import cli
-import helpers
+from tests import helpers
 
 # test_card_uses.py
 # Tests the usage of each card

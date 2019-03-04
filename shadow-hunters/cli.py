@@ -46,7 +46,6 @@ class ElementFactory:
                 target = args['self'].gc.ask_h('select', data, args['self'].user_id)['value']
                 args['self'].gc.update_h('select', {})
                 target_Player = [p for p in args['self'].gc.getLivePlayers() if p.user_id == target][0]
-                assert(len(target_Player.equipment) > 0)  # TODO For testing purposes
                 data = {'options': [eq.title for eq in target_Player.equipment]}
                 equip = args['self'].gc.ask_h('select', data, args['self'].user_id)['value']
                 args['self'].gc.update_h('select', {})

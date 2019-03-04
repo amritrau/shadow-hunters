@@ -4,14 +4,14 @@ import game_context
 import player
 import cli
 
-# testing helper functions to create a rigged game context
+# helper functions to create a rigged game context for unit testing
 
 def answer_sequence(answers):
     '''create an ask function that will return a specific sequence of answers'''
 
     def ask_function(x, y, z):
-        # need static var here of list
-        return { 'value': 'Amrit' }
+        return { 'value': ask_function.sequence.pop(0) }
+    ask_function.sequence = answers
     return ask_function
 
 def fresh_gc_ef(ask_function = lambda x, y, z: { 'value': random.choice(y['options']) }):

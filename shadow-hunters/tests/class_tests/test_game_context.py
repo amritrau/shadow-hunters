@@ -1,3 +1,4 @@
+from tests import helpers
 import pytest
 import random
 
@@ -7,25 +8,6 @@ import cli
 
 # test_game_context.py
 # Tests for the GameContext object
-
-# helper function to return a fresh game context
-def fresh_gc():
-    player_names = ['Amrit', 'Max', 'Gia', 'Joanna', 'Vishal']
-    players = [player.Player(user_id, socket_id='unused') for user_id in player_names]
-    ef = cli.ElementFactory()
-    gc = game_context.GameContext(
-        players = players,
-        characters = ef.CHARACTERS,
-        black_cards = ef.BLACK_DECK,
-        white_cards = ef.WHITE_DECK,
-        green_cards = ef.GREEN_DECK,
-        areas = ef.AREAS,
-        tell_h = lambda x: 0,
-        direct_h = lambda x, sid: 0,
-        ask_h = lambda x, y, z: { 'value': random.choice(y['options']) },
-        update_h = lambda x, y: 0
-    )
-    return gc
 
 def test_fields():
     
@@ -73,36 +55,52 @@ def test_fields():
     assert public['zones'] == [z.dump() for z in gc.zones]    
 
 def test_getLivePlayers():
-    gc = fresh_gc()
+    gc, ef = helpers.fresh_gc_ef()
+
+    # Check that all players are initially alive
     assert gc.getLivePlayers() == gc.players
+
+    # Check that dead players are not included in alive players
     gc.players[0].setHP(14)
     assert gc.getLivePlayers() == gc.players[1:]
 
 def test_getDeadPlayers():
-    gc = fresh_gc()
+    gc, ef = helpers.fresh_gc_ef()
+
+    # Check that no players are initially dead
     assert not gc.getDeadPlayers()
+
+    # Check that dead players are properly included
     gc.players[0].setHP(14)
     assert gc.getDeadPlayers() == [gc.players[0]]
 
 def test_checkWinConditions():
-    gc = fresh_gc()
+    gc, ef = helpers.fresh_gc_ef()
+
+    # Check that no one has initially won
     assert not gc.checkWinConditions()
+
+    # Check that someone wins when a game is over
     gc.play()
     assert gc.checkWinConditions()
 
-    gc = fresh_gc()
+    # Check that hunters win when everyone else is dead
+    gc, ef = helpers.fresh_gc_ef()
     for p in gc.players:
         if p.character.alleg != 2:
             p.setHP(14)
     assert all([p.character.alleg == 2 for p in gc.checkWinConditions()])
 
-    gc = fresh_gc()
+    # Check that shadows win when everyone else is dead
+    gc, ef = helpers.fresh_gc_ef()
     for p in gc.players:
         if p.character.alleg != 0:
             p.setHP(14)
     assert all([p.character.alleg == 0 for p in gc.checkWinConditions()])
 
 def test_play():
-    gc = fresh_gc()
+    gc, ef = helpers.fresh_gc_ef()
+
+    # Check that someone wins when a game is played
     winners = gc.play()
     assert winners
