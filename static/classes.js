@@ -282,7 +282,7 @@ var GameBoard = new Phaser.Class ({
         else {
             player.info.equipment.list = "";
             for(var i = 0; i < nEquip; i++) {
-                player.info.equipment.list += player.info.equipment.name;
+                player.info.equipment.list += player.info.equipment.title;
                 if(i < nEquip-1){
                     //TO DO: see how equipment list is printed, write list
                     player.info.equipment.list += ", ";
