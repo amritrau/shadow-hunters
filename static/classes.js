@@ -8,7 +8,7 @@ var WaitingRoom = new Phaser.Class ({
         Phaser.Scene.call(this, {key: 'menu'});
     },
     preload: function () {
-        this.load.image('background', '/static/assets/background.jpg');
+        this.load.image('background', 'https://s3.amazonaws.com/shadowhunters.gfxresources/background.pdf');
     },
 
     create: function () {
@@ -72,7 +72,7 @@ var GameBoard = new Phaser.Class ({
 
     //the preload function is where all images that will be used in the game are loaded into
     preload: function () {
-        this.load.image('background', '/static/assets/background.jpg');
+        this.load.image('background', 'https://s3.amazonaws.com/shadowhunters.gfxresources/background.jpg');
         this.load.image("customTip", "/static/assets/customTip.png");
         this.load.spritesheet('dude',
             '/static/assets/dude.png',
