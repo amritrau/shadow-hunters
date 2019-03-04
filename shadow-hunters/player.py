@@ -219,6 +219,6 @@ class Player:
             'state': self.state,
             'equipment': [eq.dump() for eq in self.equipment],
             'hp': self.hp,
-            'location': loc
+            'location': loc,
             'character': self.character.dump()
         }
