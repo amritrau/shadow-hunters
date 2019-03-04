@@ -33,3 +33,35 @@ def fresh_gc_ef(ask_function = lambda x, y, z: { 'value': random.choice(y['optio
         update_h = lambda x, y: 0
     )
     return (gc, ef)
+
+def get_a_hunter(gc):
+    for p in gc.players:
+        if p.alleg == 2:
+            return p
+
+def get_a_shadow(gc):
+    for p in gc.players:
+        if p.alleg == 0:
+            return p
+
+def get_a_neutral(gc):
+    for p in gc.players:
+        if p.alleg == 1:
+            return p
+
+def get_card_by_title(ef, title):
+    
+    # search white deck
+    for c in ef.WHITE_DECK.cards
+        if c.title == title:
+            return c
+
+    # search black deck
+    for c in ef.BLACK_DECK.cards
+        if c.title == title:
+            return c
+
+    # search green deck
+    for c in ef.GREEN_DECK.cards
+        if c.title == title:
+            return c
