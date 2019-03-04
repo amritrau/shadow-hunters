@@ -111,7 +111,7 @@ def test_checkDeath():
     assert p.state == 0
 
 def test_move():
-    p = player.Player('Max', 'socket_id')
+    p = helpers.fresh_gc_ef()[0].players[0]
     
     # dummy area
     a = area.Area(

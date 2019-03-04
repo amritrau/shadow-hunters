@@ -484,7 +484,7 @@ class ElementFactory:
 
         GREEN_CARDS = [
             card.Card(
-                title = "a Hermit Card",
+                title = "Hermit\'s Blackmail",
                 desc = "I bet you're either a Neutral or a Hunter. If so, you must either give an Equipment card to the current player or receive 1 damage!",
                 color = 2, # 2: GREEN
                 holder = None,
@@ -493,7 +493,7 @@ class ElementFactory:
                 use = hermit_blackmail
             ),
             card.Card(
-                title = "a Hermit Card",
+                title = "Hermit\'s Blackmail",
                 desc = "I bet you're either a Neutral or a Hunter. If so, you must either give an Equipment card to the current player or receive 1 damage!",
                 color = 2, # 2: GREEN
                 holder = None,
@@ -502,7 +502,7 @@ class ElementFactory:
                 use = hermit_blackmail
             ),
             card.Card(
-                title = "a Hermit Card",
+                title = "Hermit\'s Greed",
                 desc = "I bet you're either a Neutral or a Shadow. If so, you must either give an Equipment card to the current player or receive 1 damage!",
                 color = 2, # 2: GREEN
                 holder = None,
@@ -511,7 +511,7 @@ class ElementFactory:
                 use = hermit_greed
             ),
             card.Card(
-                title = "a Hermit Card",
+                title = "Hermit\'s Greed",
                 desc = "I bet you're either a Neutral or a Shadow. If so, you must either give an Equipment card to the current player or receive 1 damage!",
                 color = 2, # 2: GREEN
                 holder = None,
@@ -520,7 +520,7 @@ class ElementFactory:
                 use = hermit_greed
             ),
             card.Card(
-                title = "a Hermit Card",
+                title = "Hermit\'s Anger",
                 desc = "I bet you're either a Hunter or a Shadow. If so, you must either give an Equipment card to the current player or receive 1 damage!",
                 color = 2, # 2: GREEN
                 holder = None,
@@ -529,7 +529,7 @@ class ElementFactory:
                 use = hermit_anger
             ),
             card.Card(
-                title = "a Hermit Card",
+                title = "Hermit\'s Anger",
                 desc = "I bet you're either a Hunter or a Shadow. If so, you must either give an Equipment card to the current player or receive 1 damage!",
                 color = 2, # 2: GREEN
                 holder = None,
@@ -538,7 +538,7 @@ class ElementFactory:
                 use = hermit_anger
             ),
             card.Card(
-                title = "a Hermit Card",
+                title = "Hermit\'s Slap",
                 desc = "I bet you're a Hunter. If so, you receive 1 damage!",
                 color = 2, # 2: GREEN
                 holder = None,
@@ -547,7 +547,7 @@ class ElementFactory:
                 use = hermit_slap
             ),
             card.Card(
-                title = "a Hermit Card",
+                title = "Hermit\'s Slap",
                 desc = "I bet you're a Hunter. If so, you receive 1 damage!",
                 color = 2, # 2: GREEN
                 holder = None,
@@ -556,7 +556,7 @@ class ElementFactory:
                 use = hermit_slap
             ),
             card.Card(
-                title = "a Hermit Card",
+                title = "Hermit\'s Spell",
                 desc = "I bet you're a Shadow. If so, you receive 1 damage!",
                 color = 2, # 2: GREEN
                 holder = None,
@@ -565,7 +565,7 @@ class ElementFactory:
                 use = hermit_spell
             ),
             card.Card(
-                title = "a Hermit Card",
+                title = "Hermit\'s Exorcism",
                 desc = "I bet you're a Shadow. If so, you receive 2 damage!",
                 color = 2, # 2: GREEN
                 holder = None,
@@ -574,7 +574,7 @@ class ElementFactory:
                 use = hermit_exorcism
             ),
             card.Card(
-                title = "a Hermit Card",
+                title = "Hermit\'s Nurturance",
                 desc = "I bet you're a Neutral. If so, you heal 1 damage! (However, if you have no damage, then you receive 1 damage!)",
                 color = 2, # 2: GREEN
                 holder = None,
@@ -583,7 +583,7 @@ class ElementFactory:
                 use = hermit_nurturance
             ),
             card.Card(
-                title = "a Hermit Card",
+                title = "Hermit\'s Aid",
                 desc = "I bet you're a Hunter. If so, you heal 1 damage! (However, if you have no damage, then you receive 1 damage!)",
                 color = 2, # 2: GREEN
                 holder = None,
@@ -592,7 +592,7 @@ class ElementFactory:
                 use = hermit_aid
             ),
             card.Card(
-                title = "a Hermit Card",
+                title = "Hermit\'s Fiddle",
                 desc = "I bet you're a Shadow. If so, you heal 1 damage! (However, if you have no damage, then you receive 1 damage!)",
                 color = 2, # 2: GREEN
                 holder = None,

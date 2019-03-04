@@ -157,14 +157,15 @@ class Player:
 
     def drawCard(self, deck):
         drawn = deck.drawCard()
-        self.gc.tell_h("{} drew {}!".format(self.user_id, drawn.title))
+        public_title = drawn.title if drawn.color != 2 else 'a Hermit Card'
+        self.gc.tell_h("{} drew {}!".format(self.user_id, public_title))
         self.gc.direct_h("Card ({}): {}".format(drawn.title, drawn.desc), self.socket_id)
         if drawn.force_use:
-            self.gc.tell_h("{} used {}!".format(self.user_id, drawn.title))
+            self.gc.tell_h("{} used {}!".format(self.user_id, public_title))
             args = {'self': self}
             drawn.use(args)
         if drawn.is_equipment:
-            self.gc.tell_h("{} added {} to their arsenal!".format(self.user_id, drawn.title))
+            self.gc.tell_h("{} added {} to their arsenal!".format(self.user_id, public_title))
             self.equipment.append(drawn)
         self.gc.update_h('yesno', {})
 
@@ -219,6 +220,6 @@ class Player:
             'equipment': [eq.dump() for eq in self.equipment],
             'hp': self.hp,
             'character': self.character.dump() if self.character else {},
-            'modifiers': self.modifiers
+            'modifiers': self.modifiers,
             'location': self.location.dump() if self.location else {},
         }

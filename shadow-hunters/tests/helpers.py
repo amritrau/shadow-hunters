@@ -52,16 +52,16 @@ def get_a_neutral(gc):
 def get_card_by_title(ef, title):
     
     # search white deck
-    for c in ef.WHITE_DECK.cards
+    for c in ef.WHITE_DECK.cards:
         if c.title == title:
             return c
 
     # search black deck
-    for c in ef.BLACK_DECK.cards
+    for c in ef.BLACK_DECK.cards:
         if c.title == title:
             return c
 
     # search green deck
-    for c in ef.GREEN_DECK.cards
+    for c in ef.GREEN_DECK.cards:
         if c.title == title:
             return c

@@ -51,7 +51,7 @@ def setup_hermit(answers, title):
     Return a game context, element factory, a hunter, shadow
     and neutral from that game, and a card of a given title
     """
-    gc, ef = helpers.fresh_gc_ef(answer_sequence(answers))
+    gc, ef = helpers.fresh_gc_ef(helpers.answer_sequence(answers))
     h = helpers.get_a_hunter(gc)
     s = helpers.get_a_shadow(gc)
     n = helpers.get_a_neutral(gc)
@@ -59,10 +59,12 @@ def setup_hermit(answers, title):
     return (gc, ef, h, s, n, c)
 
 def test_hermit_blackmail():
-
+    assert 1
     # setup
     answers = ['asd', 'asd', 'asd']
-    gc, ef, h, s, n, c = setup_hermit(answers, "hermit_blackmail")
+    gc, ef, h, s, n, c = setup_hermit(answers, "Hermit\'s Blackmail")
+    
+    
 
 def test_hermit_greed():
     assert 1
