@@ -195,20 +195,22 @@ var GameBoard = new Phaser.Class ({
             $('#'+data.form).hide();
             $('#'+data.form+'_fields').empty();
             // TODO: UPDATE UI TO REFLECT UPDATE
-            if(data.action === "move") {
-                console.log(data);
-                if(data.player === self.player.name) {
-                    self.updatePlayer(self.player, data.action, data.value);
-                }
-                else{
-                    for(var i = 0; i < self.nPlayers - 1; i++){
-                        if(data.player === self.otherPlayers[i].name) {
-                            self.updatePlayer(self.otherPlayers[i], data.action, data.value);
-                            break;
-                        }
-                    }
-                }
-            }
+            console.log(data);
+            self.updateBoard(data);
+            // if(data.action === "move") {
+            //     console.log(data);
+            //     if(data.player === self.player.name) {
+            //         self.updatePlayer(self.player, data.action, data.value);
+            //     }
+            //     else{
+            //         for(var i = 0; i < self.nPlayers - 1; i++){
+            //             if(data.player === self.otherPlayers[i].name) {
+            //                 self.updatePlayer(self.otherPlayers[i], data.action, data.value);
+            //                 break;
+            //             }
+            //         }
+            //     }
+            // }
             $('#wait').show();
         });
 
@@ -265,6 +267,10 @@ var GameBoard = new Phaser.Class ({
         }
     },
 
+    //for each update, change parts of the board that need to be redrawn.
+    updateBoard: function(data) {
+        //TO DO: loop through each player and see if there are things to update
+    },
     //if player clicked and box is visible, make invisible. if box is invisible, make visible
     clickHandler: function (player)
     {
@@ -286,7 +292,7 @@ var config = {
     type: Phaser.CANVAS,
     width: 1066,
     height: 600,
-    pixelArt: true,
+    pixelArt: false,
     parent: 'board',
     scene: [ WaitingRoom, GameBoard ]
 };

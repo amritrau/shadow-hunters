@@ -32,8 +32,8 @@ class Player:
         roll_result_6 = self.gc.die6.roll()
         roll_result = roll_result_4 + roll_result_6
 
-        self.gc.update_h('confirm', {'action': 'roll', 'value': (roll_result_4, roll_result_6)})
         self.gc.tell_h("{} rolled {} + {} = {}!".format(self.user_id, roll_result_4, roll_result_6, roll_result))
+        self.gc.update_h('confirm', {'action': 'roll', 'value': (roll_result_4, roll_result_6)})
 
         # Move to desired location
         if roll_result == 7:
@@ -66,9 +66,10 @@ class Player:
             # Get string from Area
             destination = destination_Area.name
 
-        self.gc.update_h('select', {'action': 'move', 'value': destination, 'player': self.user_id})
-        self.gc.tell_h("{} moves to {}!".format(self.user_id, destination))
         self.move(destination_Area)
+        self.gc.update_h('select', {'action': 'move', 'value': destination})
+        self.gc.tell_h("{} moves to {}!".format(self.user_id, destination))
+
 
         # Take action
         data = {'options': [destination_Area.desc, 'Decline']}
@@ -77,17 +78,18 @@ class Player:
         if answer != 'Decline':
             # TODO Update game state
             # self.gc.update_h('yesno', {'action': 'area', 'value': 'TODO'})
-            self.gc.update_h('yesno', {})
+
             # TODO Perform area action
             self.location.action(self.gc, self)
             self.gc.tell_h(
                 '{} performed their area action!'.format(self.user_id)
             )
-        else:
             self.gc.update_h('yesno', {})
+        else:
             self.gc.tell_h(
                 '{} declined to perform their area action.'.format(self.user_id)
             )
+            self.gc.update_h('yesno', {})
 
         # Someone could have died here, so check win conditions
         if self.gc.checkWinConditions(tell = False):
@@ -164,6 +166,7 @@ class Player:
         if drawn.is_equipment:
             self.gc.tell_h("{} added {} to their arsenal!".format(self.user_id, drawn.title))
             self.equipment.append(drawn)
+        self.gc.update_h('yesno', {})
 
     def attack(self, other, amount):
         orig_amount = amount
@@ -199,9 +202,12 @@ class Player:
         else: ## TODO Remove when not debugging
             self.gc.tell_h("{}'s HP was set to {}!".format(self.user_id, self.hp))
 
+        self.gc.update_h('yesno', {})
+
     def move(self, location):
         # TODO What checks do we need here?
         self.location = location
+        self.gc.update_h('yesno', {})
 
     def dump(self):
         return {
