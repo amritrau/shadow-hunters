@@ -236,6 +236,11 @@ var GameBoard = new Phaser.Class ({
         //this is the information that will appear inside of the info box
         sprite.info = data;
 
+        if(Object.keys(sprite.info.location).length == 0) {
+            console.log("if statement true");
+            sprite.info.location.name = "None";
+        }
+
         //this creates the infobox, i.e. the box that will appear when we click on him.
         sprite.infoBox = this.add.image(sprite.x, sprite.y -60, "customTip");
         sprite.infoBox.setVisible(false);
@@ -244,7 +249,7 @@ var GameBoard = new Phaser.Class ({
             "Player: " + sprite.name,
             "Equipment: " + sprite.info.equipment,
             "Current Damage: " + sprite.info.hp,
-            "Location: " + sprite.info.location
+            "Location: " + sprite.info.location.name
         ]);
         sprite.displayInfo.setVisible(false);
 
@@ -255,24 +260,40 @@ var GameBoard = new Phaser.Class ({
     },
 
     //updates information about each player
-    updatePlayer: function (player, action_type, change) {
-        if(action_type === "move") {
-            player.info.location = change;
-            console.log("in updatePlayer function: action type is move");
-            console.log("in updatePlayer: location is ", change);
-            player.displayInfo.setText([
-                "Player: " + player.name,
-                "Equipment: " + player.info.equipment,
-                "Current Damage: " + player.info.hp,
-                "Location: " + player.info.location
-            ]);
+    updatePlayer: function (player, data) {
+        //TO DO: if location is different, move character
+        //TO DO: if hp changes, move token on health bar
+        player.info = data;
+        if(Object.keys(player.info.location).length == 0) {
+            console.log("if statement true");
+            player.info.location.name = "None";
         }
+        player.displayInfo.setText([
+            "Player: " + player.name,
+            "Equipment: " + player.info.equipment,
+            "Current Damage: " + player.info.hp,
+            "Location: " + player.info.location.name
+        ]);
     },
 
     //for each update, change parts of the board that need to be redrawn.
     updateBoard: function(data) {
-        //TO DO: loop through each player and see if there are things to update
+        //loop through each player and see if there are things to update
         console.log(data);
+        this.allPlayersInfo = data.players;
+        var count = 0;
+        for(var i = 0; i < this.nPlayers; i++){
+            var key = Object.keys(this.allPlayersInfo)[i];
+            if(key === this.player.key) {
+                //update self
+                this.updatePlayer(this.player, this.allPlayersInfo[key]);
+            }
+            else {
+                //update enemies
+                this.updatePlayer(this.otherPlayers[count], this.allPlayersInfo[key]);
+                count++;
+            }
+        }
 
     },
     //if player clicked and box is visible, make invisible. if box is invisible, make visible
