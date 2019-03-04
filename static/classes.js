@@ -141,11 +141,13 @@ var GameBoard = new Phaser.Class ({
             var key = Object.keys(this.allPlayersInfo)[i];
             if(this.allPlayersInfo[key].user_id === this.gameData.private.user_id) {
                 this.player = this.makePlayer(this.allPlayersInfo[key].user_id, this.allPlayersInfo[key], 300 + 20*i, 400);
+                this.player.key = key;
                 this.player.on('clicked', this.clickHandler, this.player);
                 console.log(this.player.name);
             }
             else {
                 this.otherPlayers[count] = this.makePlayer(this.allPlayersInfo[key].user_id, this.allPlayersInfo[key], 300 + 20*i, 400);
+                this.otherPlayers[count].key = key;
                 this.otherPlayers[count].on('clicked', this.clickHandler, this.otherPlayers[i-1]);
                 count++;
             }
@@ -195,7 +197,7 @@ var GameBoard = new Phaser.Class ({
             $('#'+data.form).hide();
             $('#'+data.form+'_fields').empty();
             // TODO: UPDATE UI TO REFLECT UPDATE
-            console.log(data);
+            //possible issue: getting too many updates
             self.updateBoard(data);
             // if(data.action === "move") {
             //     console.log(data);
@@ -270,6 +272,8 @@ var GameBoard = new Phaser.Class ({
     //for each update, change parts of the board that need to be redrawn.
     updateBoard: function(data) {
         //TO DO: loop through each player and see if there are things to update
+        console.log(data);
+
     },
     //if player clicked and box is visible, make invisible. if box is invisible, make visible
     clickHandler: function (player)
