@@ -611,12 +611,12 @@ class ElementFactory:
         def shadow_win_cond(gc, player):
             no_living_hunters = (len([p for p in gc.getLivePlayers() if p.character.alleg == 2]) == 0)
             neutrals_dead_3 = (len([p for p in gc.getDeadPlayers() if p.character.alleg == 1]) >= 3)
-            print("Living hunters:", [p for p in gc.getLivePlayers() if p.character.alleg == 2])
+            # print("Living hunters:", [p for p in gc.getLivePlayers() if p.character.alleg == 2])
             return no_living_hunters or neutrals_dead_3
 
         def hunter_win_cond(gc, player):
             no_living_shadows = (len([p for p in gc.getLivePlayers() if p.character.alleg == 0]) == 0)
-            print("Living shadows:", [p for p in gc.getLivePlayers() if p.character.alleg == 0])
+            # print("Living shadows:", [p for p in gc.getLivePlayers() if p.character.alleg == 0])
             return no_living_shadows
 
         def allie_win_cond(gc, player):
