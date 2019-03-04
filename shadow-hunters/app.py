@@ -93,6 +93,8 @@ def start_game(room_id, players):
             update_h = lambda x, y: server_update(x, y, room_id)
         )
 
+    gc.update_h = lambda x, y: server_update(x, gc.dump()[0], room_id)
+
     # gc.dump() can be called at any time to return a tuple of public,
     # private state. The public state is a self-explanatory dictionary; the
     # private state is keyed by socket_id (not by user_id!). This makes it
