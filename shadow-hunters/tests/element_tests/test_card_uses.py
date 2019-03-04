@@ -126,5 +126,3 @@ def test_hermit_fiddle():
     # setup rigged gc
     gc, ef, h, s, n, c = setup_hermit("Hermit\'s Fiddle")
     gc.ask_h = helpers.answer_sequence([])
-
-    # Check that
