@@ -1,3 +1,6 @@
+// url where gfx resources are stored
+var gfx = "https://s3.amazonaws.com/shadowhunters.gfxresources/"
+
 // this is the scene that will be used in the waiting room, i.e. before the game starts
 var WaitingRoom = new Phaser.Class ({
     Extends: Phaser.Scene,
@@ -8,7 +11,7 @@ var WaitingRoom = new Phaser.Class ({
         Phaser.Scene.call(this, {key: 'menu'});
     },
     preload: function () {
-        this.load.image('background', 'https://s3.amazonaws.com/shadowhunters.gfxresources/background.pdf');
+        this.load.image('background', gfx + 'background-1066.png');
     },
 
     create: function () {
@@ -72,7 +75,7 @@ var GameBoard = new Phaser.Class ({
 
     //the preload function is where all images that will be used in the game are loaded into
     preload: function () {
-        this.load.image('background', 'https://s3.amazonaws.com/shadowhunters.gfxresources/background.jpg');
+        this.load.image('background', gfx + 'background-1066.png');
         this.load.image("customTip", "/static/assets/customTip.png");
         this.load.spritesheet('dude',
             '/static/assets/dude.png',
