@@ -27,17 +27,20 @@ class ElementFactory:
             args['self'].gc.update_h('select', {})
             [p for p in args['self'].gc.getLivePlayers() if p.user_id == target][0].moveHP(-2)
             args['self'].moveHP(-2)
+            args['self'].gc.update_h('select', {})
 
         def use_vampire_bat(args):
             target = args['self'].gc.ask_h('select', {'options': [t.user_id for t in args['self'].gc.getLivePlayers() if t != args['self']]}, args['self'].user_id)['value']
             args['self'].gc.update_h('select', {})
             [p for p in args['self'].gc.getLivePlayers() if p.user_id == target][0].moveHP(-2)
             args['self'].moveHP(1)
+            args['self'].gc.update_h('select', {})
 
         def use_first_aid(args):
             target = args['self'].gc.ask_h('select', {'options': [t.user_id for t in args['self'].gc.getLivePlayers()]}, args['self'].user_id)['value']
             args['self'].gc.update_h('select', {})
             [p for p in args['self'].gc.getLivePlayers() if p.user_id == target][0].setHP(7)
+            args['self'].gc.update_h('select', {})
 
         def use_moody_goblin(args):
             players_w_items = [p for p in args['self'].gc.getLivePlayers() if (len(p.equipment) and p != args['self'])]
@@ -57,9 +60,11 @@ class ElementFactory:
                 args['self'].equipment.append(equip_Equipment)
                 equip_Equipment.holder = args['self']
                 args['self'].gc.tell_h("{} stole {}'s {}!".format(args['self'].user_id, target_Player.user_id, equip_Equipment.title))
+                args['self'].gc.update_h('select', {})
             else:
                 args['self'].gc.tell_h("Nobody has any items for {} to steal.".format(args['self'].user_id))
 
+            args['self'].gc.update_h('select', {})
         ##################
 
 
@@ -241,12 +246,15 @@ class ElementFactory:
                 else:
                     new_hp = target.moveHP(-1)
                     target.gc.tell_h("{}'s HP is now {}!".format(target.user_id, new_hp))
+
             else:
                 target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ['Do nothing']}
                 target.gc.ask_h('yesno', data, target.user_id)['value']
                 target.gc.update_h('yesno', {})
                 target.gc.tell_h("{} did nothing.".format(target.user_id))
+
+            target.gc.update_h('yesno', {})
 
         def hermit_greed(args):
             target = choose_player(args)
@@ -281,6 +289,8 @@ class ElementFactory:
                 target.gc.update_h('yesno', {})
                 target.gc.tell_h("{} did nothing.".format(target.user_id))
 
+            target.gc.update_h('yesno', {})
+
         def hermit_anger(args):
             target = choose_player(args)
             # TODO FIX THE FOLLOWING!
@@ -314,6 +324,8 @@ class ElementFactory:
                 target.gc.update_h('yesno', {})
                 target.gc.tell_h("{} did nothing.".format(target.user_id))
 
+            target.gc.update_h('yesno', {})
+
         def hermit_slap(args):
             target = choose_player(args)
             # TODO FIX THE FOLLOWING!
@@ -334,6 +346,8 @@ class ElementFactory:
                 target.gc.ask_h('yesno', data, target.user_id)['value']
                 target.gc.update_h('yesno', {})
                 target.gc.tell_h("{} did nothing.".format(target.user_id))
+
+            target.gc.update_h('yesno', {})
 
         def hermit_spell(args):
             target = choose_player(args)
@@ -356,6 +370,8 @@ class ElementFactory:
                 target.gc.update_h('yesno', {})
                 target.gc.tell_h("{} did nothing.".format(target.user_id))
 
+            target.gc.update_h('yesno', {})
+
         def hermit_exorcism(args):
             target = choose_player(args)
             # TODO FIX THE FOLLOWING!
@@ -376,6 +392,8 @@ class ElementFactory:
                 target.gc.ask_h('yesno', data, target.user_id)['value']
                 target.gc.update_h('yesno', {})
                 target.gc.tell_h("{} did nothing.".format(target.user_id))
+
+            target.gc.update_h('yesno', {})
 
         def hermit_nurturance(args):
             target = choose_player(args)
@@ -404,6 +422,8 @@ class ElementFactory:
                 target.gc.update_h('yesno', {})
                 target.gc.tell_h("{} did nothing.".format(target.user_id))
 
+            target.gc.update_h('yesno', {})
+
         def hermit_aid(args):
             target = choose_player(args)
             # TODO FIX THE FOLLOWING!
@@ -431,6 +451,8 @@ class ElementFactory:
                 target.gc.update_h('yesno', {})
                 target.gc.tell_h("{} did nothing.".format(target.user_id))
 
+            target.gc.update_h('yesno', {})
+
         def hermit_fiddle(args):
             target = choose_player(args)
             # TODO FIX THE FOLLOWING!
@@ -457,6 +479,8 @@ class ElementFactory:
                 target.gc.ask_h('yesno', data, target.user_id)['value']
                 target.gc.update_h('yesno', {})
                 target.gc.tell_h("{} did nothing.".format(target.user_id))
+
+            target.gc.update_h('yesno', {})
 
 
         GREEN_CARDS = [
@@ -659,6 +683,8 @@ class ElementFactory:
             else:
                 player.drawCard(gc.green_cards)
 
+            gc.update_h('select', {})
+
         def weird_woods_action(gc, player):
             data = {'options': [p.user_id for p in gc.getLivePlayers()]}
             target = gc.ask_h('select', data, player.user_id)['value']
@@ -672,6 +698,8 @@ class ElementFactory:
                 target_Player.moveHP(1)
             else:
                 target_Player.moveHP(-2)
+
+            gc.update_h('select', {})
 
         def erstwhile_altar_action(gc, player):
             # TODO Only show players with equipment
@@ -695,6 +723,7 @@ class ElementFactory:
                 gc.tell_h("{} stole {}'s {}!".format(player.user_id, target_Player.user_id, equip_Equipment.title))
             else:
                 gc.tell_h("Nobody has any items for {} to steal.".format(player.user_id))
+            gc.update_h('select', {})
 
         #########
 
