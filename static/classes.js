@@ -249,7 +249,7 @@ var GameBoard = new Phaser.Class ({
         //this creates the infobox, i.e. the box that will appear when we click on him.
         sprite.infoBox = this.add.image(sprite.x, sprite.y -60, "customTip");
         sprite.infoBox.setVisible(false);
-        sprite.displayInfo = this.add.text(sprite.infoBox.x - 120, sprite.infoBox.y - 40, " ", { font: '12px Arial', fill: '#FFFFFF', wordWrap: { width: 150, useAdvancedWrap: true }});
+        sprite.displayInfo = this.add.text(sprite.infoBox.x - 120, sprite.infoBox.y - 40, " ", { font: '10px Arial', fill: '#FFFFFF', wordWrap: { width: 250, useAdvancedWrap: true }});
         sprite.displayInfo.setText([
             "Player: " + sprite.name,
             "Equipment: " + sprite.info.equipment.list,
