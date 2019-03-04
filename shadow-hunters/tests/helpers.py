@@ -36,17 +36,17 @@ def fresh_gc_ef(ask_function = lambda x, y, z: { 'value': random.choice(y['optio
 
 def get_a_hunter(gc):
     for p in gc.players:
-        if p.alleg == 2:
+        if p.character.alleg == 2:
             return p
 
 def get_a_shadow(gc):
     for p in gc.players:
-        if p.alleg == 0:
+        if p.character.alleg == 0:
             return p
 
 def get_a_neutral(gc):
     for p in gc.players:
-        if p.alleg == 1:
+        if p.character.alleg == 1:
             return p
 
 def get_card_by_title(ef, title):

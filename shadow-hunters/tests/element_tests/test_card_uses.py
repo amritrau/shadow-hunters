@@ -12,7 +12,6 @@ from tests import helpers
 # black cards
 
 def test_bloodthirsty_spider():
-    gc, ef = helpers.fresh_gc_ef()
     assert 1
 
 def test_vampire_bat():
@@ -46,12 +45,12 @@ def test_holy_water():
 
 # hermit cards
 
-def setup_hermit(answers, title):
+def setup_hermit(title):
     """
     Return a game context, element factory, a hunter, shadow
     and neutral from that game, and a card of a given title
     """
-    gc, ef = helpers.fresh_gc_ef(helpers.answer_sequence(answers))
+    gc, ef = helpers.fresh_gc_ef()
     h = helpers.get_a_hunter(gc)
     s = helpers.get_a_shadow(gc)
     n = helpers.get_a_neutral(gc)
@@ -59,33 +58,71 @@ def setup_hermit(answers, title):
     return (gc, ef, h, s, n, c)
 
 def test_hermit_blackmail():
-    assert 1
-    # setup
-    answers = ['asd', 'asd', 'asd']
-    gc, ef, h, s, n, c = setup_hermit(answers, "Hermit\'s Blackmail")
-    
-    
+
+    # setup rigged gc
+    gc, ef, h, s, n, c = setup_hermit("Hermit\'s Blackmail")
+    gc.ask_h = helpers.answer_sequence([])
+
+    # Check that
 
 def test_hermit_greed():
-    assert 1
+
+    # setup rigged gc
+    gc, ef, h, s, n, c = setup_hermit("Hermit\'s Greed")
+    gc.ask_h = helpers.answer_sequence([])
+
+    # Check that
 
 def test_hermit_anger():
-    assert 1
+    
+    # setup rigged gc
+    gc, ef, h, s, n, c = setup_hermit("Hermit\'s Anger")
+    gc.ask_h = helpers.answer_sequence([])
+
+    # Check that
 
 def test_hermit_slap():
-    assert 1
+        
+    # setup rigged gc
+    gc, ef, h, s, n, c = setup_hermit("Hermit\'s Slap")
+    gc.ask_h = helpers.answer_sequence([])
+
+    # Check that
 
 def test_hermit_spell():
-    assert 1
+    
+    # setup rigged gc
+    gc, ef, h, s, n, c = setup_hermit("Hermit\'s Spell")
+    gc.ask_h = helpers.answer_sequence([])
+
+    # Check that
 
 def test_hermit_exorcism():
-    assert 1
+    
+    # setup rigged gc
+    gc, ef, h, s, n, c = setup_hermit("Hermit\'s Exorcism")
+    gc.ask_h = helpers.answer_sequence([])
+
+    # Check that
 
 def test_hermit_nurturance():
-    assert 1
+    
+    # setup rigged gc
+    gc, ef, h, s, n, c = setup_hermit("Hermit\'s Nurturance")
+    gc.ask_h = helpers.answer_sequence([])
+
+    # Check that
 
 def test_hermit_aid():
-    assert 1
+    
+    # setup rigged gc
+    gc, ef, h, s, n, c = setup_hermit("Hermit\'s Aid")
+    gc.ask_h = helpers.answer_sequence([])
+
+    # Check that
 
 def test_hermit_fiddle():
-    assert 1
+    
+    # setup rigged gc
+    gc, ef, h, s, n, c = setup_hermit("Hermit\'s Fiddle")
+    gc.ask_h = helpers.answer_sequence([])
