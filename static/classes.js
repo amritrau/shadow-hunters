@@ -241,13 +241,18 @@ var GameBoard = new Phaser.Class ({
             sprite.info.location.name = "None";
         }
 
+        if(Object.keys(sprite.info.equipment).length == 0) {
+            console.log("if statement true");
+            sprite.info.equipment.list = "None";
+        }
+
         //this creates the infobox, i.e. the box that will appear when we click on him.
         sprite.infoBox = this.add.image(sprite.x, sprite.y -60, "customTip");
         sprite.infoBox.setVisible(false);
         sprite.displayInfo = this.add.text(sprite.infoBox.x - 120, sprite.infoBox.y - 40, " ", { font: '12px Arial', fill: '#FFFFFF', wordWrap: { width: 150, useAdvancedWrap: true }});
         sprite.displayInfo.setText([
             "Player: " + sprite.name,
-            "Equipment: " + sprite.info.equipment,
+            "Equipment: " + sprite.info.equipment.list,
             "Current Damage: " + sprite.info.hp,
             "Location: " + sprite.info.location.name
         ]);
@@ -268,9 +273,25 @@ var GameBoard = new Phaser.Class ({
             console.log("if statement true");
             player.info.location.name = "None";
         }
+
+        var nEquip = Object.keys(player.info.equipment).length;
+        if(nEquip == 0) {
+            console.log("if statement true");
+            player.info.equipment.list = "None";
+        }
+        else {
+            player.info.equipment.list = "";
+            for(var i = 0; i < nEquip; i++) {
+                player.info.equipment.list += player.info.equipment.name;
+                if(i < nEquip-1){
+                    //TO DO: see how equipment list is printed, write list
+                    player.info.equipment.list += ", ";
+                }
+            }
+        }
         player.displayInfo.setText([
             "Player: " + player.name,
-            "Equipment: " + player.info.equipment,
+            "Equipment: " + player.info.equipment.list,
             "Current Damage: " + player.info.hp,
             "Location: " + player.info.location.name
         ]);
