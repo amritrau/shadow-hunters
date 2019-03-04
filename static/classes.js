@@ -139,8 +139,6 @@ var GameBoard = new Phaser.Class ({
         for(var i = 0; i < this.nPlayers; i++) {
             console.log("in for loop");
             var key = Object.keys(this.allPlayersInfo)[i];
-            console.log(this.allPlayersInfo[key].user_id);
-            console.log(this.gameData.private.user_id);
             if(this.allPlayersInfo[key].user_id === this.gameData.private.user_id) {
                 this.player = this.makePlayer(this.allPlayersInfo[key].user_id, this.allPlayersInfo[key], 300 + 20*i, 400);
                 this.player.on('clicked', this.clickHandler, this.player);
@@ -151,10 +149,9 @@ var GameBoard = new Phaser.Class ({
                 this.otherPlayers[count].on('clicked', this.clickHandler, this.otherPlayers[i-1]);
                 count++;
             }
-            //this.otherPlayers[i] = this.add.sprite(this.player.x + 10*i, this.player.y, "dude");
         }
 
-        //this is what makes the box appear when character is clocked. See function clickHandler below
+        //this is what makes the box appear when character is clicked. See function clickHandler below
         this.input.on('gameobjectup', function (pointer, gameObject) {
             gameObject.emit('clicked', gameObject);
         }, this);
