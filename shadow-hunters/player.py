@@ -210,12 +210,15 @@ class Player:
         self.gc.update_h('yesno', {})
 
     def dump(self):
+        loc = {}
+        if self.location:
+            loc = self.location.dump()
         return {
             'user_id': self.user_id,
             'socket_id': self.socket_id,
             'state': self.state,
             'equipment': [eq.dump() for eq in self.equipment],
             'hp': self.hp,
-            'location': str(self.location),  # handles location == None case
+            'location': loc
             'character': self.character.dump()
         }
