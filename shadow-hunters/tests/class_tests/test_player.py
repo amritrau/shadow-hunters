@@ -34,8 +34,8 @@ def test_fields():
         'state': 2,
         'equipment': [],
         'hp': 0,
-        'location': 'None',
-        'character': 'None',
+        'location': {},
+        'character': {},
         'modifiers': {}
     })
 
