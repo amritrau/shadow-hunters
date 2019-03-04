@@ -17,7 +17,7 @@ class Player:
 
     def reveal(self):
         # self.character.special()
-        self.status = 1
+        self.state = 1
 
     def takeTurn(self):
         # Announce player
@@ -195,7 +195,7 @@ class Player:
         self.checkDeath()
 
     def checkDeath(self):
-        if self.hp == self.character.max_hp:
+        if self.hp >= self.character.max_hp:
             self.state = 0  # DEAD state
             self.gc.tell_h("{} ({}: {}) died!".format(self.user_id, cli.ALLEGIANCE_MAP[self.character.alleg], self.character.name))
         else: ## TODO Remove when not debugging
@@ -213,5 +213,6 @@ class Player:
             'equipment': [eq.dump() for eq in self.equipment],
             'hp': self.hp,
             'location': str(self.location),  # handles location == None case
-            'character': self.character.dump()
+            'character': self.character.dump() if self.character else 'None',
+            'modifiers': self.modifiers
         }

@@ -4,11 +4,12 @@ import random
 import game_context
 import player
 import cli
+import helpers
 
-# test_specials.py
-# Tests the special abilities of each character
+# test_win_conds.py
+# Tests the win conditions of each character
 
-def test_mothers_love():
+def test_hunters_win():
     player_names = ['Amrit', 'Max', 'Gia', 'Joanna', 'Vishal']
     players = [player.Player(user_id, socket_id='unused') for user_id in player_names]
     ef = cli.ElementFactory()

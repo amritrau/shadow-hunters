@@ -14,6 +14,7 @@ c1 = card.Card(
     force_use = False,
     use = lambda: 0  # placeholder
 )
+
 c2 = card.Card(
     title = "Card 2",
     desc = "Another card",
@@ -24,9 +25,15 @@ c2 = card.Card(
     use = lambda: 1  # placeholder
 )
 
-def test_init():
-    d = deck.Deck(cards = [c1, c2])
-    assert 1
+def test_fields():
+    
+    # test initialization
+    card_list = [c1, c2]
+    d = deck.Deck(cards = card_list)
+
+    # test fields
+    assert d.cards == card_list
+    assert not d.discard
 
 def test_hashability():
     d1 = deck.Deck(cards = [c1, c2])

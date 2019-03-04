@@ -4,11 +4,12 @@ import random
 import game_context
 import player
 import cli
+import helpers
 
-# test_win_conds.py
-# Tests the win conditions of each character
+# test_area_actions.py
+# Tests the possible actions at each area
 
-def test_hunters_win():
+def test_underworld_gate():
     player_names = ['Amrit', 'Max', 'Gia', 'Joanna', 'Vishal']
     players = [player.Player(user_id, socket_id='unused') for user_id in player_names]
     ef = cli.ElementFactory()

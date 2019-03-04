@@ -4,12 +4,26 @@ import area
 # test_area.py
 # Tests for the Area object
 
-def test_init():
+def test_fields():
+    
+    # test initialization
     a = area.Area(
-        name = "Weird Woods",
-        desc = "You may either give 2 damage to any player or heal 1 damage of any player.",
+        name = "area_name",
+        desc = "area_desc",
         domain = [9],
-        action = lambda: 0,
-        resource_id = "weird-woods"
+        action = lambda: 5,
+        resource_id = "r_id"
     )
-    assert 1
+    
+    # test fields
+    assert a.name == "area_name"
+    assert a.desc == "area_desc"
+    assert len(a.domain) == 1 and a.domain[0] == 9
+    assert a.action() == 5
+    assert a.resource_id == "r_id"
+
+    # test dump
+    dump = a.dump()
+    assert dump['name'] == "area_name"
+    assert dump['desc'] == "area_desc"
+    assert dump['domain'] == "[9]"

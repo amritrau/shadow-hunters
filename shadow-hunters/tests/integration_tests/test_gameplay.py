@@ -8,7 +8,7 @@ import cli
 # test_gameplay.py
 # Tests random walks through the game state for runtime errors
 
-def test_game():
+def test_gameplay():
     player_names = ['Amrit', 'Max', 'Gia', 'Joanna', 'Vishal']
     for _ in range(10000):
         players = [player.Player(user_id, socket_id='unused') for user_id in player_names]
