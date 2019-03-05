@@ -54,7 +54,8 @@ var GameBoard = new Phaser.Class ({
         this.gameData;
         this.charInfo;
         this.infoBox;
-
+        this.startSpots = [490, 220, 530, 220, 570, 220, 510, 260, 550, 260]; //list of x, y coordinates for 5 players
+        this.allSpots = [];
     },
 
     //function to initialize the data sent into gameboard from waiting room
@@ -63,6 +64,8 @@ var GameBoard = new Phaser.Class ({
         this.gameData = data;
         this.charInfo = this.gameData.private.character;
         this.allPlayersInfo = this.gameData.public.players;
+
+        //BELOW CODE FOR DEBUGGING - uncomment to use
         // console.log(this.charInfo);
         // console.log(typeof this.charInfo);
         // console.log(this.gameData.public);
@@ -140,13 +143,15 @@ var GameBoard = new Phaser.Class ({
             console.log("in for loop");
             var key = Object.keys(this.allPlayersInfo)[i];
             if(this.allPlayersInfo[key].user_id === this.gameData.private.user_id) {
-                this.player = this.makePlayer(this.allPlayersInfo[key].user_id, this.allPlayersInfo[key], 300 + 20*i, 400);
+                this.player = this.makePlayer(this.allPlayersInfo[key].user_id,
+                    this.allPlayersInfo[key], this.startSpots[2*i], this.startSpots[2*i+1]);
                 this.player.key = key;
                 this.player.on('clicked', this.clickHandler, this.player);
                 console.log(this.player.name);
             }
             else {
-                this.otherPlayers[count] = this.makePlayer(this.allPlayersInfo[key].user_id, this.allPlayersInfo[key], 300 + 20*i, 400);
+                this.otherPlayers[count] = this.makePlayer(this.allPlayersInfo[key].user_id,
+                    this.allPlayersInfo[key], this.startSpots[2*i], this.startSpots[2*i+1]);
                 this.otherPlayers[count].key = key;
                 this.otherPlayers[count].on('clicked', this.clickHandler, this.otherPlayers[i-1]);
                 count++;
@@ -179,8 +184,15 @@ var GameBoard = new Phaser.Class ({
 	this.infoBox.data.set("special", "none"); //not yet implemented
 
         //create the text variables
-        var text = this.add.text(10, 470, '', { font: '12px Arial', fill: '#FFFFFF', wordWrap: { width: 150, useAdvancedWrap: true }});
-        var name = this.add.text(5, 460, this.infoBox.data.get('name'), { font:'16px Arial' ,fill: '#FFFFFF'});
+        var text = this.add.text(10, 470, '', {
+            font: '12px Arial',
+            fill: '#FFFFFF',
+            wordWrap: { width: 150, useAdvancedWrap: true }
+        });
+        var name = this.add.text(5, 460, this.infoBox.data.get('name'), {
+            font:'16px Arial' ,
+            fill: '#FFFFFF'
+        });
 
         //set the text for inside of the box
         text.setText([
@@ -199,20 +211,6 @@ var GameBoard = new Phaser.Class ({
             // TODO: UPDATE UI TO REFLECT UPDATE
             //possible issue: getting too many updates
             self.updateBoard(data);
-            // if(data.action === "move") {
-            //     console.log(data);
-            //     if(data.player === self.player.name) {
-            //         self.updatePlayer(self.player, data.action, data.value);
-            //     }
-            //     else{
-            //         for(var i = 0; i < self.nPlayers - 1; i++){
-            //             if(data.player === self.otherPlayers[i].name) {
-            //                 self.updatePlayer(self.otherPlayers[i], data.action, data.value);
-            //                 break;
-            //             }
-            //         }
-            //     }
-            // }
             $('#wait').show();
         });
 
@@ -235,21 +233,22 @@ var GameBoard = new Phaser.Class ({
 
         //this is the information that will appear inside of the info box
         sprite.info = data;
+        sprite.spots = [];
+
+        console.log(sprite.spots);
 
         if(Object.keys(sprite.info.location).length == 0) {
-            console.log("if statement true");
             sprite.info.location.name = "None";
         }
 
         if(Object.keys(sprite.info.equipment).length == 0) {
-            console.log("if statement true");
             sprite.info.equipment.list = "None";
         }
 
         //this creates the infobox, i.e. the box that will appear when we click on him.
         sprite.infoBox = this.add.image(sprite.x, sprite.y -60, "customTip");
         sprite.infoBox.setVisible(false);
-        sprite.displayInfo = this.add.text(sprite.infoBox.x - 120, sprite.infoBox.y - 40, " ", { font: '10px Arial', fill: '#FFFFFF', wordWrap: { width: 250, useAdvancedWrap: true }});
+        sprite.displayInfo = this.add.text(sprite.infoBox.x - 120, sprite.infoBox.y - 40, " ", { font: '12px Arial', fill: '#FFFFFF', wordWrap: { width: 250, useAdvancedWrap: true }});
         sprite.displayInfo.setText([
             "Player: " + sprite.name,
             "Equipment: " + sprite.info.equipment.list,
@@ -270,13 +269,11 @@ var GameBoard = new Phaser.Class ({
         //TO DO: if hp changes, move token on health bar
         player.info = data;
         if(Object.keys(player.info.location).length == 0) {
-            console.log("if statement true");
             player.info.location.name = "None";
         }
 
         var nEquip = Object.keys(player.info.equipment).length;
         if(nEquip == 0) {
-            console.log("if statement true");
             player.info.equipment.list = "None";
         }
         else {
@@ -284,7 +281,6 @@ var GameBoard = new Phaser.Class ({
             for(var i = 0; i < nEquip; i++) {
                 player.info.equipment.list += player.info.equipment[i].title;
                 if(i < nEquip-1){
-                    //TO DO: see how equipment list is printed, write list
                     player.info.equipment.list += ", ";
                 }
             }
@@ -300,7 +296,7 @@ var GameBoard = new Phaser.Class ({
     //for each update, change parts of the board that need to be redrawn.
     updateBoard: function(data) {
         //loop through each player and see if there are things to update
-        console.log(data);
+        //console.log(data);
         this.allPlayersInfo = data.players;
         var count = 0;
         for(var i = 0; i < this.nPlayers; i++){
@@ -310,7 +306,7 @@ var GameBoard = new Phaser.Class ({
                 this.updatePlayer(this.player, this.allPlayersInfo[key]);
             }
             else {
-                //update enemies
+                //update other players
                 this.updatePlayer(this.otherPlayers[count], this.allPlayersInfo[key]);
                 count++;
             }
