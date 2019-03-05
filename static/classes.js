@@ -275,12 +275,14 @@ var GameBoard = new Phaser.Class ({
             // console.log(player.x);
             // console.log(data);
             // console.log(player.spots[data.location.name]);
+            player.infoBox.setVisible(false);
+            player.displayInfo.setVisible(false);
             player.x = player.spots[data.location.name].x;
             player.y = player.spots[data.location.name].y;
-            // player.infoBox.x = player.x;
-            // player.infoBox.y = player.y -60;
-            // player.displayInfo.x = player.infoBox.x - 120;
-            // player.displayInfo.y = player.infoBox.y - 40;
+            player.infoBox.x = player.x;
+            player.infoBox.y = player.y -60;
+            player.displayInfo.x = player.infoBox.x - 120;
+            player.displayInfo.y = player.infoBox.y - 40;
             console.log("sprite moved");
         }
         //TO DO: if hp changes, move token on health bar
@@ -340,10 +342,10 @@ var GameBoard = new Phaser.Class ({
         {
             //Move infoBox. I put this here for layering purposes; when its
             //in updatePlayer, for some reason, other sprites appear on top of the box.
-            this.infoBox.x = this.x;
-            this.infoBox.y = this.y -60;
-            this.displayInfo.x = this.infoBox.x - 120;
-            this.displayInfo.y = this.infoBox.y - 40;
+            // this.infoBox.x = this.x;
+            // this.infoBox.y = this.y -60;
+            // this.displayInfo.x = this.infoBox.x - 120;
+            // this.displayInfo.y = this.infoBox.y - 40;
             this.infoBox.setVisible(true);
             this.displayInfo.setVisible(true);
         }
