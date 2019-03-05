@@ -215,10 +215,24 @@ def on_join(json):
 
 @socketio.on('disconnect')
 def on_disconnect():
+
+    # Tell everyone in the room about the disconnect
     name = connections[request.sid]['name']
     room_id = connections[request.sid]['room_id']
     socketio.emit('message', {'data': name+' has left the room', 'color': S_COLOR}, room=room_id)
-    connections.pop(request.sid, None)
+
+    # FOR DEBUGGING: Print disconnect
+    print('{} disconnected from room {}'.format(name, room_id))
+
+    # Remove user from all connection data structures
+    connections.pop(request.sid)
+    get_sid.pop((name, room_id))
+
+    # Close room if it is now empty
+    if len([x for x in connections.values() if x['room_id'] == room_id]) == 0:
+        print('everyone left, closing room {}'.format(room_id)) # DEBUGGING
+        socketio.close_room(room_id)
+        rooms.pop(room_id)
 
 if __name__ == '__main__':
     socketio.run(app, debug=True, host="0.0.0.0", port=80)
