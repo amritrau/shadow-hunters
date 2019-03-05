@@ -72,6 +72,7 @@ class GameContext:
             self.tell_h("Zone {} contains: {}.".format(z+1, ', '.join([a.name for a in self.zones[z].areas])))
         for p in self.players:
             self.direct_h("You ({}) are {} ({}).".format(p.user_id, p.character.name, cli.ALLEGIANCE_MAP[p.character.alleg]), p.socket_id)
+        self.characters_h('characters', [c.dump() for c in self.characters])
         while True:
             for player in self.getLivePlayers():
                     player.takeTurn()
