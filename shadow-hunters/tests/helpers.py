@@ -37,33 +37,23 @@ def fresh_gc_ef(ask_function = lambda x, y, z: { 'value': random.choice(y['optio
     return (gc, ef)
 
 def get_a_hunter(gc):
-    for p in gc.players:
-        if p.character.alleg == 2:
-            return p
+    return [p for p in gc.players if p.character.alleg == 2][0]
 
 def get_a_shadow(gc):
-    for p in gc.players:
-        if p.character.alleg == 0:
-            return p
+    return [p for p in gc.players if p.character.alleg == 0][0]
 
 def get_a_neutral(gc):
-    for p in gc.players:
-        if p.character.alleg == 1:
-            return p
+    return [p for p in gc.players if p.character.alleg == 1][0]
 
 def get_card_by_title(ef, title):
-    
-    # search white deck
-    for c in ef.WHITE_DECK.cards:
-        if c.title == title:
-            return c
+    all_cards = ef.WHITE_DECK.cards + ef.BLACK_DECK.cards + ef.GREEN_DECK.cards
+    return [c for c in all_cards if c.title == title][0]
 
-    # search black deck
-    for c in ef.BLACK_DECK.cards:
-        if c.title == title:
-            return c
+def get_area_by_name(gc, name):
+    for z in gc.zones:
+        for a in z.areas:
+            if a.name == name:
+                return a
 
-    # search green deck
-    for c in ef.GREEN_DECK.cards:
-        if c.title == title:
-            return c
+def get_character_by_name(ef, name):
+    return [c for c in ef.CHARACTERS if c.name == name][0]

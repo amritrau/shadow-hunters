@@ -689,10 +689,10 @@ class ElementFactory:
             gc.update_h('select', {})
             target_Player = [p for p in gc.getLivePlayers() if p.user_id == target][0]
 
-            data = {'options': ["Heal 1 HP", "Damage 2 HP"]}
+            data = {'options': ["Heal 1 damage", "Give 2 damage"]}
             amount = gc.ask_h('select', data, player.user_id)['value']
             gc.update_h('select', {})
-            if amount == "Heal 1 HP":
+            if amount == "Heal 1 damage":
                 target_Player.moveHP(1)
             else:
                 target_Player.moveHP(-2)
