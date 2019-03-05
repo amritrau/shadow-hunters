@@ -68,7 +68,7 @@ var GameBoard = new Phaser.Class ({
         //BELOW CODE FOR DEBUGGING - uncomment to use
         // console.log(this.charInfo);
         // console.log(typeof this.charInfo);
-        console.log(this.gameData.public);
+        //console.log(this.gameData.public);
         // console.log(this.gameData.public.players);
         // var key = Object.keys(this.otherPlayersInfo)[0];
         // console.log(this.otherPlayersInfo[key].user_id);
@@ -140,14 +140,14 @@ var GameBoard = new Phaser.Class ({
         this.nPlayers = Object.keys(this.allPlayersInfo).length;
         var count = 0;
         for(var i = 0; i < this.nPlayers; i++) {
-            console.log("in for loop");
+            //console.log("in for loop");
             var key = Object.keys(this.allPlayersInfo)[i];
             if(this.allPlayersInfo[key].user_id === this.gameData.private.user_id) {
                 this.player = this.makePlayer(this.allPlayersInfo[key].user_id,
                     this.allPlayersInfo[key], this.startSpots[2*i], this.startSpots[2*i+1]);
                 this.player.key = key;
                 this.player.on('clicked', this.clickHandler, this.player);
-                console.log(this.player.name);
+                //console.log(this.player.name);
             }
             else {
                 this.otherPlayers[count] = this.makePlayer(this.allPlayersInfo[key].user_id,
@@ -272,9 +272,9 @@ var GameBoard = new Phaser.Class ({
     updatePlayer: function (player, data) {
         //TO DO: if location is different, move character
         if(Object.keys(data.location).length != 0 && player.info.location.name !== data.location.name) {
-            console.log(player.x);
-            console.log(data);
-            console.log(player.spots[data.location.name]);
+            // console.log(player.x);
+            // console.log(data);
+            // console.log(player.spots[data.location.name]);
             player.x = player.spots[data.location.name].x;
             player.y = player.spots[data.location.name].y;
             player.infoBox.x = player.x;
