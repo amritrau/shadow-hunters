@@ -153,7 +153,7 @@ var GameBoard = new Phaser.Class ({
                 this.otherPlayers[count] = this.makePlayer(this.allPlayersInfo[key].user_id,
                     this.allPlayersInfo[key], this.startSpots[2*i], this.startSpots[2*i+1]);
                 this.otherPlayers[count].key = key;
-                this.otherPlayers[count].on('clicked', this.clickHandler, this.otherPlayers[i-1]);
+                this.otherPlayers[count].on('clicked', this.clickHandler, this.otherPlayers[count]);
                 count++;
             }
         }
