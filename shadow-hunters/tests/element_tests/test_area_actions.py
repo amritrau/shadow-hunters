@@ -12,6 +12,7 @@ from tests import helpers
 # are subsumed by tests of player.drawCard()
 
 def test_underworld_gate():
+    # TODO: Relies on drawCard, unclear how to test
     assert 1
 
 def test_weird_woods():

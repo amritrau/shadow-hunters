@@ -65,15 +65,19 @@ def test_reveal():
     assert p.state == 1
 
 def test_takeTurn():
+    # TODO: Unclear how to meaningfully test this function
     assert 1
 
 def test_drawCard():
+    # TODO: Unclear how to meaningfully test this function
     assert 1
 
 def test_attack():
+    # TODO: Test unwritten because implementation is subject to change
     assert 1
 
 def test_defend():
+    # TODO: Test unwritten because implementation is subject to change
     assert 1
 
 def test_moveHP():
