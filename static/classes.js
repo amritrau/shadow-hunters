@@ -68,7 +68,7 @@ var GameBoard = new Phaser.Class ({
         //BELOW CODE FOR DEBUGGING - uncomment to use
         // console.log(this.charInfo);
         // console.log(typeof this.charInfo);
-        // console.log(this.gameData.public);
+        console.log(this.gameData.public);
         // console.log(this.gameData.public.players);
         // var key = Object.keys(this.otherPlayersInfo)[0];
         // console.log(this.otherPlayersInfo[key].user_id);
@@ -233,7 +233,12 @@ var GameBoard = new Phaser.Class ({
 
         //this is the information that will appear inside of the info box
         sprite.info = data;
-        sprite.spots = [];
+        sprite.spots = {};
+
+        for(var i = 0; i < 3; i++) {
+            sprite.spots[this.gameData.public.zones[i][0].name] = {x: locx - 200 + 140*(i*i), y: locy + 110*(i%2)};
+            sprite.spots[this.gameData.public.zones[i][1].name] = {x: locx - 100 + 140*(i*i), y: locy - 120 + 230*(i%2)};
+        }
 
         console.log(sprite.spots);
 
@@ -266,6 +271,18 @@ var GameBoard = new Phaser.Class ({
     //updates information about each player
     updatePlayer: function (player, data) {
         //TO DO: if location is different, move character
+        if(Object.keys(data.location).length != 0 && player.info.location.name !== data.location.name) {
+            console.log(player.x);
+            console.log(data);
+            console.log(player.spots[data.location.name]);
+            player.x = player.spots[data.location.name].x;
+            player.y = player.spots[data.location.name].y;
+            player.infoBox.x = player.x;
+            player.infoBox.y = player.y -60;
+            player.displayInfo.x = player.infoBox.x - 120;
+            player.displayInfo.y = player.infoBox.y - 40;
+            console.log("sprite moved");
+        }
         //TO DO: if hp changes, move token on health bar
         player.info = data;
         if(Object.keys(player.info.location).length == 0) {
