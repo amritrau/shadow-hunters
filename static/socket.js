@@ -70,14 +70,6 @@ socket.on('message', function(msg) {
     $("#message_holder").scrollTop($("#message_holder")[0].scrollHeight);
 });
 
-// Receive the signal to start the game
-// socket.on('game_start', function(data) {
-//     $('#start').remove();
-//     // TODO: SET UP INITIAL UI BASED ON GAME_DATA HERE
-//     var html = '<p id="wait">Waiting...</p>';
-//     $('#game').append(html);
-// });
-
 // Receive a game state update
 // socket.on('update', function(data) {
 //     $('#'+data.form).hide();
@@ -96,4 +88,16 @@ socket.on('ask', function(data) {
     }
     $('#'+data.form+'_fields').append(option);
     $('#'+data.form).show();
+});
+
+socket.on('disconnect', function(reason) {
+    console.log("oops i disconnected! reason: "+reason);    
+    /*
+    if (reason === 'io server disconnect') 
+    {
+        // the disconnection was initiated by the server, you need to reconnect manually
+        socket.connect();
+    }
+    // else the socket will automatically try to reconnect
+    */
 });

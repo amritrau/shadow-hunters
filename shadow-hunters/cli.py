@@ -45,11 +45,10 @@ class ElementFactory:
         def use_moody_goblin(args):
             players_w_items = [p for p in args['self'].gc.getLivePlayers() if (len(p.equipment) and p != args['self'])]
             if len(players_w_items):
-                data = {'options': [p.user_id for p in args['self'].gc.getLivePlayers()]}
+                data = {'options': [p.user_id for p in players_w_items]}
                 target = args['self'].gc.ask_h('select', data, args['self'].user_id)['value']
                 args['self'].gc.update_h('select', {})
                 target_Player = [p for p in args['self'].gc.getLivePlayers() if p.user_id == target][0]
-                assert(len(target_Player.equipment) > 0)  # TODO For testing purposes
                 data = {'options': [eq.title for eq in target_Player.equipment]}
                 equip = args['self'].gc.ask_h('select', data, args['self'].user_id)['value']
                 args['self'].gc.update_h('select', {})
@@ -80,7 +79,7 @@ class ElementFactory:
                 holder = None,
                 is_equip = True,
                 force_use = False,
-                use = lambda is_attack, amt: max(0, amt - 1)  # applies to both attack and defend
+                use = lambda is_attack, successful, amt: max(0, amt - 1) # applies to both attack and defend
             ),
             card.Card(
                 title = "Flare of Judgement",
@@ -128,7 +127,7 @@ class ElementFactory:
                 holder = None,
                 is_equip = True,
                 force_use = False,
-                use = lambda is_attack, amt: amt + is_attack if amt else amt # if we're attacking give 1 point extra
+                use = lambda is_attack, successful, amt: amt + 1 if (is_attack and successful) else amt
             ),
             card.Card(
                 title = "Chainsaw",
@@ -137,7 +136,7 @@ class ElementFactory:
                 holder = None,
                 is_equip = True,
                 force_use = False,
-                use = lambda is_attack, amt: amt + is_attack if amt else amt
+                use = lambda is_attack, successful, amt: amt + 1 if (is_attack and successful) else amt 
             ),
             card.Card(
                 title = "Rusted Broad Axe",
@@ -146,7 +145,7 @@ class ElementFactory:
                 holder = None,
                 is_equip = True,
                 force_use = False,
-                use = lambda is_attack, amt: amt + is_attack if amt else amt
+                use = lambda is_attack, successful, amt: amt + 1 if (is_attack and successful) else amt
             ),
             card.Card(
                 title = "Moody Goblin",
@@ -485,7 +484,7 @@ class ElementFactory:
 
         GREEN_CARDS = [
             card.Card(
-                title = "a Hermit Card",
+                title = "Hermit\'s Blackmail",
                 desc = "I bet you're either a Neutral or a Hunter. If so, you must either give an Equipment card to the current player or receive 1 damage!",
                 color = 2, # 2: GREEN
                 holder = None,
@@ -494,7 +493,7 @@ class ElementFactory:
                 use = hermit_blackmail
             ),
             card.Card(
-                title = "a Hermit Card",
+                title = "Hermit\'s Blackmail",
                 desc = "I bet you're either a Neutral or a Hunter. If so, you must either give an Equipment card to the current player or receive 1 damage!",
                 color = 2, # 2: GREEN
                 holder = None,
@@ -503,7 +502,7 @@ class ElementFactory:
                 use = hermit_blackmail
             ),
             card.Card(
-                title = "a Hermit Card",
+                title = "Hermit\'s Greed",
                 desc = "I bet you're either a Neutral or a Shadow. If so, you must either give an Equipment card to the current player or receive 1 damage!",
                 color = 2, # 2: GREEN
                 holder = None,
@@ -512,7 +511,7 @@ class ElementFactory:
                 use = hermit_greed
             ),
             card.Card(
-                title = "a Hermit Card",
+                title = "Hermit\'s Greed",
                 desc = "I bet you're either a Neutral or a Shadow. If so, you must either give an Equipment card to the current player or receive 1 damage!",
                 color = 2, # 2: GREEN
                 holder = None,
@@ -521,7 +520,7 @@ class ElementFactory:
                 use = hermit_greed
             ),
             card.Card(
-                title = "a Hermit Card",
+                title = "Hermit\'s Anger",
                 desc = "I bet you're either a Hunter or a Shadow. If so, you must either give an Equipment card to the current player or receive 1 damage!",
                 color = 2, # 2: GREEN
                 holder = None,
@@ -530,7 +529,7 @@ class ElementFactory:
                 use = hermit_anger
             ),
             card.Card(
-                title = "a Hermit Card",
+                title = "Hermit\'s Anger",
                 desc = "I bet you're either a Hunter or a Shadow. If so, you must either give an Equipment card to the current player or receive 1 damage!",
                 color = 2, # 2: GREEN
                 holder = None,
@@ -539,7 +538,7 @@ class ElementFactory:
                 use = hermit_anger
             ),
             card.Card(
-                title = "a Hermit Card",
+                title = "Hermit\'s Slap",
                 desc = "I bet you're a Hunter. If so, you receive 1 damage!",
                 color = 2, # 2: GREEN
                 holder = None,
@@ -548,7 +547,7 @@ class ElementFactory:
                 use = hermit_slap
             ),
             card.Card(
-                title = "a Hermit Card",
+                title = "Hermit\'s Slap",
                 desc = "I bet you're a Hunter. If so, you receive 1 damage!",
                 color = 2, # 2: GREEN
                 holder = None,
@@ -557,7 +556,7 @@ class ElementFactory:
                 use = hermit_slap
             ),
             card.Card(
-                title = "a Hermit Card",
+                title = "Hermit\'s Spell",
                 desc = "I bet you're a Shadow. If so, you receive 1 damage!",
                 color = 2, # 2: GREEN
                 holder = None,
@@ -566,7 +565,7 @@ class ElementFactory:
                 use = hermit_spell
             ),
             card.Card(
-                title = "a Hermit Card",
+                title = "Hermit\'s Exorcism",
                 desc = "I bet you're a Shadow. If so, you receive 2 damage!",
                 color = 2, # 2: GREEN
                 holder = None,
@@ -575,7 +574,7 @@ class ElementFactory:
                 use = hermit_exorcism
             ),
             card.Card(
-                title = "a Hermit Card",
+                title = "Hermit\'s Nurturance",
                 desc = "I bet you're a Neutral. If so, you heal 1 damage! (However, if you have no damage, then you receive 1 damage!)",
                 color = 2, # 2: GREEN
                 holder = None,
@@ -584,7 +583,7 @@ class ElementFactory:
                 use = hermit_nurturance
             ),
             card.Card(
-                title = "a Hermit Card",
+                title = "Hermit\'s Aid",
                 desc = "I bet you're a Hunter. If so, you heal 1 damage! (However, if you have no damage, then you receive 1 damage!)",
                 color = 2, # 2: GREEN
                 holder = None,
@@ -593,7 +592,7 @@ class ElementFactory:
                 use = hermit_aid
             ),
             card.Card(
-                title = "a Hermit Card",
+                title = "Hermit\'s Fiddle",
                 desc = "I bet you're a Shadow. If so, you heal 1 damage! (However, if you have no damage, then you receive 1 damage!)",
                 color = 2, # 2: GREEN
                 holder = None,
@@ -611,12 +610,12 @@ class ElementFactory:
         def shadow_win_cond(gc, player):
             no_living_hunters = (len([p for p in gc.getLivePlayers() if p.character.alleg == 2]) == 0)
             neutrals_dead_3 = (len([p for p in gc.getDeadPlayers() if p.character.alleg == 1]) >= 3)
-            print("Living hunters:", [p for p in gc.getLivePlayers() if p.character.alleg == 2])
+            # print("Living hunters:", [p for p in gc.getLivePlayers() if p.character.alleg == 2])
             return no_living_hunters or neutrals_dead_3
 
         def hunter_win_cond(gc, player):
             no_living_shadows = (len([p for p in gc.getLivePlayers() if p.character.alleg == 0]) == 0)
-            print("Living shadows:", [p for p in gc.getLivePlayers() if p.character.alleg == 0])
+            # print("Living shadows:", [p for p in gc.getLivePlayers() if p.character.alleg == 0])
             return no_living_shadows
 
         def allie_win_cond(gc, player):
