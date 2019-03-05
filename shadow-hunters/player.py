@@ -1,4 +1,4 @@
-import cli
+import elements
 
 class Player:
     def __init__(self, user_id, socket_id):
@@ -201,7 +201,7 @@ class Player:
     def checkDeath(self):
         if self.hp >= self.character.max_hp:
             self.state = 0  # DEAD state
-            self.gc.tell_h("{} ({}: {}) died!".format(self.user_id, cli.ALLEGIANCE_MAP[self.character.alleg], self.character.name))
+            self.gc.tell_h("{} ({}: {}) died!".format(self.user_id, elements.ALLEGIANCE_MAP[self.character.alleg], self.character.name))
         else: ## TODO Remove when not debugging
             self.gc.tell_h("{}'s HP was set to {}!".format(self.user_id, self.hp))
 

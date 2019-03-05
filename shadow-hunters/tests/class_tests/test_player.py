@@ -5,7 +5,7 @@ import player
 import area
 import character
 import game_context
-import cli
+import elements
 
 # test_player.py
 # Tests for the player object

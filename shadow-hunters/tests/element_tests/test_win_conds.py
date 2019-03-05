@@ -3,7 +3,6 @@ import random
 
 import game_context
 import player
-import cli
 from tests import helpers
 
 # test_win_conds.py
