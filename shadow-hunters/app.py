@@ -91,7 +91,6 @@ def start_game(room_id, players):
             direct_h = lambda x, sid: server_msg(x, sid),
             ask_h = lambda x, y, z: server_ask(x, y, z, room_id),
             update_h = lambda x, y: server_update(x, y, room_id),
-            characters_h = lambda x, y: server_update(x, y, room_id)
         )
 
     gc.update_h = lambda x, y: server_update(x, gc.dump()[0], room_id)
