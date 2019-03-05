@@ -49,7 +49,7 @@ var GameBoard = new Phaser.Class ({
         this.player;
         this.allPlayersInfo;
         this.nPlayers;
-        this.otherPlayers = [];
+        this.otherPlayers = {};
         this.tip;
         this.gameData;
         this.charInfo;
@@ -150,10 +150,10 @@ var GameBoard = new Phaser.Class ({
                 //console.log(this.player.name);
             }
             else {
-                this.otherPlayers[count] = this.makePlayer(this.allPlayersInfo[key].user_id,
+                this.otherPlayers[key] = this.makePlayer(this.allPlayersInfo[key].user_id,
                     this.allPlayersInfo[key], this.startSpots[2*i], this.startSpots[2*i+1]);
-                this.otherPlayers[count].key = key;
-                this.otherPlayers[count].on('clicked', this.clickHandler, this.otherPlayers[count]);
+                //this.otherPlayers[count].key = key;
+                this.otherPlayers[key].on('clicked', this.clickHandler, this.otherPlayers[key]);
                 count++;
             }
         }
@@ -313,9 +313,8 @@ var GameBoard = new Phaser.Class ({
     //for each update, change parts of the board that need to be redrawn.
     updateBoard: function(data) {
         //loop through each player and see if there are things to update
-        //console.log(data);
+        console.log(data);
         this.allPlayersInfo = data.players;
-        var count = 0;
         for(var i = 0; i < this.nPlayers; i++){
             var key = Object.keys(this.allPlayersInfo)[i];
             if(key === this.player.key) {
@@ -324,11 +323,15 @@ var GameBoard = new Phaser.Class ({
             }
             else {
                 //update other players
-                this.updatePlayer(this.otherPlayers[count], this.allPlayersInfo[key]);
-                count++;
+                this.updatePlayer(this.otherPlayers[key], this.allPlayersInfo[key]);
+                // for(var j = 0; j < this.nPlayers-1; j++) {
+                //     if(this.otherPlayers[j].key == key) {
+                //         this.updatePlayer(this.otherPlayers[j], this.allPlayersInfo[key]);
+                //         break;
+                //     }
+                // }
             }
         }
-
     },
     //if player clicked and box is visible, make invisible. if box is invisible, make visible
     clickHandler: function (player)
