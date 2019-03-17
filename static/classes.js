@@ -84,6 +84,7 @@ var GameBoard = new Phaser.Class ({
             '/static/assets/dude.png',
             { frameWidth: 32, frameHeight: 48 }
         );
+        this.load.image('tracker', '/static/assets/dot.png');
         this.load.image('0', '/static/assets/zero.png');
         this.load.image('1', '/static/assets/one.png');
         this.load.image('2', '/static/assets/two.png');
@@ -241,6 +242,8 @@ var GameBoard = new Phaser.Class ({
         }
 
         console.log(sprite.spots);
+
+        sprite.hpTracker = this.add.image(960, 580, 'tracker');
 
         if(Object.keys(sprite.info.location).length == 0) {
             sprite.info.location.name = "None";
