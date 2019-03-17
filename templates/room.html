@@ -5,7 +5,12 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
         <script> var usrctx = {{ context|tojson }}; </script>
-        <script> var socket; </script>
+        <script> var socket;
+                 var WaitingRoom;
+                 var GameBoard;
+        </script>
+        <script src={{ url_for("static", filename="waitRoom.js") }}></script>
+        <script src={{ url_for("static", filename="gameBoard.js") }}></script>
         <script src={{ url_for("static", filename="classes.js") }}></script>
         <script src={{ url_for("static", filename="socket.js") }}></script>
         <link rel= "stylesheet" type= "text/css" href= {{ url_for('static',filename='styles/shadow.css') }}>
