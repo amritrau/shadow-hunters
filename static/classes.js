@@ -1,6 +1,14 @@
 // url where gfx resources are stored
 var gfx = "https://s3.amazonaws.com/shadowhunters.gfxresources/"
 
+// Player location coordinates (row = player number, even columns are x coords, odd columns are y coords)
+var loc = [ [336.909,199.411,383.466,117.760,682.109,117.760,728.666,199.411,457.000,342.000,560.000,342.000], 
+            [361.909,156.110,408.466, 74.459,657.109, 74.459,703.666,156.110,507.000,342.000,610.000,342.000],
+            [382.965,197.134,429.522,115.483,636.053,115.483,682.610,197.134,482.000,380.747,585.000,380.747],
+            [406.191,239.411,452.748,157.760,612.827,157.760,659.384,239.411,457.000,422.000,560.000,422.000],
+            [431.191,196.110,477.748,114.459,587.827,114.459,634.384,196.110,507.000,422.000,610.000,422.000]
+            ];
+
 // this is the scene that will be used in the waiting room, i.e. before the game starts
 var WaitingRoom = new Phaser.Class ({
     Extends: Phaser.Scene,
@@ -68,7 +76,7 @@ var GameBoard = new Phaser.Class ({
         //BELOW CODE FOR DEBUGGING - uncomment to use
         // console.log(this.charInfo);
         // console.log(typeof this.charInfo);
-        //console.log(this.gameData.public);
+        console.log(this.gameData.public);
         // console.log(this.gameData.public.players);
         // var key = Object.keys(this.otherPlayersInfo)[0];
         // console.log(this.otherPlayersInfo[key].user_id);
@@ -101,9 +109,13 @@ var GameBoard = new Phaser.Class ({
         this.load.image('13', '/static/assets/thirteen.png');
         this.load.image('14', '/static/assets/fourteen.png');
         this.load.image('text', '/static/assets/text.png');
+        this.load.image('location', gfx + 'location.png');
 
-
-
+        this.load.image('player1', gfx + 'white-person.png')
+        this.load.image('player2', gfx + 'black-person.png')
+        this.load.image('player3', gfx + 'green-person.png')
+        this.load.image('player4', gfx + 'blue-person.png')
+        this.load.image('player5', gfx + 'pink-person.png')
 
         this.load.image('box', '/static/assets/box.png');
     },
@@ -115,6 +127,10 @@ var GameBoard = new Phaser.Class ({
         var background = this.add.image(533, 300, 'background');
         background.displayWidth = this.sys.canvas.width;
         background.displayHeight = this.sys.canvas.height;
+
+        this.add.image(533.000,382.719, 'location');
+        this.add.image(407.399,157.493, 'location').angle = 120;
+        this.add.image(658.601,157.493, 'location').angle = 60;
 
         this.add.image(970,20, '14');
         this.add.image(970,60, '13');
@@ -131,13 +147,14 @@ var GameBoard = new Phaser.Class ({
         this.add.image(970,500, '2');
         this.add.image(970,540, '1');
         this.add.image(970,580, '0');
+        
 
         //this.makeBox();
-       // this.block = this.add.image(this.player.x +20, this.player.y, "text");
-       // this.block.setVisible(false);
-       // this.player.on('clicked', this.clickHandler, this.block);
+        // this.block = this.add.image(this.player.x +20, this.player.y, "text");
+        // this.block.setVisible(false);
+        // this.player.on('clicked', this.clickHandler, this.block);
 
-       //this loop creates all players: self and enemies.
+        //this loop creates all players: self and enemies.
         this.nPlayers = Object.keys(this.allPlayersInfo).length;
         var count = 0;
         for(var i = 0; i < this.nPlayers; i++) {
@@ -145,14 +162,14 @@ var GameBoard = new Phaser.Class ({
             var key = Object.keys(this.allPlayersInfo)[i];
             if(this.allPlayersInfo[key].user_id === this.gameData.private.user_id) {
                 this.player = this.makePlayer(this.allPlayersInfo[key].user_id,
-                    this.allPlayersInfo[key], this.startSpots[2*i], this.startSpots[2*i+1]);
+                    this.allPlayersInfo[key], this.startSpots[2*i], this.startSpots[2*i+1], i+1);
                 this.player.key = key;
                 this.player.on('clicked', this.clickHandler, this.player);
                 //console.log(this.player.name);
             }
             else {
                 this.otherPlayers[key] = this.makePlayer(this.allPlayersInfo[key].user_id,
-                    this.allPlayersInfo[key], this.startSpots[2*i], this.startSpots[2*i+1]);
+                    this.allPlayersInfo[key], this.startSpots[2*i], this.startSpots[2*i+1], i+1);
                 //this.otherPlayers[count].key = key;
                 this.otherPlayers[key].on('clicked', this.clickHandler, this.otherPlayers[key]);
                 count++;
@@ -182,7 +199,7 @@ var GameBoard = new Phaser.Class ({
         this.infoBox.data.set("name", this.charInfo.name);
         this.infoBox.data.set("team", this.charInfo.alleg);
         this.infoBox.data.set("win", this.charInfo.win_cond_desc);
-	this.infoBox.data.set("special", "none"); //not yet implemented
+        this.infoBox.data.set("special", "none"); //not yet implemented
 
         //create the text variables
         var text = this.add.text(10, 470, '', {
@@ -226,19 +243,23 @@ var GameBoard = new Phaser.Class ({
 
 
     //the makePlayer function is what creates our sprite and adds him to the board.
-    makePlayer: function (name, data, locx, locy) {
-        var sprite = this.add.sprite(locx, locy, 'dude');
+    makePlayer: function (name, data, locx, locy, num) {
+        var sprite = this.add.sprite(locx, locy, 'player' + String(num));
 
         //our player's name
         sprite.name = name;
+        sprite.number = num;
 
         //this is the information that will appear inside of the info box
         sprite.info = data;
         sprite.spots = {};
 
+        var count = 0;
+
         for(var i = 0; i < 3; i++) {
-            sprite.spots[this.gameData.public.zones[i][0].name] = {x: locx - 200 + 140*(i*i), y: locy + 110*(i%2)};
-            sprite.spots[this.gameData.public.zones[i][1].name] = {x: locx - 100 + 140*(i*i), y: locy - 120 + 230*(i%2)};
+            sprite.spots[this.gameData.public.zones[i][0].name] = {x: loc[num-1][count], y: loc[num-1][count+1]};
+            sprite.spots[this.gameData.public.zones[i][1].name] = {x: loc[num-1][count+2], y: loc[num-1][count+3]};
+            count += 4;
         }
 
         console.log(sprite.spots);
@@ -278,6 +299,8 @@ var GameBoard = new Phaser.Class ({
             // console.log(player.x);
             // console.log(data);
             // console.log(player.spots[data.location.name]);
+            console.log(data.location.name);
+            console.log(player.spots[data.location.name]);
             player.infoBox.setVisible(false);
             player.displayInfo.setVisible(false);
             player.x = player.spots[data.location.name].x;

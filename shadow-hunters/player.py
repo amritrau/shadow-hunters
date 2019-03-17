@@ -17,7 +17,7 @@ class Player:
 
     def reveal(self):
         # self.character.special()
-        self.status = 1
+        self.state = 1
 
     def takeTurn(self):
         # Announce player
@@ -157,30 +157,33 @@ class Player:
 
     def drawCard(self, deck):
         drawn = deck.drawCard()
-        self.gc.tell_h("{} drew {}!".format(self.user_id, drawn.title))
+        public_title = drawn.title if drawn.color != 2 else 'a Hermit Card'
+        self.gc.tell_h("{} drew {}!".format(self.user_id, public_title))
         self.gc.direct_h("Card ({}): {}".format(drawn.title, drawn.desc), self.socket_id)
         if drawn.force_use:
-            self.gc.tell_h("{} used {}!".format(self.user_id, drawn.title))
+            self.gc.tell_h("{} used {}!".format(self.user_id, public_title))
             args = {'self': self}
             drawn.use(args)
         if drawn.is_equipment:
-            self.gc.tell_h("{} added {} to their arsenal!".format(self.user_id, drawn.title))
+            self.gc.tell_h("{} added {} to their arsenal!".format(self.user_id, public_title))
             self.equipment.append(drawn)
         self.gc.update_h('yesno', {})
 
     def attack(self, other, amount):
-        orig_amount = amount
+        is_attack = True
+        successful = (amount != 0)
         for eq in self.equipment:
-            amount = eq.use(True, amount, orig_amount) # Compose each of these functions
-            # "True" argument refers to is_attack
+            amount = eq.use(is_attack, successful, amount) # Compose each of these functions
 
         dealt = other.defend(self, amount)
         return dealt
 
     def defend(self, other, amount):
+        is_attack = False
+        successful = False # irrelevant for defend
         for eq in self.equipment:
-            amount = eq.use(False, amount) # Compose each of these functions
-            # "False" argument refers to is_attack
+            amount = eq.use(is_attack, successful, amount) # Compose each of these functions
+        
         dealt = amount
         self.moveHP(-dealt)
         return dealt
@@ -196,7 +199,7 @@ class Player:
         self.checkDeath()
 
     def checkDeath(self):
-        if self.hp == self.character.max_hp:
+        if self.hp >= self.character.max_hp:
             self.state = 0  # DEAD state
             self.gc.tell_h("{} ({}: {}) died!".format(self.user_id, cli.ALLEGIANCE_MAP[self.character.alleg], self.character.name))
         else: ## TODO Remove when not debugging
@@ -210,15 +213,13 @@ class Player:
         self.gc.update_h('yesno', {})
 
     def dump(self):
-        loc = {}
-        if self.location:
-            loc = self.location.dump()
         return {
             'user_id': self.user_id,
             'socket_id': self.socket_id,
             'state': self.state,
             'equipment': [eq.dump() for eq in self.equipment],
             'hp': self.hp,
-            'location': loc,
-            'character': self.character.dump()
+            'character': self.character.dump() if self.character else {},
+            'modifiers': self.modifiers,
+            'location': self.location.dump() if self.location else {},
         }
