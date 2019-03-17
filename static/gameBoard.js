@@ -20,7 +20,7 @@ var GameBoard = new Phaser.Class ({
         this.gameData;
         this.charInfo;
         this.infoBox;
-        this.startSpots = [490, 220, 530, 220, 570, 220, 510, 260, 550, 260]; //list of x, y coordinates for 5 players
+        this.startSpots = [[490, 220], [530, 220], [570, 220], [510, 260], [550, 260]]; //list of x, y coordinates for 5 players
 
         // Player location coordinates (row = player number, even columns are x coords, odd columns are y coords)
         this.allSpots = [[336.909,199.411,383.466,117.760,682.109,117.760,728.666,199.411,457.000,342.000,560.000,342.000],
@@ -29,6 +29,10 @@ var GameBoard = new Phaser.Class ({
                          [406.191,239.411,452.748,157.760,612.827,157.760,659.384,239.411,457.000,422.000,560.000,422.000],
                          [431.191,196.110,477.748,114.459,587.827,114.459,634.384,196.110,507.000,422.000,610.000,422.000]
                      ];
+
+        //y coordinates of all possible spots on health bar
+        this.hpSpots = [585];
+        this.hpStart = 585;
     },
 
     //function to initialize the data sent into gameboard from waiting room
@@ -54,9 +58,9 @@ var GameBoard = new Phaser.Class ({
         // url where gfx resources are stored
         var gfx = "https://s3.amazonaws.com/shadowhunters.gfxresources/";
 
+        // load background and health bar
         this.load.image('background', gfx + 'background-1066.png');
         this.load.image("customTip", "/static/assets/customTip.png");
-        this.load.image('tracker', '/static/assets/dot.png');
         this.load.image('0', '/static/assets/zero.png');
         this.load.image('1', '/static/assets/one.png');
         this.load.image('2', '/static/assets/two.png');
@@ -75,11 +79,18 @@ var GameBoard = new Phaser.Class ({
         this.load.image('text', '/static/assets/text.png');
         this.load.image('location', gfx + 'location.png');
 
-        this.load.image('player1', gfx + 'white-person.png')
-        this.load.image('player2', gfx + 'black-person.png')
-        this.load.image('player3', gfx + 'green-person.png')
-        this.load.image('player4', gfx + 'blue-person.png')
-        this.load.image('player5', gfx + 'pink-person.png')
+        // load player sprites and hp trackers
+        this.load.image('player1', gfx + 'white-person.png');
+        this.load.image('player2', gfx + 'black-person.png');
+        this.load.image('player3', gfx + 'green-person.png');
+        this.load.image('player4', gfx + 'blue-person.png');
+        this.load.image('player5', gfx + 'pink-person.png');
+
+        this.load.image('hpp1', '/static/assets/whiteDot.png');
+        this.load.image('hpp2', '/static/assets/blackDot.png');
+        this.load.image('hpp3', '/static/assets/greenDot.png');
+        this.load.image('hpp4', '/static/assets/blueDot.png');
+        this.load.image('hpp5', '/static/assets/pinkDot.png');
 
         this.load.image('box', '/static/assets/box.png');
     },
@@ -120,15 +131,14 @@ var GameBoard = new Phaser.Class ({
             var key = Object.keys(this.allPlayersInfo)[i];
             if(this.allPlayersInfo[key].user_id === this.gameData.private.user_id) {
                 this.player = this.makePlayer(this.allPlayersInfo[key].user_id,
-                    this.allPlayersInfo[key], this.startSpots[2*i], this.startSpots[2*i+1], i+1);
+                    this.allPlayersInfo[key], i+1);
                 this.player.key = key;
                 this.player.on('clicked', this.clickHandler, this.player);
                 //console.log(this.player.name);
             }
             else {
                 this.otherPlayers[key] = this.makePlayer(this.allPlayersInfo[key].user_id,
-                    this.allPlayersInfo[key], this.startSpots[2*i], this.startSpots[2*i+1], i+1);
-                //this.otherPlayers[count].key = key;
+                    this.allPlayersInfo[key], i+1);
                 this.otherPlayers[key].on('clicked', this.clickHandler, this.otherPlayers[key]);
                 count++;
             }
@@ -198,8 +208,9 @@ var GameBoard = new Phaser.Class ({
     },
 
     //the makePlayer function is what creates our sprite and adds him to the board.
-    makePlayer: function (name, data, locx, locy, num) {
-        var sprite = this.add.sprite(locx, locy, 'player' + String(num));
+    makePlayer: function (name, data, num) {
+        var sprite = this.add.sprite(this.startSpots[num-1][0], this.startSpots[num-1][1], 'player' + String(num));
+        sprite.hpTracker = this.add.image(900 + (35*(num-1)), this.hpStart, 'hpp' + String(num));
 
         //our player's name
         sprite.name = name;
@@ -219,7 +230,7 @@ var GameBoard = new Phaser.Class ({
 
         console.log(sprite.spots);
 
-        sprite.hpTracker = this.add.image(960, 580, 'tracker');
+        // sprite.hpTracker = this.add.image(960, 580, 'tracker');
 
         if(Object.keys(sprite.info.location).length == 0) {
             sprite.info.location.name = "None";
@@ -262,6 +273,10 @@ var GameBoard = new Phaser.Class ({
         }
 
         //TO DO: if hp changes, move token on health bar
+        if(player.info.hp != data.hp) {
+            player.hpTracker.y = this.hpStart - 40*data.hp;
+        }
+
         player.info = data;
         if(Object.keys(player.info.location).length == 0) {
             player.info.location.name = "None";
