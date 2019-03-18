@@ -45,7 +45,7 @@ var GameBoard = new Phaser.Class ({
         //BELOW CODE FOR DEBUGGING - uncomment to use
         // console.log(this.charInfo);
         // console.log(typeof this.charInfo);
-        // console.log(this.gameData.public);
+        console.log(this.gameData.public);
         // console.log(this.gameData.public.players);
         // var key = Object.keys(this.otherPlayersInfo)[0];
         // console.log(this.otherPlayersInfo[key].user_id);
@@ -59,7 +59,7 @@ var GameBoard = new Phaser.Class ({
         var gfx = "https://s3.amazonaws.com/shadowhunters.gfxresources/";
 
         // load background and health bar
-        this.load.image('background', gfx + 'background-1066.png');
+        this.load.image('background', gfx + 'background.svg');
         this.load.image("customTip", "/static/assets/customTip.png");
         this.load.image('0', '/static/assets/zero.png');
         this.load.image('1', '/static/assets/one.png');
@@ -78,6 +78,14 @@ var GameBoard = new Phaser.Class ({
         this.load.image('14', '/static/assets/fourteen.png');
         this.load.image('text', '/static/assets/text.png');
         this.load.image('location', gfx + 'location.png');
+
+        // load the locatio cards
+        this.load.image('Hermit\'s Cabin', gfx + 'hermits_cabin.png');
+        this.load.image('Underworld Gate', gfx + 'pleasure_island.png');
+        this.load.image('Church', gfx + 'church.png');
+        this.load.image('Cemetery', gfx + 'cemetery.png');
+        this.load.image('Weird Woods', gfx + 'weird_woods.png');
+        this.load.image('Erstwhile Altar', gfx + 'erstwhile_altar.png');
 
         // load player sprites and hp trackers
         this.load.image('player1', gfx + 'white-person.png');
@@ -104,7 +112,7 @@ var GameBoard = new Phaser.Class ({
         background.displayHeight = this.sys.canvas.height;
 
         this.add.image(533.000,382.719, 'location');
-        this.add.image(407.399,157.493, 'location').angle = 120;
+        this.add.image(407.399,157.493, 'location').angle = -60;
         this.add.image(658.601,157.493, 'location').angle = 60;
 
         this.add.image(966,20, '14');
@@ -122,6 +130,15 @@ var GameBoard = new Phaser.Class ({
         this.add.image(966,500, '2');
         this.add.image(966,540, '1');
         this.add.image(966,580, '0');
+
+        // Place locations based on given order
+        this.add.image(382.000,201.500, this.gameData.public.zones[0][0].name).angle = -60;
+        this.add.image(433.000,113.250, this.gameData.public.zones[0][1].name).angle = -60;
+        this.add.image(633.000,113.250, this.gameData.public.zones[1][0].name).angle = 60;
+        this.add.image(684.250,201.750, this.gameData.public.zones[1][1].name).angle = 60;
+        this.add.image(482.000,382.712, this.gameData.public.zones[2][0].name).angle = 0;
+        this.add.image(584.000,382.712, this.gameData.public.zones[2][1].name).angle = 0;
+
 
         //this loop creates all players: self and enemies.
         this.nPlayers = Object.keys(this.allPlayersInfo).length;
