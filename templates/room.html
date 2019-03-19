@@ -20,6 +20,11 @@
             Shadow Hunters
         </div>
         <div class="container">
+            <div id="startButton">
+                <form id="start">
+                    <input type="submit" class="start" value="Start Game"/>
+                </form>
+            </div>
             <div id="board"></div>
             <div id="chatbox">
                 <div id="message_holder"></div><br>
@@ -40,9 +45,6 @@
         <!-- FOR EASE OF DEBUGGING, DEFER TO FRONTEND BRANCH CHANGES-->
         <div id="game" style="position:absolute; left:50px; top:25px;">
           <!-- END DEFER TO FRONTEND BRANCH -->
-            <form id="start">
-                <input type="submit" value="Start Game"/>
-            </form>
             <form id="select">
                 <select id="select_fields"></select>
                 <input type="submit" value="Proceed"/>

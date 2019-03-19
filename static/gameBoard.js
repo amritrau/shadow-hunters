@@ -45,7 +45,7 @@ var GameBoard = new Phaser.Class ({
         //BELOW CODE FOR DEBUGGING - uncomment to use
         // console.log(this.charInfo);
         // console.log(typeof this.charInfo);
-        console.log(this.gameData.public);
+        // console.log(this.gameData.public);
         // console.log(this.gameData.public.players);
         // var key = Object.keys(this.otherPlayersInfo)[0];
         // console.log(this.otherPlayersInfo[key].user_id);
@@ -59,7 +59,7 @@ var GameBoard = new Phaser.Class ({
         var gfx = "https://s3.amazonaws.com/shadowhunters.gfxresources/";
 
         // load background and health bar
-        this.load.image('background', gfx + 'background.svg');
+        this.load.image('background', gfx + 'background-1066.png');
         this.load.image("customTip", "/static/assets/customTip.png");
         this.load.image('0', '/static/assets/zero.png');
         this.load.image('1', '/static/assets/one.png');
@@ -115,21 +115,9 @@ var GameBoard = new Phaser.Class ({
         this.add.image(407.399,157.493, 'location').angle = -60;
         this.add.image(658.601,157.493, 'location').angle = 60;
 
-        this.add.image(966,20, '14');
-        this.add.image(966,60, '13');
-        this.add.image(966,100, '12');
-        this.add.image(966,140, '11');
-        this.add.image(966,180, '10');
-        this.add.image(966,220, '9');
-        this.add.image(966,260, '8');
-        this.add.image(966,300, '7');
-        this.add.image(966,340, '6');
-        this.add.image(966,380, '5');
-        this.add.image(966,420, '4');
-        this.add.image(966,460, '3');
-        this.add.image(966,500, '2');
-        this.add.image(966,540, '1');
-        this.add.image(966,580, '0');
+        for(var i = 0; i < 15; i++) {
+            this.add.image(966, 580 - i*40, String(i));
+        }
 
         // Place locations based on given order
         this.add.image(382.000,201.500, this.gameData.public.zones[0][0].name).angle = -60;
