@@ -155,7 +155,7 @@ var GameBoard = new Phaser.Class ({
         }, this);
 
         //create the information box for the bottom left corner
-        this.infoBox = this.add.image(75, 525, 'box');
+        this.infoBox = this.add.image(75, 537.5, 'box');
 
         //amrit sets character allegance to a number. we convert it to a team
         if(this.charInfo.alleg == 1){
@@ -194,13 +194,13 @@ var GameBoard = new Phaser.Class ({
 
         //align the text inside of our information box
         Phaser.Display.Align.In.TopCenter(name, this.infoBox);
-        Phaser.Display.Align.In.TopLeft(text, this.add.zone(70, 545, 130, 130));
+        Phaser.Display.Align.In.TopLeft(text, this.add.zone(70, 560, 130, 130));
 
         socket.on('update', function(data) {
-            $('#'+data.form).hide();
-            $('#'+data.form+'_fields').empty();
+            // $('#'+data.form).hide();
+            // $('#'+data.form+'_fields').empty();
             self.updateBoard(data);
-            $('#wait').show();
+            // $('#wait').show();
         });
 
     },
