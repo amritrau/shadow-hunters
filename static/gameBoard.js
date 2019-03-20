@@ -59,7 +59,7 @@ var GameBoard = new Phaser.Class ({
         var gfx = "https://s3.amazonaws.com/shadowhunters.gfxresources/";
 
         // load background and health bar
-        this.load.image('background', gfx + 'background-1066.png');
+        this.load.image('background', gfx + 'background.svg');
         this.load.image("customTip", "/static/assets/customTip.png");
         this.load.image('0', '/static/assets/zero.png');
         this.load.image('1', '/static/assets/one.png');
@@ -77,22 +77,22 @@ var GameBoard = new Phaser.Class ({
         this.load.image('13', '/static/assets/thirteen.png');
         this.load.image('14', '/static/assets/fourteen.png');
         this.load.image('text', '/static/assets/text.png');
-        this.load.image('location', gfx + 'location.png');
+        this.load.image('location', gfx + 'location.svg');
 
-        // load the locatio cards
-        this.load.image('Hermit\'s Cabin', gfx + 'hermits_cabin.png');
-        this.load.image('Underworld Gate', gfx + 'pleasure_island.png');
-        this.load.image('Church', gfx + 'church.png');
-        this.load.image('Cemetery', gfx + 'cemetery.png');
-        this.load.image('Weird Woods', gfx + 'weird_woods.png');
-        this.load.image('Erstwhile Altar', gfx + 'erstwhile_altar.png');
+        // load the location cards
+        this.load.image('Hermit\'s Cabin', gfx + 'hermits_cabin.svg');
+        this.load.image('Underworld Gate', gfx + 'pleasure_island.svg');
+        this.load.image('Church', gfx + 'church.svg');
+        this.load.image('Cemetery', gfx + 'cemetery.svg');
+        this.load.image('Weird Woods', gfx + 'weird_woods.svg');
+        this.load.image('Erstwhile Altar', gfx + 'erstwhile_altar.svg');
 
         // load player sprites and hp trackers
-        this.load.image('player1', gfx + 'white-person.png');
-        this.load.image('player2', gfx + 'black-person.png');
-        this.load.image('player3', gfx + 'green-person.png');
-        this.load.image('player4', gfx + 'blue-person.png');
-        this.load.image('player5', gfx + 'pink-person.png');
+        this.load.image('player1', gfx + 'white-person.svg');
+        this.load.image('player2', gfx + 'black-person.svg');
+        this.load.image('player3', gfx + 'green-person.svg');
+        this.load.image('player4', gfx + 'blue-person.svg');
+        this.load.image('player5', gfx + 'pink-person.svg');
 
         this.load.image('hpp1', '/static/assets/whiteDot.png');
         this.load.image('hpp2', '/static/assets/blackDot.png');
@@ -108,24 +108,25 @@ var GameBoard = new Phaser.Class ({
         var self = this;
         //this adds our background image. the x, y coordinates provided are the center of the canvas
         var background = this.add.image(533, 300, 'background');
-        background.displayWidth = this.sys.canvas.width;
-        background.displayHeight = this.sys.canvas.height;
+        background.setScale(1);
+        //background.displayWidth = this.sys.canvas.width;
+        //background.displayHeight = this.sys.canvas.height;
 
-        this.add.image(533.000,382.719, 'location');
-        this.add.image(407.399,157.493, 'location').angle = -60;
-        this.add.image(658.601,157.493, 'location').angle = 60;
+        this.add.image(533.000,383.000, 'location').setScale(1.01);
+        this.add.image(407.399,157.493, 'location').setScale(1.01).angle = -60;
+        this.add.image(658.601,157.493, 'location').setScale(1.01).angle = 60;
 
         for(var i = 0; i < 15; i++) {
             this.add.image(966, 580 - i*40, String(i));
         }
 
         // Place locations based on given order
-        this.add.image(382.000,201.500, this.gameData.public.zones[0][0].name).angle = -60;
-        this.add.image(433.000,113.250, this.gameData.public.zones[0][1].name).angle = -60;
-        this.add.image(633.000,113.250, this.gameData.public.zones[1][0].name).angle = 60;
-        this.add.image(684.250,201.750, this.gameData.public.zones[1][1].name).angle = 60;
-        this.add.image(482.000,382.712, this.gameData.public.zones[2][0].name).angle = 0;
-        this.add.image(584.000,382.712, this.gameData.public.zones[2][1].name).angle = 0;
+        this.add.image(382.000,201.500, this.gameData.public.zones[0][0].name).setScale(1).angle = -60;
+        this.add.image(433.000,113.250, this.gameData.public.zones[0][1].name).setScale(1).angle = -60;
+        this.add.image(633.000,113.250, this.gameData.public.zones[1][0].name).setScale(1).angle = 60;
+        this.add.image(684.250,201.750, this.gameData.public.zones[1][1].name).setScale(1).angle = 60;
+        this.add.image(482.000,382.712, this.gameData.public.zones[2][0].name).setScale(1).angle = 0;
+        this.add.image(584.000,382.712, this.gameData.public.zones[2][1].name).setScale(1).angle = 0;
 
 
         //this loop creates all players: self and enemies.
@@ -257,7 +258,7 @@ var GameBoard = new Phaser.Class ({
         ]);
         sprite.displayInfo.setVisible(false);
 
-        //this makes the sprite interactive so that we can click on him
+        //this makes the sprite interactive so that we can click on them
         sprite.setInteractive();
 
         return sprite;
