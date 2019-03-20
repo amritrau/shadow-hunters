@@ -198,10 +198,7 @@ var GameBoard = new Phaser.Class ({
         Phaser.Display.Align.In.TopLeft(text, this.add.zone(70, 560, 130, 130));
 
         socket.on('update', function(data) {
-            // $('#'+data.form).hide();
-            // $('#'+data.form+'_fields').empty();
             self.updateBoard(data);
-            // $('#wait').show();
         });
 
     },
