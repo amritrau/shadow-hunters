@@ -10,7 +10,7 @@ var WaitingRoom = new Phaser.Class ({
     preload: function () {
         // url where gfx resources are stored
         var gfx = "https://s3.amazonaws.com/shadowhunters.gfxresources/";
-        this.load.image('background', gfx + 'background-1066.png');
+        this.load.image('background', gfx + 'background.svg');
     },
 
     create: function () {
@@ -18,8 +18,9 @@ var WaitingRoom = new Phaser.Class ({
 
         //this resizes the background image to fit into our canvas
         var background = this.add.image(533, 300, 'background');
-        background.displayWidth = this.sys.canvas.width;
-        background.displayHeight = this.sys.canvas.height;
+        background.setScale(1);
+        //background.displayWidth = this.sys.canvas.width;
+        //background.displayHeight = this.sys.canvas.height;
 
         //SOCKET CALL! if game start button pressed, then we switch scenes and go to the game board
         socket.on("game_start", function (data) {
