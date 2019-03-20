@@ -59,7 +59,7 @@ var GameBoard = new Phaser.Class ({
         var gfx = "https://s3.amazonaws.com/shadowhunters.gfxresources/";
 
         // load background and health bar
-        this.load.image('background', gfx + 'background.svg');
+        this.load.image('background', gfx + 'background-1066.png');
         this.load.image("customTip", "/static/assets/customTip.png");
         this.load.image('0', '/static/assets/zero.png');
         this.load.image('1', '/static/assets/one.png');
@@ -77,22 +77,22 @@ var GameBoard = new Phaser.Class ({
         this.load.image('13', '/static/assets/thirteen.png');
         this.load.image('14', '/static/assets/fourteen.png');
         this.load.image('text', '/static/assets/text.png');
-        this.load.image('location', gfx + 'location.svg');
+        this.load.image('location', gfx + 'location.png');
 
         // load the location cards
-        this.load.image('Hermit\'s Cabin', gfx + 'hermits_cabin.svg');
-        this.load.image('Underworld Gate', gfx + 'pleasure_island.svg');
-        this.load.image('Church', gfx + 'church.svg');
-        this.load.image('Cemetery', gfx + 'cemetery.svg');
-        this.load.image('Weird Woods', gfx + 'weird_woods.svg');
-        this.load.image('Erstwhile Altar', gfx + 'erstwhile_altar.svg');
+        this.load.image('Hermit\'s Cabin', gfx + 'hermits_cabin.png');
+        this.load.image('Underworld Gate', gfx + 'pleasure_island.png');
+        this.load.image('Church', gfx + 'church.png');
+        this.load.image('Cemetery', gfx + 'cemetery.png');
+        this.load.image('Weird Woods', gfx + 'weird_woods.png');
+        this.load.image('Erstwhile Altar', gfx + 'erstwhile_altar.png');
 
         // load player sprites and hp trackers
-        this.load.image('player1', gfx + 'white-person.svg');
-        this.load.image('player2', gfx + 'black-person.svg');
-        this.load.image('player3', gfx + 'green-person.svg');
-        this.load.image('player4', gfx + 'blue-person.svg');
-        this.load.image('player5', gfx + 'pink-person.svg');
+        this.load.image('player1', gfx + 'white-person.png');
+        this.load.image('player2', gfx + 'black-person.png');
+        this.load.image('player3', gfx + 'green-person.png');
+        this.load.image('player4', gfx + 'blue-person.png');
+        this.load.image('player5', gfx + 'pink-person.png');
 
         this.load.image('hpp1', '/static/assets/whiteDot.png');
         this.load.image('hpp2', '/static/assets/blackDot.png');
