@@ -4,7 +4,7 @@ import random
 
 import game_context
 import player
-import cli
+import elements
 
 # test_game_context.py
 # Tests for the GameContext object
@@ -14,7 +14,7 @@ def test_fields():
     # test initialization
     player_names = ['Amrit', 'Max', 'Gia', 'Joanna', 'Vishal']
     players = [player.Player(user_id, socket_id='unused') for user_id in player_names]
-    ef = cli.ElementFactory()
+    ef = elements.ElementFactory()
     gc = game_context.GameContext(
         players = players,
         characters = ef.CHARACTERS,
