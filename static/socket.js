@@ -1,6 +1,3 @@
-// EMISSION EVENTS
-
-
 // Initial connection
 var socket = io.connect('http://' + document.domain + ':' + location.port);
 
@@ -11,15 +8,15 @@ $('document').ready(function() {
 });
 
 socket.on('connect', function() {
-    
+
     // User joins the room
     socket.emit('join', { name: usrctx.name, room_id: usrctx.room_id } );
-	
+
     // Set up message posting with button presses
     var chat_form = $('#chat').on('submit', function(e) {
         e.preventDefault();
         var user_input = $('#message').val();
-        socket.emit('post_message', { 'data': user_input });
+        socket.emit('message', { 'data': user_input });
         $('#message').val('').focus();
     });
 
@@ -29,7 +26,7 @@ socket.on('connect', function() {
         socket.emit('start');
     });
 
-    // Generalized form setup PROTOTYPE
+    // Generalized form setup PROTOTYPE (couldnt get it to work)
     /*
     var form_ids = ['confirm', 'yesno', 'select'];
     for (var i = 0; i < form_ids.length; i++)
@@ -56,10 +53,6 @@ socket.on('connect', function() {
     });
 });
 
-
-// RECEPTION EVENTS
-
-
 // Receive a message and add it to the chat
 socket.on('message', function(msg) {
     var html = '<p style="margin:0"><b style="color:'+msg.color+'">';
@@ -77,30 +70,34 @@ socket.on('message', function(msg) {
     $("#message_holder").scrollTop($("#message_holder")[0].scrollHeight);
 });
 
-// Receive the signal to start the game
-socket.on('game_start', function(data) {
-    $('#start').remove();
-    // TODO: SET UP INITIAL UI BASED ON GAME_DATA HERE
-    var html = '<p id="wait">Waiting...</p>';
-    $('#game').append(html);
-});
-
 // Receive a game state update
-socket.on('update', function(data) {
-    $('#'+data.form).hide();
-    $('#'+data.form+'_fields').empty();
-    // TODO: UPDATE UI TO REFLECT UPDATE
-    $('#wait').show();
-});
+// socket.on('update', function(data) {
+//     $('#'+data.form).hide();
+//     $('#'+data.form+'_fields').empty();
+//     // TODO: UPDATE UI TO REFLECT UPDATE
+//     $('#wait').show();
+// });
 
 // Receive an ask
 socket.on('ask', function(data) {
     $('#wait').hide();
     var option = '';
-    for (var i = 0; i < data.options.length; i++) 
+    for (var i = 0; i < data.options.length; i++)
     {
         option += '<option value="'+data.options[i]+'">'+data.options[i]+'</option>';
     }
     $('#'+data.form+'_fields').append(option);
     $('#'+data.form).show();
+});
+
+socket.on('disconnect', function(reason) {
+    console.log("oops i disconnected! reason: "+reason);    
+    /*
+    if (reason === 'io server disconnect') 
+    {
+        // the disconnection was initiated by the server, you need to reconnect manually
+        socket.connect();
+    }
+    // else the socket will automatically try to reconnect
+    */
 });
