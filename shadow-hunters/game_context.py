@@ -92,7 +92,8 @@ class GameContext:
 
         public_state = {
             'zones': public_zones,
-            'players': public_players
+            'players': public_players,
+            'characters': [c.dump() for c in self.characters]
         }
         private_state = private_players
 
