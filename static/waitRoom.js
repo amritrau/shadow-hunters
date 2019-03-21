@@ -25,8 +25,6 @@ var WaitingRoom = new Phaser.Class ({
         //SOCKET CALL! if game start button pressed, then we switch scenes and go to the game board
         socket.on("game_start", function (data) {
             $('#start').remove();
-            var html = '<p id="wait">Waiting...</p>';
-            $('#game').append(html);
             self.scene.start('board', data);
         });
     }

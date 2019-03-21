@@ -31,11 +31,12 @@ body {
 
 #startButton {
     position: absolute;
-    left:500px;
+    left:475px;
     top:550px;
 }
 
 .start {
+    border-radius: 25px;
     background-color: #b786b0;
     border: none;
     color: white;
@@ -44,6 +45,71 @@ body {
     text-decoration: none;
     display: inline-block;
     font-size: 16px;
+}
+.start:focus {
+    background-color: #6d4e69;
+    color: black;
+}
+
+#ingame {
+    position: absolute;
+    left:750px;
+    top:400px;
+}
+
+.button1 {
+  background-color: #b786b0;
+  border-radius: 15px;
+  height: 50px;
+  width: 100px;
+  white-space:normal;
+  border: none;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 10px;
+}
+.button2 {
+  background-color: #b786b0;
+  border-radius: 15px;
+  height: 20px;
+  width: 100px;
+  white-space:normal;
+  border: none;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 10px;
+}
+
+#popup {
+    position: absolute;
+    border-radius: 25px;
+    background-color: #7d6f82;
+    padding: 5px 5px 5px 5px;
+    text-align: center;
+    left: 200px;
+    top: 100px;
+    width:800px;
+    height:80px;
+}
+
+.selectButton {
+    background-color: #b786b0;
+    margin-right: 10px;
+    border-radius: 15px;
+    vertical-align: top;
+    height: 40px;
+    width: 100px;
+    white-space:normal;
+    border: none;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 13px;
 }
 
 #chatbox {

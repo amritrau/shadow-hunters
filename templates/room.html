@@ -25,6 +25,14 @@
                     <input type="submit" class="start" value="Start Game"/>
                 </form>
             </div>
+            <form id="select">
+            </form>
+            <div id="ingame">
+                <form id="confirm">
+                </form>
+                <form id="yesno">
+                </form>
+            </div>
             <div id="board"></div>
             <div id="chatbox">
                 <div id="message_holder"></div><br>
@@ -39,24 +47,6 @@
                 <p>Gameplay itself consists of each player taking individual, sequential turns.  During a player's turn, they must roll a six-sided and a four-sided die and move to one of six possible locations as a result of the roll.  The six locations are grouped together in pairs and allow players to perform specific, unique action if they wish to do so.  These actions are: pick up a Hermit card (which allows players to gain knowledge about other players), pick up a white or black card (which provides equipment to players or allows them to attack or heal other players), damage or heal other players, and steal equipment.  Following this, players always have the option to attack players location in their region (either the location they are currently on or the corresponding paired location).  Characters can also choose to reveal their identities voluntarily during their turn in order to use their special ability.  Each character has a unique special ability which provides them with an advantage in the game. </p>
                 <p>During the game, players use the information available to them to guess or infer the identities of other players and attempt to achieve their win conditions.  For the Hunters and Shadows, this inherently requires attempting to coordinate with perceived allies, while the Neutrals can work unilaterally towards their own objectives.  The game progresses until any character achieves their win condition, at which point the game ends, though more than one player can win at the same time.  </p>
             </div>-->
-        </div>
-
-        <!--<div id="game" style="position:absolute; left:850px; top:25px;">-->
-        <!-- FOR EASE OF DEBUGGING, DEFER TO FRONTEND BRANCH CHANGES-->
-        <div id="game" style="position:absolute; left:50px; top:25px;">
-          <!-- END DEFER TO FRONTEND BRANCH -->
-            <form id="select">
-                <select id="select_fields"></select>
-                <input type="submit" value="Proceed"/>
-            </form>
-            <form id="yesno">
-                <select id="yesno_fields"></select>
-                <input type="submit" value="Proceed"/>
-            </form>
-            <form id="confirm">
-                <select id="confirm_fields"></select>
-                <input type="submit" value="Proceed"/>
-            </form>
         </div>
 
         <div id="footer">

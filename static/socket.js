@@ -26,30 +26,27 @@ socket.on('connect', function() {
         socket.emit('start');
     });
 
-    // Generalized form setup PROTOTYPE (couldnt get it to work)
-    /*
-    var form_ids = ['confirm', 'yesno', 'select'];
-    for (var i = 0; i < form_ids.length; i++)
-    {
-        $('#'+form_ids[i]).on('submit', function (e) {
-            e.preventDefault();
-            socket.emit('answer', { 'form': form_ids[i], 'value': $('#'+form_ids[i]+'_fields').val() });
-        });
-    }
-    */
     var confirm_form = $('#confirm').on('submit', function(e) {
         e.preventDefault();
-        socket.emit('answer', { 'form': 'confirm', 'value': $('#confirm_fields').val() });
+        console.log(e);
+        socket.emit('answer', { 'form': 'confirm', 'value': $('#confirm [name="inputs"][clicked=true]').val() });
+        $('#confirm').hide();
+        $('#confirm').empty();
     });
 
     var yesno_form = $('#yesno').on('submit', function(e) {
         e.preventDefault();
-        socket.emit('answer', { 'form': 'yesno', 'value': $('#yesno_fields').val() });
+        console.log(e);
+        socket.emit('answer', { 'form': 'yesno', 'value': $('#yesno [name="inputs"][clicked=true]').val() });
+        $('#yesno').hide();
+        $('#yesno').empty();
     });
 
     var select_form = $('#select').on('submit', function(e) {
         e.preventDefault();
-        socket.emit('answer', { 'form': 'select', 'value': $('#select_fields').val() });
+        socket.emit('answer', { 'form': 'select', 'value': $('#select [name="inputs"][clicked=true]').val() });
+        $('#select').hide();
+        $('#select').empty();
     });
 });
 
@@ -70,30 +67,37 @@ socket.on('message', function(msg) {
     $("#message_holder").scrollTop($("#message_holder")[0].scrollHeight);
 });
 
-// Receive a game state update
-// socket.on('update', function(data) {
-//     $('#'+data.form).hide();
-//     $('#'+data.form+'_fields').empty();
-//     // TODO: UPDATE UI TO REFLECT UPDATE
-//     $('#wait').show();
-// });
-
 // Receive an ask
 socket.on('ask', function(data) {
-    $('#wait').hide();
     var option = '';
-    for (var i = 0; i < data.options.length; i++)
-    {
-        option += '<option value="'+data.options[i]+'">'+data.options[i]+'</option>';
+    if(data.form === 'select') {
+        option += '<div id="popup"><br>';
+        for (var i = 0; i < data.options.length; i++)
+        {
+            option += '<button name="inputs" type="submit" class="selectButton" value="'+data.options[i]+'">'+data.options[i]+'</button>';
+        }
+        option += '<br></div>';
     }
-    $('#'+data.form+'_fields').append(option);
+    else {
+        for (var i = 0; i < data.options.length; i++)
+        {
+            option += '<button name="inputs" type="submit" class="button' + String(i+1) + '" value="'+data.options[i]+'">'+data.options[i]+'</button><br>';
+        }
+    }
+    $('#'+data.form).append(option);
+
+    //add click handler to each button
+    $('form [name="inputs"]').click(function() {
+        $('[name="inputs"]', $(this).parents("form")).removeAttr("clicked");
+        $(this).attr("clicked", "true");
+    });
     $('#'+data.form).show();
 });
 
 socket.on('disconnect', function(reason) {
-    console.log("oops i disconnected! reason: "+reason);    
+    console.log("oops i disconnected! reason: "+reason);
     /*
-    if (reason === 'io server disconnect') 
+    if (reason === 'io server disconnect')
     {
         // the disconnection was initiated by the server, you need to reconnect manually
         socket.connect();
