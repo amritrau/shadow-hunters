@@ -50,7 +50,7 @@ var GameBoard = new Phaser.Class ({
         // var key = Object.keys(this.otherPlayersInfo)[0];
         // console.log(this.otherPlayersInfo[key].user_id);
         // console.log(Object.keys(this.otherPlayersInfo).length);
-        // console.log(this.gameData.private);
+        console.log(this.gameData.private);
     },
 
     //the preload function is where all images that will be used in the game are loaded into
@@ -115,6 +115,16 @@ var GameBoard = new Phaser.Class ({
         this.load.image('hpp5', '/static/assets/pinkDot.png');
 
         this.load.image('box', '/static/assets/box.png');
+
+        this.load.image('charImage', '/static/assets/charImage.png');
+        this.load.image('8hp', '/static/assets/8hp.png');
+        this.load.image('12hp', '/static/assets/12hp.png');
+        this.load.image('13hp', '/static/assets/13hp.png');
+        this.load.image('14hp', '/static/assets/14hp.png');
+        this.load.image('A', '/static/assets/a.png');
+        this.load.image('V', '/static/assets/v.png');
+        this.load.image('F', '/static/assets/f.png');
+        this.load.image('G', '/static/assets/g.png');
     },
 
     //the create function is where everything is added to the canvas
@@ -166,7 +176,7 @@ var GameBoard = new Phaser.Class ({
         }, this);
 
         //create the information box for the bottom left corner
-        this.infoBox = this.add.image(75, 537.5, 'box');
+        this.infoBox = this.add.image(100, 537.5, 'box');
 
         //amrit sets character allegance to a number. we convert it to a team
         if(this.charInfo.alleg == 1){
@@ -189,7 +199,7 @@ var GameBoard = new Phaser.Class ({
         var text = this.add.text(10, 470, '', {
             font: '12px Arial',
             fill: '#FFFFFF',
-            wordWrap: { width: 150, useAdvancedWrap: true }
+            wordWrap: { width: 180, useAdvancedWrap: true }
         });
         var name = this.add.text(5, 460, this.infoBox.data.get('name'), {
             font:'16px Arial' ,
@@ -199,13 +209,17 @@ var GameBoard = new Phaser.Class ({
         //set the text for inside of the box
         text.setText([
             'Team: ' + this.infoBox.data.get('team'),
-            'Win Condition: ' + this.infoBox.data.get('win') + '\n',
+            'Win Condition: ' + this.infoBox.data.get('win'), "\n",
             'Special Ability: ' + this.infoBox.data.get('special')
         ]);
 
+        this.add.image(100, 366.975, "charImage");
+        this.add.image(60.442, 322.289, this.charInfo.name[0]);
+        this.add.image(137.489, 412.722, String(this.charInfo.max_hp) + "hp");
+
         //align the text inside of our information box
         Phaser.Display.Align.In.TopCenter(name, this.infoBox);
-        Phaser.Display.Align.In.TopLeft(text, this.add.zone(70, 560, 130, 130));
+        Phaser.Display.Align.In.TopLeft(text, this.add.zone(110, 560, 200, 130));
 
         socket.on('update', function(data) {
             self.updateBoard(data);
