@@ -203,10 +203,18 @@ def on_join(json):
 
     # Join room
     join_room(room_id)
+    print("{} joined room {}".format(name, room_id)) # DEBUGGING
 
     # Emit welcome message to new player
-    # TODO: List other players in the room
     data = {'data': 'Welcome to Shadow Hunters Room: '+room_id, 'color': S_COLOR}
+    socketio.emit('message', data, room=request.sid)
+    
+    # Tell player about other room members
+    members = [x['name'] for x in connections.values() if (x['room_id'] == room_id and x['name'] != name)]
+    msg = 'There\'s no one else here!'
+    if members:
+        msg = 'Other players in the room: '+', '.join(members)
+    data = {'data': msg, 'color': S_COLOR}
     socketio.emit('message', data, room=request.sid)
 
 @socketio.on('disconnect')

@@ -42,7 +42,7 @@ var GameBoard = new Phaser.Class ({
         this.charInfo = this.gameData.private.character;
         this.allPlayersInfo = this.gameData.public.players;
 
-        //BELOW CODE FOR DEBUGGING - uncomment to use
+        /* DEBUGGING
         // console.log(this.charInfo);
         // console.log(typeof this.charInfo);
         // console.log(this.gameData.public);
@@ -50,7 +50,8 @@ var GameBoard = new Phaser.Class ({
         // var key = Object.keys(this.otherPlayersInfo)[0];
         // console.log(this.otherPlayersInfo[key].user_id);
         // console.log(Object.keys(this.otherPlayersInfo).length);
-        console.log(this.gameData.private);
+        // console.log(this.gameData.private);
+        */
     },
 
     //the preload function is where all images that will be used in the game are loaded into
@@ -138,14 +139,14 @@ var GameBoard = new Phaser.Class ({
         this.nPlayers = Object.keys(this.allPlayersInfo).length;
         var count = 0;
         for(var i = 0; i < this.nPlayers; i++) {
-            //console.log("in for loop");
+            // console.log("in for loop");
             var key = Object.keys(this.allPlayersInfo)[i];
             if(this.allPlayersInfo[key].user_id === this.gameData.private.user_id) {
                 this.player = this.makePlayer(this.allPlayersInfo[key].user_id,
                     this.allPlayersInfo[key], i+1);
                 this.player.key = key;
                 this.player.on('clicked', this.clickHandler, this.player);
-                //console.log(this.player.name);
+                // console.log(this.player.name);
             }
             else {
                 this.otherPlayers[key] = this.makePlayer(this.allPlayersInfo[key].user_id,
@@ -240,7 +241,7 @@ var GameBoard = new Phaser.Class ({
             count += 4;
         }
 
-        console.log(sprite.spots);
+        // console.log(sprite.spots);
 
         // sprite.hpTracker = this.add.image(960, 580, 'tracker');
 
@@ -281,7 +282,7 @@ var GameBoard = new Phaser.Class ({
             player.infoBox.y = player.y -60;
             player.displayInfo.x = player.infoBox.x - 120;
             player.displayInfo.y = player.infoBox.y - 40;
-            console.log("sprite moved");
+            // console.log("sprite moved");
         }
 
         //TO DO: if hp changes, move token on health bar
