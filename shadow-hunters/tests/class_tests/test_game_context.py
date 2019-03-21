@@ -10,7 +10,7 @@ import cli
 # Tests for the GameContext object
 
 def test_fields():
-    
+
     # test initialization
     player_names = ['Amrit', 'Max', 'Gia', 'Joanna', 'Vishal']
     players = [player.Player(user_id, socket_id='unused') for user_id in player_names]
@@ -25,9 +25,9 @@ def test_fields():
         tell_h = lambda x: 5,
         direct_h = lambda x, sid: 5,
         ask_h = lambda x, y, z: { 'value': random.choice(y['options']) },
-        update_h = lambda x, y: 5
+        update_h = lambda: 5
     )
- 
+
     # test fields
     assert gc.players == players
     assert gc.characters == ef.CHARACTERS
@@ -52,7 +52,7 @@ def test_fields():
     # test dump
     public, private = gc.dump()
     assert private == {p.socket_id: p.dump() for p in gc.players}
-    assert public['zones'] == [z.dump() for z in gc.zones]    
+    assert public['zones'] == [z.dump() for z in gc.zones]
 
 def test_getLivePlayers():
     gc, ef = helpers.fresh_gc_ef()

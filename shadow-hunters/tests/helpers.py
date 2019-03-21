@@ -30,7 +30,7 @@ def fresh_gc_ef(ask_function = lambda x, y, z: { 'value': random.choice(y['optio
         tell_h = lambda x: 0,
         direct_h = lambda x, sid: 0,
         ask_h = ask_function,
-        update_h = lambda x, y: 0
+        update_h = lambda: 0
     )
     return (gc, ef)
 
@@ -50,7 +50,7 @@ def get_a_neutral(gc):
             return p
 
 def get_card_by_title(ef, title):
-    
+
     # search white deck
     for c in ef.WHITE_DECK.cards:
         if c.title == title:
