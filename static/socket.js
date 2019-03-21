@@ -32,7 +32,6 @@ socket.on('connect', function() {
         socket.emit('answer', { 'form': 'confirm', 'value': $('#confirm [name="inputs"][clicked=true]').val() });
         $('#confirm').hide();
         $('#confirm').empty();
-        $('#wait').show();
     });
 
     var yesno_form = $('#yesno').on('submit', function(e) {
@@ -41,7 +40,6 @@ socket.on('connect', function() {
         socket.emit('answer', { 'form': 'yesno', 'value': $('#yesno [name="inputs"][clicked=true]').val() });
         $('#yesno').hide();
         $('#yesno').empty();
-        $('#wait').show();
     });
 
     var select_form = $('#select').on('submit', function(e) {
@@ -49,7 +47,6 @@ socket.on('connect', function() {
         socket.emit('answer', { 'form': 'select', 'value': $('#select [name="inputs"][clicked=true]').val() });
         $('#select').hide();
         $('#select').empty();
-        $('#wait').show();
     });
 });
 
@@ -72,7 +69,6 @@ socket.on('message', function(msg) {
 
 // Receive an ask
 socket.on('ask', function(data) {
-    $('#wait').hide();
     var option = '';
     if(data.form === 'select') {
         option += '<div id="popup"><br>';

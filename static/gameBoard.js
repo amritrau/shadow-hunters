@@ -59,7 +59,7 @@ var GameBoard = new Phaser.Class ({
         var gfx = "https://s3.amazonaws.com/shadowhunters.gfxresources/";
 
         // load background and health bar
-        this.load.image('background', gfx + 'background-1066.png');
+        this.load.svg('background', gfx + 'background.svg', {width: 1066, height: 600});
         this.load.image("customTip", "/static/assets/customTip.png");
         this.load.image('0', '/static/assets/zero.png');
         this.load.image('1', '/static/assets/one.png');
@@ -77,7 +77,21 @@ var GameBoard = new Phaser.Class ({
         this.load.image('13', '/static/assets/thirteen.png');
         this.load.image('14', '/static/assets/fourteen.png');
         this.load.image('text', '/static/assets/text.png');
-        this.load.image('location', gfx + 'location.png');
+
+        // load the location cards
+        this.load.svg('Hermit\'s Cabin', gfx + 'hermits_cabin.svg', {width: 101, height: 150});
+        this.load.svg('Underworld Gate', gfx + 'pleasure_island.svg', {width: 101, height: 150});
+        this.load.svg('Church', gfx + 'church.svg', {width: 101, height: 150});
+        this.load.svg('Cemetery', gfx + 'cemetery.svg', {width: 101, height: 150});
+        this.load.svg('Weird Woods', gfx + 'weird_woods.svg', {width: 101, height: 150});
+        this.load.svg('Erstwhile Altar', gfx + 'erstwhile_altar.svg', {width: 101, height: 150});
+
+        // load player sprites and hp trackers
+        this.load.svg('player1', gfx + 'white-person.svg', {width: 50.5, height: 37.5});
+        this.load.svg('player2', gfx + 'black-person.svg', {width: 50.5, height: 37.5});
+        this.load.svg('player3', gfx + 'green-person.svg', {width: 50.5, height: 37.5});
+        this.load.svg('player4', gfx + 'blue-person.svg', {width: 50.5, height: 37.5});
+        this.load.svg('player5', gfx + 'pink-person.svg', {width: 50.5, height: 37.5});
 
         // load the location cards
         this.load.image('Hermit\'s Cabin', gfx + 'hermits_cabin.png');
@@ -121,10 +135,6 @@ var GameBoard = new Phaser.Class ({
         background.setScale(1);
         //background.displayWidth = this.sys.canvas.width;
         //background.displayHeight = this.sys.canvas.height;
-
-        this.add.image(533.000,383.000, 'location').setScale(1.01);
-        this.add.image(407.399,157.493, 'location').setScale(1.01).angle = -60;
-        this.add.image(658.601,157.493, 'location').setScale(1.01).angle = 60;
 
         for(var i = 0; i < 15; i++) {
             this.add.image(966, 580 - i*40, String(i));

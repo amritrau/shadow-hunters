@@ -10,7 +10,7 @@ var WaitingRoom = new Phaser.Class ({
     preload: function () {
         // url where gfx resources are stored
         var gfx = "https://s3.amazonaws.com/shadowhunters.gfxresources/";
-        this.load.image('background', gfx + 'background-1066.png');
+        this.load.svg('background', gfx + 'background.svg', {width: 1066, height: 600});
     },
 
     create: function () {
@@ -25,8 +25,6 @@ var WaitingRoom = new Phaser.Class ({
         //SOCKET CALL! if game start button pressed, then we switch scenes and go to the game board
         socket.on("game_start", function (data) {
             $('#start').remove();
-            var html = '<p id="wait">Waiting...</p>';
-            $('#game').append(html);
             self.scene.start('board', data);
         });
     }
