@@ -200,7 +200,7 @@ var GameBoard = new Phaser.Class ({
 
         this.add.image(100, 366.975, "charImage");
         this.add.image(60.442, 322.289, this.charInfo.name[0]);
-        this.add.image(137.489, 412.722, String(this.charInfo.max_hp) + "hp");
+        this.add.image(137.489, 412.722, String(this.charInfo.max_damage) + "hp");
 
         //align the text inside of our information box
         Phaser.Display.Align.In.TopCenter(name, this.infoBox);
@@ -259,7 +259,7 @@ var GameBoard = new Phaser.Class ({
         sprite.displayInfo.setText([
             "Player: " + sprite.name,
             "Equipment: " + sprite.info.equipment.list,
-            "Current Damage: " + sprite.info.hp,
+            "Current Damage: " + sprite.info.damage,
             "Location: " + sprite.info.location.name
         ]);
         sprite.displayInfo.setVisible(false);
@@ -285,8 +285,8 @@ var GameBoard = new Phaser.Class ({
         }
 
         //TO DO: if hp changes, move token on health bar
-        if(player.info.hp != data.hp) {
-            player.hpTracker.y = this.hpStart - 40*data.hp;
+        if(player.info.damage != data.damage) {
+            player.hpTracker.y = this.hpStart - 40*data.damage;
         }
 
         player.info = data;
@@ -311,7 +311,7 @@ var GameBoard = new Phaser.Class ({
         player.displayInfo.setText([
             "Player: " + player.name,
             "Equipment: " + player.info.equipment.list,
-            "Current Damage: " + player.info.hp,
+            "Current Damage: " + player.info.damage,
             "Location: " + player.info.location.name
         ]);
     },
