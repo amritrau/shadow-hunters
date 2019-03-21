@@ -31,11 +31,11 @@ def test_weird_woods():
 
     # Check give 2 damage
     area.action(gc, actor)
-    assert target.hp == 2
+    assert target.damage == 2
 
     # Check heal 1 damage
     area.action(gc, actor)
-    assert target.hp == 1
+    assert target.damage == 1
 
 def test_erstwhile_altar():
     

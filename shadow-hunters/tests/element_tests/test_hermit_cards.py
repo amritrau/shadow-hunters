@@ -32,26 +32,26 @@ def test_hermit_blackmail():
     ])
 
     # Check that hunters take 1 damage
-    init_hp = h.hp
+    init_damage = h.damage
     c.use({ 'self': s })
-    assert h.hp == init_hp + 1
+    assert h.damage == init_damage + 1
 
     # Check that shadows do nothing
-    init_hp = s.hp
+    init_damage = s.damage
     c.use({ 'self': h })
-    assert s.hp == init_hp
+    assert s.damage == init_damage
 
     # Check that neutrals take 1 damage
-    init_hp = n.hp
+    init_damage = n.damage
     c.use({ 'self': h })
-    assert n.hp == init_hp + 1
+    assert n.damage == init_damage + 1
 
     # Check that giving equipment works
     eq = helpers.get_card_by_title(ef, 'Holy Robe')
     h.equipment.append(eq)
-    init_hp = h.hp
+    init_damage = h.damage
     c.use({ 'self': s })
-    assert h.hp == init_hp
+    assert h.damage == init_damage
     assert not h.equipment
     assert s.equipment == [eq]
 
@@ -67,26 +67,26 @@ def test_hermit_greed():
     ])
     
     # Check that hunters do nothing
-    init_hp = h.hp
+    init_damage = h.damage
     c.use({ 'self': s })
-    assert h.hp == init_hp
+    assert h.damage == init_damage
 
     # Check that shadows take 1 damage
-    init_hp = s.hp
+    init_damage = s.damage
     c.use({ 'self': h })
-    assert s.hp == init_hp + 1
+    assert s.damage == init_damage + 1
 
     # Check that neutrals take 1 damage
-    init_hp = n.hp
+    init_damage = n.damage
     c.use({ 'self': h })
-    assert n.hp == init_hp + 1
+    assert n.damage == init_damage + 1
 
     # Check that giving equipment works
     eq = helpers.get_card_by_title(ef, 'Holy Robe')
     s.equipment.append(eq)
-    init_hp = s.hp
+    init_damage = s.damage
     c.use({ 'self': h })
-    assert s.hp == init_hp
+    assert s.damage == init_damage
     assert not s.equipment
     assert h.equipment == [eq]
 
@@ -102,26 +102,26 @@ def test_hermit_anger():
     ])
     
     # Check that hunters take 1 damage
-    init_hp = h.hp
+    init_damage = h.damage
     c.use({ 'self': s })
-    assert h.hp == init_hp + 1
+    assert h.damage == init_damage + 1
 
     # Check that shadows take 1 damage
-    init_hp = s.hp
+    init_damage = s.damage
     c.use({ 'self': h })
-    assert s.hp == init_hp + 1
+    assert s.damage == init_damage + 1
 
     # Check that neutrals do nothing
-    init_hp = n.hp
+    init_damage = n.damage
     c.use({ 'self': h })
-    assert n.hp == init_hp
+    assert n.damage == init_damage
 
     # Check that giving equipment works
     eq = helpers.get_card_by_title(ef, 'Holy Robe')
     s.equipment.append(eq)
-    init_hp = s.hp
+    init_damage = s.damage
     c.use({ 'self': h })
-    assert s.hp == init_hp
+    assert s.damage == init_damage
     assert not s.equipment
     assert h.equipment == [eq]
 
@@ -136,19 +136,19 @@ def test_hermit_slap():
     ])
     
     # Check that hunters take 1 damage
-    init_hp = h.hp
+    init_damage = h.damage
     c.use({ 'self': s })
-    assert h.hp == init_hp + 1
+    assert h.damage == init_damage + 1
 
     # Check that shadows do nothing
-    init_hp = s.hp
+    init_damage = s.damage
     c.use({ 'self': h })
-    assert s.hp == init_hp
+    assert s.damage == init_damage
 
     # Check that neutrals do nothing
-    init_hp = n.hp
+    init_damage = n.damage
     c.use({ 'self': h })
-    assert n.hp == init_hp
+    assert n.damage == init_damage
 
 def test_hermit_spell():
     
@@ -161,19 +161,19 @@ def test_hermit_spell():
     ])
     
     # Check that hunters do nothing
-    init_hp = h.hp
+    init_damage = h.damage
     c.use({ 'self': s })
-    assert h.hp == init_hp
+    assert h.damage == init_damage
 
     # Check that shadows take 1 damage
-    init_hp = s.hp
+    init_damage = s.damage
     c.use({ 'self': h })
-    assert s.hp == init_hp + 1
+    assert s.damage == init_damage + 1
 
     # Check that neutrals do nothing
-    init_hp = n.hp
+    init_damage = n.damage
     c.use({ 'self': h })
-    assert n.hp == init_hp
+    assert n.damage == init_damage
 
 def test_hermit_exorcism():
     
@@ -186,19 +186,19 @@ def test_hermit_exorcism():
     ])
 
     # Check that hunters do nothing
-    init_hp = h.hp
+    init_damage = h.damage
     c.use({ 'self': s })
-    assert h.hp == init_hp
+    assert h.damage == init_damage
 
     # Check that shadows take 2 damage
-    init_hp = s.hp
+    init_damage = s.damage
     c.use({ 'self': h })
-    assert s.hp == init_hp + 2
+    assert s.damage == init_damage + 2
 
     # Check that neutrals do nothing
-    init_hp = n.hp
+    init_damage = n.damage
     c.use({ 'self': h })
-    assert n.hp == init_hp
+    assert n.damage == init_damage
 
 def test_hermit_nurturance():
     
@@ -212,23 +212,23 @@ def test_hermit_nurturance():
     ])
     
     # Check that hunters do nothing
-    h.hp = 1
+    h.damage = 1
     c.use({ 'self': s })
-    assert h.hp == 1
+    assert h.damage == 1
 
     # Check that shadows do nothing
-    s.hp = 1
+    s.damage = 1
     c.use({ 'self': h })
-    assert s.hp == 1
+    assert s.damage == 1
 
     # Check that neutrals heal 1 damage
-    n.hp = 1
+    n.damage = 1
     c.use({ 'self': h })
-    assert n.hp == 0
+    assert n.damage == 0
 
     # Check that neutrals take 1 damage when at 0
     c.use({ 'self': h })
-    assert n.hp == 1
+    assert n.damage == 1
 
 def test_hermit_aid():
     
@@ -242,23 +242,23 @@ def test_hermit_aid():
     ])
 
     # Check that hunters heal 1 damage
-    h.hp = 1
+    h.damage = 1
     c.use({ 'self': s })
-    assert h.hp == 0
+    assert h.damage == 0
 
     # Check that shadows do nothing
-    s.hp = 1
+    s.damage = 1
     c.use({ 'self': h })
-    assert s.hp == 1
+    assert s.damage == 1
 
     # Check that neutrals do nothing
-    n.hp = 1
+    n.damage = 1
     c.use({ 'self': h })
-    assert n.hp == 1
+    assert n.damage == 1
 
     # Check that hunters take 1 damage when at 0
     c.use({ 'self': s })
-    assert h.hp == 1
+    assert h.damage == 1
 
 def test_hermit_fiddle():
     
@@ -272,20 +272,20 @@ def test_hermit_fiddle():
     ])
 
     # Check that hunters do nothing
-    h.hp = 1
+    h.damage = 1
     c.use({ 'self': s })
-    assert h.hp == 1
+    assert h.damage == 1
 
     # Check that shadows heal 1 damage
-    s.hp = 1
+    s.damage = 1
     c.use({ 'self': h })
-    assert s.hp == 0
+    assert s.damage == 0
 
     # Check that neutrals do nothing
-    n.hp = 1
+    n.damage = 1
     c.use({ 'self': h })
-    assert n.hp == 1
+    assert n.damage == 1
 
     # Check that shadows take 1 damage when at 0
     c.use({ 'self': h })
-    assert s.hp == 1 
+    assert s.damage == 1 

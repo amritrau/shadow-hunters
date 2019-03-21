@@ -24,7 +24,7 @@ def test_fields():
     assert not p.location
     assert not p.equipment
     assert not p.modifiers
-    assert p.hp == 0
+    assert p.damage == 0
 
     # test dump
     dump = p.dump()
@@ -33,7 +33,7 @@ def test_fields():
         'socket_id': 'socket_id',
         'state': 2,
         'equipment': [],
-        'hp': 0,
+        'damage': 0,
         'location': {},
         'character': {},
         'modifiers': {}
@@ -46,7 +46,7 @@ def test_setCharacter():
     c = character.Character(
         name = "char_name",
         alleg = 1,
-        max_hp = 10,
+        max_damage = 10,
         win_cond = lambda: 5,
         win_cond_desc = "win_desc",
         special = lambda: 5,
@@ -80,27 +80,27 @@ def test_defend():
     # TODO: Test unwritten because implementation is subject to change
     assert 1
 
-def test_moveHP():
+def test_moveDamage():
     p = helpers.fresh_gc_ef()[0].players[0]
 
     # Check in-bounds movement
-    p.moveHP(-5)
-    assert p.hp == 5
+    p.moveDamage(-5)
+    assert p.damage == 5
 
-    # Check ceiling of max_hp
-    p.moveHP(-50)
-    assert p.hp == p.character.max_hp
+    # Check ceiling of max_damage
+    p.moveDamage(-50)
+    assert p.damage == p.character.max_damage
 
     # Check floor of 0
-    p.moveHP(100)
-    assert p.hp == 0
+    p.moveDamage(100)
+    assert p.damage == 0
 
-def test_setHP():
+def test_setDamage():
     p = helpers.fresh_gc_ef()[0].players[0]
     
-    # Check setting hp changes player hp
-    p.setHP(5)
-    assert p.hp == 5
+    # Check setting damage changes player damage
+    p.setDamage(5)
+    assert p.damage == 5
 
 def test_checkDeath():
     p = helpers.fresh_gc_ef()[0].players[0]
@@ -109,8 +109,8 @@ def test_checkDeath():
     p.checkDeath()
     assert p.state == 2
 
-    # Check that player dies when hp > max_hp
-    p.hp = 20
+    # Check that player dies when damage > max_damage
+    p.damage = 20
     p.checkDeath()
     assert p.state == 0
 
