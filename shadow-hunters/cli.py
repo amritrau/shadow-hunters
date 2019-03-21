@@ -24,34 +24,34 @@ class ElementFactory:
         # TODO For the following functions, insert descriptive tell_h()'s
         def use_bloodthirsty_spider(args):
             target = args['self'].gc.ask_h('select', {'options': [t.user_id for t in args['self'].gc.getLivePlayers() if t != args['self']]}, args['self'].user_id)['value']
-            args['self'].gc.update_h('select', {})
+            args['self'].gc.update_h()
             [p for p in args['self'].gc.getLivePlayers() if p.user_id == target][0].moveHP(-2)
             args['self'].moveHP(-2)
-            args['self'].gc.update_h('select', {})
+            args['self'].gc.update_h()
 
         def use_vampire_bat(args):
             target = args['self'].gc.ask_h('select', {'options': [t.user_id for t in args['self'].gc.getLivePlayers() if t != args['self']]}, args['self'].user_id)['value']
-            args['self'].gc.update_h('select', {})
+            args['self'].gc.update_h()
             [p for p in args['self'].gc.getLivePlayers() if p.user_id == target][0].moveHP(-2)
             args['self'].moveHP(1)
-            args['self'].gc.update_h('select', {})
+            args['self'].gc.update_h()
 
         def use_first_aid(args):
             target = args['self'].gc.ask_h('select', {'options': [t.user_id for t in args['self'].gc.getLivePlayers()]}, args['self'].user_id)['value']
-            args['self'].gc.update_h('select', {})
+            args['self'].gc.update_h()
             [p for p in args['self'].gc.getLivePlayers() if p.user_id == target][0].setHP(7)
-            args['self'].gc.update_h('select', {})
+            args['self'].gc.update_h()
 
         def use_moody_goblin(args):
             players_w_items = [p for p in args['self'].gc.getLivePlayers() if (len(p.equipment) and p != args['self'])]
             if len(players_w_items):
                 data = {'options': [p.user_id for p in players_w_items]}
                 target = args['self'].gc.ask_h('select', data, args['self'].user_id)['value']
-                args['self'].gc.update_h('select', {})
+                args['self'].gc.update_h()
                 target_Player = [p for p in args['self'].gc.getLivePlayers() if p.user_id == target][0]
                 data = {'options': [eq.title for eq in target_Player.equipment]}
                 equip = args['self'].gc.ask_h('select', data, args['self'].user_id)['value']
-                args['self'].gc.update_h('select', {})
+                args['self'].gc.update_h()
                 equip_Equipment = [eq for eq in target_Player.equipment if eq.title == equip][0]
 
                 i = target_Player.equipment.index(equip_Equipment)
@@ -59,11 +59,11 @@ class ElementFactory:
                 args['self'].equipment.append(equip_Equipment)
                 equip_Equipment.holder = args['self']
                 args['self'].gc.tell_h("{} stole {}'s {}!".format(args['self'].user_id, target_Player.user_id, equip_Equipment.title))
-                args['self'].gc.update_h('select', {})
+                args['self'].gc.update_h()
             else:
                 args['self'].gc.tell_h("Nobody has any items for {} to steal.".format(args['self'].user_id))
 
-            args['self'].gc.update_h('select', {})
+            args['self'].gc.update_h()
         ##################
 
 
@@ -136,7 +136,7 @@ class ElementFactory:
                 holder = None,
                 is_equip = True,
                 force_use = False,
-                use = lambda is_attack, successful, amt: amt + 1 if (is_attack and successful) else amt 
+                use = lambda is_attack, successful, amt: amt + 1 if (is_attack and successful) else amt
             ),
             card.Card(
                 title = "Rusted Broad Axe",
@@ -207,7 +207,7 @@ class ElementFactory:
             args['self'].gc.tell_h("{} is choosing a player...".format(args['self'].user_id))
             data = {'options': [p.user_id for p in args['self'].gc.getLivePlayers() if p != args['self']]}
             target = args['self'].gc.ask_h('select', data, args['self'].user_id)['value']
-            args['self'].gc.update_h('select', {})
+            args['self'].gc.update_h()
             target_Player = [p for p in args['self'].gc.getLivePlayers() if p.user_id == target][0]
             args['self'].gc.tell_h("{} chose {}!".format(args['self'].user_id, target))
             return target_Player
@@ -215,7 +215,7 @@ class ElementFactory:
         def choose_equipment(player, target):
             data = {'options': [eq.title for eq in target.equipment]}
             equip = target.gc.ask_h('select', data, player.user_id)['value']
-            player.gc.update_h('select', {})
+            player.gc.update_h()
             equip_Equipment = [eq for eq in target.equipment if eq.title == equip][0]
             return equip_Equipment
 
@@ -233,7 +233,7 @@ class ElementFactory:
                 else:
                     data = {'options': ["Receive 1 damage"]}
                 decision = target.gc.ask_h('select', data, target.user_id)['value']
-                target.gc.update_h('select', {})
+                target.gc.update_h()
                 if decision == "Give an equipment card":
                     target.gc.tell_h("{} is choosing an equipment card to give to {}...".format(target.user_id, args['self'].user_id))
                     eq = choose_equipment(target, target)
@@ -250,10 +250,10 @@ class ElementFactory:
                 target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ['Do nothing']}
                 target.gc.ask_h('yesno', data, target.user_id)['value']
-                target.gc.update_h('yesno', {})
+                target.gc.update_h()
                 target.gc.tell_h("{} did nothing.".format(target.user_id))
 
-            target.gc.update_h('yesno', {})
+            target.gc.update_h()
 
         def hermit_greed(args):
             target = choose_player(args)
@@ -269,7 +269,7 @@ class ElementFactory:
                 else:
                     data = {'options': ["Receive 1 damage"]}
                 decision = target.gc.ask_h('select', data, target.user_id)['value']
-                target.gc.update_h('select', {})
+                target.gc.update_h()
                 if decision == "Give an equipment card":
                     target.gc.tell_h("{} is choosing an equipment card to give to {}...".format(target.user_id, args['self'].user_id))
                     eq = choose_equipment(target, target)
@@ -285,10 +285,10 @@ class ElementFactory:
                 target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ['Do nothing']}
                 target.gc.ask_h('yesno', data, target.user_id)['value']
-                target.gc.update_h('yesno', {})
+                target.gc.update_h()
                 target.gc.tell_h("{} did nothing.".format(target.user_id))
 
-            target.gc.update_h('yesno', {})
+            target.gc.update_h()
 
         def hermit_anger(args):
             target = choose_player(args)
@@ -304,7 +304,7 @@ class ElementFactory:
                 else:
                     data = {'options': ["Receive 1 damage"]}
                 decision = target.gc.ask_h('select', data, target.user_id)['value']
-                target.gc.update_h('select', {})
+                target.gc.update_h()
                 if decision == "Give an equipment card":
                     target.gc.tell_h("{} is choosing an equipment card to give to {}...".format(target.user_id, args['self'].user_id))
                     eq = choose_equipment(target, target)
@@ -320,10 +320,10 @@ class ElementFactory:
                 target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ['Do nothing']}
                 target.gc.ask_h('yesno', data, target.user_id)['value']
-                target.gc.update_h('yesno', {})
+                target.gc.update_h()
                 target.gc.tell_h("{} did nothing.".format(target.user_id))
 
-            target.gc.update_h('yesno', {})
+            target.gc.update_h()
 
         def hermit_slap(args):
             target = choose_player(args)
@@ -336,17 +336,17 @@ class ElementFactory:
                 target.gc.direct_h("You are a {}.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ["Receive 1 damage"]}
                 target.gc.ask_h('select', data, target.user_id)['value']
-                target.gc.update_h('select', {})
+                target.gc.update_h()
                 new_hp = target.moveHP(-1)
                 target.gc.tell_h("{}'s HP is now {}!".format(target.user_id, new_hp))
             else:
                 target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ['Do nothing']}
                 target.gc.ask_h('yesno', data, target.user_id)['value']
-                target.gc.update_h('yesno', {})
+                target.gc.update_h()
                 target.gc.tell_h("{} did nothing.".format(target.user_id))
 
-            target.gc.update_h('yesno', {})
+            target.gc.update_h()
 
         def hermit_spell(args):
             target = choose_player(args)
@@ -359,17 +359,17 @@ class ElementFactory:
                 target.gc.direct_h("You are a {}.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ["Receive 1 damage"]}
                 target.gc.ask_h('select', data, target.user_id)['value']
-                target.gc.update_h('select', {})
+                target.gc.update_h()
                 new_hp = target.moveHP(-1)
                 target.gc.tell_h("{}'s HP is now {}!".format(target.user_id, new_hp))
             else:
                 target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ['Do nothing']}
                 target.gc.ask_h('yesno', data, target.user_id)['value']
-                target.gc.update_h('yesno', {})
+                target.gc.update_h()
                 target.gc.tell_h("{} did nothing.".format(target.user_id))
 
-            target.gc.update_h('yesno', {})
+            target.gc.update_h()
 
         def hermit_exorcism(args):
             target = choose_player(args)
@@ -382,17 +382,17 @@ class ElementFactory:
                 target.gc.direct_h("You are a {}.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ["Receive 1 damage"]}
                 target.gc.ask_h('select', data, target.user_id)['value']
-                target.gc.update_h('select', {})
+                target.gc.update_h()
                 new_hp = target.moveHP(-2)
                 target.gc.tell_h("{}'s HP is now {}!".format(target.user_id, new_hp))
             else:
                 target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ['Do nothing']}
                 target.gc.ask_h('yesno', data, target.user_id)['value']
-                target.gc.update_h('yesno', {})
+                target.gc.update_h()
                 target.gc.tell_h("{} did nothing.".format(target.user_id))
 
-            target.gc.update_h('yesno', {})
+            target.gc.update_h()
 
         def hermit_nurturance(args):
             target = choose_player(args)
@@ -406,22 +406,22 @@ class ElementFactory:
                 if target.hp == target.character.max_hp:
                     data = {'options': ["Receive 1 damage"]}
                     target.gc.ask_h('select', data, target.user_id)['value']
-                    target.gc.update_h('select', {})
+                    target.gc.update_h()
                     new_hp = target.moveHP(-1)
                 else:
                     data = {'options': ["Heal 1 damage"]}
                     target.gc.ask_h('select', data, target.user_id)['value']
-                    target.gc.update_h('select', {})
+                    target.gc.update_h()
                     new_hp = target.moveHP(1)
                 target.gc.tell_h("{}'s HP is now {}!".format(target.user_id, new_hp))
             else:
                 target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ['Do nothing']}
                 target.gc.ask_h('yesno', data, target.user_id)['value']
-                target.gc.update_h('yesno', {})
+                target.gc.update_h()
                 target.gc.tell_h("{} did nothing.".format(target.user_id))
 
-            target.gc.update_h('yesno', {})
+            target.gc.update_h()
 
         def hermit_aid(args):
             target = choose_player(args)
@@ -435,22 +435,22 @@ class ElementFactory:
                 if target.hp == target.character.max_hp:
                     data = {'options': ["Receive 1 damage"]}
                     target.gc.ask_h('select', data, target.user_id)['value']
-                    target.gc.update_h('select', {})
+                    target.gc.update_h()
                     new_hp = target.moveHP(-1)
                 else:
                     data = {'options': ["Heal 1 damage"]}
                     target.gc.ask_h('select', data, target.user_id)['value']
-                    target.gc.update_h('select', {})
+                    target.gc.update_h()
                     new_hp = target.moveHP(1)
                 target.gc.tell_h("{}'s HP is now {}!".format(target.user_id, new_hp))
             else:
                 target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ['Do nothing']}
                 target.gc.ask_h('yesno', data, target.user_id)['value']
-                target.gc.update_h('yesno', {})
+                target.gc.update_h()
                 target.gc.tell_h("{} did nothing.".format(target.user_id))
 
-            target.gc.update_h('yesno', {})
+            target.gc.update_h()
 
         def hermit_fiddle(args):
             target = choose_player(args)
@@ -464,22 +464,22 @@ class ElementFactory:
                 if target.hp == target.character.max_hp:
                     data = {'options': ["Receive 1 damage"]}
                     target.gc.ask_h('select', data, target.user_id)['value']
-                    target.gc.update_h('select', {})
+                    target.gc.update_h()
                     new_hp = target.moveHP(-1)
                 else:
                     data = {'options': ["Heal 1 damage"]}
                     target.gc.ask_h('select', data, target.user_id)['value']
-                    target.gc.update_h('select', {})
+                    target.gc.update_h()
                     new_hp = target.moveHP(1)
                 target.gc.tell_h("{}'s HP is now {}!".format(target.user_id, new_hp))
             else:
                 target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ['Do nothing']}
                 target.gc.ask_h('yesno', data, target.user_id)['value']
-                target.gc.update_h('yesno', {})
+                target.gc.update_h()
                 target.gc.tell_h("{} did nothing.".format(target.user_id))
 
-            target.gc.update_h('yesno', {})
+            target.gc.update_h()
 
 
         GREEN_CARDS = [
@@ -674,7 +674,7 @@ class ElementFactory:
         def underworld_gate_action(gc, player):
             data = {'options': ["Draw White Card", "Draw Black Card", "Draw Green Card"]}
             answer = gc.ask_h('select', data, player.user_id)['value']
-            gc.update_h('select', {})
+            gc.update_h()
             if answer == "Draw White Card":
                 player.drawCard(gc.white_cards)
             elif answer == "Draw Black Card":
@@ -682,23 +682,23 @@ class ElementFactory:
             else:
                 player.drawCard(gc.green_cards)
 
-            gc.update_h('select', {})
+            gc.update_h()
 
         def weird_woods_action(gc, player):
             data = {'options': [p.user_id for p in gc.getLivePlayers()]}
             target = gc.ask_h('select', data, player.user_id)['value']
-            gc.update_h('select', {})
+            gc.update_h()
             target_Player = [p for p in gc.getLivePlayers() if p.user_id == target][0]
 
             data = {'options': ["Heal 1 HP", "Damage 2 HP"]}
             amount = gc.ask_h('select', data, player.user_id)['value']
-            gc.update_h('select', {})
+            gc.update_h()
             if amount == "Heal 1 HP":
                 target_Player.moveHP(1)
             else:
                 target_Player.moveHP(-2)
 
-            gc.update_h('select', {})
+            gc.update_h()
 
         def erstwhile_altar_action(gc, player):
             # TODO Only show players with equipment
@@ -707,12 +707,12 @@ class ElementFactory:
             if len(players_w_items):
                 data = {'options': [p.user_id for p in players_w_items]}
                 target = gc.ask_h('select', data, player.user_id)['value']
-                gc.update_h('select', {})
+                gc.update_h()
                 target_Player = [p for p in players_w_items if p.user_id == target][0]
 
                 data = {'options': [eq.title for eq in target_Player.equipment]}
                 equip = gc.ask_h('select', data, player.user_id)['value']
-                gc.update_h('select', {})
+                gc.update_h()
                 equip_Equipment = [eq for eq in target_Player.equipment if eq.title == equip][0]
 
                 i = target_Player.equipment.index(equip_Equipment)
@@ -722,7 +722,7 @@ class ElementFactory:
                 gc.tell_h("{} stole {}'s {}!".format(player.user_id, target_Player.user_id, equip_Equipment.title))
             else:
                 gc.tell_h("Nobody has any items for {} to steal.".format(player.user_id))
-            gc.update_h('select', {})
+            gc.update_h()
 
         #########
 

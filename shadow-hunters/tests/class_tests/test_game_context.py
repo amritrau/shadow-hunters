@@ -37,7 +37,7 @@ def test_fields():
     assert gc.tell_h(0) == 5
     assert gc.direct_h(0, 0) == 5
     assert gc.ask_h(0, { 'options': ['test'] }, 0) == { 'value': 'test' }
-    assert gc.update_h(0, 0) == 5
+    assert gc.update_h() == 5
     assert not gc.modifiers
     assert gc.die4.n_sides == 4
     assert gc.die6.n_sides == 6

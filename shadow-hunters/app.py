@@ -90,10 +90,10 @@ def start_game(room_id, players):
             tell_h = lambda x: server_msg(x, room_id),
             direct_h = lambda x, sid: server_msg(x, sid),
             ask_h = lambda x, y, z: server_ask(x, y, z, room_id),
-            update_h = lambda x, y: server_update(x, y, room_id)
+            update_h = lambda x: server_update(x, room_id)
         )
 
-    gc.update_h = lambda x, y: server_update(x, gc.dump()[0], room_id)
+    gc.update_h = lambda: server_update(gc.dump()[0], room_id)
 
     # gc.dump() can be called at any time to return a tuple of public,
     # private state. The public state is a self-explanatory dictionary; the
@@ -138,9 +138,8 @@ def server_msg(data, room_id):
     socketio.emit('message', {'data': data, 'color': S_COLOR}, room=room_id)
     socketio.sleep(SOCKET_SLEEP)
 
-def server_update(form, data, room_id):
+def server_update(data, room_id):
     # TODO Consider moving this to separate file
-    data['form'] = form
     socketio.emit('update', data, room=room_id)
     socketio.sleep(SOCKET_SLEEP)
 

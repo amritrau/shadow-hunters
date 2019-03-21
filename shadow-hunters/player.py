@@ -33,7 +33,7 @@ class Player:
         roll_result = roll_result_4 + roll_result_6
 
         self.gc.tell_h("{} rolled {} + {} = {}!".format(self.user_id, roll_result_4, roll_result_6, roll_result))
-        self.gc.update_h('confirm', {'action': 'roll', 'value': (roll_result_4, roll_result_6)})
+        self.gc.update_h()
 
         # Move to desired location
         if roll_result == 7:
@@ -67,7 +67,7 @@ class Player:
             destination = destination_Area.name
 
         self.move(destination_Area)
-        self.gc.update_h('select', {'action': 'move', 'value': destination})
+        self.gc.update_h()
         self.gc.tell_h("{} moves to {}!".format(self.user_id, destination))
 
 
@@ -77,19 +77,19 @@ class Player:
         answer = self.gc.ask_h('yesno', data, self.user_id)['value']
         if answer != 'Decline':
             # TODO Update game state
-            # self.gc.update_h('yesno', {'action': 'area', 'value': 'TODO'})
+            # self.gc.update_h()
 
             # TODO Perform area action
             self.location.action(self.gc, self)
             self.gc.tell_h(
                 '{} performed their area action!'.format(self.user_id)
             )
-            self.gc.update_h('yesno', {})
+            self.gc.update_h()
         else:
             self.gc.tell_h(
                 '{} declined to perform their area action.'.format(self.user_id)
             )
-            self.gc.update_h('yesno', {})
+            self.gc.update_h()
 
         # Someone could have died here, so check win conditions
         if self.gc.checkWinConditions(tell = False):
@@ -103,7 +103,7 @@ class Player:
         ]
         data = {'options': [t.user_id for t in targets] + ['Decline']}
         answer = self.gc.ask_h('select', data, self.user_id)['value']
-        self.gc.update_h('select', {})
+        self.gc.update_h()
 
         if answer != 'Decline':
             target = answer
@@ -116,12 +116,7 @@ class Player:
             roll_result_4 = self.gc.die4.roll()
             roll_result_6 = self.gc.die6.roll()
             roll_result = abs(roll_result_4 - roll_result_6)
-            self.gc.update_h(
-                'confirm',
-                {
-                    'action': 'roll',
-                    'value': (
-                        max(roll_result_6, roll_result_4),
+            self.gc.update_h(),
                         min(roll_result_6, roll_result_4)
                     )
                 }
@@ -137,13 +132,7 @@ class Player:
 
             damage_dealt = self.attack(target_Player, roll_result)
 
-            self.gc.update_h(
-                'none', {
-                    'action': 'damage',
-                    'player': target,
-                    'value': damage_dealt
-                }
-            )
+            self.gc.update_h()
             self.gc.tell_h(
                 "{} hit {} for {} damage!".format(
                     self.user_id, target, damage_dealt
@@ -167,7 +156,7 @@ class Player:
         if drawn.is_equipment:
             self.gc.tell_h("{} added {} to their arsenal!".format(self.user_id, public_title))
             self.equipment.append(drawn)
-        self.gc.update_h('yesno', {})
+        self.gc.update_h()
 
     def attack(self, other, amount):
         is_attack = True
@@ -183,7 +172,7 @@ class Player:
         successful = False # irrelevant for defend
         for eq in self.equipment:
             amount = eq.use(is_attack, successful, amount) # Compose each of these functions
-        
+
         dealt = amount
         self.moveHP(-dealt)
         return dealt
@@ -205,12 +194,12 @@ class Player:
         else: ## TODO Remove when not debugging
             self.gc.tell_h("{}'s HP was set to {}!".format(self.user_id, self.hp))
 
-        self.gc.update_h('yesno', {})
+        self.gc.update_h()
 
     def move(self, location):
         # TODO What checks do we need here?
         self.location = location
-        self.gc.update_h('yesno', {})
+        self.gc.update_h()
 
     def dump(self):
         return {
