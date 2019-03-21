@@ -1,4 +1,4 @@
-import cli
+import elements
 
 class Player:
     def __init__(self, user_id, socket_id):
@@ -8,7 +8,7 @@ class Player:
         self.state = 2 #  2 for ALIVE_ANON, 1 for ALIVE_KNOWN, 0 for DEAD
         self.character = None
         self.equipment = []
-        self.hp = 0
+        self.damage = 0
         self.location = None
         self.modifiers = {}
 
@@ -170,25 +170,25 @@ class Player:
             amount = eq.use(is_attack, successful, amount) # Compose each of these functions
 
         dealt = amount
-        self.moveHP(-dealt)
+        self.moveDamage(-dealt)
         return dealt
 
-    def moveHP(self, hp_change):
-        self.hp = min(self.hp - hp_change, self.character.max_hp)
-        self.hp = max(0, self.hp)
+    def moveDamage(self, damage_change):
+        self.damage = min(self.damage - damage_change, self.character.max_damage)
+        self.damage = max(0, self.damage)
         self.checkDeath()
-        return self.hp
+        return self.damage
 
-    def setHP(self, hp):
-        self.hp = hp
+    def setDamage(self, damage):
+        self.damage = damage
         self.checkDeath()
 
     def checkDeath(self):
-        if self.hp >= self.character.max_hp:
+        if self.damage >= self.character.max_damage:
             self.state = 0  # DEAD state
-            self.gc.tell_h("{} ({}: {}) died!".format(self.user_id, cli.ALLEGIANCE_MAP[self.character.alleg], self.character.name))
+            self.gc.tell_h("{} ({}: {}) died!".format(self.user_id, elements.ALLEGIANCE_MAP[self.character.alleg], self.character.name))
         else: ## TODO Remove when not debugging
-            self.gc.tell_h("{}'s HP was set to {}!".format(self.user_id, self.hp))
+            self.gc.tell_h("{}'s damage was set to {}!".format(self.user_id, self.damage))
 
         self.gc.update_h()
 
@@ -203,7 +203,7 @@ class Player:
             'socket_id': self.socket_id,
             'state': self.state,
             'equipment': [eq.dump() for eq in self.equipment],
-            'hp': self.hp,
+            'damage': self.damage,
             'character': self.character.dump() if self.character else {},
             'modifiers': self.modifiers,
             'location': self.location.dump() if self.location else {},

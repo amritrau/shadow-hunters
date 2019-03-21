@@ -1,13 +1,11 @@
 from flask import Flask, render_template, url_for, redirect, request, flash
 from flask_socketio import SocketIO, join_room, leave_room
 from random import randint
-from time import sleep
 import os
-from pprint import pprint  # TODO FOR TESTING PURPOSES ONLY, REMOVE!
 
 from game_context import GameContext
 from player import Player
-import cli
+import elements
 
 # basic app setup
 template_dir = os.path.abspath('./templates')
@@ -79,7 +77,7 @@ def start_game(room_id, players):
 
     # Initialize players and game context
     players = [Player(user_id, socket_id = get_sid[(user_id, room_id)]) for user_id in players]
-    ef = cli.ElementFactory()
+    ef = elements.ElementFactory()
     gc = GameContext(
             players = players,
             characters = ef.CHARACTERS,

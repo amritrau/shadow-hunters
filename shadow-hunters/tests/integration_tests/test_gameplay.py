@@ -3,7 +3,7 @@ import random
 
 import game_context
 import player
-import cli
+import elements
 from tests import helpers
 
 # test_gameplay.py

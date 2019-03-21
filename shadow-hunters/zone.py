@@ -1,7 +1,7 @@
 from area import Area
+
 # zone.py
 # Implements a Zone, which contains two areas.
-
 
 class Zone:
     def __init__(self, areas):

@@ -1,8 +1,9 @@
 import card, deck, character, area
 
-# cli.py
-# Provides a CLI to the game.
-# For now -- run with python -i cli.py
+# elements.py
+# Encodes all characters, win conditions, special abilities,
+# game areas, decks, and cards in an element factory. Every
+# game context is initialized with its own element factory.
 
 ALLEGIANCE_MAP = {
     0: "Shadow",
@@ -88,11 +89,11 @@ class ElementFactory:
                 holder = None,
                 is_equip = False,
                 force_use = True,
-                use = lambda args: [p.moveHP(-2) for p in args['self'].gc.getLivePlayers() if p != args['self']]
+                use = lambda args: [p.moveDamage(-2) for p in args['self'].gc.getLivePlayers() if p != args['self']]
             ),
             card.Card(
                 title = "First Aid",
-                desc = "Place a character's HP marker to 7 (You can choose yourself).",
+                desc = "Place a character's damage marker to 7 (You can choose yourself).",
                 color = 0,
                 holder = None,
                 is_equip = False,
@@ -106,7 +107,7 @@ class ElementFactory:
                 holder = None,
                 is_equip = False,
                 force_use = True,
-                use = lambda args: args['self'].moveHP(2)
+                use = lambda args: args['self'].moveDamage(2)
             ),
             card.Card(
                 title = "Holy Water of Healing",
@@ -115,7 +116,7 @@ class ElementFactory:
                 holder = None,
                 is_equip = False,
                 force_use = True,
-                use = lambda args: args['self'].moveHP(2)
+                use = lambda args: args['self'].moveDamage(2)
             )
         ]
 
@@ -243,8 +244,8 @@ class ElementFactory:
                     eq.holder = args['self']
                     args['self'].gc.tell_h("{} gave {} their {}!".format(target.user_id, args['self'].user_id, eq.title))
                 else:
-                    new_hp = target.moveHP(-1)
-                    target.gc.tell_h("{}'s HP is now {}!".format(target.user_id, new_hp))
+                    new_damage = target.moveDamage(-1)
+                    target.gc.tell_h("{}'s damage is now {}!".format(target.user_id, new_damage))
 
             else:
                 target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
@@ -279,8 +280,8 @@ class ElementFactory:
                     eq.holder = args['self']
                     args['self'].gc.tell_h("{} gave {} their {}!".format(target.user_id, args['self'].user_id, eq.title))
                 else:
-                    new_hp = target.moveHP(-1)
-                    target.gc.tell_h("{}'s HP is now {}!".format(target.user_id, new_hp))
+                    new_damage = target.moveDamage(-1)
+                    target.gc.tell_h("{}'s damage is now {}!".format(target.user_id, new_damage))
             else:
                 target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ['Do nothing']}
@@ -314,8 +315,8 @@ class ElementFactory:
                     eq.holder = args['self']
                     args['self'].gc.tell_h("{} gave {} their {}!".format(target.user_id, args['self'].user_id, eq.title))
                 else:
-                    new_hp = target.moveHP(-1)
-                    target.gc.tell_h("{}'s HP is now {}!".format(target.user_id, new_hp))
+                    new_damage = target.moveDamage(-1)
+                    target.gc.tell_h("{}'s damage is now {}!".format(target.user_id, new_damage))
             else:
                 target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ['Do nothing']}
@@ -380,7 +381,7 @@ class ElementFactory:
 
             if target.character.alleg == 0: ## shadow
                 target.gc.direct_h("You are a {}.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
-                data = {'options': ["Receive 1 damage"]}
+                data = {'options': ["Receive 2 damage"]}
                 target.gc.ask_h('select', data, target.user_id)['value']
                 target.gc.update_h()
                 new_hp = target.moveHP(-2)
@@ -403,7 +404,7 @@ class ElementFactory:
 
             if target.character.alleg == 1: ## neutral
                 target.gc.direct_h("You are a {}.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
-                if target.hp == target.character.max_hp:
+                if target.damage == 0:
                     data = {'options': ["Receive 1 damage"]}
                     target.gc.ask_h('select', data, target.user_id)['value']
                     target.gc.update_h()
@@ -432,7 +433,7 @@ class ElementFactory:
 
             if target.character.alleg == 2: ## hunter
                 target.gc.direct_h("You are a {}.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
-                if target.hp == target.character.max_hp:
+                if target.damage == 0:
                     data = {'options': ["Receive 1 damage"]}
                     target.gc.ask_h('select', data, target.user_id)['value']
                     target.gc.update_h()
@@ -456,12 +457,12 @@ class ElementFactory:
             target = choose_player(args)
             # TODO FIX THE FOLLOWING!
             # Description should come from the card itself!
-            args['self'].gc.direct_h("{} says: {}".format(args['self'].user_id, "If hunter, then heal 1 damage"), target.socket_id)
+            args['self'].gc.direct_h("{} says: {}".format(args['self'].user_id, "If shadow, then heal 1 damage"), target.socket_id)
             # END FIX
 
             if target.character.alleg == 0: ## shadow
                 target.gc.direct_h("You are a {}.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
-                if target.hp == target.character.max_hp:
+                if target.damage == 0:
                     data = {'options': ["Receive 1 damage"]}
                     target.gc.ask_h('select', data, target.user_id)['value']
                     target.gc.update_h()
@@ -610,12 +611,10 @@ class ElementFactory:
         def shadow_win_cond(gc, player):
             no_living_hunters = (len([p for p in gc.getLivePlayers() if p.character.alleg == 2]) == 0)
             neutrals_dead_3 = (len([p for p in gc.getDeadPlayers() if p.character.alleg == 1]) >= 3)
-            # print("Living hunters:", [p for p in gc.getLivePlayers() if p.character.alleg == 2])
             return no_living_hunters or neutrals_dead_3
 
         def hunter_win_cond(gc, player):
             no_living_shadows = (len([p for p in gc.getLivePlayers() if p.character.alleg == 0]) == 0)
-            # print("Living shadows:", [p for p in gc.getLivePlayers() if p.character.alleg == 0])
             return no_living_shadows
 
         def allie_win_cond(gc, player):
@@ -625,7 +624,7 @@ class ElementFactory:
             character.Character(
                 name = "Valkyrie",
                 alleg = 0,  # Shadow
-                max_hp = 13,
+                max_damage = 13,
                 win_cond = shadow_win_cond,
                 win_cond_desc = "All the Hunter characters are dead or 3 Neutral characters are dead",
                 special = lambda: 0,  # TODO
@@ -634,7 +633,7 @@ class ElementFactory:
             character.Character(
                 name = "Vampire",
                 alleg = 0,  # Shadow
-                max_hp = 13,
+                max_damage = 13,
                 win_cond = shadow_win_cond,
                 win_cond_desc = "All the Hunter characters are dead or 3 Neutral characters are dead",
                 special = lambda: 0,  # TODO
@@ -643,7 +642,7 @@ class ElementFactory:
             character.Character(
                 name = "Allie",
                 alleg = 1,  # Neutral
-                max_hp = 8,
+                max_damage = 8,
                 win_cond = allie_win_cond,
                 win_cond_desc = "You're not dead when the game is over",
                 special = lambda: 0,  # TODO
@@ -652,7 +651,7 @@ class ElementFactory:
             character.Character(
                 name = "George",
                 alleg = 2,  # Hunter
-                max_hp = 14,
+                max_damage = 14,
                 win_cond = hunter_win_cond,
                 win_cond_desc = "All the Shadow characters are dead",
                 special = lambda: 0,  # TODO
@@ -661,7 +660,7 @@ class ElementFactory:
             character.Character(
                 name = "Fu-ka",
                 alleg = 2,  # Hunter
-                max_hp = 12,
+                max_damage = 12,
                 win_cond = hunter_win_cond,
                 win_cond_desc = "All the Shadow characters are dead",
                 special = lambda: 0,  # TODO
@@ -690,19 +689,17 @@ class ElementFactory:
             gc.update_h()
             target_Player = [p for p in gc.getLivePlayers() if p.user_id == target][0]
 
-            data = {'options': ["Heal 1 HP", "Damage 2 HP"]}
+            data = {'options': ["Heal 1 damage", "Give 2 damage"]}
             amount = gc.ask_h('select', data, player.user_id)['value']
             gc.update_h()
             if amount == "Heal 1 HP":
                 target_Player.moveHP(1)
             else:
-                target_Player.moveHP(-2)
+                target_Player.moveDamage(-2)
 
             gc.update_h()
 
         def erstwhile_altar_action(gc, player):
-            # TODO Only show players with equipment
-            # TODO Handle case: nobody has any equipment
             players_w_items = [p for p in gc.getLivePlayers() if (len(p.equipment) and p != player)]
             if len(players_w_items):
                 data = {'options': [p.user_id for p in players_w_items]}
@@ -732,7 +729,6 @@ class ElementFactory:
                 name = "Hermit's Cabin",
                 desc = "You may draw a Hermit Card.",
                 domain = [2, 3],
-                # TODO uncomment below once green cards are implemented
                 action = lambda gc, player: player.drawCard(gc.green_cards),
                 resource_id = "hermits-cabin"
             ),
@@ -768,7 +764,7 @@ class ElementFactory:
                 name = "Erstwhile Altar",
                 desc = "You may steal an equipment card from any player.",
                 domain = [10],
-                action = erstwhile_altar_action,  # TODO
+                action = erstwhile_altar_action,
                 resource_id = "erstwhile-altar"
             )
         ]

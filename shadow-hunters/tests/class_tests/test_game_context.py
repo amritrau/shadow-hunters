@@ -4,7 +4,7 @@ import random
 
 import game_context
 import player
-import cli
+import elements
 
 # test_game_context.py
 # Tests for the GameContext object
@@ -14,7 +14,7 @@ def test_fields():
     # test initialization
     player_names = ['Amrit', 'Max', 'Gia', 'Joanna', 'Vishal']
     players = [player.Player(user_id, socket_id='unused') for user_id in player_names]
-    ef = cli.ElementFactory()
+    ef = elements.ElementFactory()
     gc = game_context.GameContext(
         players = players,
         characters = ef.CHARACTERS,
@@ -61,7 +61,7 @@ def test_getLivePlayers():
     assert gc.getLivePlayers() == gc.players
 
     # Check that dead players are not included in alive players
-    gc.players[0].setHP(14)
+    gc.players[0].setDamage(14)
     assert gc.getLivePlayers() == gc.players[1:]
 
 def test_getDeadPlayers():
@@ -71,7 +71,7 @@ def test_getDeadPlayers():
     assert not gc.getDeadPlayers()
 
     # Check that dead players are properly included
-    gc.players[0].setHP(14)
+    gc.players[0].setDamage(14)
     assert gc.getDeadPlayers() == [gc.players[0]]
 
 def test_checkWinConditions():
@@ -88,14 +88,14 @@ def test_checkWinConditions():
     gc, ef = helpers.fresh_gc_ef()
     for p in gc.players:
         if p.character.alleg != 2:
-            p.setHP(14)
+            p.setDamage(14)
     assert all([p.character.alleg == 2 for p in gc.checkWinConditions()])
 
     # Check that shadows win when everyone else is dead
     gc, ef = helpers.fresh_gc_ef()
     for p in gc.players:
         if p.character.alleg != 0:
-            p.setHP(14)
+            p.setDamage(14)
     assert all([p.character.alleg == 0 for p in gc.checkWinConditions()])
 
 def test_play():

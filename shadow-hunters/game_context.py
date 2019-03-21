@@ -3,7 +3,8 @@ import copy
 
 from die import Die
 from zone import Zone
-import cli
+import elements
+
 # game_context.py
 # Implements a GameContext.
 
@@ -63,7 +64,7 @@ class GameContext:
             winners = self._checkWinConditions()  # Hack to collect Allie
             if tell:
                 for w in winners:
-                    self.tell_h("{} ({}: {}) won! {}".format(w.user_id, cli.ALLEGIANCE_MAP[w.character.alleg], w.character.name, w.character.win_cond_desc))
+                    self.tell_h("{} ({}: {}) won! {}".format(w.user_id, elements.ALLEGIANCE_MAP[w.character.alleg], w.character.name, w.character.win_cond_desc))
             return winners
 
 
@@ -71,7 +72,7 @@ class GameContext:
         for z in range(len(self.zones)):
             self.tell_h("Zone {} contains: {}.".format(z+1, ', '.join([a.name for a in self.zones[z].areas])))
         for p in self.players:
-            self.direct_h("You ({}) are {} ({}).".format(p.user_id, p.character.name, cli.ALLEGIANCE_MAP[p.character.alleg]), p.socket_id)
+            self.direct_h("You ({}) are {} ({}).".format(p.user_id, p.character.name, elements.ALLEGIANCE_MAP[p.character.alleg]), p.socket_id)
         while True:
             for player in self.getLivePlayers():
                     player.takeTurn()
@@ -91,7 +92,8 @@ class GameContext:
 
         public_state = {
             'zones': public_zones,
-            'players': public_players
+            'players': public_players,
+            'characters': [c.dump() for c in self.characters]
         }
         private_state = private_players
 
