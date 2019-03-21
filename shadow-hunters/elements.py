@@ -26,21 +26,21 @@ class ElementFactory:
         def use_bloodthirsty_spider(args):
             target = args['self'].gc.ask_h('select', {'options': [t.user_id for t in args['self'].gc.getLivePlayers() if t != args['self']]}, args['self'].user_id)['value']
             args['self'].gc.update_h()
-            [p for p in args['self'].gc.getLivePlayers() if p.user_id == target][0].moveHP(-2)
-            args['self'].moveHP(-2)
+            [p for p in args['self'].gc.getLivePlayers() if p.user_id == target][0].moveDamage(-2)
+            args['self'].moveDamage(-2)
             args['self'].gc.update_h()
 
         def use_vampire_bat(args):
             target = args['self'].gc.ask_h('select', {'options': [t.user_id for t in args['self'].gc.getLivePlayers() if t != args['self']]}, args['self'].user_id)['value']
             args['self'].gc.update_h()
-            [p for p in args['self'].gc.getLivePlayers() if p.user_id == target][0].moveHP(-2)
-            args['self'].moveHP(1)
+            [p for p in args['self'].gc.getLivePlayers() if p.user_id == target][0].moveDamage(-2)
+            args['self'].moveDamage(1)
             args['self'].gc.update_h()
 
         def use_first_aid(args):
             target = args['self'].gc.ask_h('select', {'options': [t.user_id for t in args['self'].gc.getLivePlayers()]}, args['self'].user_id)['value']
             args['self'].gc.update_h()
-            [p for p in args['self'].gc.getLivePlayers() if p.user_id == target][0].setHP(7)
+            [p for p in args['self'].gc.getLivePlayers() if p.user_id == target][0].setDamage(7)
             args['self'].gc.update_h()
 
         def use_moody_goblin(args):
@@ -338,8 +338,8 @@ class ElementFactory:
                 data = {'options': ["Receive 1 damage"]}
                 target.gc.ask_h('select', data, target.user_id)['value']
                 target.gc.update_h()
-                new_hp = target.moveHP(-1)
-                target.gc.tell_h("{}'s HP is now {}!".format(target.user_id, new_hp))
+                new_damage = target.moveDamage(-1)
+                target.gc.tell_h("{}'s Damage is now {}!".format(target.user_id, new_damage))
             else:
                 target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ['Do nothing']}
@@ -361,8 +361,8 @@ class ElementFactory:
                 data = {'options': ["Receive 1 damage"]}
                 target.gc.ask_h('select', data, target.user_id)['value']
                 target.gc.update_h()
-                new_hp = target.moveHP(-1)
-                target.gc.tell_h("{}'s HP is now {}!".format(target.user_id, new_hp))
+                new_damage = target.moveDamage(-1)
+                target.gc.tell_h("{}'s damage is now {}!".format(target.user_id, new_damage))
             else:
                 target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ['Do nothing']}
@@ -384,8 +384,8 @@ class ElementFactory:
                 data = {'options': ["Receive 2 damage"]}
                 target.gc.ask_h('select', data, target.user_id)['value']
                 target.gc.update_h()
-                new_hp = target.moveHP(-2)
-                target.gc.tell_h("{}'s HP is now {}!".format(target.user_id, new_hp))
+                new_damage = target.moveDamage(-2)
+                target.gc.tell_h("{}'s damage is now {}!".format(target.user_id, new_damage))
             else:
                 target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ['Do nothing']}
@@ -408,13 +408,13 @@ class ElementFactory:
                     data = {'options': ["Receive 1 damage"]}
                     target.gc.ask_h('select', data, target.user_id)['value']
                     target.gc.update_h()
-                    new_hp = target.moveHP(-1)
+                    new_damage = target.moveDamage(-1)
                 else:
                     data = {'options': ["Heal 1 damage"]}
                     target.gc.ask_h('select', data, target.user_id)['value']
                     target.gc.update_h()
-                    new_hp = target.moveHP(1)
-                target.gc.tell_h("{}'s HP is now {}!".format(target.user_id, new_hp))
+                    new_damage = target.moveDamage(1)
+                target.gc.tell_h("{}'s damage is now {}!".format(target.user_id, new_damage))
             else:
                 target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ['Do nothing']}
@@ -437,13 +437,13 @@ class ElementFactory:
                     data = {'options': ["Receive 1 damage"]}
                     target.gc.ask_h('select', data, target.user_id)['value']
                     target.gc.update_h()
-                    new_hp = target.moveHP(-1)
+                    new_damage = target.moveDamage(-1)
                 else:
                     data = {'options': ["Heal 1 damage"]}
                     target.gc.ask_h('select', data, target.user_id)['value']
                     target.gc.update_h()
-                    new_hp = target.moveHP(1)
-                target.gc.tell_h("{}'s HP is now {}!".format(target.user_id, new_hp))
+                    new_damage = target.moveDamage(1)
+                target.gc.tell_h("{}'s damage is now {}!".format(target.user_id, new_damage))
             else:
                 target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ['Do nothing']}
@@ -466,13 +466,13 @@ class ElementFactory:
                     data = {'options': ["Receive 1 damage"]}
                     target.gc.ask_h('select', data, target.user_id)['value']
                     target.gc.update_h()
-                    new_hp = target.moveHP(-1)
+                    new_damage = target.moveDamage(-1)
                 else:
                     data = {'options': ["Heal 1 damage"]}
                     target.gc.ask_h('select', data, target.user_id)['value']
                     target.gc.update_h()
-                    new_hp = target.moveHP(1)
-                target.gc.tell_h("{}'s HP is now {}!".format(target.user_id, new_hp))
+                    new_damage = target.moveDamage(1)
+                target.gc.tell_h("{}'s damage is now {}!".format(target.user_id, new_damage))
             else:
                 target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ['Do nothing']}
@@ -692,8 +692,8 @@ class ElementFactory:
             data = {'options': ["Heal 1 damage", "Give 2 damage"]}
             amount = gc.ask_h('select', data, player.user_id)['value']
             gc.update_h()
-            if amount == "Heal 1 HP":
-                target_Player.moveHP(1)
+            if amount == "Heal 1 Damage":
+                target_Player.moveDamage(1)
             else:
                 target_Player.moveDamage(-2)
 
