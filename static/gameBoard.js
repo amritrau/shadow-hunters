@@ -93,38 +93,23 @@ var GameBoard = new Phaser.Class ({
         this.load.svg('player4', gfx + 'blue-person.svg', {width: 50.5, height: 37.5});
         this.load.svg('player5', gfx + 'pink-person.svg', {width: 50.5, height: 37.5});
 
-        // load the location cards
-        this.load.image('Hermit\'s Cabin', gfx + 'hermits_cabin.png');
-        this.load.image('Underworld Gate', gfx + 'pleasure_island.png');
-        this.load.image('Church', gfx + 'church.png');
-        this.load.image('Cemetery', gfx + 'cemetery.png');
-        this.load.image('Weird Woods', gfx + 'weird_woods.png');
-        this.load.image('Erstwhile Altar', gfx + 'erstwhile_altar.png');
-
-        // load player sprites and hp trackers
-        this.load.image('player1', gfx + 'white-person.png');
-        this.load.image('player2', gfx + 'black-person.png');
-        this.load.image('player3', gfx + 'green-person.png');
-        this.load.image('player4', gfx + 'blue-person.png');
-        this.load.image('player5', gfx + 'pink-person.png');
-
-        this.load.image('hpp1', '/static/assets/whiteDot.png');
-        this.load.image('hpp2', '/static/assets/blackDot.png');
-        this.load.image('hpp3', '/static/assets/greenDot.png');
-        this.load.image('hpp4', '/static/assets/blueDot.png');
-        this.load.image('hpp5', '/static/assets/pinkDot.png');
+        this.load.svg('hpp1', gfx + 'whiteDot.svg', {width: 15, height: 15});
+        this.load.svg('hpp2', gfx + 'blackDot.svg', {width: 15, height: 15});
+        this.load.svg('hpp3', gfx + 'greenDot.svg', {width: 15, height: 15});
+        this.load.svg('hpp4', gfx + 'blueDot.svg', {width: 15, height: 15});
+        this.load.svg('hpp5', gfx + 'pinkDot.svg', {width: 15, height: 15});
 
         this.load.image('box', '/static/assets/box.png');
 
-        this.load.image('charImage', '/static/assets/charImage.png');
-        this.load.image('8hp', '/static/assets/8hp.png');
-        this.load.image('12hp', '/static/assets/12hp.png');
-        this.load.image('13hp', '/static/assets/13hp.png');
-        this.load.image('14hp', '/static/assets/14hp.png');
-        this.load.image('A', '/static/assets/a.png');
-        this.load.image('V', '/static/assets/v.png');
-        this.load.image('F', '/static/assets/f.png');
-        this.load.image('G', '/static/assets/g.png');
+        this.load.svg('charImage', gfx + 'charImage.svg', {width: 123.633, height: 123.633});
+        this.load.svg('8hp', gfx + '8hp.svg', {width: 30.14, height: 30.14});
+        this.load.svg('12hp', gfx + '12hp.svg', {width: 30.14, height: 30.14});
+        this.load.svg('13hp', gfx + '13hp.svg', {width: 30.14, height: 30.14});
+        this.load.svg('14hp', gfx + '14hp.svg', {width: 30.14, height: 30.14});
+        this.load.svg('A', gfx + 'a.svg', {width: 36.657, height: 36.657});
+        this.load.svg('V', gfx + 'v.svg', {width: 36.657, height: 36.657});
+        this.load.svg('F', gfx + 'f.svg', {width: 36.657, height: 36.657});
+        this.load.svg('G', gfx + 'g.svg', {width: 36.657, height: 36.657});
     },
 
     //the create function is where everything is added to the canvas
