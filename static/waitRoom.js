@@ -10,7 +10,7 @@ var WaitingRoom = new Phaser.Class ({
     preload: function () {
         // url where gfx resources are stored
         var gfx = "https://s3.amazonaws.com/shadowhunters.gfxresources/";
-        this.load.image('background', gfx + 'background.svg');
+        this.load.svg('background', gfx + 'background.svg', {width: 1066, height: 600});
     },
 
     create: function () {
