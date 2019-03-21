@@ -692,7 +692,7 @@ class ElementFactory:
             data = {'options': ["Heal 1 damage", "Give 2 damage"]}
             amount = gc.ask_h('select', data, player.user_id)['value']
             gc.update_h()
-            if amount == "Heal 1 Damage":
+            if amount == "Heal 1 damage":
                 target_Player.moveDamage(1)
             else:
                 target_Player.moveDamage(-2)
