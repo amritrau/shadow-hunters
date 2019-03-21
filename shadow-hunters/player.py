@@ -116,11 +116,7 @@ class Player:
             roll_result_4 = self.gc.die4.roll()
             roll_result_6 = self.gc.die6.roll()
             roll_result = abs(roll_result_4 - roll_result_6)
-            self.gc.update_h(),
-                        min(roll_result_6, roll_result_4)
-                    )
-                }
-            )
+            self.gc.update_h()
             self.gc.tell_h(
                 "{} rolled a {} - {} = {}!".format(
                     self.user_id,
