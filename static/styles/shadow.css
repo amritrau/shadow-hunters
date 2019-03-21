@@ -1,32 +1,116 @@
 body {
-font-family: Century Gothic, Arial;
-background-color: #CCCCCC;
-margin: 0px auto;
-text-align: center;
+    height: 100%;
+    font-family: Century Gothic, Arial;
+    background-color: #CCCCCC;
+    margin: 0px auto;
+    text-align: center;
 }
 .container {
-margin: auto;
-width: 1100px;
-height: 1600px;
-
+    margin: auto;
+    width: 1100px;
+    height: 1000px;
+    position: relative;
 }
 .header {
-font-size: 22px;
-background-color: #999999;
-border: 1px dashed #666666;
-color: #444444;
-width: 800px;
-font-size: 14px;
-text-align: center;
-margin: 10px auto 0px auto;
+    font-size: 22px;
+    background-color: #999999;
+    border: 1px dashed #666666;
+    color: #444444;
+    width: 800px;
+    font-size: 14px;
+    text-align: center;
+    margin: 10px auto 0px auto;
 }
 
 #title {
-color: #444444;
-font-size: 48px;
-text-align: center;
-margin: 10px auto 0px auto;
-border-bottom: 10px solid #4b3868;
+    color: #444444;
+    font-size: 48px;
+    text-align: center;
+    margin: 10px auto 0px auto;
+    border-bottom: 10px solid #4b3868;
+}
+
+#startButton {
+    position: absolute;
+    left:475px;
+    top:550px;
+}
+
+.start {
+    border-radius: 25px;
+    background-color: #b786b0;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
+.start:focus {
+    background-color: #6d4e69;
+    color: black;
+}
+
+#ingame {
+    position: absolute;
+    left:750px;
+    top:400px;
+}
+
+.button1 {
+  background-color: #b786b0;
+  border-radius: 15px;
+  height: 50px;
+  width: 100px;
+  white-space:normal;
+  border: none;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 10px;
+}
+.button2 {
+  background-color: #b786b0;
+  border-radius: 15px;
+  height: 20px;
+  width: 100px;
+  white-space:normal;
+  border: none;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 10px;
+}
+
+#popup {
+    position: absolute;
+    border-radius: 25px;
+    background-color: #7d6f82;
+    padding: 5px 5px 5px 5px;
+    text-align: center;
+    left: 200px;
+    top: 100px;
+    width:800px;
+    height:80px;
+}
+
+.selectButton {
+    background-color: #b786b0;
+    margin-right: 10px;
+    border-radius: 15px;
+    vertical-align: top;
+    height: 40px;
+    width: 100px;
+    white-space:normal;
+    border: none;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 13px;
 }
 
 #chatbox {
@@ -55,17 +139,15 @@ input[type=text]{
 }
 
 canvas {
-padding: 20px;
-margin: auto;
+    padding: 20px;
+    margin: auto;
 }
 
 #footer {
-clear:both;
-margin-top: 10px;
-border-top: 5px solid #4b3868;
-padding: 20px 0px;
-font-size: 80%;
-text-align:center;
-
-
+    clear:both;
+    margin-top: 10px;
+    border-top: 5px solid #4b3868;
+    padding: 20px 0px;
+    font-size: 80%;
+    text-align:center;
 }

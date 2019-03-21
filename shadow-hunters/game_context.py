@@ -74,9 +74,11 @@ class GameContext:
         for p in self.players:
             self.direct_h("You ({}) are {} ({}).".format(p.user_id, p.character.name, elements.ALLEGIANCE_MAP[p.character.alleg]), p.socket_id)
         while True:
-            for player in self.getLivePlayers():
+            living = self.getLivePlayers()
+            for player in living:
                     player.takeTurn()
                     winners = self.checkWinConditions()
+                    living = self.getLivePlayers()
                     if winners:
                         return winners
 

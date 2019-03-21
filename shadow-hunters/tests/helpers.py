@@ -32,7 +32,7 @@ def fresh_gc_ef(ask_function = lambda x, y, z: { 'value': random.choice(y['optio
         tell_h = lambda x: 0,
         direct_h = lambda x, sid: 0,
         ask_h = ask_function,
-        update_h = lambda x, y: 0
+        update_h = lambda: 0
     )
     return (gc, ef)
 
