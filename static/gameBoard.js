@@ -241,10 +241,6 @@ var GameBoard = new Phaser.Class ({
             count += 4;
         }
 
-        // console.log(sprite.spots);
-
-        // sprite.hpTracker = this.add.image(960, 580, 'tracker');
-
         if(Object.keys(sprite.info.location).length == 0) {
             sprite.info.location.name = "None";
         }
@@ -259,15 +255,15 @@ var GameBoard = new Phaser.Class ({
         sprite.displayInfo = this.add.text(sprite.infoBox.x - 120, sprite.infoBox.y - 40, " ", { font: '12px Arial', fill: '#FFFFFF', wordWrap: { width: 250, useAdvancedWrap: true }});
         sprite.displayInfo.setText([
             "Player: " + sprite.name,
-            "Equipment: " + sprite.info.equipment.list,
-            "Current Damage: " + sprite.info.damage,
-            "Location: " + sprite.info.location.name
+            "Equipment: " + sprite.info.equipment.list
         ]);
         sprite.displayInfo.setVisible(false);
 
         //this makes the sprite interactive so that we can click on them
         sprite.setInteractive();
-
+        sprite.depth = 10;
+        sprite.infoBox.depth = 20;
+        sprite.displayInfo.depth = 20;
         return sprite;
     },
 
@@ -311,9 +307,7 @@ var GameBoard = new Phaser.Class ({
 
         player.displayInfo.setText([
             "Player: " + player.name,
-            "Equipment: " + player.info.equipment.list,
-            "Current Damage: " + player.info.damage,
-            "Location: " + player.info.location.name
+            "Equipment: " + player.info.equipment.list
         ]);
     },
 
