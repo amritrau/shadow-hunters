@@ -263,6 +263,7 @@ var GameBoard = new Phaser.Class ({
         sprite.setInteractive();
         sprite.depth = 10;
         sprite.infoBox.depth = 20;
+        sprite.displayInfo.depth = 30;
         return sprite;
     },
 
