@@ -75,12 +75,13 @@ class GameContext:
             self.direct_h("You ({}) are {} ({}).".format(p.user_id, p.character.name, elements.ALLEGIANCE_MAP[p.character.alleg]), p.socket_id)
         while True:
             living = self.getLivePlayers()
-            for player in living:
-                    player.takeTurn()
-                    winners = self.checkWinConditions()
-                    living = self.getLivePlayers()
-                    if winners:
-                        return winners
+            while len(living):
+                player = living.pop()
+                player.takeTurn()
+                winners = self.checkWinConditions()
+                living = [p for p in living if p.state != 0]
+                if winners:
+                    return winners
 
     def dump(self):
         public_zones = [z.dump() for z in self.zones]
