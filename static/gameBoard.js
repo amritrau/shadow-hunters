@@ -309,6 +309,13 @@ var GameBoard = new Phaser.Class ({
             "Player: " + player.name,
             "Equipment: " + player.info.equipment.list
         ]);
+
+        if(player.info.state == 0) {
+            player.alpha = 0.1;
+            player.hpTracker.alpha = 0.1;
+            player.infoBox.alpha = 0.1;
+            player.displayInfo.alpha = 0.1;
+        }
     },
 
     //for each update, change parts of the board that need to be redrawn.
