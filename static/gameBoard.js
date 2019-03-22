@@ -261,7 +261,8 @@ var GameBoard = new Phaser.Class ({
 
         //this makes the sprite interactive so that we can click on them
         sprite.setInteractive();
-
+        sprite.depth = 10;
+        sprite.infoBox.depth = 20;
         return sprite;
     },
 
