@@ -95,6 +95,10 @@ class Player:
         if self.gc.checkWinConditions(tell = False):
             return  # let the win conditions check in GameContext.play() handle
 
+        # The current player could have died -- if so end their turn
+        if self.state == 0:
+            return
+
         # Attack
         self.gc.tell_h("{} is picking whom to attack...".format(self.user_id))
         live_players = [p for p in self.gc.getLivePlayers() if p.location]
@@ -136,6 +140,10 @@ class Player:
             )
         else:
             self.gc.tell_h("{} declined to attack.".format(self.user_id))
+
+        # The current player could have died -- if so end their turn
+        if self.state == 0:
+            return
 
         # Turn is over
         self.gc.tell_h("{}'s turn is over.".format(self.user_id))
