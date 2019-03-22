@@ -286,6 +286,19 @@ var GameBoard = new Phaser.Class ({
             player.hpTracker.y = this.hpStart - 40*data.damage;
         }
 
+        if((data.state == 0) && (player.info.state != 0)) {
+            player.alpha = 0.4;
+            player.hpTracker.alpha = 0.4;
+            player.infoBox.alpha = 0.4;
+            player.displayInfo.alpha = 0.4;
+            player.x = this.startSpots[num-1][0];
+            player.y = this.startSpots[num-1][1];
+            player.infoBox.x = player.x;
+            player.infoBox.y = player.y -60;
+            player.displayInfo.x = player.infoBox.x - 120;
+            player.displayInfo.y = player.infoBox.y - 40;
+        }
+
         player.info = data;
         if(Object.keys(player.info.location).length == 0) {
             player.info.location.name = "None";
@@ -309,13 +322,6 @@ var GameBoard = new Phaser.Class ({
             "Player: " + player.name,
             "Equipment: " + player.info.equipment.list
         ]);
-
-        if(player.info.state == 0) {
-            player.alpha = 0.1;
-            player.hpTracker.alpha = 0.1;
-            player.infoBox.alpha = 0.1;
-            player.displayInfo.alpha = 0.1;
-        }
     },
 
     //for each update, change parts of the board that need to be redrawn.
