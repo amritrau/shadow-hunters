@@ -2,6 +2,7 @@ from flask import Flask, render_template, url_for, redirect, request, flash
 from flask_socketio import SocketIO, join_room, leave_room
 from random import randint
 import os
+import re
 
 from game_context import GameContext
 from player import Player
@@ -48,24 +49,29 @@ def join():
 def room(methods=['GET','POST']):
     if request.method == 'POST':
 
-        # form validation
+        # check for empty fields
         username = request.form.get('username').strip()
         room_id = request.form.get('room_id').strip()
         if not username or not room_id:
             flash("Please enter a username and room")
             return redirect('/')
 
-        # don't let someone in if there's a game in progress in the room
+        # check for valid username
+        if not re.match("^[\w\d ]*$", username):
+            flash("Your username must not contain special characters")
+            return redirect('/')
+
+        # check for game already in progress
         if room_id in rooms and rooms[room_id] == 'GAME':
             flash("This room is already in game")
             return redirect('/')
 
-        # don't let someone enter a room with the same name as someone else
+        # check for username taken
         if (username, room_id) in get_sid:
             flash("Someone in the room has taken your username")
             return redirect('/')
 
-        # send them to join the room!
+        # send player to room
         rooms[room_id] = 'LOBBY'
         return render_template('room.html', context={ 'name': username, 'room_id': room_id })
     else:
@@ -208,7 +214,7 @@ def on_join(json):
     # Emit welcome message to new player
     data = {'data': 'Welcome to Shadow Hunters Room: '+room_id, 'color': S_COLOR}
     socketio.emit('message', data, room=request.sid)
-    
+
     # Tell player about other room members
     members = [x['name'] for x in connections.values() if (x['room_id'] == room_id and x['name'] != name)]
     msg = 'There\'s no one else here!'
