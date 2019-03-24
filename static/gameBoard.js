@@ -209,7 +209,7 @@ var GameBoard = new Phaser.Class ({
         this.add.image(60.442, 322.289, this.charInfo.name[0]);
         this.add.image(137.489, 412.722, String(this.charInfo.max_damage) + "hp");
 
-        this.box = makeBox();
+        this.box = this.makeBox();
         this.box.on('clicked', this.clickHandler, this.box);
 
         //align the text inside of our information box
@@ -223,11 +223,12 @@ var GameBoard = new Phaser.Class ({
     },
 
     makeBox: function() {
-        var sprite  = this.add.image(500, 300, '14');
-        sprite.infoBox = this.add.image(500, 200, 'text');
+        var sprite  = this.add.image(966, 20, '14');
+        sprite.infoBox = this.add.image(750, 150, 'text');
         sprite.infoBox.setVisible(false);
-        sprite.displayInfo = this.add.text(400, 100, " ", { font: '12px Arial', fill: '#FFFFFF', wordWrap: { width: 250, useAdvancedWrap: true }});
-        sprite.displayInfo.setText(["hello"]);
+        sprite.displayInfo = this.add.text(700, 50, " ", { font: '12px Arial', fill: '#FFFFFF', wordWrap: { width: 250, useAdvancedWrap: true }});
+        sprite.displayInfo.setText(["Player: Dies At HP:"
+            ]);
         sprite.displayInfo.setVisible(false);
         sprite.setInteractive();
         return sprite;
