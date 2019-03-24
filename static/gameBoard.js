@@ -12,6 +12,7 @@ var GameBoard = new Phaser.Class ({
         this.allowClick = true;
 
         //this is where all of the objects specific to our scene will appear
+        this.box;
         this.player;
         this.allPlayersInfo;
         this.nPlayers;
@@ -79,6 +80,9 @@ var GameBoard = new Phaser.Class ({
         this.load.image('14', '/static/assets/fourteen.png');
         this.load.image('text', '/static/assets/text.png');
 
+        this.load.image('arsenal', '/static/assets/arsenal.png');
+
+
         // load the location cards
         this.load.svg('Hermit\'s Cabin', gfx + 'hermits_cabin.svg', {width: 101, height: 150});
         this.load.svg('Underworld Gate', gfx + 'pleasure_island.svg', {width: 101, height: 150});
@@ -125,6 +129,8 @@ var GameBoard = new Phaser.Class ({
         for(var i = 0; i < 15; i++) {
             this.add.image(966, 580 - i*40, String(i));
         }
+        this.add.image(533, 537.5, 'arsenal');
+
 
         // Place locations based on given order
         this.add.image(382.000,201.500, this.gameData.public.zones[0][0].name).setScale(1).angle = -60;
@@ -203,6 +209,9 @@ var GameBoard = new Phaser.Class ({
         this.add.image(60.442, 322.289, this.charInfo.name[0]);
         this.add.image(137.489, 412.722, String(this.charInfo.max_damage) + "hp");
 
+        this.box = makeBox();
+        this.box.on('clicked', this.clickHandler, this.box);
+
         //align the text inside of our information box
         Phaser.Display.Align.In.TopCenter(name, this.infoBox);
         Phaser.Display.Align.In.TopLeft(text, this.add.zone(110, 560, 200, 130));
@@ -214,10 +223,14 @@ var GameBoard = new Phaser.Class ({
     },
 
     makeBox: function() {
-        var box  = this.add.box(800, 20, 'text');
-        box.name = 'text';
-        box.setInteractive();
-        this.player = box;
+        var sprite  = this.add.image(500, 300, '14');
+        sprite.infoBox = this.add.image(500, 200, 'text');
+        sprite.infoBox.setVisible(false);
+        sprite.displayInfo = this.add.text(400, 100, " ", { font: '12px Arial', fill: '#FFFFFF', wordWrap: { width: 250, useAdvancedWrap: true }});
+        sprite.displayInfo.setText(["hello"]);
+        sprite.displayInfo.setVisible(false);
+        sprite.setInteractive();
+        return sprite;
     },
 
     //the makePlayer function is what creates our sprite and adds him to the board.
