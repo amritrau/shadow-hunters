@@ -43,16 +43,16 @@ var GameBoard = new Phaser.Class ({
         this.charInfo = this.gameData.private.character;
         this.allPlayersInfo = this.gameData.public.players;
 
-        /* DEBUGGING
+        
         // console.log(this.charInfo);
         // console.log(typeof this.charInfo);
-        // console.log(this.gameData.public);
+         console.log(this.gameData.public);
         // console.log(this.gameData.public.players);
         // var key = Object.keys(this.otherPlayersInfo)[0];
         // console.log(this.otherPlayersInfo[key].user_id);
         // console.log(Object.keys(this.otherPlayersInfo).length);
         // console.log(this.gameData.private);
-        */
+    
     },
 
     //the preload function is where all images that will be used in the game are loaded into
@@ -227,7 +227,10 @@ var GameBoard = new Phaser.Class ({
         sprite.infoBox = this.add.image(750, 150, 'text');
         sprite.infoBox.setVisible(false);
         sprite.displayInfo = this.add.text(700, 50, " ", { font: '12px Arial', fill: '#FFFFFF', wordWrap: { width: 250, useAdvancedWrap: true }});
-        sprite.displayInfo.setText(["Player: Dies At HP:"
+        sprite.displayInfo.setText(["Player: " + this.gameData.public.characters[0].name, "Dies At HP: " + this.gameData.public.characters[0].max_damage,
+            "Player: " + this.gameData.public.characters[1].name, "Dies At HP: " + this.gameData.public.characters[1].max_damage,
+            "Player: " + this.gameData.public.characters[2].name, "Dies At HP: " + this.gameData.public.characters[2].max_damage,
+            "Player: " + this.gameData.public.characters[3].name, "Dies At HP: " + this.gameData.public.characters[3].max_damage
             ]);
         sprite.displayInfo.setVisible(false);
         sprite.setInteractive();
