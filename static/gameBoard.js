@@ -85,7 +85,7 @@ var GameBoard = new Phaser.Class ({
 
         // load the location cards
         this.load.svg('Hermit\'s Cabin', gfx + 'hermits_cabin.svg', {width: 101, height: 150});
-        this.load.svg('Underworld Gate', gfx + 'pleasure_island.svg', {width: 101, height: 150});
+        this.load.svg('Underworld Gate', gfx + 'underworld_gate.svg', {width: 101, height: 150});
         this.load.svg('Church', gfx + 'church.svg', {width: 101, height: 150});
         this.load.svg('Cemetery', gfx + 'cemetery.svg', {width: 101, height: 150});
         this.load.svg('Weird Woods', gfx + 'weird_woods.svg', {width: 101, height: 150});
