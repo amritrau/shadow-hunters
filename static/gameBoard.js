@@ -344,15 +344,15 @@ var GameBoard = new Phaser.Class ({
     //if player clicked and box is visible, make invisible. if box is invisible, make visible
     clickHandler: function (player)
     {
-        if(this.infoBox.visible == false)
+        if(player.infoBox.visible == false)
         {
-            this.infoBox.setVisible(true);
-            this.displayInfo.setVisible(true);
+            player.infoBox.setVisible(true);
+            player.displayInfo.setVisible(true);
         }
         else
         {
-            this.infoBox.setVisible(false);
-            this.displayInfo.setVisible(false);
+            player.infoBox.setVisible(false);
+            player.displayInfo.setVisible(false);
         }
     }
 });
