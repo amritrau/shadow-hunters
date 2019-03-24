@@ -227,10 +227,12 @@ var GameBoard = new Phaser.Class ({
         sprite.infoBox = this.add.image(750, 150, 'text');
         sprite.infoBox.setVisible(false);
         sprite.displayInfo = this.add.text(700, 50, " ", { font: '12px Arial', fill: '#FFFFFF', wordWrap: { width: 250, useAdvancedWrap: true }});
+        
         sprite.displayInfo.setText(["Player: " + this.gameData.public.characters[0].name, "Dies At HP: " + this.gameData.public.characters[0].max_damage,
             "Player: " + this.gameData.public.characters[1].name, "Dies At HP: " + this.gameData.public.characters[1].max_damage,
             "Player: " + this.gameData.public.characters[2].name, "Dies At HP: " + this.gameData.public.characters[2].max_damage,
             "Player: " + this.gameData.public.characters[3].name, "Dies At HP: " + this.gameData.public.characters[3].max_damage
+
             ]);
         sprite.displayInfo.setVisible(false);
         sprite.setInteractive();
@@ -361,15 +363,15 @@ var GameBoard = new Phaser.Class ({
     //if player clicked and box is visible, make invisible. if box is invisible, make visible
     clickHandler: function (player)
     {
-        if(this.infoBox.visible == false)
+        if(player.infoBox.visible == false)
         {
-            this.infoBox.setVisible(true);
-            this.displayInfo.setVisible(true);
+            player.infoBox.setVisible(true);
+            player.displayInfo.setVisible(true);
         }
         else
         {
-            this.infoBox.setVisible(false);
-            this.displayInfo.setVisible(false);
+            player.infoBox.setVisible(false);
+            player.displayInfo.setVisible(false);
         }
     }
 });

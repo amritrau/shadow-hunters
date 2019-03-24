@@ -42,9 +42,10 @@ class GameContext:
                 a.zone = z
 
         # Randomly assign characters and point game context
-        random.shuffle(characters)
+        character_q = copy.deepcopy(characters)
+        random.shuffle(character_q)
         for player in self.players:
-            player.setCharacter(characters.pop())
+            player.setCharacter(character_q.pop())
             player.gc = self
 
 
@@ -93,6 +94,7 @@ class GameContext:
             if public_players[k]['state'] == 2:
                 public_players[k]['character'] = {}
 
+        # Collect the public states
         public_state = {
             'zones': public_zones,
             'players': public_players,
