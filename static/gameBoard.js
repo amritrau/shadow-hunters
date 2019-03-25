@@ -79,6 +79,7 @@ var GameBoard = new Phaser.Class ({
         this.load.image('13', '/static/assets/thirteen.png');
         this.load.image('14', '/static/assets/fourteen.png');
         this.load.image('text', '/static/assets/text.png');
+        this.load.image('health', '/static/assets/health.png');
 
         this.load.image('arsenal', '/static/assets/arsenal.png');
 
@@ -130,6 +131,8 @@ var GameBoard = new Phaser.Class ({
             this.add.image(966, 580 - i*40, String(i));
         }
         this.add.image(533, 537.5, 'arsenal');
+        this.box = this.makeBox();
+        this.box.on('clicked', this.clickHandler, this.box);
 
 
         // Place locations based on given order
@@ -161,6 +164,7 @@ var GameBoard = new Phaser.Class ({
                 count++;
             }
         }
+        
 
         //this is what makes the box appear when character is clicked. See function clickHandler below
         this.input.on('gameobjectup', function (pointer, gameObject) {
@@ -209,8 +213,7 @@ var GameBoard = new Phaser.Class ({
         this.add.image(60.442, 322.289, this.charInfo.name[0]);
         this.add.image(137.489, 412.722, String(this.charInfo.max_damage) + "hp");
 
-        this.box = this.makeBox();
-        this.box.on('clicked', this.clickHandler, this.box);
+        
 
         //align the text inside of our information box
         Phaser.Display.Align.In.TopCenter(name, this.infoBox);
@@ -223,15 +226,17 @@ var GameBoard = new Phaser.Class ({
     },
 
     makeBox: function() {
-        var sprite  = this.add.image(966, 20, '14');
+        var sprite  = this.add.image(966, 300, 'health');
         sprite.infoBox = this.add.image(750, 150, 'text');
         sprite.infoBox.setVisible(false);
-        sprite.displayInfo = this.add.text(700, 50, " ", { font: '12px Arial', fill: '#FFFFFF', wordWrap: { width: 250, useAdvancedWrap: true }});
-        
-        sprite.displayInfo.setText(["Player: " + this.gameData.public.characters[0].name, "Dies At HP: " + this.gameData.public.characters[0].max_damage,
-            "Player: " + this.gameData.public.characters[1].name, "Dies At HP: " + this.gameData.public.characters[1].max_damage,
-            "Player: " + this.gameData.public.characters[2].name, "Dies At HP: " + this.gameData.public.characters[2].max_damage,
-            "Player: " + this.gameData.public.characters[3].name, "Dies At HP: " + this.gameData.public.characters[3].max_damage
+        sprite.displayInfo = this.add.text(700, 30, " ", { font: '12px Arial', fill: '#FFFFFF', wordWrap: { width: 250, useAdvancedWrap: true }});
+
+        sprite.displayInfo.setText(["Player: " + this.gameData.public.characters[0].name, "Dies At HP: " + this.gameData.public.characters[0].max_damage, "\n",
+            "Player: " + this.gameData.public.characters[1].name, "Dies At HP: " + this.gameData.public.characters[1].max_damage, "\n",
+            "Player: " + this.gameData.public.characters[2].name, "Dies At HP: " + this.gameData.public.characters[2].max_damage, "\n",
+            "Player: " + this.gameData.public.characters[3].name, "Dies At HP: " + this.gameData.public.characters[3].max_damage, "\n",
+            "Player: " + this.gameData.public.characters[4].name, "Dies At HP: " + this.gameData.public.characters[4].max_damage
+
 
             ]);
         sprite.displayInfo.setVisible(false);
@@ -317,6 +322,35 @@ var GameBoard = new Phaser.Class ({
             player.displayInfo.x = player.infoBox.x - 120;
             player.displayInfo.y = player.infoBox.y - 40;
         }
+
+        ////////////////////////////////////////////////////////////////*
+        //first check if player is this.player - yourself
+        //then check if player.info.equipment is the same as data.equipment 
+        //if it is, then no update
+        //    if its not, then for loop through the equipment, putting each text in the right location 
+
+        //issues, if you get something stolen from your arsenal it doesnt disappear
+        //we're not erasing text 
+
+        var playerequipsize = Object.keys(player.info.equipment).length;
+        var datasize = Object.keys(data.equipment).length;
+
+        if(player == this.player){
+            if(playerequipsize == datasize){ //no change
+                playerequipsize = datasize;
+            }
+            else{
+                for(var i = 0; i < datasize; i++){
+                    var text = this.add.text(235 + i*100, 537.5, '', {
+                    font: '12px Arial',
+                    fill: '#FFFFFF',
+                    wordWrap: { width: 80, useAdvancedWrap: true }
+                    });
+                    text.setText([data.equipment[i].title]);
+                }
+            }
+        }
+
 
         player.info = data;
         if(Object.keys(player.info.location).length == 0) {
