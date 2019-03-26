@@ -43,7 +43,7 @@ var GameBoard = new Phaser.Class ({
         this.charInfo = this.gameData.private.character;
         this.allPlayersInfo = this.gameData.public.players;
 
-        
+
         // console.log(this.charInfo);
         // console.log(typeof this.charInfo);
          console.log(this.gameData.public);
@@ -52,7 +52,7 @@ var GameBoard = new Phaser.Class ({
         // console.log(this.otherPlayersInfo[key].user_id);
         // console.log(Object.keys(this.otherPlayersInfo).length);
         // console.log(this.gameData.private);
-    
+
     },
 
     //the preload function is where all images that will be used in the game are loaded into
@@ -164,7 +164,7 @@ var GameBoard = new Phaser.Class ({
                 count++;
             }
         }
-        
+
 
         //this is what makes the box appear when character is clicked. See function clickHandler below
         this.input.on('gameobjectup', function (pointer, gameObject) {
@@ -202,6 +202,18 @@ var GameBoard = new Phaser.Class ({
             fill: '#FFFFFF'
         });
 
+        // Adding placeholder text to go in equipment slots
+        this.equip_text = [];
+        this.num_equip_slots = 6;
+        for(var i = 0; i < this.num_equip_slots; i++)
+        {
+            this.equip_text[i] = this.add.text(235 + i*100, 537.5, '', {
+                font: '12px Arial',
+                fill: '#FFFFFF',
+                wordWrap: { width: 80, useAdvancedWrap: true }
+            });
+        }
+
         //set the text for inside of the box
         text.setText([
             'Team: ' + this.infoBox.data.get('team'),
@@ -213,7 +225,7 @@ var GameBoard = new Phaser.Class ({
         this.add.image(60.442, 322.289, this.charInfo.name[0]);
         this.add.image(137.489, 412.722, String(this.charInfo.max_damage) + "hp");
 
-        
+
 
         //align the text inside of our information box
         Phaser.Display.Align.In.TopCenter(name, this.infoBox);
@@ -323,31 +335,21 @@ var GameBoard = new Phaser.Class ({
             player.displayInfo.y = player.infoBox.y - 40;
         }
 
-        ////////////////////////////////////////////////////////////////*
-        //first check if player is this.player - yourself
-        //then check if player.info.equipment is the same as data.equipment 
-        //if it is, then no update
-        //    if its not, then for loop through the equipment, putting each text in the right location 
+        ////////////////////////////////////////////////////////////////
+        // First check if player is this.player - yourself
+        // For loop through the equipment, putting each text in the right location
 
-        //issues, if you get something stolen from your arsenal it doesnt disappear
-        //we're not erasing text 
-
-        var playerequipsize = Object.keys(player.info.equipment).length;
         var datasize = Object.keys(data.equipment).length;
+        if(player == this.player) {
 
-        if(player == this.player){
-            if(playerequipsize == datasize){ //no change
-                playerequipsize = datasize;
+            // Set equip text in box to name of equipment
+            for(var i = 0; i < datasize; i++) {
+                this.equip_text[i].setText([data.equipment[i].title]);
             }
-            else{
-                for(var i = 0; i < datasize; i++){
-                    var text = this.add.text(235 + i*100, 537.5, '', {
-                    font: '12px Arial',
-                    fill: '#FFFFFF',
-                    wordWrap: { width: 80, useAdvancedWrap: true }
-                    });
-                    text.setText([data.equipment[i].title]);
-                }
+
+            // Empty equip text in rest of boxes
+            for(var i = datasize; i < this.num_equip_slots; i++) {
+                this.equip_text[i].setText([""]);
             }
         }
 
