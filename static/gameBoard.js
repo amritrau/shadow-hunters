@@ -63,21 +63,6 @@ var GameBoard = new Phaser.Class ({
         // load background and health bar
         this.load.svg('background', gfx + 'background.svg', {width: 1066, height: 600});
         this.load.image("customTip", "/static/assets/customTip.png");
-        this.load.image('0', '/static/assets/zero.png');
-        this.load.image('1', '/static/assets/one.png');
-        this.load.image('2', '/static/assets/two.png');
-        this.load.image('3', '/static/assets/three.png');
-        this.load.image('4', '/static/assets/four.png');
-        this.load.image('5', '/static/assets/five.png');
-        this.load.image('6', '/static/assets/six.png');
-        this.load.image('7', '/static/assets/seven.png');
-        this.load.image('8', '/static/assets/eight.png');
-        this.load.image('9', '/static/assets/nine.png');
-        this.load.image('10', '/static/assets/ten.png');
-        this.load.image('11', '/static/assets/eleven.png');
-        this.load.image('12', '/static/assets/twelve.png');
-        this.load.image('13', '/static/assets/thirteen.png');
-        this.load.image('14', '/static/assets/fourteen.png');
         this.load.image('text', '/static/assets/text.png');
         this.load.image('health', '/static/assets/health.png');
 
@@ -127,9 +112,6 @@ var GameBoard = new Phaser.Class ({
         //background.displayWidth = this.sys.canvas.width;
         //background.displayHeight = this.sys.canvas.height;
 
-        for(var i = 0; i < 15; i++) {
-            this.add.image(966, 580 - i*40, String(i));
-        }
         this.add.image(533, 537.5, 'arsenal');
         this.box = this.makeBox();
         this.box.on('clicked', this.clickHandler, this.box);
@@ -241,6 +223,7 @@ var GameBoard = new Phaser.Class ({
         var sprite  = this.add.image(966, 300, 'health');
         sprite.infoBox = this.add.image(750, 150, 'text');
         sprite.infoBox.setVisible(false);
+        sprite.infoBox.depth = 30;
         sprite.displayInfo = this.add.text(700, 30, " ", { font: '12px Arial', fill: '#FFFFFF', wordWrap: { width: 250, useAdvancedWrap: true }});
 
         sprite.displayInfo.setText(["Player: " + this.gameData.public.characters[0].name, "Dies At HP: " + this.gameData.public.characters[0].max_damage, "\n",
@@ -252,6 +235,7 @@ var GameBoard = new Phaser.Class ({
 
             ]);
         sprite.displayInfo.setVisible(false);
+        sprite.displayInfo.depth = 30;
         sprite.setInteractive();
         return sprite;
     },
