@@ -2,6 +2,6 @@ language: python
 python:
   - "3.6"
 script:
-  - pip3 install pycodestyle
+  # - pip3 install pycodestyle
   - pytest
-  - pycodestyle --statistics -q .
+  # - pycodestyle --statistics -q .
