@@ -26,15 +26,13 @@ class Player:
         # Roll dice
         self.gc.tell_h("{} is rolling for movement...".format(self.user_id))
         data = {'options': ['Roll for movement!']}
-        print('emit ask')
         self.gc.ask_h('confirm', data, self.user_id)
-        print('calculate result')
+
         roll_result_4 = self.gc.die4.roll()
         roll_result_6 = self.gc.die6.roll()
         roll_result = roll_result_4 + roll_result_6
-        print('send tell')
+        
         self.gc.tell_h("{} rolled {} + {} = {}!".format(self.user_id, roll_result_4, roll_result_6, roll_result))
-        print('send update')
         self.gc.update_h()
 
         # Move to desired location
