@@ -49,16 +49,19 @@ def join():
 def room(methods=['GET','POST']):
     if request.method == 'POST':
 
-        # check for empty fields
+        # collect fields
         username = request.form.get('username').strip()
         room_id = request.form.get('room_id').strip()
-        if not username or not room_id:
-            flash("Please enter a username and room")
-            return redirect('/')
 
-        # check for valid username
-        if not re.match("^[\w\d ]*$", username):
-            flash("Your username must not contain special characters")
+        # check for valid username and room id
+        if not username or not room_id:
+            flash("Please enter a name and room ID")
+            return redirect('/')
+        if len(username) >= 16 or len(room_id) >= 16:
+            flash("Name and room ID must be shorter than 16 characters")
+            return redirect('/')
+        if (not re.match("^[\w\d ]*$", username)) or (not re.match("^[\w\d ]*$", room_id)):
+            flash("Name and room ID must not contain special characters")
             return redirect('/')
 
         # check for game already in progress
@@ -68,7 +71,7 @@ def room(methods=['GET','POST']):
 
         # check for username taken
         if (username, room_id) in get_sid:
-            flash("Someone in the room has taken your username")
+            flash("Someone in the room has taken your name")
             return redirect('/')
 
         # send player to room
