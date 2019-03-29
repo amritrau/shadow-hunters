@@ -26,13 +26,15 @@ class Player:
         # Roll dice
         self.gc.tell_h("{} is rolling for movement...".format(self.user_id))
         data = {'options': ['Roll for movement!']}
+        print('emit ask')
         self.gc.ask_h('confirm', data, self.user_id)
-
+        print('calculate result')
         roll_result_4 = self.gc.die4.roll()
         roll_result_6 = self.gc.die6.roll()
         roll_result = roll_result_4 + roll_result_6
-
+        print('send tell')
         self.gc.tell_h("{} rolled {} + {} = {}!".format(self.user_id, roll_result_4, roll_result_6, roll_result))
+        print('send update')
         self.gc.update_h()
 
         # Move to desired location
@@ -152,10 +154,13 @@ class Player:
         drawn = deck.drawCard()
         public_title = drawn.title if drawn.color != 2 else 'a Hermit Card'
         self.gc.tell_h("{} drew {}!".format(self.user_id, public_title))
-        self.gc.direct_h("Card ({}): {}".format(drawn.title, drawn.desc), self.socket_id)
+        if drawn.color != 2:
+            self.gc.tell_h("Card ({}): {}".format(drawn.title, drawn.desc))
+        else:
+            self.gc.direct_h("Card ({}): {}".format(drawn.title, drawn.desc), self.socket_id)
         if drawn.force_use:
             self.gc.tell_h("{} used {}!".format(self.user_id, public_title))
-            args = {'self': self}
+            args = {'self': self, 'card': drawn}
             drawn.use(args)
         if drawn.is_equipment:
             self.gc.tell_h("{} added {} to their arsenal!".format(self.user_id, public_title))

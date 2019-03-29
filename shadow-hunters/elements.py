@@ -224,7 +224,7 @@ class ElementFactory:
             target = choose_player(args)
             # TODO FIX THE FOLLOWING!
             # Description should come from the card itself!
-            args['self'].gc.direct_h("{} says: {}".format(args['self'].user_id, "I bet you're either a Neutral or Hunter. If so, you must either give an Equipment card to the current player or receive 1 damage!"), target.socket_id)
+            args['self'].gc.direct_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
             # END FIX
 
             if target.character.alleg > 0: ## neutral or hunter
@@ -260,7 +260,7 @@ class ElementFactory:
             target = choose_player(args)
             # TODO FIX THE FOLLOWING!
             # Description should come from the card itself!
-            args['self'].gc.direct_h("{} says: {}".format(args['self'].user_id, "I bet you're either a Neutral or a Shadow. If so, you must either give an Equipment card to the current player or receive 1 damage!"), target.socket_id)
+            args['self'].gc.direct_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
             # END FIX
 
             if target.character.alleg < 2: ## neutral or shadow
@@ -295,7 +295,7 @@ class ElementFactory:
             target = choose_player(args)
             # TODO FIX THE FOLLOWING!
             # Description should come from the card itself!
-            args['self'].gc.direct_h("{} says: {}".format(args['self'].user_id, "I bet you're either a Hunter or a Shadow. If so, you must either give an Equipment card to the current player or receive 1 damage!"), target.socket_id)
+            args['self'].gc.direct_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
             # END FIX
 
             if target.character.alleg in [0, 2]: ## hunter or shadow
@@ -330,7 +330,7 @@ class ElementFactory:
             target = choose_player(args)
             # TODO FIX THE FOLLOWING!
             # Description should come from the card itself!
-            args['self'].gc.direct_h("{} says: {}".format(args['self'].user_id, "If hunter, then 1 damage"), target.socket_id)
+            args['self'].gc.direct_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
             # END FIX
 
             if target.character.alleg == 2: ## hunter
@@ -353,7 +353,7 @@ class ElementFactory:
             target = choose_player(args)
             # TODO FIX THE FOLLOWING!
             # Description should come from the card itself!
-            args['self'].gc.direct_h("{} says: {}".format(args['self'].user_id, "If shadow, then 1 damage"), target.socket_id)
+            args['self'].gc.direct_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
             # END FIX
 
             if target.character.alleg == 0: ## shadow
@@ -376,7 +376,7 @@ class ElementFactory:
             target = choose_player(args)
             # TODO FIX THE FOLLOWING!
             # Description should come from the card itself!
-            args['self'].gc.direct_h("{} says: {}".format(args['self'].user_id, "If shadow, then 2 damage"), target.socket_id)
+            args['self'].gc.direct_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
             # END FIX
 
             if target.character.alleg == 0: ## shadow
@@ -399,7 +399,7 @@ class ElementFactory:
             target = choose_player(args)
             # TODO FIX THE FOLLOWING!
             # Description should come from the card itself!
-            args['self'].gc.direct_h("{} says: {}".format(args['self'].user_id, "If neutral, then heal 1 damage"), target.socket_id)
+            args['self'].gc.direct_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
             # END FIX
 
             if target.character.alleg == 1: ## neutral
@@ -428,7 +428,7 @@ class ElementFactory:
             target = choose_player(args)
             # TODO FIX THE FOLLOWING!
             # Description should come from the card itself!
-            args['self'].gc.direct_h("{} says: {}".format(args['self'].user_id, "If hunter, then heal 1 damage"), target.socket_id)
+            args['self'].gc.direct_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
             # END FIX
 
             if target.character.alleg == 2: ## hunter
@@ -457,7 +457,7 @@ class ElementFactory:
             target = choose_player(args)
             # TODO FIX THE FOLLOWING!
             # Description should come from the card itself!
-            args['self'].gc.direct_h("{} says: {}".format(args['self'].user_id, "If shadow, then heal 1 damage"), target.socket_id)
+            args['self'].gc.direct_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
             # END FIX
 
             if target.character.alleg == 0: ## shadow
