@@ -19,59 +19,15 @@ CARD_COLOR_MAP = {
 
 class ElementFactory:
     def __init__(self):
-        # Initialize all game elements
-        #####
-        #####
-        # TODO For the following functions, insert descriptive tell_h()'s
-        def use_bloodthirsty_spider(args):
-            target = args['self'].ask_h('select', {'options': [t.user_id for t in args['self'].gc.getLivePlayers() if t != args['self']]}, args['self'].user_id)['value']
-            args['self'].gc.update_h()
-            [p for p in args['self'].gc.getLivePlayers() if p.user_id == target][0].moveDamage(-2)
-            args['self'].moveDamage(-2)
-            args['self'].gc.update_h()
 
-        def use_vampire_bat(args):
-            target = args['self'].ask_h('select', {'options': [t.user_id for t in args['self'].gc.getLivePlayers() if t != args['self']]}, args['self'].user_id)['value']
-            args['self'].gc.update_h()
-            [p for p in args['self'].gc.getLivePlayers() if p.user_id == target][0].moveDamage(-2)
-            args['self'].moveDamage(1)
-            args['self'].gc.update_h()
-
+        # White card usage functions
         def use_first_aid(args):
             target = args['self'].ask_h('select', {'options': [t.user_id for t in args['self'].gc.getLivePlayers()]}, args['self'].user_id)['value']
             args['self'].gc.update_h()
             [p for p in args['self'].gc.getLivePlayers() if p.user_id == target][0].setDamage(7)
             args['self'].gc.update_h()
 
-        def use_moody_goblin(args):
-            players_w_items = [p for p in args['self'].gc.getLivePlayers() if (len(p.equipment) and p != args['self'])]
-            if len(players_w_items):
-                data = {'options': [p.user_id for p in players_w_items]}
-                target = args['self'].ask_h('select', data, args['self'].user_id)['value']
-                args['self'].gc.update_h()
-                target_Player = [p for p in args['self'].gc.getLivePlayers() if p.user_id == target][0]
-                data = {'options': [eq.title for eq in target_Player.equipment]}
-                equip = args['self'].ask_h('select', data, args['self'].user_id)['value']
-                args['self'].gc.update_h()
-                equip_Equipment = [eq for eq in target_Player.equipment if eq.title == equip][0]
-
-                i = target_Player.equipment.index(equip_Equipment)
-                equip_Equipment = target_Player.equipment.pop(i)
-                args['self'].equipment.append(equip_Equipment)
-                equip_Equipment.holder = args['self']
-                args['self'].gc.tell_h("{} stole {}'s {}!".format(args['self'].user_id, target_Player.user_id, equip_Equipment.title))
-                args['self'].gc.update_h()
-            else:
-                args['self'].gc.tell_h("Nobody has any items for {} to steal.".format(args['self'].user_id))
-
-            args['self'].gc.update_h()
-        ##################
-
-
-
-        # TODO Hermit cards, Characters, and Areas
-
-        # Initialize cards and decks
+        # Initialize white cards
         WHITE_CARDS = [
             card.Card(
                 title = "Holy Robe",
@@ -120,6 +76,44 @@ class ElementFactory:
             )
         ]
 
+        # Black card usage functions
+        def use_bloodthirsty_spider(args):
+            target = args['self'].ask_h('select', {'options': [t.user_id for t in args['self'].gc.getLivePlayers() if t != args['self']]}, args['self'].user_id)['value']
+            args['self'].gc.update_h()
+            [p for p in args['self'].gc.getLivePlayers() if p.user_id == target][0].moveDamage(-2)
+            args['self'].moveDamage(-2)
+            args['self'].gc.update_h()
+
+        def use_vampire_bat(args):
+            target = args['self'].ask_h('select', {'options': [t.user_id for t in args['self'].gc.getLivePlayers() if t != args['self']]}, args['self'].user_id)['value']
+            args['self'].gc.update_h()
+            [p for p in args['self'].gc.getLivePlayers() if p.user_id == target][0].moveDamage(-2)
+            args['self'].moveDamage(1)
+            args['self'].gc.update_h()
+
+        def use_moody_goblin(args):
+            players_w_items = [p for p in args['self'].gc.getLivePlayers() if (len(p.equipment) and p != args['self'])]
+            if len(players_w_items):
+                data = {'options': [p.user_id for p in players_w_items]}
+                target = args['self'].ask_h('select', data, args['self'].user_id)['value']
+                args['self'].gc.update_h()
+                target_Player = [p for p in args['self'].gc.getLivePlayers() if p.user_id == target][0]
+                data = {'options': [eq.title for eq in target_Player.equipment]}
+                equip = args['self'].ask_h('select', data, args['self'].user_id)['value']
+                args['self'].gc.update_h()
+                equip_Equipment = [eq for eq in target_Player.equipment if eq.title == equip][0]
+
+                i = target_Player.equipment.index(equip_Equipment)
+                equip_Equipment = target_Player.equipment.pop(i)
+                args['self'].equipment.append(equip_Equipment)
+                equip_Equipment.holder = args['self']
+                args['self'].gc.tell_h("{} stole {}'s {}!".format(args['self'].user_id, target_Player.user_id, equip_Equipment.title))
+                args['self'].gc.update_h()
+            else:
+                args['self'].gc.tell_h("Nobody has any items for {} to steal.".format(args['self'].user_id))
+            args['self'].gc.update_h()
+
+        # Initialize black cards
         BLACK_CARDS = [
             card.Card(
                 title = "Butcher Knife",
@@ -133,7 +127,7 @@ class ElementFactory:
             card.Card(
                 title = "Chainsaw",
                 desc = "If your attack is successful, you give 1 point of extra damage.",
-                color = 1, # 1 : BLACK
+                color = 1,
                 holder = None,
                 is_equip = True,
                 force_use = False,
@@ -142,7 +136,7 @@ class ElementFactory:
             card.Card(
                 title = "Rusted Broad Axe",
                 desc = "If your attack is successful, you give 1 point of extra damage.",
-                color = 1, # 1 : BLACK
+                color = 1,
                 holder = None,
                 is_equip = True,
                 force_use = False,
@@ -204,6 +198,7 @@ class ElementFactory:
             )
         ]
 
+        # Hermit card usage functions
         def choose_player(args):
             args['self'].gc.tell_h("{} is choosing a player...".format(args['self'].user_id))
             data = {'options': [p.user_id for p in args['self'].gc.getLivePlayers() if p != args['self']]}
@@ -222,10 +217,7 @@ class ElementFactory:
 
         def hermit_blackmail(args):
             target = choose_player(args)
-            # TODO FIX THE FOLLOWING!
-            # Description should come from the card itself!
             args['self'].gc.direct_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
-            # END FIX
 
             if target.character.alleg > 0: ## neutral or hunter
                 target.gc.direct_h("You are a {}. Make a choice.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
@@ -245,7 +237,7 @@ class ElementFactory:
                     args['self'].gc.tell_h("{} gave {} their {}!".format(target.user_id, args['self'].user_id, eq.title))
                 else:
                     new_damage = target.moveDamage(-1)
-                    target.gc.tell_h("{}'s damage is now {}!".format(target.user_id, new_damage))
+                    target.gc.tell_h("{}\'s damage is now {}!".format(target.user_id, new_damage))
 
             else:
                 target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
@@ -253,15 +245,11 @@ class ElementFactory:
                 target.ask_h('yesno', data, target.user_id)['value']
                 target.gc.update_h()
                 target.gc.tell_h("{} did nothing.".format(target.user_id))
-
             target.gc.update_h()
 
         def hermit_greed(args):
             target = choose_player(args)
-            # TODO FIX THE FOLLOWING!
-            # Description should come from the card itself!
             args['self'].gc.direct_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
-            # END FIX
 
             if target.character.alleg < 2: ## neutral or shadow
                 target.gc.direct_h("You are a {}. Make a choice.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
@@ -281,22 +269,18 @@ class ElementFactory:
                     args['self'].gc.tell_h("{} gave {} their {}!".format(target.user_id, args['self'].user_id, eq.title))
                 else:
                     new_damage = target.moveDamage(-1)
-                    target.gc.tell_h("{}'s damage is now {}!".format(target.user_id, new_damage))
+                    target.gc.tell_h("{}\'s damage is now {}!".format(target.user_id, new_damage))
             else:
                 target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ['Do nothing']}
                 target.ask_h('yesno', data, target.user_id)['value']
                 target.gc.update_h()
                 target.gc.tell_h("{} did nothing.".format(target.user_id))
-
             target.gc.update_h()
 
         def hermit_anger(args):
             target = choose_player(args)
-            # TODO FIX THE FOLLOWING!
-            # Description should come from the card itself!
             args['self'].gc.direct_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
-            # END FIX
 
             if target.character.alleg in [0, 2]: ## hunter or shadow
                 target.gc.direct_h("You are a {}. Make a choice.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
@@ -323,15 +307,11 @@ class ElementFactory:
                 target.ask_h('yesno', data, target.user_id)['value']
                 target.gc.update_h()
                 target.gc.tell_h("{} did nothing.".format(target.user_id))
-
             target.gc.update_h()
 
         def hermit_slap(args):
             target = choose_player(args)
-            # TODO FIX THE FOLLOWING!
-            # Description should come from the card itself!
             args['self'].gc.direct_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
-            # END FIX
 
             if target.character.alleg == 2: ## hunter
                 target.gc.direct_h("You are a {}.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
@@ -339,22 +319,18 @@ class ElementFactory:
                 target.ask_h('select', data, target.user_id)['value']
                 target.gc.update_h()
                 new_damage = target.moveDamage(-1)
-                target.gc.tell_h("{}'s Damage is now {}!".format(target.user_id, new_damage))
+                target.gc.tell_h("{}\'s Damage is now {}!".format(target.user_id, new_damage))
             else:
                 target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ['Do nothing']}
                 target.ask_h('yesno', data, target.user_id)['value']
                 target.gc.update_h()
                 target.gc.tell_h("{} did nothing.".format(target.user_id))
-
             target.gc.update_h()
 
         def hermit_spell(args):
             target = choose_player(args)
-            # TODO FIX THE FOLLOWING!
-            # Description should come from the card itself!
             args['self'].gc.direct_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
-            # END FIX
 
             if target.character.alleg == 0: ## shadow
                 target.gc.direct_h("You are a {}.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
@@ -362,22 +338,18 @@ class ElementFactory:
                 target.ask_h('select', data, target.user_id)['value']
                 target.gc.update_h()
                 new_damage = target.moveDamage(-1)
-                target.gc.tell_h("{}'s damage is now {}!".format(target.user_id, new_damage))
+                target.gc.tell_h("{}\'s damage is now {}!".format(target.user_id, new_damage))
             else:
                 target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ['Do nothing']}
                 target.ask_h('yesno', data, target.user_id)['value']
                 target.gc.update_h()
                 target.gc.tell_h("{} did nothing.".format(target.user_id))
-
             target.gc.update_h()
 
         def hermit_exorcism(args):
             target = choose_player(args)
-            # TODO FIX THE FOLLOWING!
-            # Description should come from the card itself!
             args['self'].gc.direct_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
-            # END FIX
 
             if target.character.alleg == 0: ## shadow
                 target.gc.direct_h("You are a {}.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
@@ -385,22 +357,18 @@ class ElementFactory:
                 target.ask_h('select', data, target.user_id)['value']
                 target.gc.update_h()
                 new_damage = target.moveDamage(-2)
-                target.gc.tell_h("{}'s damage is now {}!".format(target.user_id, new_damage))
+                target.gc.tell_h("{}\'s damage is now {}!".format(target.user_id, new_damage))
             else:
                 target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ['Do nothing']}
                 target.ask_h('yesno', data, target.user_id)['value']
                 target.gc.update_h()
                 target.gc.tell_h("{} did nothing.".format(target.user_id))
-
             target.gc.update_h()
 
         def hermit_nurturance(args):
             target = choose_player(args)
-            # TODO FIX THE FOLLOWING!
-            # Description should come from the card itself!
             args['self'].gc.direct_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
-            # END FIX
 
             if target.character.alleg == 1: ## neutral
                 target.gc.direct_h("You are a {}.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
@@ -414,22 +382,18 @@ class ElementFactory:
                     target.ask_h('select', data, target.user_id)['value']
                     target.gc.update_h()
                     new_damage = target.moveDamage(1)
-                target.gc.tell_h("{}'s damage is now {}!".format(target.user_id, new_damage))
+                target.gc.tell_h("{}\'s damage is now {}!".format(target.user_id, new_damage))
             else:
                 target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ['Do nothing']}
                 target.ask_h('yesno', data, target.user_id)['value']
                 target.gc.update_h()
                 target.gc.tell_h("{} did nothing.".format(target.user_id))
-
             target.gc.update_h()
 
         def hermit_aid(args):
             target = choose_player(args)
-            # TODO FIX THE FOLLOWING!
-            # Description should come from the card itself!
             args['self'].gc.direct_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
-            # END FIX
 
             if target.character.alleg == 2: ## hunter
                 target.gc.direct_h("You are a {}.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
@@ -443,22 +407,18 @@ class ElementFactory:
                     target.ask_h('select', data, target.user_id)['value']
                     target.gc.update_h()
                     new_damage = target.moveDamage(1)
-                target.gc.tell_h("{}'s damage is now {}!".format(target.user_id, new_damage))
+                target.gc.tell_h("{}\'s damage is now {}!".format(target.user_id, new_damage))
             else:
                 target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ['Do nothing']}
                 target.ask_h('yesno', data, target.user_id)['value']
                 target.gc.update_h()
                 target.gc.tell_h("{} did nothing.".format(target.user_id))
-
             target.gc.update_h()
 
-        def hermit_fiddle(args):
+        def hermit_huddle(args):
             target = choose_player(args)
-            # TODO FIX THE FOLLOWING!
-            # Description should come from the card itself!
             args['self'].gc.direct_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
-            # END FIX
 
             if target.character.alleg == 0: ## shadow
                 target.gc.direct_h("You are a {}.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
@@ -472,22 +432,76 @@ class ElementFactory:
                     target.ask_h('select', data, target.user_id)['value']
                     target.gc.update_h()
                     new_damage = target.moveDamage(1)
-                target.gc.tell_h("{}'s damage is now {}!".format(target.user_id, new_damage))
+                target.gc.tell_h("{}\'s damage is now {}!".format(target.user_id, new_damage))
             else:
                 target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ['Do nothing']}
                 target.ask_h('yesno', data, target.user_id)['value']
                 target.gc.update_h()
                 target.gc.tell_h("{} did nothing.".format(target.user_id))
-
             target.gc.update_h()
 
+        def hermit_lesson(args):
+            target = choose_player(args)
+            args['self'].gc.direct_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
 
+            if target.character.max_damage >= 12:
+                target.gc.direct_h("Your maximum hp ({}) is 12 or more.".format(target.character.max_damage), target.socket_id)
+                data = {'options': ["Receive 2 damage"]}
+                target.ask_h('select', data, target.user_id)['value']
+                target.gc.update_h()
+                new_damage = target.moveDamage(-2)
+                target.gc.tell_h("{}\'s Damage is now {}!".format(target.user_id, new_damage))
+            else:
+                target.gc.direct_h("Your maximum hp ({}) is less than 12. Do nothing.".format(target.character.max_damage), target.socket_id)
+                data = {'options': ['Do nothing']}
+                target.ask_h('yesno', data, target.user_id)['value']
+                target.gc.update_h()
+                target.gc.tell_h("{} did nothing.".format(target.user_id))
+            target.gc.update_h()
+
+        def hermit_bully(args):
+            target = choose_player(args)
+            args['self'].gc.direct_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
+
+            if target.character.max_damage <= 11:
+                target.gc.direct_h("Your maximum hp ({}) is 11 or less.".format(target.character.max_damage), target.socket_id)
+                data = {'options': ["Receive 1 damage"]}
+                target.ask_h('select', data, target.user_id)['value']
+                target.gc.update_h()
+                new_damage = target.moveDamage(-1)
+                target.gc.tell_h("{}\'s Damage is now {}!".format(target.user_id, new_damage))
+            else:
+                target.gc.direct_h("Your maximum hp ({}) is greater than 11. Do nothing.".format(target.character.max_damage), target.socket_id)
+                data = {'options': ['Do nothing']}
+                target.ask_h('yesno', data, target.user_id)['value']
+                target.gc.update_h()
+                target.gc.tell_h("{} did nothing.".format(target.user_id))
+            target.gc.update_h()
+
+        def hermit_prediction(args):
+            target = choose_player(args)
+            args['self'].gc.direct_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
+            target.gc.direct_h("You have no choice. Reveal yourself to {}.".format(args['self'].user_id), target.socket_id)
+            data = {'options': ["Send your character information"]}
+            target.ask_h('select', data, target.user_id)['value']
+            target.gc.direct_h("{}\'s character is {}, a {} with {} hp.".format(
+                target.user_id,
+                target.character.name,
+                ALLEGIANCE_MAP[target.character.alleg],
+                target.character.max_damage
+            ), args['self'].socket_id)
+            target.gc.direct_h("Their win condition: {}.".format(target.character.win_cond_desc), args['self'].socket_id)
+            target.gc.direct_h("Their special ability: {}.".format("None"), args['self'].socket_id)
+            target.gc.tell_h("{} revealed their identity secretly to {}!".format(target.user_id, args['self'].user_id))
+            target.gc.update_h()
+
+        # Initialize hermit cards
         GREEN_CARDS = [
             card.Card(
                 title = "Hermit\'s Blackmail",
                 desc = "I bet you're either a Neutral or a Hunter. If so, you must either give an Equipment card to the current player or receive 1 damage!",
-                color = 2, # 2: GREEN
+                color = 2, # 2 : GREEN
                 holder = None,
                 is_equip = False,
                 force_use = True,
@@ -496,7 +510,7 @@ class ElementFactory:
             card.Card(
                 title = "Hermit\'s Blackmail",
                 desc = "I bet you're either a Neutral or a Hunter. If so, you must either give an Equipment card to the current player or receive 1 damage!",
-                color = 2, # 2: GREEN
+                color = 2,
                 holder = None,
                 is_equip = False,
                 force_use = True,
@@ -505,7 +519,7 @@ class ElementFactory:
             card.Card(
                 title = "Hermit\'s Greed",
                 desc = "I bet you're either a Neutral or a Shadow. If so, you must either give an Equipment card to the current player or receive 1 damage!",
-                color = 2, # 2: GREEN
+                color = 2,
                 holder = None,
                 is_equip = False,
                 force_use = True,
@@ -514,7 +528,7 @@ class ElementFactory:
             card.Card(
                 title = "Hermit\'s Greed",
                 desc = "I bet you're either a Neutral or a Shadow. If so, you must either give an Equipment card to the current player or receive 1 damage!",
-                color = 2, # 2: GREEN
+                color = 2,
                 holder = None,
                 is_equip = False,
                 force_use = True,
@@ -523,7 +537,7 @@ class ElementFactory:
             card.Card(
                 title = "Hermit\'s Anger",
                 desc = "I bet you're either a Hunter or a Shadow. If so, you must either give an Equipment card to the current player or receive 1 damage!",
-                color = 2, # 2: GREEN
+                color = 2,
                 holder = None,
                 is_equip = False,
                 force_use = True,
@@ -532,7 +546,7 @@ class ElementFactory:
             card.Card(
                 title = "Hermit\'s Anger",
                 desc = "I bet you're either a Hunter or a Shadow. If so, you must either give an Equipment card to the current player or receive 1 damage!",
-                color = 2, # 2: GREEN
+                color = 2,
                 holder = None,
                 is_equip = False,
                 force_use = True,
@@ -541,7 +555,7 @@ class ElementFactory:
             card.Card(
                 title = "Hermit\'s Slap",
                 desc = "I bet you're a Hunter. If so, you receive 1 damage!",
-                color = 2, # 2: GREEN
+                color = 2,
                 holder = None,
                 is_equip = False,
                 force_use = True,
@@ -550,7 +564,7 @@ class ElementFactory:
             card.Card(
                 title = "Hermit\'s Slap",
                 desc = "I bet you're a Hunter. If so, you receive 1 damage!",
-                color = 2, # 2: GREEN
+                color = 2,
                 holder = None,
                 is_equip = False,
                 force_use = True,
@@ -559,7 +573,7 @@ class ElementFactory:
             card.Card(
                 title = "Hermit\'s Spell",
                 desc = "I bet you're a Shadow. If so, you receive 1 damage!",
-                color = 2, # 2: GREEN
+                color = 2,
                 holder = None,
                 is_equip = False,
                 force_use = True,
@@ -568,7 +582,7 @@ class ElementFactory:
             card.Card(
                 title = "Hermit\'s Exorcism",
                 desc = "I bet you're a Shadow. If so, you receive 2 damage!",
-                color = 2, # 2: GREEN
+                color = 2,
                 holder = None,
                 is_equip = False,
                 force_use = True,
@@ -577,7 +591,7 @@ class ElementFactory:
             card.Card(
                 title = "Hermit\'s Nurturance",
                 desc = "I bet you're a Neutral. If so, you heal 1 damage! (However, if you have no damage, then you receive 1 damage!)",
-                color = 2, # 2: GREEN
+                color = 2,
                 holder = None,
                 is_equip = False,
                 force_use = True,
@@ -586,28 +600,56 @@ class ElementFactory:
             card.Card(
                 title = "Hermit\'s Aid",
                 desc = "I bet you're a Hunter. If so, you heal 1 damage! (However, if you have no damage, then you receive 1 damage!)",
-                color = 2, # 2: GREEN
+                color = 2,
                 holder = None,
                 is_equip = False,
                 force_use = True,
                 use = hermit_aid
             ),
             card.Card(
-                title = "Hermit\'s Fiddle",
+                title = "Hermit\'s Huddle",
                 desc = "I bet you're a Shadow. If so, you heal 1 damage! (However, if you have no damage, then you receive 1 damage!)",
-                color = 2, # 2: GREEN
+                color = 2,
                 holder = None,
                 is_equip = False,
                 force_use = True,
-                use = hermit_fiddle
+                use = hermit_huddle
+            ),
+            card.Card(
+                title = "Hermit\'s Lesson",
+                desc = "I bet your maximum HP is 12 or more. If so, you receive 2 damage!",
+                color = 2,
+                holder = None,
+                is_equip = False,
+                force_use = True,
+                use = hermit_lesson
+            ),
+            card.Card(
+                title = "Hermit\'s Bully",
+                desc = "I bet your maximum HP is 11 or less. If so, you receive 1 damage!",
+                color = 2,
+                holder = None,
+                is_equip = False,
+                force_use = True,
+                use = hermit_bully
+            ),
+            card.Card(
+                title = "Hermit\'s Prediction",
+                desc = "You must reveal your character information secretly to the current player!",
+                color = 2,
+                holder = None,
+                is_equip = False,
+                force_use = True,
+                use = hermit_prediction
             )
         ]
+
+        # Initialize white, black, hermit decks
         self.WHITE_DECK = deck.Deck(cards = WHITE_CARDS)
         self.BLACK_DECK = deck.Deck(cards = BLACK_CARDS)
         self.GREEN_DECK = deck.Deck(cards = GREEN_CARDS)
 
-
-        # Initialize characters
+        # Character win condition functions
         def shadow_win_cond(gc, player):
             no_living_hunters = (len([p for p in gc.getLivePlayers() if p.character.alleg == 2]) == 0)
             neutrals_dead_3 = (len([p for p in gc.getDeadPlayers() if p.character.alleg == 1]) >= 3)
@@ -620,6 +662,7 @@ class ElementFactory:
         def allie_win_cond(gc, player):
             return (player in gc.getLivePlayers()) and gc.game_over
 
+        # Initialize characters
         self.CHARACTERS = [
             character.Character(
                 name = "Valkyrie",
@@ -668,10 +711,9 @@ class ElementFactory:
             )
         ]
 
-        ##########
-        # TODO For the following functions, insert descriptive tell_h()'s
+        # Area action functions
         def underworld_gate_action(gc, player):
-            data = {'options': ["Draw White Card", "Draw Black Card", "Draw Green Card"]}
+            data = {'options': ["Draw White Card", "Draw Black Card", "Draw Hermit Card"]}
             answer = player.ask_h('select', data, player.user_id)['value']
             gc.update_h()
             if answer == "Draw White Card":
@@ -680,7 +722,6 @@ class ElementFactory:
                 player.drawCard(gc.black_cards)
             else:
                 player.drawCard(gc.green_cards)
-
             gc.update_h()
 
         def weird_woods_action(gc, player):
@@ -696,7 +737,6 @@ class ElementFactory:
                 target_Player.moveDamage(1)
             else:
                 target_Player.moveDamage(-2)
-
             gc.update_h()
 
         def erstwhile_altar_action(gc, player):
@@ -720,8 +760,6 @@ class ElementFactory:
             else:
                 gc.tell_h("Nobody has any items for {} to steal.".format(player.user_id))
             gc.update_h()
-
-        #########
 
         # Initialize areas
         self.AREAS = [

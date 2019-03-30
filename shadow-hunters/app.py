@@ -95,9 +95,9 @@ def room(methods=['GET','POST']):
 def start_game(room_id, names):
 
     # Initialize human and AI players
-    # TODO: don't hard code number of players
+    ## TODO: don't hard code number of players
     num_players = 5
-    human_players = [Player(n, get_sid[(user_id, room_id)], lambda x,y,z: server_ask(x,y,z,room_id), False) for n in names]
+    human_players = [Player(n, get_sid[(n, room_id)], lambda x,y,z: server_ask(x,y,z,room_id), False) for n in names]
     ai_players = [Player("CPU_{}".format(i), str(i), ai_ask, True) for i in range(1,num_players-len(human_players)+1)]
     players = human_players + ai_players
 
@@ -116,17 +116,6 @@ def start_game(room_id, names):
     )
     gc.update_h = lambda: server_update(gc.dump()[0], room_id)
     rooms[room_id]['gc'] = gc
-
-    ## add a swap handler on the backend
-    ## add buttons to spectator mode to sub in for AI players
-    ## Make buttons disappear when the swap happens
-
-    ## add support for variable number of players with mapping
-    ## add button to start game with some number of players,
-    ## send value to backend through game_start socket handler, receive it in app.py
-
-    ## Test
-    ## Github, pass issue to frontend
 
     # Send public and private game states to frontend
     public_state, private_state = gc.dump()
@@ -268,7 +257,6 @@ def on_disconnect():
     name = connections[request.sid]['name']
     room_id = connections[request.sid]['room_id']
     socketio.emit('message', {'data': name+' has left the room', 'color': S_COLOR}, room=room_id)
-    print('{} disconnected from room {}'.format(name, room_id))
 
     # Remove user from all connection data structures
     connections.pop(request.sid)
