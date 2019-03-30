@@ -281,6 +281,9 @@ var GameBoard = new Phaser.Class ({
     //updates information about each player
     updatePlayer: function (player, data) {
 
+        // Update name (in case replaced by CPU)
+        player.name = data.user_id;
+
         // Move player
         if(Object.keys(data.location).length != 0) {
             if(!player.info.location.name || player.info.location.name !== data.location.name) {

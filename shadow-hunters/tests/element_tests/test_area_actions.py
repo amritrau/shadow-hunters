@@ -8,7 +8,7 @@ from tests import helpers
 # test_area_actions.py
 # Tests the possible actions at each area
 
-# Tests on hermit's cabin, church, and cemetary
+# Tests on hermit's cabin, church, and cemetery
 # are subsumed by tests of player.drawCard()
 
 def test_underworld_gate():
@@ -16,7 +16,7 @@ def test_underworld_gate():
     assert 1
 
 def test_weird_woods():
-    
+
     # Set up rigged game context
     gc, ef = helpers.fresh_gc_ef()
     area = helpers.get_area_by_name(gc, "Weird Woods")
@@ -24,7 +24,7 @@ def test_weird_woods():
     target = helpers.get_a_shadow(gc)
     actor = helpers.get_a_hunter(gc)
 
-    gc.ask_h = helpers.answer_sequence([
+    actor.ask_h = helpers.answer_sequence([
         target.user_id, 'Give 2 damage', # test damage
         target.user_id, 'Heal 1 damage', # test heal
     ])
@@ -38,7 +38,7 @@ def test_weird_woods():
     assert target.damage == 1
 
 def test_erstwhile_altar():
-    
+
     # Set up rigged game context
     gc, ef = helpers.fresh_gc_ef()
     area = helpers.get_area_by_name(gc, "Erstwhile Altar")
@@ -46,7 +46,7 @@ def test_erstwhile_altar():
     target = helpers.get_a_shadow(gc)
     actor = helpers.get_a_hunter(gc)
 
-    gc.ask_h = helpers.answer_sequence([
+    actor.ask_h = helpers.answer_sequence([
         target.user_id, 'Holy Robe' # test pick an equipment to steal
     ])
 

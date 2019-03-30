@@ -13,7 +13,7 @@ def test_fields():
 
     # test initialization
     player_names = ['Amrit', 'Max', 'Gia', 'Joanna', 'Vishal']
-    players = [player.Player(user_id, socket_id='unused') for user_id in player_names]
+    players = [player.Player(user_id, 'unused', lambda x, y, z: { 'value': random.choice(y['options']) }, True) for user_id in player_names]
     ef = elements.ElementFactory()
     gc = game_context.GameContext(
         players = players,
@@ -24,7 +24,6 @@ def test_fields():
         areas = ef.AREAS,
         tell_h = lambda x: 5,
         direct_h = lambda x, sid: 5,
-        ask_h = lambda x, y, z: { 'value': random.choice(y['options']) },
         update_h = lambda: 5
     )
 
@@ -36,7 +35,6 @@ def test_fields():
     assert gc.green_cards == ef.GREEN_DECK
     assert gc.tell_h(0) == 5
     assert gc.direct_h(0, 0) == 5
-    assert gc.ask_h(0, { 'options': ['test'] }, 0) == { 'value': 'test' }
     assert gc.update_h() == 5
     assert not gc.modifiers
     assert gc.die4.n_sides == 4

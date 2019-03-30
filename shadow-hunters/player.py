@@ -1,7 +1,7 @@
 import elements
 
 class Player:
-    def __init__(self, user_id, socket_id):
+    def __init__(self, user_id, socket_id, ask_h, ai):
         self.user_id = user_id
         self.socket_id = socket_id
         self.gc = None # game context (abbreviated for convenience)
@@ -11,6 +11,8 @@ class Player:
         self.damage = 0
         self.location = None
         self.modifiers = {}
+        self.ask_h = ask_h
+        self.ai = ai
 
     def setCharacter(self, character):
         self.character = character
@@ -26,12 +28,12 @@ class Player:
         # Roll dice
         self.gc.tell_h("{} is rolling for movement...".format(self.user_id))
         data = {'options': ['Roll for movement!']}
-        self.gc.ask_h('confirm', data, self.user_id)
+        self.ask_h('confirm', data, self.user_id)
 
         roll_result_4 = self.gc.die4.roll()
         roll_result_6 = self.gc.die6.roll()
         roll_result = roll_result_4 + roll_result_6
-        
+
         self.gc.tell_h("{} rolled {} + {} = {}!".format(self.user_id, roll_result_4, roll_result_6, roll_result))
         self.gc.update_h()
 
@@ -46,7 +48,7 @@ class Player:
             data = {
                 'options': area_options
             }
-            destination = self.gc.ask_h('select', data, self.user_id)['value']
+            destination = self.ask_h('select', data, self.user_id)['value']
 
             # Get Area object from area name
             destination_Area = None
@@ -74,7 +76,7 @@ class Player:
         # Take action
         data = {'options': [destination_Area.desc, 'Decline']}
 
-        answer = self.gc.ask_h('yesno', data, self.user_id)['value']
+        answer = self.ask_h('yesno', data, self.user_id)['value']
         if answer != 'Decline':
             # TODO Update game state
             # self.gc.update_h()
@@ -106,7 +108,7 @@ class Player:
             p for p in live_players if (p.location.zone == self.location.zone and p != self)
         ]
         data = {'options': [t.user_id for t in targets] + ['Decline']}
-        answer = self.gc.ask_h('select', data, self.user_id)['value']
+        answer = self.ask_h('select', data, self.user_id)['value']
         self.gc.update_h()
 
         if answer != 'Decline':
@@ -115,7 +117,7 @@ class Player:
             target_Player = target_Player[0]
             self.gc.tell_h("{} is attacking {}!".format(self.user_id, target))
             data = {'options': ['Roll for damage!']}
-            self.gc.ask_h('confirm', data, self.user_id)
+            self.ask_h('confirm', data, self.user_id)
 
             roll_result_4 = self.gc.die4.roll()
             roll_result_6 = self.gc.die6.roll()
@@ -204,7 +206,6 @@ class Player:
         self.gc.update_h()
 
     def move(self, location):
-        # TODO What checks do we need here?
         self.location = location
         self.gc.update_h()
 
@@ -218,4 +219,5 @@ class Player:
             'character': self.character.dump() if self.character else {},
             'modifiers': self.modifiers,
             'location': self.location.dump() if self.location else {},
+            'ai': self.ai,
         }

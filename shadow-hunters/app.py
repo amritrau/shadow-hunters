@@ -1,6 +1,7 @@
 from flask import Flask, render_template, url_for, redirect, request, flash
 from flask_socketio import SocketIO, join_room, leave_room
-from random import randint
+import random
+import string
 import os
 import re
 
@@ -93,7 +94,13 @@ def room(methods=['GET','POST']):
 def start_game(room_id, players):
 
     # Initialize players and game context
-    players = [Player(user_id, socket_id = get_sid[(user_id, room_id)]) for user_id in players]
+
+    # TODO: Don't hard code number of players
+    num_players = 5
+    human_players = [Player(user_id, get_sid[(user_id, room_id)], lambda x, y, z: server_ask(x, y, z, room_id), False) for user_id in players]
+    ai_players = [Player("CPU_{}".format(i), str(i), lambda x, y, z: {'value': random.choice(y['options'])}, True) for i in range(1, num_players-len(human_players)+1)]
+    players = human_players + ai_players
+
     ef = elements.ElementFactory()
     gc = GameContext(
             players = players,
@@ -104,9 +111,8 @@ def start_game(room_id, players):
             areas = ef.AREAS,
             tell_h = lambda x: server_msg(x, room_id),
             direct_h = lambda x, sid: server_msg(x, sid),
-            ask_h = lambda x, y, z: server_ask(x, y, z, room_id),
             update_h = lambda x: server_update(x, room_id)
-        )
+    )
 
     gc.update_h = lambda: server_update(gc.dump()[0], room_id)
     rooms[room_id]['gc'] = gc
@@ -118,7 +124,6 @@ def start_game(room_id, players):
 
     ## TODOS
 
-    ## change game to associate ask functions with individual players
     ## and then, if that disconnect was from an active room, modify gc to add AI player
     ## by modifying ask function (and their name as well, possibly other fields)
     ## then add buttons to spectator mode to sub in for AI players
@@ -231,15 +236,15 @@ def on_join(json):
     # Add new player to active connections
     room_id = json['room_id']
     name = json['name']
-    rgb = [str(randint(25,150)), str(randint(25,150)), str(randint(25,150))]
+    rgb = [str(random.randint(25,150)), str(random.randint(25,150)), str(random.randint(25,150))]
     connections[request.sid] = { 'name': name, 'room_id': room_id }
     connections[request.sid]['color'] = 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')'
     get_sid[(name, room_id)] = request.sid
 
     # Emit join message to other players
-    join_msg = name+' has joined Shadow Hunters Room: '+room_id
+    join_msg = name+' has joined the room!'
     if json['spectate']:
-        join_msg = name+' has joined the room as a spectator'
+        join_msg = name+' has joined the room as a spectator!'
     data = {'data': join_msg, 'color': S_COLOR}
     socketio.emit('message', data, room=room_id)
 
@@ -269,19 +274,24 @@ def on_disconnect():
     name = connections[request.sid]['name']
     room_id = connections[request.sid]['room_id']
     socketio.emit('message', {'data': name+' has left the room', 'color': S_COLOR}, room=room_id)
-
-    # FOR DEBUGGING: Print disconnect
     print('{} disconnected from room {}'.format(name, room_id))
 
     # Remove user from all connection data structures
     connections.pop(request.sid)
     get_sid.pop((name, room_id))
 
-    # Close room if it is now empty
+    # Close room if it is now empty, or replace player with AI if it's in game
     if len([x for x in connections.values() if x['room_id'] == room_id]) == 0:
-        print('everyone left, closing room {}'.format(room_id)) # DEBUGGING
+        print('everyone left, closing room {}'.format(room_id))
         socketio.close_room(room_id)
         rooms.pop(room_id)
+    elif rooms[room_id]['status'] == 'GAME':
+        player = [p for p in rooms[room_id]['gc'].players if p.socket_id == request.sid][0]
+        player.ask_h = lambda x, y, z: {'value': random.choice(y['options'])}
+        player.ai = True
+        player.user_id = 'CPU_{}'.format(name)
+        socketio.emit('message', {'data': 'A computer player, {} has taken {}\'s place!'.format(player.user_id, name), 'color': S_COLOR}, room=room_id)
+        # how to deal with people leaving mid turn?
 
 if __name__ == '__main__':
     socketio.run(app, debug=True, host="0.0.0.0", port=80)
