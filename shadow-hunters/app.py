@@ -27,6 +27,7 @@ def after_request(response):
 
 # constants
 SOCKET_SLEEP = 0.25
+AI_SLEEP = 3.0
 S_COLOR = 'rgb(37,25,64)'
 
 # connection/room management data structures
@@ -98,7 +99,7 @@ def start_game(room_id, players):
     # TODO: Don't hard code number of players
     num_players = 5
     human_players = [Player(user_id, get_sid[(user_id, room_id)], lambda x, y, z: server_ask(x, y, z, room_id), False) for user_id in players]
-    ai_players = [Player("CPU_{}".format(i), str(i), lambda x, y, z: {'value': random.choice(y['options'])}, True) for i in range(1, num_players-len(human_players)+1)]
+    ai_players = [Player("CPU_{}".format(i), str(i), ai_ask, True) for i in range(1, num_players-len(human_players)+1)]
     players = human_players + ai_players
 
     ef = elements.ElementFactory()
@@ -124,8 +125,6 @@ def start_game(room_id, players):
 
     ## TODOS
 
-    ## and then, if that disconnect was from an active room, modify gc to add AI player
-    ## by modifying ask function (and their name as well, possibly other fields)
     ## then add buttons to spectator mode to sub in for AI players
     ## Make buttons disappear when the swap happens
     ## add a swap handler on the backend
@@ -174,6 +173,10 @@ def server_ask(form, data, player, room_id):
     # Return answer
     answer_bins[room_id]['answered'] = False
     return answer_bins[room_id]['data']
+
+def ai_ask(x, y, z):
+    socketio.sleep(AI_SLEEP)
+    return {'value': random.choice(y['options'])}
 
 def server_msg(data, room_id):
     # TODO Consider moving this to separate file
@@ -287,11 +290,11 @@ def on_disconnect():
         rooms.pop(room_id)
     elif rooms[room_id]['status'] == 'GAME':
         player = [p for p in rooms[room_id]['gc'].players if p.socket_id == request.sid][0]
-        player.ask_h = lambda x, y, z: {'value': random.choice(y['options'])}
+        player.ask_h = ai_ask
         player.ai = True
         player.user_id = 'CPU_{}'.format(name)
         socketio.emit('message', {'data': 'A computer player, {} has taken {}\'s place!'.format(player.user_id, name), 'color': S_COLOR}, room=room_id)
-        # how to deal with people leaving mid turn?
+        # how to deal with people leaving mid turn? store current ask in game state
 
 if __name__ == '__main__':
     socketio.run(app, debug=True, host="0.0.0.0", port=80)
