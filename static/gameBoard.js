@@ -12,7 +12,7 @@ var GameBoard = new Phaser.Class ({
         this.allowClick = true;
 
         //this is where all of the objects specific to our scene will appear
-        this.box;
+        this.healthBar;
         this.player;
         this.allPlayersInfo;
         this.nPlayers;
@@ -40,19 +40,16 @@ var GameBoard = new Phaser.Class ({
     init: function (data)
     {
         this.gameData = data;
-        this.charInfo = this.gameData.private.character;
+        if("private" in this.gameData) this.charInfo = this.gameData.private.character;
         this.allPlayersInfo = this.gameData.public.players;
-
-
         // console.log(this.charInfo);
         // console.log(typeof this.charInfo);
-         console.log(this.gameData.public);
+        // console.log("game data", this.gameData.public);
         // console.log(this.gameData.public.players);
         // var key = Object.keys(this.otherPlayersInfo)[0];
         // console.log(this.otherPlayersInfo[key].user_id);
         // console.log(Object.keys(this.otherPlayersInfo).length);
         // console.log(this.gameData.private);
-
     },
 
     //the preload function is where all images that will be used in the game are loaded into
@@ -66,8 +63,8 @@ var GameBoard = new Phaser.Class ({
         this.load.image('text', '/static/assets/text.png');
         this.load.image('health', '/static/assets/health.png');
 
+        // load arsenal
         this.load.image('arsenal', '/static/assets/arsenal.png');
-
 
         // load the location cards
         this.load.svg('Hermit\'s Cabin', gfx + 'hermits_cabin.svg', {width: 101, height: 150});
@@ -106,16 +103,14 @@ var GameBoard = new Phaser.Class ({
     //the create function is where everything is added to the canvas
     create: function () {
         var self = this;
+
         //this adds our background image. the x, y coordinates provided are the center of the canvas
         var background = this.add.image(533, 300, 'background');
         background.setScale(1);
-        //background.displayWidth = this.sys.canvas.width;
-        //background.displayHeight = this.sys.canvas.height;
 
-        this.add.image(533, 537.5, 'arsenal');
-        this.box = this.makeBox();
-        this.box.on('clicked', this.clickHandler, this.box);
-
+        // Add healthbar
+        this.healthBar = this.makeHealthBar();
+        this.healthBar.on('clicked', this.clickHandler, this.box);
 
         // Place locations based on given order
         this.add.image(382.000,201.500, this.gameData.public.zones[0][0].name).setScale(1).angle = -60;
@@ -125,101 +120,107 @@ var GameBoard = new Phaser.Class ({
         this.add.image(482.000,382.712, this.gameData.public.zones[2][0].name).setScale(1).angle = 0;
         this.add.image(584.000,382.712, this.gameData.public.zones[2][1].name).setScale(1).angle = 0;
 
-
         //this loop creates all players: self and enemies.
+        sorted_keys = Object.keys(this.allPlayersInfo).sort(); // Hack to force keys into a deterministic order
         this.nPlayers = Object.keys(this.allPlayersInfo).length;
         var count = 0;
         for(var i = 0; i < this.nPlayers; i++) {
-            // console.log("in for loop");
-            var key = Object.keys(this.allPlayersInfo)[i];
-            if(this.allPlayersInfo[key].user_id === this.gameData.private.user_id) {
+            var key = sorted_keys[i];
+            if(("private" in this.gameData) && this.allPlayersInfo[key].user_id === this.gameData.private.user_id) {
                 this.player = this.makePlayer(this.allPlayersInfo[key].user_id,
-                    this.allPlayersInfo[key], i+1);
+                                              this.allPlayersInfo[key], i+1);
                 this.player.key = key;
                 this.player.on('clicked', this.clickHandler, this.player);
-                // console.log(this.player.name);
             }
             else {
                 this.otherPlayers[key] = this.makePlayer(this.allPlayersInfo[key].user_id,
-                    this.allPlayersInfo[key], i+1);
+                                                         this.allPlayersInfo[key], i+1);
                 this.otherPlayers[key].on('clicked', this.clickHandler, this.otherPlayers[key]);
                 count++;
             }
         }
-
 
         //this is what makes the box appear when character is clicked. See function clickHandler below
         this.input.on('gameobjectup', function (pointer, gameObject) {
             gameObject.emit('clicked', gameObject);
         }, this);
 
-        //create the information box for the bottom left corner
-        this.infoBox = this.add.image(100, 537.5, 'box');
-
-        //amrit sets character allegance to a number. we convert it to a team
-        if(this.charInfo.alleg == 1){
-            this.charInfo.alleg = "Neutral";
-        }
-        else if (this.charInfo.alleg == 0) {
-            this.charInfo.alleg = "Shadow";
-        }
-        else {
-            this.charInfo.alleg = "Hunter";
-        }
-        //enable data to be stored in this box. I'm not sure if this is necessary; if it isn't we can delete these set lines below
-        this.infoBox.setDataEnabled();
-        this.infoBox.data.set("name", this.charInfo.name);
-        this.infoBox.data.set("team", this.charInfo.alleg);
-        this.infoBox.data.set("win", this.charInfo.win_cond_desc);
-        this.infoBox.data.set("special", "none"); //not yet implemented
-
-        //create the text variables
-        var text = this.add.text(10, 470, '', {
-            font: '12px Arial',
-            fill: '#FFFFFF',
-            wordWrap: { width: 180, useAdvancedWrap: true }
-        });
-        var name = this.add.text(5, 460, this.infoBox.data.get('name'), {
-            font:'16px Arial' ,
-            fill: '#FFFFFF'
-        });
-
-        // Adding placeholder text to go in equipment slots
-        this.equip_text = [];
-        this.num_equip_slots = 6;
-        for(var i = 0; i < this.num_equip_slots; i++)
+        // Only create the aresenal and character card if
+        // this user is not a spectator
+        if("private" in this.gameData)
         {
-            this.equip_text[i] = this.add.text(235 + i*100, 537.5, '', {
+            // Add arsenal to screen
+            this.add.image(533, 537.5, 'arsenal');
+
+            //create the information box for the bottom left corner
+            this.infoBox = this.add.image(100, 537.5, 'box');
+
+            //amrit sets character allegance to a number. we convert it to a team
+            if(this.charInfo.alleg == 1){
+                this.charInfo.alleg = "Neutral";
+            }
+            else if (this.charInfo.alleg == 0) {
+                this.charInfo.alleg = "Shadow";
+            }
+            else {
+                this.charInfo.alleg = "Hunter";
+            }
+            //enable data to be stored in this box. I'm not sure if this is necessary; if it isn't we can delete these set lines below
+            this.infoBox.setDataEnabled();
+            this.infoBox.data.set("name", this.charInfo.name);
+            this.infoBox.data.set("team", this.charInfo.alleg);
+            this.infoBox.data.set("win", this.charInfo.win_cond_desc);
+            this.infoBox.data.set("special", "none"); //not yet implemented
+
+            //create the text variables
+            var text = this.add.text(10, 470, '', {
                 font: '12px Arial',
                 fill: '#FFFFFF',
-                wordWrap: { width: 80, useAdvancedWrap: true }
+                wordWrap: { width: 180, useAdvancedWrap: true }
             });
+            var name = this.add.text(5, 460, this.infoBox.data.get('name'), {
+                font:'16px Arial' ,
+                fill: '#FFFFFF'
+            });
+
+            // Adding placeholder text to go in equipment slots
+            this.equip_text = [];
+            this.num_equip_slots = 6;
+            for(var i = 0; i < this.num_equip_slots; i++)
+            {
+                this.equip_text[i] = this.add.text(235 + i*100, 537.5, '', {
+                    font: '12px Arial',
+                    fill: '#FFFFFF',
+                    wordWrap: { width: 80, useAdvancedWrap: true }
+                });
+            }
+
+            //set the text for inside of the box
+            text.setText([
+                'Team: ' + this.infoBox.data.get('team'),
+                'Win Condition: ' + this.infoBox.data.get('win'), "\n",
+                'Special Ability: ' + this.infoBox.data.get('special')
+            ]);
+
+            this.add.image(100, 366.975, "charImage");
+            this.add.image(60.442, 322.289, this.charInfo.name[0]);
+            this.add.image(137.489, 412.722, String(this.charInfo.max_damage) + "hp");
+
+            //align the text inside of our information box
+            Phaser.Display.Align.In.TopCenter(name, this.infoBox);
+            Phaser.Display.Align.In.TopLeft(text, this.add.zone(110, 560, 200, 130));
         }
 
-        //set the text for inside of the box
-        text.setText([
-            'Team: ' + this.infoBox.data.get('team'),
-            'Win Condition: ' + this.infoBox.data.get('win'), "\n",
-            'Special Ability: ' + this.infoBox.data.get('special')
-        ]);
+        // Initial update to synchronize spectators
+        self.updateBoard(this.gameData.public);
 
-        this.add.image(100, 366.975, "charImage");
-        this.add.image(60.442, 322.289, this.charInfo.name[0]);
-        this.add.image(137.489, 412.722, String(this.charInfo.max_damage) + "hp");
-
-
-
-        //align the text inside of our information box
-        Phaser.Display.Align.In.TopCenter(name, this.infoBox);
-        Phaser.Display.Align.In.TopLeft(text, this.add.zone(110, 560, 200, 130));
-
+        // Socket receiver for future updates
         socket.on('update', function(data) {
             self.updateBoard(data);
         });
-
     },
 
-    makeBox: function() {
+    makeHealthBar: function() {
         var sprite  = this.add.image(966, 300, 'health');
         sprite.infoBox = this.add.image(750, 150, 'text');
         sprite.infoBox.setVisible(false);
@@ -231,9 +232,7 @@ var GameBoard = new Phaser.Class ({
             "Player: " + this.gameData.public.characters[2].name, "Dies At HP: " + this.gameData.public.characters[2].max_damage, "\n",
             "Player: " + this.gameData.public.characters[3].name, "Dies At HP: " + this.gameData.public.characters[3].max_damage, "\n",
             "Player: " + this.gameData.public.characters[4].name, "Dies At HP: " + this.gameData.public.characters[4].max_damage
-
-
-            ]);
+        ]);
         sprite.displayInfo.setVisible(false);
         sprite.displayInfo.depth = 30;
         sprite.setInteractive();
@@ -261,21 +260,13 @@ var GameBoard = new Phaser.Class ({
             count += 4;
         }
 
-        if(Object.keys(sprite.info.location).length == 0) {
-            sprite.info.location.name = "None";
-        }
-
-        if(Object.keys(sprite.info.equipment).length == 0) {
-            sprite.info.equipment.list = "None";
-        }
-
         //this creates the infobox, i.e. the box that will appear when we click on him.
         sprite.infoBox = this.add.image(sprite.x, sprite.y -60, "customTip");
         sprite.infoBox.setVisible(false);
         sprite.displayInfo = this.add.text(sprite.infoBox.x - 120, sprite.infoBox.y - 40, " ", { font: '12px Arial', fill: '#FFFFFF', wordWrap: { width: 250, useAdvancedWrap: true }});
         sprite.displayInfo.setText([
             "Player: " + sprite.name,
-            "Equipment: " + sprite.info.equipment.list
+            "Equipment: None"
         ]);
         sprite.displayInfo.setVisible(false);
 
@@ -289,24 +280,26 @@ var GameBoard = new Phaser.Class ({
 
     //updates information about each player
     updatePlayer: function (player, data) {
-        if(Object.keys(data.location).length != 0 && player.info.location.name !== data.location.name) {
-            player.infoBox.setVisible(false);
-            player.displayInfo.setVisible(false);
+
+        // Move player
+        if(Object.keys(data.location).length != 0) {
+            if(!player.info.location.name || player.info.location.name !== data.location.name) {
+                player.infoBox.setVisible(false);
+                player.displayInfo.setVisible(false);
+            }
             player.x = player.spots[data.location.name].x;
             player.y = player.spots[data.location.name].y;
             player.infoBox.x = player.x;
             player.infoBox.y = player.y -60;
             player.displayInfo.x = player.infoBox.x - 120;
             player.displayInfo.y = player.infoBox.y - 40;
-            // console.log("sprite moved");
         }
 
-        //TO DO: if hp changes, move token on health bar
-        if(player.info.damage != data.damage) {
-            player.hpTracker.y = this.hpStart - 40*data.damage;
-        }
+        // Update hp
+        player.hpTracker.y = this.hpStart - 40*data.damage;
 
-        if((data.state == 0) && (player.info.state != 0)) {
+        // Kill player if dead
+        if(data.state == 0) {
             player.alpha = 0.4;
             player.hpTracker.alpha = 0.4;
             player.infoBox.alpha = 0.4;
@@ -319,12 +312,9 @@ var GameBoard = new Phaser.Class ({
             player.displayInfo.y = player.infoBox.y - 40;
         }
 
-        ////////////////////////////////////////////////////////////////
-        // First check if player is this.player - yourself
-        // For loop through the equipment, putting each text in the right location
-
-        var datasize = Object.keys(data.equipment).length;
-        if(player == this.player) {
+        // Update arsenal
+        var datasize = data.equipment.length;
+        if(this.player && player == this.player) {
 
             // Set equip text in box to name of equipment
             for(var i = 0; i < datasize; i++) {
@@ -337,13 +327,13 @@ var GameBoard = new Phaser.Class ({
             }
         }
 
-
+        // Update infobox
         player.info = data;
         if(Object.keys(player.info.location).length == 0) {
             player.info.location.name = "None";
         }
 
-        var nEquip = Object.keys(player.info.equipment).length;
+        var nEquip = player.info.equipment.length;
         if(nEquip == 0) {
             player.info.equipment.list = "None";
         }
@@ -370,7 +360,7 @@ var GameBoard = new Phaser.Class ({
         this.allPlayersInfo = data.players;
         for(var i = 0; i < this.nPlayers; i++){
             var key = Object.keys(this.allPlayersInfo)[i];
-            if(key === this.player.key) {
+            if(this.player && key === this.player.key) {
                 //update self
                 this.updatePlayer(this.player, this.allPlayersInfo[key]);
             }

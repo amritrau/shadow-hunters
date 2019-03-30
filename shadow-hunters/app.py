@@ -63,10 +63,8 @@ def room(methods=['GET','POST']):
         if (not re.match("^[\w\d ]*$", username)) or (not re.match("^[\w\d ]*$", room_id)):
             flash("Name and room ID must not contain special characters")
             return redirect('/')
-
-        # check for game already in progress
-        if room_id in rooms and rooms[room_id] == 'GAME':
-            flash("This room is already in game")
+        if username == "undefined" or room_id == "undefined":
+            flash("Nice try.")
             return redirect('/')
 
         # check for username taken
@@ -74,9 +72,19 @@ def room(methods=['GET','POST']):
             flash("Someone in the room has taken your name")
             return redirect('/')
 
+        # check for game already in progress
+        if room_id in rooms and rooms[room_id]['status'] == 'GAME':
+            public_state, private_state = rooms[room_id]['gc'].dump()
+            return render_template('room.html', context = {
+                'name': username,
+                'room_id': room_id,
+                'spectate': True,
+                'gc_data': { 'public': public_state }
+            })
+
         # send player to room
-        rooms[room_id] = 'LOBBY'
-        return render_template('room.html', context={ 'name': username, 'room_id': room_id })
+        rooms[room_id] = {'status': 'LOBBY', 'gc': None}
+        return render_template('room.html', context={ 'name': username, 'room_id': room_id, 'spectate': False })
     else:
         return redirect('/')
 
@@ -101,15 +109,38 @@ def start_game(room_id, players):
         )
 
     gc.update_h = lambda: server_update(gc.dump()[0], room_id)
+    rooms[room_id]['gc'] = gc
 
     # gc.dump() can be called at any time to return a tuple of public,
     # private state. The public state is a self-explanatory dictionary; the
     # private state is keyed by socket_id (not by user_id!). This makes it
     # easier to send messages individually.
 
+    ## TODOS
+
+    ## add to disconnects a redirect back to home page with flash
+    ## change game to associate ask functions with individual players
+    ## and then, if that disconnect was from an active room, modify gc to add AI player
+    ## by modifying ask function (and their name as well, possibly other fields)
+    ## then add buttons to spectator mode to sub in for AI players
+    ## Make buttons disappear when the swap happens
+    ## add a swap handler on the backend
+
+    ## TEST disconnecting and swapping back in
+
+    ## add support for variable number of players with mapping
+
+    ## TEST
+
+    ## add button to start game with some number of players, if there aren't enough humans
+    ## in the room fill the rest with AI players by default
+    ## deal with that on the backend
+    ## done with AI
+
+    ## TEST starting games with AI, then having swaps in
+
     # Send public and private game states across
     public_state, private_state = gc.dump()
-    # socketio.emit('game_start', public_state, room = room_id)
     for k in private_state:
         data = {'public': public_state, 'private': private_state[k]}
         socketio.emit('game_start', data, room = k)
@@ -157,9 +188,9 @@ def on_start():
 
     # Mark game as in progress so no one else can start/join it
     room_id = connections[request.sid]['room_id']
-    if rooms[room_id] == 'GAME':
+    if rooms[room_id]['status'] == 'GAME':
         return
-    rooms[room_id] = 'GAME'
+    rooms[room_id]['status'] = 'GAME'
 
     # Set default values for this room's answer bin
     answer_bins[room_id] = {
@@ -207,7 +238,10 @@ def on_join(json):
     get_sid[(name, room_id)] = request.sid
 
     # Emit join message to other players
-    data = {'data': name+' has joined Shadow Hunters Room: '+room_id, 'color': S_COLOR}
+    join_msg = name+' has joined Shadow Hunters Room: '+room_id
+    if json['spectate']:
+        join_msg = name+' has joined the room as a spectator'
+    data = {'data': join_msg, 'color': S_COLOR}
     socketio.emit('message', data, room=room_id)
 
     # Join room
@@ -215,7 +249,10 @@ def on_join(json):
     print("{} joined room {}".format(name, room_id)) # DEBUGGING
 
     # Emit welcome message to new player
-    data = {'data': 'Welcome to Shadow Hunters Room: '+room_id, 'color': S_COLOR}
+    join_msg = 'Welcome to Shadow Hunters Room: '+room_id
+    if json['spectate']:
+        join_msg = 'You are now spectating Shadow Hunters Room: '+room_id
+    data = {'data': join_msg, 'color': S_COLOR}
     socketio.emit('message', data, room=request.sid)
 
     # Tell player about other room members
