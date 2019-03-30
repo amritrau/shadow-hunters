@@ -10,7 +10,7 @@ $('document').ready(function() {
     if(usrctx.spectate) $('#start').remove();
 
     // Initial connection
-    socket = io.connect('http://' + document.domain + ':' + location.port);
+    socket = io.connect('http://' + document.domain + ':' + location.port, {reconnection: false});
     socket.on('connect', function() {
 
         // User joins the room
@@ -113,8 +113,7 @@ $('document').ready(function() {
 
         // Disconnect handler
         socket.on('disconnect', function(reason) {
-            console.log("Socket disconnected for reason: " + reason);
-            // Note: the socket will automatically try to reconnect here
+            window.location = "/";
         });
 
         // Configure game

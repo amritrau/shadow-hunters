@@ -118,7 +118,6 @@ def start_game(room_id, players):
 
     ## TODOS
 
-    ## add to disconnects a redirect back to home page with flash
     ## change game to associate ask functions with individual players
     ## and then, if that disconnect was from an active room, modify gc to add AI player
     ## by modifying ask function (and their name as well, possibly other fields)

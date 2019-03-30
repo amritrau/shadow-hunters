@@ -30,13 +30,10 @@ var WaitingRoom = new Phaser.Class ({
         //this resizes the background image to fit into our canvas
         var background = this.add.image(533, 300, 'background');
         background.setScale(1);
-        //background.displayWidth = this.sys.canvas.width;
-        //background.displayHeight = this.sys.canvas.height;
 
         //SOCKET CALL! if game start button pressed, then we switch scenes and go to the game board
         socket.on("game_start", function (data) {
             $('#start').remove();
-            console.log(data);
             self.scene.start('board', data);
         });
     }
