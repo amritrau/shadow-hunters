@@ -92,16 +92,16 @@ def room(methods=['GET','POST']):
 
 # GAMEPLAY FUNCTIONS
 
-def start_game(room_id, players):
+def start_game(room_id, names):
 
-    # Initialize players and game context
-
-    # TODO: Don't hard code number of players
+    # Initialize human and AI players
+    # TODO: don't hard code number of players
     num_players = 5
-    human_players = [Player(user_id, get_sid[(user_id, room_id)], lambda x, y, z: server_ask(x, y, z, room_id), False) for user_id in players]
-    ai_players = [Player("CPU_{}".format(i), str(i), ai_ask, True) for i in range(1, num_players-len(human_players)+1)]
+    human_players = [Player(n, get_sid[(user_id, room_id)], lambda x,y,z: server_ask(x,y,z,room_id), False) for n in names]
+    ai_players = [Player("CPU_{}".format(i), str(i), ai_ask, True) for i in range(1,num_players-len(human_players)+1)]
     players = human_players + ai_players
 
+    # Initialize game context with players and match room with game context
     ef = elements.ElementFactory()
     gc = GameContext(
             players = players,
@@ -114,35 +114,21 @@ def start_game(room_id, players):
             direct_h = lambda x, sid: server_msg(x, sid),
             update_h = lambda x: server_update(x, room_id)
     )
-
     gc.update_h = lambda: server_update(gc.dump()[0], room_id)
     rooms[room_id]['gc'] = gc
 
-    # gc.dump() can be called at any time to return a tuple of public,
-    # private state. The public state is a self-explanatory dictionary; the
-    # private state is keyed by socket_id (not by user_id!). This makes it
-    # easier to send messages individually.
-
-    ## TODOS
-
-    ## then add buttons to spectator mode to sub in for AI players
-    ## Make buttons disappear when the swap happens
     ## add a swap handler on the backend
-
-    ## TEST disconnecting and swapping back in
+    ## add buttons to spectator mode to sub in for AI players
+    ## Make buttons disappear when the swap happens
 
     ## add support for variable number of players with mapping
+    ## add button to start game with some number of players,
+    ## send value to backend through game_start socket handler, receive it in app.py
 
-    ## TEST
+    ## Test
+    ## Github, pass issue to frontend
 
-    ## add button to start game with some number of players, if there aren't enough humans
-    ## in the room fill the rest with AI players by default
-    ## deal with that on the backend
-    ## done with AI
-
-    ## TEST starting games with AI, then having swaps in
-
-    # Send public and private game states across
+    # Send public and private game states to frontend
     public_state, private_state = gc.dump()
     for k in private_state:
         data = {'public': public_state, 'private': private_state[k]}
@@ -151,11 +137,12 @@ def start_game(room_id, players):
     # Initiate gameplay loop
     winners = gc.play()
 
-def server_ask(form, data, player, room_id):
+def server_ask(form, data, user_id, room_id):
     # TODO Consider moving this to separate file
 
     # Emit ask
-    sid = get_sid[(player, room_id)]
+    sid = get_sid[(user_id, room_id)]
+    player = [p for p in rooms[room_id]['gc'].players if p.socket_id == sid][0]
     data['form'] = form
     answer_bins[room_id]['answered'] = False
     socketio.emit('ask', data, room=sid)
@@ -163,6 +150,9 @@ def server_ask(form, data, player, room_id):
     # Loop until an answer is received
     while not answer_bins[room_id]['answered']:
         while not answer_bins[room_id]['answered']:
+            # If a player swaps out for an AI during an ask, the AI answers for them
+            if player.ai:
+                return {'value': random.choice(data['options'])}
             socketio.sleep(SOCKET_SLEEP)
 
         # Validate answerer and answer
@@ -193,7 +183,7 @@ def server_update(data, room_id):
 @socketio.on('start')
 def on_start():
 
-    # Mark game as in progress so no one else can start/join it
+    # Mark game as in progress so no one else can start it
     room_id = connections[request.sid]['room_id']
     if rooms[room_id]['status'] == 'GAME':
         return
@@ -208,14 +198,14 @@ def on_start():
     }
 
     # Begin game
-    players = [x['name'] for x in connections.values() if x['room_id'] == room_id]
+    names = [x['name'] for x in connections.values() if x['room_id'] == room_id]
     socketio.sleep(SOCKET_SLEEP)
-    start_game(room_id, players)
+    start_game(room_id, names)
 
 @socketio.on('answer')
 def on_answer(json):
 
-    # Make sure an answer isn't being processed
+    # Make sure an answer isn't already being processed
     room_id = connections[request.sid]['room_id']
     if answer_bins[room_id]['answered']:
         return
@@ -228,6 +218,8 @@ def on_answer(json):
 
 @socketio.on('message')
 def on_message(msg):
+
+    # Broadcast message to all players
     room_id = connections[request.sid]['room_id']
     msg['name'] = connections[request.sid]['name']
     msg['color'] = connections[request.sid]['color']
@@ -253,7 +245,6 @@ def on_join(json):
 
     # Join room
     join_room(room_id)
-    print("{} joined room {}".format(name, room_id)) # DEBUGGING
 
     # Emit welcome message to new player
     join_msg = 'Welcome to Shadow Hunters Room: '+room_id
@@ -285,16 +276,27 @@ def on_disconnect():
 
     # Close room if it is now empty, or replace player with AI if it's in game
     if len([x for x in connections.values() if x['room_id'] == room_id]) == 0:
-        print('everyone left, closing room {}'.format(room_id))
+
+        # Close the room
         socketio.close_room(room_id)
         rooms.pop(room_id)
+
     elif rooms[room_id]['status'] == 'GAME':
-        player = [p for p in rooms[room_id]['gc'].players if p.socket_id == request.sid][0]
+
+        # If disconnected person was spectating, don't swap them for an AI
+        player_in_game = [p for p in rooms[room_id]['gc'].players if p.socket_id == request.sid]
+        if not player_in_game:
+            return
+
+        # Swap player for AI
+        player = player_in_game[0]
+        player.user_id = 'CPU_{}'.format(name)
         player.ask_h = ai_ask
         player.ai = True
-        player.user_id = 'CPU_{}'.format(name)
-        socketio.emit('message', {'data': 'A computer player, {} has taken {}\'s place!'.format(player.user_id, name), 'color': S_COLOR}, room=room_id)
-        # how to deal with people leaving mid turn? store current ask in game state
+
+        # Tell everyone about the swap
+        msg = 'A computer player, {} has taken {}\'s place!'.format(player.user_id, name)
+        socketio.emit('message', {'data': msg, 'color': S_COLOR}, room=room_id)
 
 if __name__ == '__main__':
     socketio.run(app, debug=True, host="0.0.0.0", port=80)
