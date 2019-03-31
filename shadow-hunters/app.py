@@ -117,6 +117,12 @@ def start_game(room_id, names):
     gc.update_h = lambda: server_update(gc.dump()[0], room_id)
     rooms[room_id]['gc'] = gc
 
+    # Hermit unit tests
+    # reduce number of updates
+    # check on ask types (confirm vs select), make sure all cards behave in standard way (all should include prompt)
+    # change tell_h and direct_h to have type json
+    # reveals (backend, then frontend)
+
     # Send public and private game states to frontend
     public_state, private_state = gc.dump()
     for k in private_state:
@@ -269,11 +275,12 @@ def on_disconnect():
         socketio.close_room(room_id)
         rooms.pop(room_id)
 
-    elif rooms[room_id]['status'] == 'GAME':
+    elif rooms[room_id]['status'] == 'GAME' and (not rooms[room_id]['gc'].game_over):
 
-        # If disconnected person was spectating, don't swap them for an AI
+        # If disconnected person was spectating, or dead, or if the game is over,
+        # don't swap them for an AI
         player_in_game = [p for p in rooms[room_id]['gc'].players if p.socket_id == request.sid]
-        if not player_in_game:
+        if (not player_in_game) or (not player_in_game[0].state):
             return
 
         # Swap player for AI

@@ -13,6 +13,7 @@ class GameContext:
 
         # Instantiate gameplay objects
         self.players = players
+        self.turn_order = list(players)
         self.characters = characters
         self.black_cards = black_cards
         self.white_cards = white_cards
@@ -67,21 +68,19 @@ class GameContext:
                     self.tell_h("{} ({}: {}) won! {}".format(w.user_id, elements.ALLEGIANCE_MAP[w.character.alleg], w.character.name, w.character.win_cond_desc))
             return winners
 
-
     def play(self):
-        for z in range(len(self.zones)):
-            self.tell_h("Zone {} contains: {}.".format(z+1, ', '.join([a.name for a in self.zones[z].areas])))
-        for p in self.players:
-            self.direct_h("You ({}) are {} ({}).".format(p.user_id, p.character.name, elements.ALLEGIANCE_MAP[p.character.alleg]), p.socket_id)
+        turn = random.randint(0, len(self.turn_order) - 1)
         while True:
-            living = self.getLivePlayers()
-            while len(living):
-                player = living.pop()
-                player.takeTurn()
-                winners = self.checkWinConditions()
-                living = [p for p in living if p.state != 0]
-                if winners:
-                    return winners
+            current_player = self.turn_order[turn]
+            if current_player.state:
+                current_player.takeTurn()
+            winners = self.checkWinConditions()
+            if winners:
+                return winners
+            turn += 1
+            if turn >= len(self.turn_order):
+                turn = 0
+                self.turn_order = list(self.players)
 
     def dump(self):
         public_zones = [z.dump() for z in self.zones]

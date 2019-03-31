@@ -23,7 +23,7 @@ class Player:
         self.gc.tell_h("{} revealed themselves as {}, a {} with {} hp!".format(
             self.user_id,
             self.character.name,
-            self.character.alleg,
+            elements.ALLEGIANCE_MAP[self.character.alleg],
             self.character.max_damage
         ))
         self.gc.tell_h("Their win condition: {}.".format(self.character.win_cond_desc))
@@ -32,6 +32,11 @@ class Player:
     def takeTurn(self):
         # Announce player
         self.gc.tell_h("It's {}'s turn!".format(self.user_id))
+
+        # Guardian Angel wears off
+        if "guardian_angel" in self.modifiers:
+            self.gc.tell_h("The effect of {}\'s Guardian Angel wore off!".format(self.user_id))
+            del self.modifiers["guardian_angel"]
 
         # Roll dice
         self.gc.tell_h("{} is rolling for movement...".format(self.user_id))
@@ -187,6 +192,12 @@ class Player:
     def defend(self, other, amount):
         is_attack = False
         successful = False # irrelevant for defend
+
+        # Check for guardian angel
+        if "guardian_angel" in self.modifiers:
+            self.gc.tell_h("{}\'s Guardian Angel shielded them from damage!".format(self.user_id))
+            return 0
+
         for eq in self.equipment:
             amount = eq.use(is_attack, successful, amount) # Compose each of these functions
 

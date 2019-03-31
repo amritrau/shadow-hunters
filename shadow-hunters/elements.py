@@ -45,25 +45,123 @@ class ElementFactory:
             args['self'].gc.update_h()
 
         def use_advent(args):
-            raise NotImplementedError
+            data = {'options': ["Do nothing"]}
+            if args['self'].character.alleg == 2:
+                if args['self'].state == 0:
+                    data['options'].append("Reveal and heal fully")
+                else:
+                    data['options'].append("Heal fully")
+            decision = args['self'].ask_h('select', data, args['self'].user_id)['value']
+            if decision == "Do nothing":
+                args['self'].gc.tell_h("{} did nothing.".format(args['self'].user_id))
+            elif decision == "Reveal and heal fully":
+                args['self'].reveal()
+                args['self'].setDamage(0)
+            else:
+                args['self'].setDamage(0)
+            args['self'].gc.update_h()
 
         def use_disenchant_mirror(args):
-            raise NotImplementedError
+            data = {'options': ["Do nothing"]}
+            if args['self'].character.alleg == 0 and args['self'].character.name != "Unknown":
+                data = {'options': ["Reveal yourself"]}
+            decision = args['self'].ask_h('confirm', data, args['self'].user_id)['value']
+            if decision == "Do nothing":
+                args['self'].gc.tell_h("{} did nothing.".format(args['self'].user_id))
+            else:
+                args['self'].reveal()
+            args['self'].gc.update_h()
 
         def use_blessing(args):
-            raise NotImplementedError
+            target = choose_player(args)
+            args['self'].gc.update_h()
+            args['self'].gc.tell_h("{} is rolling the 6-sided die...".format(args['self'].user_id))
+            data = {'options': ['Roll the 6-sided die']}
+            args['self'].ask_h('confirm', data, args['self'].user_id)
+            roll_result = args['self'].gc.die6.roll()
+            args['self'].gc.tell_h("{} rolled a {}!".format(args['self'].user_id, roll_result))
+            target.moveDamage(roll_result)
+            args['self'].gc.update_h()
 
         def use_chocolate(args):
-            raise NotImplementedError
+            data = {'options': ["Do nothing"]}
+            if args['self'].character.name in ["Allie", "Agnes", "Emi", "Ellen", "Ultra Soul", "Unknown"]:
+                if args['self'].state == 0:
+                    data['options'].append("Reveal and heal fully")
+                else:
+                    data['options'].append("Heal fully")
+            decision = args['self'].ask_h('select', data, args['self'].user_id)['value']
+            if decision == "Do nothing":
+                args['self'].gc.tell_h("{} did nothing.".format(args['self'].user_id))
+            elif decision == "Reveal and heal fully":
+                args['self'].reveal()
+                args['self'].setDamage(0)
+            else:
+                args['self'].setDamage(0)
+            args['self'].gc.update_h()
 
         def use_concealed_knowledge(args):
-            raise NotImplementedError
+            args['self'].gc.turn_order.insert(args['self'].gc.turn_order.index(args['self']), args['self'])
 
         def use_guardian_angel(args):
-            raise NotImplementedError
+            args['self'].modifiers['guardian_angel'] = True
 
         # Initialize white cards
         WHITE_CARDS = [
+            card.Card(
+                title = "Advent",
+                desc = "If you are a Hunter, you may reveal your identity. If you do, or if you are already revealed, you heal fully.",
+                color = 0,
+                holder = None,
+                is_equip = False,
+                force_use = True,
+                use = use_advent
+            ),
+            card.Card(
+                title = "Disenchant Mirror",
+                desc = "If you are a Shadow, except for Unknown, you must reveal your identity.",
+                color = 0,
+                holder = None,
+                is_equip = False,
+                force_use = True,
+                use = use_disenchant_mirror
+            ),
+            card.Card(
+                title = "Blessing",
+                desc = "Pick a character other than yourself and roll the 6-sided die. That character heals an amount of damage equal to the die roll.",
+                color = 0,
+                holder = None,
+                is_equip = False,
+                force_use = True,
+                use = use_blessing
+            ),
+            card.Card(
+                title = "Chocolate",
+                desc = "If you are Allie, Agnes, Emi, Ellen, Unknown, or Ultra Soul, you may reveal your identity. If you do, or if you are already revealed, you heal fully.",
+                color = 0,
+                holder = None,
+                is_equip = False,
+                force_use = True,
+                use = use_chocolate
+            ),
+            card.Card(
+                title = "Concealed Knowledge",
+                desc = "When this turn is over, it will be your turn again.",
+                color = 0,
+                holder = None,
+                is_equip = False,
+                force_use = True,
+                use = use_concealed_knowledge
+            ),
+            card.Card(
+                title = "Guardian Angel",
+                desc = "You take no damage from the direct attacks of other characters until the start of your next turn.",
+                color = 0,
+                holder = None,
+                is_equip = False,
+                force_use = True,
+                use = use_guardian_angel
+            ),
             card.Card(
                 title = "Holy Robe",
                 desc = "Your attacks do 1 less damage and the amount of damage you receive from attacks is reduced by 1 point.",
@@ -110,7 +208,7 @@ class ElementFactory:
                 use = lambda args: args['self'].moveDamage(2)
             )
         ]
-
+        
         # Black card usage functions
         def use_bloodthirsty_spider(args):
             target = choose_player(args)
@@ -150,7 +248,7 @@ class ElementFactory:
 
         def use_diabolic_ritual(args):
             data = {'options': ["Do nothing"]}
-            if args['self'].character.alleg == 0:
+            if args['self'].character.alleg == 0 and args['self'].state != 1:
                 data['options'].append("Reveal and heal fully")
             decision = args['self'].ask_h('select', data, args['self'].user_id)['value']
             if decision == "Do nothing":
