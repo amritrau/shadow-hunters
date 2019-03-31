@@ -88,6 +88,11 @@ var GameBoard = new Phaser.Class ({
         this.load.svg('player3', gfx + 'green-person.svg', {width: 50.5, height: 37.5});
         this.load.svg('player4', gfx + 'blue-person.svg', {width: 50.5, height: 37.5});
         this.load.svg('player5', gfx + 'pink-person.svg', {width: 50.5, height: 37.5});
+        this.load.svg('circle1', gfx + 'white_circle.svg', {width: 123.633, height: 123.633});
+        this.load.svg('circle2', gfx + 'black_circle.svg', {width: 123.633, height: 123.633});
+        this.load.svg('circle3', gfx + 'green_circle.svg', {width: 123.633, height: 123.633});
+        this.load.svg('circle4', gfx + 'blue_circle.svg', {width: 123.633, height: 123.633});
+        this.load.svg('circle5', gfx + 'pink_circle.svg', {width: 123.633, height: 123.633});
 
         this.load.svg('hpp1', gfx + 'whiteDot.svg', {width: 15, height: 15});
         this.load.svg('hpp2', gfx + 'blackDot.svg', {width: 15, height: 15});
@@ -106,6 +111,8 @@ var GameBoard = new Phaser.Class ({
         this.load.svg('V', gfx + 'v.svg', {width: 36.657, height: 36.657});
         this.load.svg('F', gfx + 'f.svg', {width: 36.657, height: 36.657});
         this.load.svg('G', gfx + 'g.svg', {width: 36.657, height: 36.657});
+        this.load.image('Allie', '/static/assets/Allie.png');
+        //this.load.svg('Allie', '/static/assets/Allie.svg', {width: 123, height: 123});
     },
 
     //the create function is where everything is added to the canvas
@@ -202,7 +209,8 @@ var GameBoard = new Phaser.Class ({
             'Special Ability: ' + this.infoBox.data.get('special')
         ]);
 
-        this.add.image(100, 366.975, "charImage");
+        this.add.image(100, 366.975, "circle" + String(this.player.number));
+        this.add.image(100, 366.975, "Allie");
         this.add.image(60.442, 322.289, this.charInfo.name[0]);
         this.add.image(137.489, 412.722, String(this.charInfo.max_damage) + "hp");
 
