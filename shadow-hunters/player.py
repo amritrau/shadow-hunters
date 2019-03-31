@@ -18,8 +18,16 @@ class Player:
         self.character = character
 
     def reveal(self):
-        # self.character.special()
         self.state = 1
+        self.gc.update_h()
+        self.gc.tell_h("{} revealed themselves as {}, a {} with {} hp!".format(
+            self.user_id,
+            self.character.name,
+            self.character.alleg,
+            self.character.max_damage
+        ))
+        self.gc.tell_h("Their win condition: {}.".format(self.character.win_cond_desc))
+        self.gc.tell_h("Their special ability: {}.".format("None"))
 
     def takeTurn(self):
         # Announce player

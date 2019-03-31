@@ -20,12 +20,47 @@ CARD_COLOR_MAP = {
 class ElementFactory:
     def __init__(self):
 
+        # Helper functions for asking players to make choices
+        def choose_player(args):
+            args['self'].gc.tell_h("{} is choosing a player...".format(args['self'].user_id))
+            data = {'options': [p.user_id for p in args['self'].gc.getLivePlayers() if p != args['self']]}
+            target = args['self'].ask_h('select', data, args['self'].user_id)['value']
+            args['self'].gc.update_h()
+            target_Player = [p for p in args['self'].gc.getLivePlayers() if p.user_id == target][0]
+            args['self'].gc.tell_h("{} chose {}!".format(args['self'].user_id, target))
+            return target_Player
+
+        def choose_equipment(player, target):
+            data = {'options': [eq.title for eq in target.equipment]}
+            equip = target.ask_h('select', data, player.user_id)['value']
+            player.gc.update_h()
+            equip_Equipment = [eq for eq in target.equipment if eq.title == equip][0]
+            return equip_Equipment
+
         # White card usage functions
         def use_first_aid(args):
             target = args['self'].ask_h('select', {'options': [t.user_id for t in args['self'].gc.getLivePlayers()]}, args['self'].user_id)['value']
             args['self'].gc.update_h()
             [p for p in args['self'].gc.getLivePlayers() if p.user_id == target][0].setDamage(7)
             args['self'].gc.update_h()
+
+        def use_advent(args):
+            raise NotImplementedError
+
+        def use_disenchant_mirror(args):
+            raise NotImplementedError
+
+        def use_blessing(args):
+            raise NotImplementedError
+
+        def use_chocolate(args):
+            raise NotImplementedError
+
+        def use_concealed_knowledge(args):
+            raise NotImplementedError
+
+        def use_guardian_angel(args):
+            raise NotImplementedError
 
         # Initialize white cards
         WHITE_CARDS = [
@@ -78,16 +113,16 @@ class ElementFactory:
 
         # Black card usage functions
         def use_bloodthirsty_spider(args):
-            target = args['self'].ask_h('select', {'options': [t.user_id for t in args['self'].gc.getLivePlayers() if t != args['self']]}, args['self'].user_id)['value']
+            target = choose_player(args)
             args['self'].gc.update_h()
-            [p for p in args['self'].gc.getLivePlayers() if p.user_id == target][0].moveDamage(-2)
+            target.moveDamage(-2)
             args['self'].moveDamage(-2)
             args['self'].gc.update_h()
 
         def use_vampire_bat(args):
-            target = args['self'].ask_h('select', {'options': [t.user_id for t in args['self'].gc.getLivePlayers() if t != args['self']]}, args['self'].user_id)['value']
+            target = choose_player(args)
             args['self'].gc.update_h()
-            [p for p in args['self'].gc.getLivePlayers() if p.user_id == target][0].moveDamage(-2)
+            target.moveDamage(-2)
             args['self'].moveDamage(1)
             args['self'].gc.update_h()
 
@@ -111,6 +146,77 @@ class ElementFactory:
                 args['self'].gc.update_h()
             else:
                 args['self'].gc.tell_h("Nobody has any items for {} to steal.".format(args['self'].user_id))
+            args['self'].gc.update_h()
+
+        def use_diabolic_ritual(args):
+            data = {'options': ["Do nothing"]}
+            if args['self'].character.alleg == 0:
+                data['options'].append("Reveal and heal fully")
+            decision = args['self'].ask_h('select', data, args['self'].user_id)['value']
+            if decision == "Do nothing":
+                args['self'].gc.tell_h("{} did nothing.".format(args['self'].user_id))
+            else:
+                args['self'].reveal()
+                args['self'].setDamage(0)
+            args['self'].gc.update_h()
+
+        def use_banana_peel(args):
+            if len(args['self'].equipment):
+                data = {'options': ["Give an equipment card", "Receive 1 damage"]}
+            else:
+                data = {'options': ["Receive 1 damage"]}
+            decision = args['self'].ask_h('select', data, args['self'].user_id)['value']
+            args['self'].gc.update_h()
+            if decision == "Give an equipment card":
+                args['self'].gc.tell_h("{} is choosing an equipment card to give away...".format(args['self'].user_id))
+                eq = choose_equipment(args['self'], args['self'])
+                receiver = choose_player(args)
+                i = args['self'].equipment.index(eq)
+                eq = args['self'].equipment.pop(i)
+                receiver.equipment.append(eq)
+                eq.holder = receiver
+                args['self'].gc.tell_h("{} gave {} their {}!".format(args['self'].user_id, receiver.user_id, eq.title))
+            else:
+                args['self'].moveDamage(-1)
+            args['self'].gc.update_h()
+
+        def use_dynamite(args):
+            args['self'].gc.tell_h("{} is rolling for location...".format(args['self'].user_id))
+            data = {'options': ['Roll for location']}
+            args['self'].ask_h('confirm', data, args['self'].user_id)
+            roll_result_4 = args['self'].gc.die4.roll()
+            roll_result_6 = args['self'].gc.die6.roll()
+            roll_result = roll_result_4 + roll_result_6
+            args['self'].gc.tell_h("{} rolled {} + {} = {}!".format(args['self'].user_id, roll_result_4, roll_result_6, roll_result))
+            args['self'].gc.update_h()
+
+            if roll_result == 7:
+                args['self'].gc.tell_h("Nothing happens.")
+            else:
+                destination_Area = None
+                for z in args['self'].gc.zones:
+                    for a in z.areas:
+                        if roll_result in a.domain:
+                            destination_Area = a
+                destination = destination_Area.name
+                args['self'].gc.tell_h("Dynamite blew up the {}!".format(destination))
+                affected_players = [p for p in args['self'].gc.players if p.location == destination_Area]
+                for p in affected_players:
+                    p.moveDamage(-3)
+            args['self'].gc.update_h()
+
+        def use_spiritual_doll(args):
+            target = choose_player(args)
+            args['self'].gc.update_h()
+            args['self'].gc.tell_h("{} is rolling the 6-sided die...".format(args['self'].user_id))
+            data = {'options': ['Roll the 6-sided die']}
+            args['self'].ask_h('confirm', data, args['self'].user_id)
+            roll_result = args['self'].gc.die6.roll()
+            args['self'].gc.tell_h("{} rolled a {}!".format(args['self'].user_id, roll_result))
+            if roll_result >= 5:
+                args['self'].moveDamage(-3)
+            else:
+                target.moveDamage(-3)
             args['self'].gc.update_h()
 
         # Initialize black cards
@@ -195,26 +301,46 @@ class ElementFactory:
                 is_equip = False,
                 force_use = True,
                 use = use_vampire_bat
+            ),
+            card.Card(
+                title = "Diabolic Ritual",
+                desc = "If you are a Shadow, you may reveal your identity. If you do, you fully heal you damage.",
+                color = 1,
+                holder = None,
+                is_equip = False,
+                force_use = True,
+                use = use_diabolic_ritual
+            ),
+            card.Card(
+                title = "Banana Peel",
+                desc = "Give one of your equipment cards to another character. If you have no equipment cards, you receive 1 point of damage.",
+                color = 1,
+                holder = None,
+                is_equip = False,
+                force_use = True,
+                use = use_banana_peel
+            ),
+            card.Card(
+                title = "Dynamite",
+                desc = "Roll 2 dice and give 3 points of damage to all characters in the area designated by the total number rolled (nothing happens if a 7 is rolled).",
+                color = 1,
+                holder = None,
+                is_equip = False,
+                force_use = True,
+                use = use_dynamite
+            ),
+            card.Card(
+                title = "Spiritual Doll",
+                desc = "Pick a character and roll the 6-sided die. If the die number is 1 to 4, you give 3 points of damage to that character. If the die number is 5 or 6, you get 3 points of damage.",
+                color = 1,
+                holder = None,
+                is_equip = False,
+                force_use = True,
+                use = use_spiritual_doll
             )
         ]
 
         # Hermit card usage functions
-        def choose_player(args):
-            args['self'].gc.tell_h("{} is choosing a player...".format(args['self'].user_id))
-            data = {'options': [p.user_id for p in args['self'].gc.getLivePlayers() if p != args['self']]}
-            target = args['self'].ask_h('select', data, args['self'].user_id)['value']
-            args['self'].gc.update_h()
-            target_Player = [p for p in args['self'].gc.getLivePlayers() if p.user_id == target][0]
-            args['self'].gc.tell_h("{} chose {}!".format(args['self'].user_id, target))
-            return target_Player
-
-        def choose_equipment(player, target):
-            data = {'options': [eq.title for eq in target.equipment]}
-            equip = target.ask_h('select', data, player.user_id)['value']
-            player.gc.update_h()
-            equip_Equipment = [eq for eq in target.equipment if eq.title == equip][0]
-            return equip_Equipment
-
         def hermit_blackmail(args):
             target = choose_player(args)
             args['self'].gc.direct_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
