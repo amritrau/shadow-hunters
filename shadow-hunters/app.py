@@ -117,10 +117,17 @@ def start_game(room_id, names):
     gc.update_h = lambda: server_update(gc.dump()[0], room_id)
     rooms[room_id]['gc'] = gc
 
-    # Hermit unit tests
-    # reduce number of updates
-    # check on ask types (confirm vs select), make sure all cards behave in standard way (all should include prompt)
+    # Fix hermit tests
+    # Write single use tests
+
+    # comment elements.py
+    # remove force_use
+    # remove ['value'] from asks
+    # check on ask types (confirm vs select),
+    # make sure all cards behave in standard way (all should include prompt)
+
     # change tell_h and direct_h to have type json
+
     # reveals (backend, then frontend)
 
     # Send public and private game states to frontend
@@ -132,8 +139,9 @@ def start_game(room_id, names):
     # Initiate gameplay loop
     winners = gc.play()
 
+    # Send winners to frontend in socket emission for game-over screen
+
 def server_ask(form, data, user_id, room_id):
-    # TODO Consider moving this to separate file
 
     # Emit ask
     sid = get_sid[(user_id, room_id)]
@@ -164,12 +172,10 @@ def ai_ask(x, y, z):
     return {'value': random.choice(y['options'])}
 
 def server_msg(data, room_id):
-    # TODO Consider moving this to separate file
     socketio.emit('message', {'data': data, 'color': S_COLOR}, room=room_id)
     socketio.sleep(SOCKET_SLEEP)
 
 def server_update(data, room_id):
-    # TODO Consider moving this to separate file
     socketio.emit('update', data, room=room_id)
     socketio.sleep(SOCKET_SLEEP)
 
