@@ -154,19 +154,19 @@ class Player:
         public_title = drawn.title if drawn.color != 2 else 'a Hermit Card'
         self.gc.tell_h("{} drew {}!".format(self.user_id, public_title))
         if drawn.color != 2:
-            self.gc.tell_h("Card ({}): {}".format(drawn.title, drawn.desc))
+            self.gc.tell_h("{}: {}".format(drawn.title, drawn.desc))
         else:
-            self.gc.direct_h("Card ({}): {}".format(drawn.title, drawn.desc), self.socket_id)
+            self.gc.direct_h("{}: {}".format(drawn.title, drawn.desc), self.socket_id)
 
         # Use card if it's single-use, or add to arsenal if it's equipment
-        if drawn.force_use:
-            self.gc.tell_h("{} used {}!".format(self.user_id, public_title))
-            args = {'self': self, 'card': drawn}
-            drawn.use(args)
         if drawn.is_equipment:
             self.gc.tell_h("{} added {} to their arsenal!".format(self.user_id, public_title))
             self.equipment.append(drawn)
             self.gc.update_h()
+        else:
+            self.gc.tell_h("{} used {}!".format(self.user_id, public_title))
+            args = {'self': self, 'card': drawn}
+            drawn.use(args)
 
     def attack(self, other, amount):
 

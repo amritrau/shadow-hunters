@@ -105,7 +105,6 @@ class ElementFactory:
                 color = 0,
                 holder = None,
                 is_equip = False,
-                force_use = True,
                 use = use_advent
             ),
             card.Card(
@@ -114,7 +113,6 @@ class ElementFactory:
                 color = 0,
                 holder = None,
                 is_equip = False,
-                force_use = True,
                 use = use_disenchant_mirror
             ),
             card.Card(
@@ -123,7 +121,6 @@ class ElementFactory:
                 color = 0,
                 holder = None,
                 is_equip = False,
-                force_use = True,
                 use = use_blessing
             ),
             card.Card(
@@ -132,7 +129,6 @@ class ElementFactory:
                 color = 0,
                 holder = None,
                 is_equip = False,
-                force_use = True,
                 use = use_chocolate
             ),
             card.Card(
@@ -141,7 +137,6 @@ class ElementFactory:
                 color = 0,
                 holder = None,
                 is_equip = False,
-                force_use = True,
                 use = use_concealed_knowledge
             ),
             card.Card(
@@ -150,7 +145,6 @@ class ElementFactory:
                 color = 0,
                 holder = None,
                 is_equip = False,
-                force_use = True,
                 use = use_guardian_angel
             ),
             card.Card(
@@ -159,7 +153,6 @@ class ElementFactory:
                 color = 0, # 0 : WHITE
                 holder = None,
                 is_equip = True,
-                force_use = False,
                 use = lambda is_attack, successful, amt: max(0, amt - 1) # applies to both attack and defend
             ),
             card.Card(
@@ -168,7 +161,6 @@ class ElementFactory:
                 color = 0,
                 holder = None,
                 is_equip = False,
-                force_use = True,
                 use = lambda args: [p.moveDamage(-2) for p in args['self'].gc.getLivePlayers() if p != args['self']]
             ),
             card.Card(
@@ -177,7 +169,6 @@ class ElementFactory:
                 color = 0,
                 holder = None,
                 is_equip = False,
-                force_use = True,
                 use = use_first_aid
             ),
             card.Card(
@@ -186,7 +177,6 @@ class ElementFactory:
                 color = 0,
                 holder = None,
                 is_equip = False,
-                force_use = True,
                 use = lambda args: args['self'].moveDamage(2)
             ),
             card.Card(
@@ -195,7 +185,6 @@ class ElementFactory:
                 color = 0,
                 holder = None,
                 is_equip = False,
-                force_use = True,
                 use = lambda args: args['self'].moveDamage(2)
             )
         ]
@@ -303,7 +292,6 @@ class ElementFactory:
                 color = 1, # 1 : BLACK
                 holder = None,
                 is_equip = True,
-                force_use = False,
                 use = lambda is_attack, successful, amt: amt + 1 if (is_attack and successful) else amt
             ),
             card.Card(
@@ -312,7 +300,6 @@ class ElementFactory:
                 color = 1,
                 holder = None,
                 is_equip = True,
-                force_use = False,
                 use = lambda is_attack, successful, amt: amt + 1 if (is_attack and successful) else amt
             ),
             card.Card(
@@ -321,7 +308,6 @@ class ElementFactory:
                 color = 1,
                 holder = None,
                 is_equip = True,
-                force_use = False,
                 use = lambda is_attack, successful, amt: amt + 1 if (is_attack and successful) else amt
             ),
             card.Card(
@@ -330,7 +316,6 @@ class ElementFactory:
                 color = 1,
                 holder = None,
                 is_equip = False,
-                force_use = True,
                 use = use_moody_goblin
             ),
             card.Card(
@@ -339,7 +324,6 @@ class ElementFactory:
                 color = 1,
                 holder = None,
                 is_equip = False,
-                force_use = True,
                 use = use_moody_goblin
             ),
             card.Card(
@@ -348,7 +332,6 @@ class ElementFactory:
                 color = 1,
                 holder = None,
                 is_equip = False,
-                force_use = True,
                 use = use_bloodthirsty_spider
             ),
             card.Card(
@@ -357,7 +340,6 @@ class ElementFactory:
                 color = 1,
                 holder = None,
                 is_equip = False,
-                force_use = True,
                 use = use_vampire_bat
             ),
             card.Card(
@@ -366,7 +348,6 @@ class ElementFactory:
                 color = 1,
                 holder = None,
                 is_equip = False,
-                force_use = True,
                 use = use_vampire_bat
             ),
             card.Card(
@@ -375,7 +356,6 @@ class ElementFactory:
                 color = 1,
                 holder = None,
                 is_equip = False,
-                force_use = True,
                 use = use_vampire_bat
             ),
             card.Card(
@@ -384,7 +364,6 @@ class ElementFactory:
                 color = 1,
                 holder = None,
                 is_equip = False,
-                force_use = True,
                 use = use_diabolic_ritual
             ),
             card.Card(
@@ -393,7 +372,6 @@ class ElementFactory:
                 color = 1,
                 holder = None,
                 is_equip = False,
-                force_use = True,
                 use = use_banana_peel
             ),
             card.Card(
@@ -402,7 +380,6 @@ class ElementFactory:
                 color = 1,
                 holder = None,
                 is_equip = False,
-                force_use = True,
                 use = use_dynamite
             ),
             card.Card(
@@ -411,7 +388,6 @@ class ElementFactory:
                 color = 1,
                 holder = None,
                 is_equip = False,
-                force_use = True,
                 use = use_spiritual_doll
             )
         ]
@@ -439,7 +415,7 @@ class ElementFactory:
                     target.gc.update_h()
                 else:
                     new_damage = target.moveDamage(-1)
-                    target.gc.tell_h("{}\'s damage is now {}!".format(target.user_id, new_damage))
+                    target.gc.tell_h("{} took 1 damage!".format(target.user_id))
 
             else:
                 target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
@@ -469,7 +445,7 @@ class ElementFactory:
                     target.gc.update_h()
                 else:
                     new_damage = target.moveDamage(-1)
-                    target.gc.tell_h("{}\'s damage is now {}!".format(target.user_id, new_damage))
+                    target.gc.tell_h("{} took 1 damage!".format(target.user_id))
             else:
                 target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ['Do nothing']}
@@ -498,7 +474,7 @@ class ElementFactory:
                     target.gc.update_h()
                 else:
                     new_damage = target.moveDamage(-1)
-                    target.gc.tell_h("{}'s damage is now {}!".format(target.user_id, new_damage))
+                    target.gc.tell_h("{} took 1 damage!".format(target.user_id))
             else:
                 target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ['Do nothing']}
@@ -514,7 +490,7 @@ class ElementFactory:
                 data = {'options': ["Receive 1 damage"]}
                 target.ask_h('select', data, target.user_id)['value']
                 new_damage = target.moveDamage(-1)
-                target.gc.tell_h("{}\'s Damage is now {}!".format(target.user_id, new_damage))
+                target.gc.tell_h("{} took 1 damage!".format(target.user_id))
             else:
                 target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ['Do nothing']}
@@ -530,7 +506,7 @@ class ElementFactory:
                 data = {'options': ["Receive 1 damage"]}
                 target.ask_h('select', data, target.user_id)['value']
                 new_damage = target.moveDamage(-1)
-                target.gc.tell_h("{}\'s damage is now {}!".format(target.user_id, new_damage))
+                target.gc.tell_h("{} took 1 damage!".format(target.user_id))
             else:
                 target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ['Do nothing']}
@@ -546,7 +522,7 @@ class ElementFactory:
                 data = {'options': ["Receive 2 damage"]}
                 target.ask_h('select', data, target.user_id)['value']
                 new_damage = target.moveDamage(-2)
-                target.gc.tell_h("{}\'s damage is now {}!".format(target.user_id, new_damage))
+                target.gc.tell_h("{} took 2 damage!".format(target.user_id))
             else:
                 target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ['Do nothing']}
@@ -563,11 +539,12 @@ class ElementFactory:
                     data = {'options': ["Receive 1 damage"]}
                     target.ask_h('select', data, target.user_id)['value']
                     new_damage = target.moveDamage(-1)
+                    target.gc.tell_h("{} took 1 damage!".format(target.user_id))
                 else:
                     data = {'options': ["Heal 1 damage"]}
                     target.ask_h('select', data, target.user_id)['value']
                     new_damage = target.moveDamage(1)
-                target.gc.tell_h("{}\'s damage is now {}!".format(target.user_id, new_damage))
+                    target.gc.tell_h("{} healed 1 damage!".format(target.user_id))
             else:
                 target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ['Do nothing']}
@@ -584,11 +561,12 @@ class ElementFactory:
                     data = {'options': ["Receive 1 damage"]}
                     target.ask_h('select', data, target.user_id)['value']
                     new_damage = target.moveDamage(-1)
+                    target.gc.tell_h("{} took 1 damage!".format(target.user_id))
                 else:
                     data = {'options': ["Heal 1 damage"]}
                     target.ask_h('select', data, target.user_id)['value']
                     new_damage = target.moveDamage(1)
-                target.gc.tell_h("{}\'s damage is now {}!".format(target.user_id, new_damage))
+                    target.gc.tell_h("{} healed 1 damage!".format(target.user_id))
             else:
                 target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ['Do nothing']}
@@ -605,11 +583,12 @@ class ElementFactory:
                     data = {'options': ["Receive 1 damage"]}
                     target.ask_h('select', data, target.user_id)['value']
                     new_damage = target.moveDamage(-1)
+                    target.gc.tell_h("{} took 1 damage!".format(target.user_id))
                 else:
                     data = {'options': ["Heal 1 damage"]}
                     target.ask_h('select', data, target.user_id)['value']
                     new_damage = target.moveDamage(1)
-                target.gc.tell_h("{}\'s damage is now {}!".format(target.user_id, new_damage))
+                    target.gc.tell_h("{} healed 1 damage!".format(target.user_id))
             else:
                 target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ['Do nothing']}
@@ -625,7 +604,7 @@ class ElementFactory:
                 data = {'options': ["Receive 2 damage"]}
                 target.ask_h('select', data, target.user_id)['value']
                 new_damage = target.moveDamage(-2)
-                target.gc.tell_h("{}\'s Damage is now {}!".format(target.user_id, new_damage))
+                target.gc.tell_h("{} took 2 damage!".format(target.user_id))
             else:
                 target.gc.direct_h("Your maximum hp ({}) is less than 12. Do nothing.".format(target.character.max_damage), target.socket_id)
                 data = {'options': ['Do nothing']}
@@ -641,7 +620,7 @@ class ElementFactory:
                 data = {'options': ["Receive 1 damage"]}
                 target.ask_h('select', data, target.user_id)['value']
                 new_damage = target.moveDamage(-1)
-                target.gc.tell_h("{}\'s Damage is now {}!".format(target.user_id, new_damage))
+                target.gc.tell_h("{} took 1 damage!".format(target.user_id))
             else:
                 target.gc.direct_h("Your maximum hp ({}) is greater than 11. Do nothing.".format(target.character.max_damage), target.socket_id)
                 data = {'options': ['Do nothing']}
@@ -672,7 +651,6 @@ class ElementFactory:
                 color = 2, # 2 : GREEN
                 holder = None,
                 is_equip = False,
-                force_use = True,
                 use = hermit_blackmail
             ),
             card.Card(
@@ -681,7 +659,6 @@ class ElementFactory:
                 color = 2,
                 holder = None,
                 is_equip = False,
-                force_use = True,
                 use = hermit_blackmail
             ),
             card.Card(
@@ -690,7 +667,6 @@ class ElementFactory:
                 color = 2,
                 holder = None,
                 is_equip = False,
-                force_use = True,
                 use = hermit_greed
             ),
             card.Card(
@@ -699,7 +675,6 @@ class ElementFactory:
                 color = 2,
                 holder = None,
                 is_equip = False,
-                force_use = True,
                 use = hermit_greed
             ),
             card.Card(
@@ -708,7 +683,6 @@ class ElementFactory:
                 color = 2,
                 holder = None,
                 is_equip = False,
-                force_use = True,
                 use = hermit_anger
             ),
             card.Card(
@@ -717,7 +691,6 @@ class ElementFactory:
                 color = 2,
                 holder = None,
                 is_equip = False,
-                force_use = True,
                 use = hermit_anger
             ),
             card.Card(
@@ -726,7 +699,6 @@ class ElementFactory:
                 color = 2,
                 holder = None,
                 is_equip = False,
-                force_use = True,
                 use = hermit_slap
             ),
             card.Card(
@@ -735,7 +707,6 @@ class ElementFactory:
                 color = 2,
                 holder = None,
                 is_equip = False,
-                force_use = True,
                 use = hermit_slap
             ),
             card.Card(
@@ -744,7 +715,6 @@ class ElementFactory:
                 color = 2,
                 holder = None,
                 is_equip = False,
-                force_use = True,
                 use = hermit_spell
             ),
             card.Card(
@@ -753,7 +723,6 @@ class ElementFactory:
                 color = 2,
                 holder = None,
                 is_equip = False,
-                force_use = True,
                 use = hermit_exorcism
             ),
             card.Card(
@@ -762,7 +731,6 @@ class ElementFactory:
                 color = 2,
                 holder = None,
                 is_equip = False,
-                force_use = True,
                 use = hermit_nurturance
             ),
             card.Card(
@@ -771,7 +739,6 @@ class ElementFactory:
                 color = 2,
                 holder = None,
                 is_equip = False,
-                force_use = True,
                 use = hermit_aid
             ),
             card.Card(
@@ -780,7 +747,6 @@ class ElementFactory:
                 color = 2,
                 holder = None,
                 is_equip = False,
-                force_use = True,
                 use = hermit_huddle
             ),
             card.Card(
@@ -789,7 +755,6 @@ class ElementFactory:
                 color = 2,
                 holder = None,
                 is_equip = False,
-                force_use = True,
                 use = hermit_lesson
             ),
             card.Card(
@@ -798,7 +763,6 @@ class ElementFactory:
                 color = 2,
                 holder = None,
                 is_equip = False,
-                force_use = True,
                 use = hermit_bully
             ),
             card.Card(
@@ -807,7 +771,6 @@ class ElementFactory:
                 color = 2,
                 holder = None,
                 is_equip = False,
-                force_use = True,
                 use = hermit_prediction
             )
         ]

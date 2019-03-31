@@ -121,7 +121,6 @@ def start_game(room_id, names):
     # Write single use tests
 
     # comment elements.py
-    # remove force_use
     # remove ['value'] from asks
     # check on ask types (confirm vs select),
     # make sure all cards behave in standard way (all should include prompt)
