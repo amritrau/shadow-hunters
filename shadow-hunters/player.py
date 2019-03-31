@@ -164,7 +164,6 @@ class Player:
             self.equipment.append(drawn)
             self.gc.update_h()
         else:
-            self.gc.tell_h("{} used {}!".format(self.user_id, public_title))
             args = {'self': self, 'card': drawn}
             drawn.use(args)
 
