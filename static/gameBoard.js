@@ -34,6 +34,10 @@ var GameBoard = new Phaser.Class ({
         //y coordinates of all possible spots on health bar
         this.hpSpots = [585];
         this.hpStart = 585;
+        this.zoneCards = [[],[],[]];
+        this.zoneSpots = [[382.000, 201.500, 433.000, 113.250],
+                          [633.000, 113.250, 684.250, 201.750],
+                          [482.000, 382.712, 584.000, 382.712]];
     },
 
     //function to initialize the data sent into gameboard from waiting room
@@ -62,6 +66,8 @@ var GameBoard = new Phaser.Class ({
         // load background and health bar
         this.load.svg('background', gfx + 'background.svg', {width: 1066, height: 600});
         this.load.image("customTip", "/static/assets/customTip.png");
+        this.load.image("popup_right", "/static/assets/popup_right.png");
+        this.load.image("popup_left", "/static/assets/popup_left.png");
         this.load.image('text', '/static/assets/text.png');
         this.load.image('health', '/static/assets/health.png');
 
@@ -108,8 +114,6 @@ var GameBoard = new Phaser.Class ({
         //this adds our background image. the x, y coordinates provided are the center of the canvas
         var background = this.add.image(533, 300, 'background');
         background.setScale(1);
-        //background.displayWidth = this.sys.canvas.width;
-        //background.displayHeight = this.sys.canvas.height;
 
         this.add.image(533, 537.5, 'arsenal');
         this.box = this.makeBox();
@@ -117,26 +121,23 @@ var GameBoard = new Phaser.Class ({
 
 
         // Place locations based on given order
-        this.add.image(382.000,201.500, this.gameData.public.zones[0][0].name).setScale(1).angle = -60;
-        this.add.image(433.000,113.250, this.gameData.public.zones[0][1].name).setScale(1).angle = -60;
-        this.add.image(633.000,113.250, this.gameData.public.zones[1][0].name).setScale(1).angle = 60;
-        this.add.image(684.250,201.750, this.gameData.public.zones[1][1].name).setScale(1).angle = 60;
-        this.add.image(482.000,382.712, this.gameData.public.zones[2][0].name).setScale(1).angle = 0;
-        this.add.image(584.000,382.712, this.gameData.public.zones[2][1].name).setScale(1).angle = 0;
-
+        for (var i = 0; i < 3; i++) {
+            for (var j = 0; j < 2; j++) {
+                this.zoneCards[i][j] = this.makeZones(i,j);
+                this.zoneCards[i][j].on('clicked', this.clickHandler, this.zoneCards[i][j]);
+            }
+        }
 
         //this loop creates all players: self and enemies.
         this.nPlayers = Object.keys(this.allPlayersInfo).length;
         var count = 0;
         for(var i = 0; i < this.nPlayers; i++) {
-            // console.log("in for loop");
             var key = Object.keys(this.allPlayersInfo)[i];
             if(this.allPlayersInfo[key].user_id === this.gameData.private.user_id) {
                 this.player = this.makePlayer(this.allPlayersInfo[key].user_id,
                     this.allPlayersInfo[key], i+1);
                 this.player.key = key;
                 this.player.on('clicked', this.clickHandler, this.player);
-                // console.log(this.player.name);
             }
             else {
                 this.otherPlayers[key] = this.makePlayer(this.allPlayersInfo[key].user_id,
@@ -145,7 +146,6 @@ var GameBoard = new Phaser.Class ({
                 count++;
             }
         }
-
 
         //this is what makes the box appear when character is clicked. See function clickHandler below
         this.input.on('gameobjectup', function (pointer, gameObject) {
@@ -218,6 +218,7 @@ var GameBoard = new Phaser.Class ({
 
     },
 
+    // this adds the health bar to the board and makes it interactive on click
     makeBox: function() {
         var sprite  = this.add.image(966, 300, 'health');
         sprite.infoBox = this.add.image(750, 150, 'text');
@@ -237,6 +238,43 @@ var GameBoard = new Phaser.Class ({
         sprite.displayInfo.depth = 30;
         sprite.setInteractive();
         return sprite;
+    },
+
+    // this adds the zones to the board and makes them interactive on click
+    makeZones: function(zone_num, card_num) {
+        var zone = this.add.image(this.zoneSpots[zone_num][card_num*2],this.zoneSpots[zone_num][card_num*2 + 1], this.gameData.public.zones[zone_num][card_num].name);
+        if (zone_num == 0) {
+            zone.setScale(1).angle = -60;
+            zone.infoBox = this.add.image(zone.x-90, zone.y, "popup_left");
+            zone.displayInfo = this.add.text(zone.infoBox.x - 80, zone.infoBox.y - 40, " ", { font: '12px Arial', fill: '#FFFFFF', wordWrap: { width: 130, useAdvancedWrap: true }});
+        }
+        else if (zone_num == 1) {
+            zone.setScale(1).angle = 60;
+            zone.infoBox = this.add.image(zone.x+90, zone.y, "popup_right");
+            zone.displayInfo = this.add.text(zone.infoBox.x - 60, zone.infoBox.y - 40, " ", { font: '12px Arial', fill: '#FFFFFF', wordWrap: { width: 130, useAdvancedWrap: true }});
+        }
+        else {
+            if(card_num == 0) {
+                zone.infoBox = this.add.image(zone.x-90, zone.y, "popup_left");
+                zone.displayInfo = this.add.text(zone.infoBox.x - 80, zone.infoBox.y - 40, " ", { font: '12px Arial', fill: '#FFFFFF', wordWrap: { width: 130, useAdvancedWrap: true }});
+            }
+            else {
+                zone.infoBox = this.add.image(zone.x+90, zone.y, "popup_right");
+                zone.displayInfo = this.add.text(zone.infoBox.x - 60, zone.infoBox.y - 40, " ", { font: '12px Arial', fill: '#FFFFFF', wordWrap: { width: 130, useAdvancedWrap: true }});
+            }
+        }
+
+        zone.displayInfo.setText([
+            "Area: " + this.gameData.public.zones[zone_num][card_num].name,
+            this.gameData.public.zones[zone_num][card_num].desc
+        ]);
+
+        zone.infoBox.setVisible(false);
+        zone.displayInfo.setVisible(false);
+        zone.infoBox.depth = 30;
+        zone.displayInfo.depth = 30;
+        zone.setInteractive();
+        return zone;
     },
 
     //the makePlayer function is what creates our sprite and adds him to the board.
