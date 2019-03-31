@@ -121,7 +121,6 @@ def start_game(room_id, names):
     # Write single use tests
 
     # comment elements.py
-    # remove ['value'] from asks
     # check on ask types (confirm vs select),
     # make sure all cards behave in standard way (all should include prompt)
 
@@ -139,6 +138,7 @@ def start_game(room_id, names):
     winners = gc.play()
 
     # Send winners to frontend in socket emission for game-over screen
+    # TODO
 
 def server_ask(form, data, user_id, room_id):
 

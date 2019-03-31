@@ -47,7 +47,7 @@ class ElementFactory:
                     data['options'].append("Reveal and heal fully")
                 else:
                     data['options'].append("Heal fully")
-            decision = args['self'].ask_h('select', data, args['self'].user_id)['value']
+            decision = args['self'].ask_h('yesno', data, args['self'].user_id)['value']
             if decision == "Do nothing":
                 args['self'].gc.tell_h("{} did nothing.".format(args['self'].user_id))
             elif decision == "Reveal and heal fully":
@@ -60,7 +60,7 @@ class ElementFactory:
             data = {'options': ["Do nothing"]}
             if args['self'].character.alleg == 0 and args['self'].character.name != "Unknown":
                 data = {'options': ["Reveal yourself"]}
-            decision = args['self'].ask_h('confirm', data, args['self'].user_id)['value']
+            decision = args['self'].ask_h('yesno', data, args['self'].user_id)['value']
             if decision == "Do nothing":
                 args['self'].gc.tell_h("{} did nothing.".format(args['self'].user_id))
             else:
@@ -82,7 +82,7 @@ class ElementFactory:
                     data['options'].append("Reveal and heal fully")
                 else:
                     data['options'].append("Heal fully")
-            decision = args['self'].ask_h('select', data, args['self'].user_id)['value']
+            decision = args['self'].ask_h('yesno', data, args['self'].user_id)['value']
             if decision == "Do nothing":
                 args['self'].gc.tell_h("{} did nothing.".format(args['self'].user_id))
             elif decision == "Reveal and heal fully":
@@ -223,7 +223,7 @@ class ElementFactory:
             data = {'options': ["Do nothing"]}
             if args['self'].character.alleg == 0 and args['self'].state != 1:
                 data['options'].append("Reveal and heal fully")
-            decision = args['self'].ask_h('select', data, args['self'].user_id)['value']
+            decision = args['self'].ask_h('yesno', data, args['self'].user_id)['value']
             if decision == "Do nothing":
                 args['self'].gc.tell_h("{} did nothing.".format(args['self'].user_id))
             else:
@@ -235,7 +235,7 @@ class ElementFactory:
                 data = {'options': ["Give an equipment card", "Receive 1 damage"]}
             else:
                 data = {'options': ["Receive 1 damage"]}
-            decision = args['self'].ask_h('select', data, args['self'].user_id)['value']
+            decision = args['self'].ask_h('yesno', data, args['self'].user_id)['value']
             if decision == "Give an equipment card":
                 args['self'].gc.tell_h("{} is choosing an equipment card to give away...".format(args['self'].user_id))
                 eq = choose_equipment(args['self'], args['self'])
@@ -403,7 +403,7 @@ class ElementFactory:
                     data = {'options': ["Give an equipment card", "Receive 1 damage"]}
                 else:
                     data = {'options': ["Receive 1 damage"]}
-                decision = target.ask_h('select', data, target.user_id)['value']
+                decision = target.ask_h('yesno', data, target.user_id)['value']
                 if decision == "Give an equipment card":
                     target.gc.tell_h("{} is choosing an equipment card to give to {}...".format(target.user_id, args['self'].user_id))
                     eq = choose_equipment(target, target)
@@ -420,7 +420,7 @@ class ElementFactory:
             else:
                 target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ['Do nothing']}
-                target.ask_h('yesno', data, target.user_id)
+                target.ask_h('confirm', data, target.user_id)
                 target.gc.tell_h("{} did nothing.".format(target.user_id))
 
         def hermit_greed(args):
@@ -433,7 +433,7 @@ class ElementFactory:
                     data = {'options': ["Give an equipment card", "Receive 1 damage"]}
                 else:
                     data = {'options': ["Receive 1 damage"]}
-                decision = target.ask_h('select', data, target.user_id)['value']
+                decision = target.ask_h('yesno', data, target.user_id)['value']
                 if decision == "Give an equipment card":
                     target.gc.tell_h("{} is choosing an equipment card to give to {}...".format(target.user_id, args['self'].user_id))
                     eq = choose_equipment(target, target)
@@ -449,7 +449,7 @@ class ElementFactory:
             else:
                 target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ['Do nothing']}
-                target.ask_h('yesno', data, target.user_id)
+                target.ask_h('confirm', data, target.user_id)
                 target.gc.tell_h("{} did nothing.".format(target.user_id))
 
         def hermit_anger(args):
@@ -462,7 +462,7 @@ class ElementFactory:
                     data = {'options': ["Give an equipment card", "Receive 1 damage"]}
                 else:
                     data = {'options': ["Receive 1 damage"]}
-                decision = target.ask_h('select', data, target.user_id)['value']
+                decision = target.ask_h('yesno', data, target.user_id)['value']
                 if decision == "Give an equipment card":
                     target.gc.tell_h("{} is choosing an equipment card to give to {}...".format(target.user_id, args['self'].user_id))
                     eq = choose_equipment(target, target)
@@ -478,7 +478,7 @@ class ElementFactory:
             else:
                 target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ['Do nothing']}
-                target.ask_h('yesno', data, target.user_id)
+                target.ask_h('confirm', data, target.user_id)
                 target.gc.tell_h("{} did nothing.".format(target.user_id))
 
         def hermit_slap(args):
@@ -488,13 +488,13 @@ class ElementFactory:
             if target.character.alleg == 2: ## hunter
                 target.gc.direct_h("You are a {}.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ["Receive 1 damage"]}
-                target.ask_h('select', data, target.user_id)
+                target.ask_h('confirm', data, target.user_id)
                 new_damage = target.moveDamage(-1)
                 target.gc.tell_h("{} took 1 damage!".format(target.user_id))
             else:
                 target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ['Do nothing']}
-                target.ask_h('yesno', data, target.user_id)
+                target.ask_h('confirm', data, target.user_id)
                 target.gc.tell_h("{} did nothing.".format(target.user_id))
 
         def hermit_spell(args):
