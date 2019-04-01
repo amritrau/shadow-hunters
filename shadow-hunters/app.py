@@ -119,12 +119,7 @@ def start_game(room_id, names):
 
     # Fix hermit tests
     # Write single use tests
-
-    # comment elements.py
-    # make sure all cards behave in standard way (all should include prompt)
-
     # change tell_h and direct_h to have type json
-
     # reveals (backend, then frontend)
 
     # Send public and private game states to frontend
