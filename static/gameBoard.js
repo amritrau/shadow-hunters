@@ -111,8 +111,13 @@ var GameBoard = new Phaser.Class ({
         this.load.svg('V', gfx + 'v.svg', {width: 36.657, height: 36.657});
         this.load.svg('F', gfx + 'f.svg', {width: 36.657, height: 36.657});
         this.load.svg('G', gfx + 'g.svg', {width: 36.657, height: 36.657});
+        // will replace with actual art as I make them
+        // possible later implementation: loop through dumped list of playable characters to load images?
         this.load.image('Allie', '/static/assets/Allie.png');
-        this.load.image('anon', '/static/assets/anon.png');
+        this.load.image('George', '/static/assets/george.png');
+        this.load.image('Fu-ka', '/static/assets/anon.png');
+        this.load.image('Valkyrie', '/static/assets/anon.png');
+        this.load.image('Vampire', '/static/assets/anon.png');
         //this.load.svg('Allie', '/static/assets/Allie.svg', {width: 123, height: 123});
     },
 
@@ -211,15 +216,7 @@ var GameBoard = new Phaser.Class ({
         ]);
 
         this.add.image(100, 366.975, "circle" + String(this.player.number));
-
-        // this is temporary. eventually when we have all art, we can use the line that's commented out below
-        if (this.charInfo.name == "Allie") {
-            this.add.image(100, 366.975, "Allie");
-        }
-        else {
-            this.add.image(100, 366.975, "anon");
-        }
-        // this.add.image(100, 366.975, this.charInfo.name);
+        this.add.image(100, 366.975, this.charInfo.name);
         this.add.image(60.442, 322.289, this.charInfo.name[0]);
         this.add.image(137.489, 412.722, String(this.charInfo.max_damage) + "hp");
 
