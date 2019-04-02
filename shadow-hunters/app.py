@@ -100,6 +100,7 @@ def start_game(room_id, names):
     ai_players = [Player("CPU_{}".format(i), str(i), ai_ask, True) for i in range(1, n_players - len(human_players) + 1)]
     players = human_players + ai_players
 
+
     # Initialize game context with players and match room with game context
     ef = elements.ElementFactory()
     gc = GameContext(
@@ -115,6 +116,8 @@ def start_game(room_id, names):
     )
     gc.update_h = lambda: server_update(gc.dump()[0], room_id)
     rooms[room_id]['gc'] = gc
+
+    gc.tell_h("Started a game with players: {}".format(str(players)))
 
     # Fix hermit tests
     # Write single use tests
