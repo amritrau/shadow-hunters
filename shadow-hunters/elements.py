@@ -1117,6 +1117,18 @@ class ElementFactory:
             # Allie wins if she is still alive when the game ends
             return (player in gc.getLivePlayers()) and gc.game_over
 
+        def bob_win_cond(gc, player):
+
+            # Bob wins if he has 5+ equipment cards
+            return len(player.equipment) >= 5
+
+        def catherine_win_cond(gc, player):
+
+            # Catherine wins if she is the first to die or one of the last 2 remaining
+            first_to_die = (player in gc.getDeadPlayers()) and (len(gc.getDeadPlayers) == 1)
+            last_two = (player in gc.getLivePlayers()) and (len(gc.getLivePlayers) <= 2)
+            return first_to_die or last_two
+
         ## Initialize characters
 
         self.CHARACTERS = [
@@ -1139,6 +1151,24 @@ class ElementFactory:
                 resource_id = "vampire"
             ),
             character.Character(
+                name = "Werewolf",
+                alleg = 0,  # Shadow
+                max_damage = 14,
+                win_cond = shadow_win_cond,
+                win_cond_desc = "All the Hunter characters are dead or 3 Neutral characters are dead",
+                special = lambda: 0,  # TODO
+                resource_id = "werewolf"
+            ),
+            character.Character(
+                name = "Ultra Soul",
+                alleg = 0,  # Shadow
+                max_damage = 11,
+                win_cond = shadow_win_cond,
+                win_cond_desc = "All the Hunter characters are dead or 3 Neutral characters are dead",
+                special = lambda: 0,  # TODO
+                resource_id = "vampire"
+            ),
+            character.Character(
                 name = "Allie",
                 alleg = 1,  # Neutral
                 max_damage = 8,
@@ -1146,6 +1176,24 @@ class ElementFactory:
                 win_cond_desc = "You're not dead when the game is over",
                 special = lambda: 0,  # TODO
                 resource_id = "allie"
+            ),
+            character.Character(
+                name = "Bob",
+                alleg = 1,  # Neutral
+                max_damage = 10,
+                win_cond = bob_win_cond,
+                win_cond_desc = "You have 5 or more equipment cards",
+                special = lambda: 0,  # TODO
+                resource_id = "bob"
+            ),
+            character.Character(
+                name = "Catherine",
+                alleg = 1,  # Neutral
+                max_damage = 11,
+                win_cond = catherine_win_cond,
+                win_cond_desc = "You are the first to die or you are one of the last two characters remaining",
+                special = lambda: 0,  # TODO
+                resource_id = "catherine"
             ),
             character.Character(
                 name = "George",
@@ -1164,6 +1212,24 @@ class ElementFactory:
                 win_cond_desc = "All the Shadow characters are dead",
                 special = lambda: 0,  # TODO
                 resource_id = "fu-ka"
+            ),
+            character.Character(
+                name = "Franklin",
+                alleg = 2,  # Hunter
+                max_damage = 12,
+                win_cond = hunter_win_cond,
+                win_cond_desc = "All the Shadow characters are dead",
+                special = lambda: 0,  # TODO
+                resource_id = "franklin"
+            ),
+            character.Character(
+                name = "Ellen",
+                alleg = 2,  # Hunter
+                max_damage = 10,
+                win_cond = hunter_win_cond,
+                win_cond_desc = "All the Shadow characters are dead",
+                special = lambda: 0,  # TODO
+                resource_id = "ellen"
             )
         ]
 
