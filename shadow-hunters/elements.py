@@ -1260,9 +1260,9 @@ class ElementFactory:
             data = {'options': ["Heal 1 damage", "Give 2 damage"]}
             amount = player.ask_h('select', data, player.user_id)['value']
             if amount == "Heal 1 damage":
-                target_Player.moveDamage(1)
+                target_Player.moveDamage(1, player)
             else:
-                target_Player.moveDamage(-2)
+                target_Player.moveDamage(-2, player)
 
         def erstwhile_altar_action(gc, player):
 
