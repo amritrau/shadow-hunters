@@ -47,23 +47,19 @@ class GameContext:
         random.shuffle(character_q)
 
         # Figure out how many of each allegiance there has to be
-        # (note that allegiance_counts can be indexed with Character.alleg)
-        if len(self.players) == 4:
-            allegiance_counts = (2, 0, 2)
-        else if len(self.players) == 5:
-            allegiance_counts = (2, 1, 2)
-        else if len(self.players) == 6:
-            allegiance_counts = (2, 2, 2)
-        else if len(self.players) == 7:
-            allegiance_counts = (3, 1, 3)
-        else if len(self.players) == 8:
-            allegiance_counts = (3, 2, 3)
+        counts_dict = {
+            4: (2, 0, 2),
+            5: (2, 1, 2),
+            6: (2, 2, 2),
+            7: (3, 1, 3),
+            8: (3, 2, 3)
+        }
 
         queue = []
         while character_q:
             ch = character_q.pop()
             already_in = len([c for c in queue if c.alleg == ch.alleg])
-            if (already_in < allegiance_counts[ch.alleg]):
+            if (already_in < counts_dict[len(self.players)][ch.alleg]):
                 queue.append(ch)
 
         assert(len(queue) == len(self.players))
