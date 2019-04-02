@@ -209,14 +209,47 @@ class Player:
 
     def checkDeath(self, attacker):
         if self.damage >= self.character.max_damage:
-            self.state = 0
-            self.gc.tell_h("{} ({}: {}) was killed by {}!".format(
-                self.user_id,
-                elements.ALLEGIANCE_MAP[self.character.alleg],
-                self.character.name,
-                attacker.user_id
-            ))
+            self.die()
         self.gc.update_h()
+
+    def die(self, attacker):
+        # Set state to 0 (DEAD)
+        self.state = 0
+
+        # Report to console
+        self.gc.tell_h("{} ({}: {}) was killed by {}!".format(
+            self.user_id,
+            elements.ALLEGIANCE_MAP[self.character.alleg],
+            self.character.name,
+            attacker.user_id
+        ))
+
+        # Get dead player and their equipment
+        data = {'options': [eq.title for eq in self.equipment]}
+
+        # Choose which equipment to take
+        equip = attacker.ask_h('select', data, attacker.user_id)['value']
+        equip_Equipment = [eq for eq in self.equipment if eq.title == equip][0]
+
+        # Transfer equipment from one player to the other
+        i = self.equipment.index(equip_Equipment)
+        equip_Equipment = self.equipment.pop(i)
+        attacker.equipment.append(equip_Equipment)
+        equip_Equipment.holder = attacker
+        self.gc.tell_h("{} took {}'s {}!".format(attacker.user_id, self.user_id, equip_Equipment.title))
+
+        # Update the game board
+        self.gc.update_h()
+
+        # Put remaining equipment back in the deck (discard pile)
+        while self.equipment:
+            eq = self.equipment.pop()
+            if eq.color == 1: # Black
+                self.gc.black_cards.addToDiscard(eq)
+            else if eq.color == 2: # Green
+                self.gc.green_cards.addToDiscard(eq)
+            else if eq.color == 3: # White
+                self.gc.white_cards.addToDiscard(eq)
 
     def move(self, location):
         self.location = location

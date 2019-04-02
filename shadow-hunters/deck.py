@@ -47,3 +47,9 @@ class Deck:
             self.cards, self.discard = self.discard, []
             self.shuffle()
             return self.drawCard()
+
+    def addToDiscard(self, card):
+        """
+        Add a card to the discard pile.
+        """
+        self.discard.append(card)
