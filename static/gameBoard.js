@@ -104,18 +104,18 @@ var GameBoard = new Phaser.Class ({
 
         this.load.svg('charImage', gfx + 'charImage.svg', {width: 123.633, height: 123.633});
         this.load.svg('8hp', gfx + '8hp.svg', {width: 30.14, height: 30.14});
-        this.load.svg('10hp', gfx + '8hp.svg', {width: 30.14, height: 30.14});
-        this.load.svg('11hp', gfx + '8hp.svg', {width: 30.14, height: 30.14});
+        this.load.svg('10hp', '/static/assets/10hp.svg', {width: 30.14, height: 30.14});
+        this.load.svg('11hp', '/static/assets/11hp.svg', {width: 30.14, height: 30.14});
         this.load.svg('12hp', gfx + '12hp.svg', {width: 30.14, height: 30.14});
         this.load.svg('13hp', gfx + '13hp.svg', {width: 30.14, height: 30.14});
         this.load.svg('14hp', gfx + '14hp.svg', {width: 30.14, height: 30.14});
         this.load.svg('A', gfx + 'a.svg', {width: 36.657, height: 36.657});
-        this.load.svg('B', gfx + 'a.svg', {width: 36.657, height: 36.657});
-        this.load.svg('C', gfx + 'a.svg', {width: 36.657, height: 36.657});
-        this.load.svg('U', gfx + 'v.svg', {width: 36.657, height: 36.657});
+        this.load.svg('B', '/static/assets/b.svg', {width: 36.657, height: 36.657});
+        this.load.svg('C', '/static/assets/c.svg', {width: 36.657, height: 36.657});
+        this.load.svg('U', '/static/assets/u.svg', {width: 36.657, height: 36.657});
         this.load.svg('V', gfx + 'v.svg', {width: 36.657, height: 36.657});
-        this.load.svg('W', gfx + 'v.svg', {width: 36.657, height: 36.657});
-        this.load.svg('E', gfx + 'f.svg', {width: 36.657, height: 36.657});
+        this.load.svg('W', '/static/assets/w.svg', {width: 36.657, height: 36.657});
+        this.load.svg('E', '/static/assets/e.svg', {width: 36.657, height: 36.657});
         this.load.svg('F', gfx + 'f.svg', {width: 36.657, height: 36.657});
         this.load.svg('G', gfx + 'g.svg', {width: 36.657, height: 36.657});
         // will replace with actual art as I make them
@@ -237,12 +237,8 @@ var GameBoard = new Phaser.Class ({
                 'Special Ability: ' + this.infoBox.data.get('special')
             ]);
 
-        this.add.image(100, 366.975, "circle" + String(this.player.number));
-        this.add.image(100, 366.975, this.charInfo.name);
-        this.add.image(60.442, 322.289, this.charInfo.name[0]);
-        this.add.image(137.489, 412.722, String(this.charInfo.max_damage) + "hp");
-
-            this.add.image(100, 366.975, "charImage");
+            this.add.image(100, 366.975, "circle" + String(this.player.number));
+            this.add.image(100, 366.975, this.charInfo.name);
             this.add.image(60.442, 322.289, this.charInfo.name[0]);
             this.add.image(137.489, 412.722, String(this.charInfo.max_damage) + "hp");
 
