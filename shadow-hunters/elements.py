@@ -1129,6 +1129,21 @@ class ElementFactory:
             last_two = (player in gc.getLivePlayers()) and (len(gc.getLivePlayers()) <= 2)
             return first_to_die or last_two
 
+        ## Specials
+        def allie_special(gc, player):
+            if !player.modifiers['special']:
+                # Full heal
+                player.setDamage(0, player)
+
+                # Update modifiers
+                player.modifiers['special'] = True
+
+                # Tell
+                gc.tell_h("Allie used her special ability: {}".format(player.character.special_desc))
+            else:
+                # Already used special
+                gc.direct_h("This special ability can be used only once.", player.socket_id)
+
         ## Initialize characters
 
         self.CHARACTERS = [
@@ -1139,6 +1154,7 @@ class ElementFactory:
                 win_cond = shadow_win_cond,
                 win_cond_desc = "All the Hunter characters are dead or 3 Neutral characters are dead",
                 special = lambda: 0,  # TODO
+                special_desc = "todo",
                 resource_id = "valkyrie"
             ),
             character.Character(
@@ -1148,6 +1164,7 @@ class ElementFactory:
                 win_cond = shadow_win_cond,
                 win_cond_desc = "All the Hunter characters are dead or 3 Neutral characters are dead",
                 special = lambda: 0,  # TODO
+                special_desc = "todo",
                 resource_id = "vampire"
             ),
             character.Character(
@@ -1157,6 +1174,7 @@ class ElementFactory:
                 win_cond = shadow_win_cond,
                 win_cond_desc = "All the Hunter characters are dead or 3 Neutral characters are dead",
                 special = lambda: 0,  # TODO
+                special_desc = "todo",
                 resource_id = "werewolf"
             ),
             character.Character(
@@ -1166,6 +1184,7 @@ class ElementFactory:
                 win_cond = shadow_win_cond,
                 win_cond_desc = "All the Hunter characters are dead or 3 Neutral characters are dead",
                 special = lambda: 0,  # TODO
+                special_desc = "todo",
                 resource_id = "vampire"
             ),
             character.Character(
@@ -1174,7 +1193,8 @@ class ElementFactory:
                 max_damage = 8,
                 win_cond = allie_win_cond,
                 win_cond_desc = "You're not dead when the game is over",
-                special = lambda: 0,  # TODO
+                special = lambda args: args[''],  # TODO
+                special_desc = "Fully heal your damage",
                 resource_id = "allie"
             ),
             character.Character(
@@ -1184,6 +1204,7 @@ class ElementFactory:
                 win_cond = bob_win_cond,
                 win_cond_desc = "You have 5 or more equipment cards",
                 special = lambda: 0,  # TODO
+                special_desc = "todo",
                 resource_id = "bob"
             ),
             character.Character(
