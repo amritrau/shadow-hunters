@@ -114,10 +114,16 @@ var GameBoard = new Phaser.Class ({
         // will replace with actual art as I make them
         // possible later implementation: loop through dumped list of playable characters to load images?
         this.load.image('Allie', '/static/assets/Allie.png');
-        this.load.image('George', '/static/assets/george.png');
-        this.load.image('Fu-ka', '/static/assets/anon.png');
-        this.load.image('Valkyrie', '/static/assets/anon.png');
-        this.load.image('Vampire', '/static/assets/anon.png');
+        this.load.image('George', '/static/assets/George.png');
+        this.load.image('Fu-ka', '/static/assets/Fu-ka.png');
+        this.load.image('Valkyrie', '/static/assets/Valkyrie.png');
+        this.load.image('Vampire', '/static/assets/Vampire.png');
+        this.load.image('Bob', '/static/assets/anon.png');
+        this.load.image('Catherine', '/static/assets/anon.png');
+        this.load.image('Franklin', '/static/assets/anon.png');
+        this.load.image('Ellen', '/static/assets/anon.png');
+        this.load.image('Ultra Soul', '/static/assets/anon.png');
+        this.load.image('Werewolf', '/static/assets/anon.png');
         //this.load.svg('Allie', '/static/assets/Allie.svg', {width: 123, height: 123});
     },
 
@@ -345,10 +351,22 @@ var GameBoard = new Phaser.Class ({
             player.displayInfo.setVisible(false);
             player.x = player.spots[data.location.name].x;
             player.y = player.spots[data.location.name].y;
-            player.infoBox.x = player.x;
-            player.infoBox.y = player.y -60;
-            player.displayInfo.x = player.infoBox.x - 120;
-            player.displayInfo.y = player.infoBox.y - 40;
+            if(player.y-60-45 < 0) {
+                player.infoBox.angle = 180;
+                player.infoBox.x = player.x;
+                player.infoBox.y = player.y + 60;
+                player.displayInfo.x = player.infoBox.x - 120;
+                player.displayInfo.y = player.infoBox.y - 20;
+            }
+            else {
+                if (player.infoBox.angle != 0) {
+                    player.infoBox.angle = 0;
+                }
+                player.infoBox.x = player.x;
+                player.infoBox.y = player.y -60;
+                player.displayInfo.x = player.infoBox.x - 120;
+                player.displayInfo.y = player.infoBox.y - 40;
+            }
             // console.log("sprite moved");
         }
 
