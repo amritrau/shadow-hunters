@@ -95,10 +95,9 @@ def room(methods=['GET','POST']):
 def start_game(room_id, names):
 
     # Initialize human and AI players
-    ## TODO: don't hard code number of players
-    num_players = 5
-    human_players = [Player(n, get_sid[(n, room_id)], lambda x,y,z: server_ask(x,y,z,room_id), False) for n in names]
-    ai_players = [Player("CPU_{}".format(i), str(i), ai_ask, True) for i in range(1,num_players-len(human_players)+1)]
+    n_players = random.randrange(human_players, 9, 1) ## TODO Replace with dropdown response
+    human_players = [Player(n, get_sid[(n, room_id)], lambda x, y, z: server_ask(x, y, z, room_id), False) for n in names]
+    ai_players = [Player("CPU_{}".format(i), str(i), ai_ask, True) for i in range(1, n_players - len(human_players) + 1)]
     players = human_players + ai_players
 
     # Initialize game context with players and match room with game context
