@@ -101,8 +101,8 @@ def start_game(room_id, players):
 
     # Send playable characters to frontend
     socketio.emit(
-        'playable_characters',
-        {'playable_characters': [ch.dump() for ch in gc.playable]}
+        'playable_chars',
+        {'playable_chars': [ch.dump() for ch in gc.playable]}
         room = room_id
     )
 
