@@ -49,7 +49,7 @@ class ElementFactory:
         ## White card usage functions
 
         def use_first_aid(args):
-          
+
             # Select a player to use card on (includes user)
             args['self'].ask_h('confirm', {'options': ["Use First Aid"]}, args['self'].user_id)
             data = {'options': [t.user_id for t in args['self'].gc.getLivePlayers()]}
@@ -59,7 +59,7 @@ class ElementFactory:
             [p for p in args['self'].gc.getLivePlayers() if p.user_id == target][0].setDamage(7, args['self'])
 
         def use_judgement(args):
-          
+
             # Give all players except user 2 damage
             args['self'].ask_h('confirm', {'options': ["Unleash judgement"]}, args['self'].user_id)
             for p in args['self'].gc.getLivePlayers():
@@ -942,7 +942,7 @@ class ElementFactory:
             target.gc.direct_h("Their win condition: {}.".format(target.character.win_cond_desc), args['self'].socket_id)
             target.gc.direct_h("Their special ability: {}.".format("None"), args['self'].socket_id)
             target.gc.tell_h("{} revealed their identity secretly to {}!".format(target.user_id, args['self'].user_id))
-       
+
         ## Initialize hermit cards
 
         GREEN_CARDS = [
@@ -1125,7 +1125,7 @@ class ElementFactory:
 
         ## Specials
         def allie_special(gc, player):
-            if !player.modifiers['special']:
+            if not player.modifiers['special']:
                 # Full heal
                 player.setDamage(0, player)
 
