@@ -11,9 +11,9 @@ import elements
 # Tests for the player object
 
 def test_fields():
-    
+
     # test initialization
-    p = player.Player('Max', 'socket_id')
+    p = player.Player('Max', 'socket_id', lambda x, y, z: 5, False)
 
     # test fields
     assert p.user_id == 'Max'
@@ -25,6 +25,8 @@ def test_fields():
     assert not p.equipment
     assert not p.modifiers
     assert p.damage == 0
+    assert p.ai == False
+    assert p.ask_h(0, 0, 0) == 5
 
     # test dump
     dump = p.dump()
@@ -36,12 +38,13 @@ def test_fields():
         'damage': 0,
         'location': {},
         'character': {},
-        'modifiers': {}
+        'modifiers': {},
+        'ai': False
     })
 
 def test_setCharacter():
-    p = player.Player('Max', 'socket_id')
-    
+    p = player.Player('Max', 'socket_id', lambda x, y, z: 5, False)
+
     # dummy character
     c = character.Character(
         name = "char_name",
@@ -59,7 +62,7 @@ def test_setCharacter():
 
 def test_reveal():
     p = helpers.fresh_gc_ef()[0].players[0]
-    
+
     # Check that reveal sets state to 1
     p.reveal()
     assert p.state == 1
@@ -97,14 +100,14 @@ def test_moveDamage():
 
 def test_setDamage():
     p = helpers.fresh_gc_ef()[0].players[0]
-    
+
     # Check setting damage changes player damage
     p.setDamage(5)
     assert p.damage == 5
 
 def test_checkDeath():
     p = helpers.fresh_gc_ef()[0].players[0]
-    
+
     # Check that player is initially not dead
     p.checkDeath()
     assert p.state == 2
@@ -116,7 +119,7 @@ def test_checkDeath():
 
 def test_move():
     p = helpers.fresh_gc_ef()[0].players[0]
-    
+
     # dummy area
     a = area.Area(
         name = "area_name",

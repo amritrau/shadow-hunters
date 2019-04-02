@@ -9,11 +9,13 @@ import elements
 # Implements a GameContext.
 
 class GameContext:
-    def __init__(self, players, characters, black_cards, white_cards, green_cards, areas, tell_h, direct_h, ask_h, update_h, modifiers = dict()):
+    def __init__(self, players, characters, black_cards, white_cards, green_cards, areas, tell_h, direct_h, update_h, modifiers = dict()):
 
         # Instantiate gameplay objects
         self.players = players
+        self.turn_order = list(players)
         self.characters = characters
+        self.playable = copy.deepcopy(characters)
         self.black_cards = black_cards
         self.white_cards = white_cards
         self.green_cards = green_cards
@@ -24,7 +26,6 @@ class GameContext:
         # Instantiate message handlers
         self.tell_h = tell_h
         self.direct_h = direct_h
-        self.ask_h = ask_h
         self.update_h = update_h
 
         # Assign modifiers
@@ -44,8 +45,27 @@ class GameContext:
         # Randomly assign characters and point game context
         character_q = copy.deepcopy(characters)
         random.shuffle(character_q)
+
+        # Figure out how many of each allegiance there has to be
+        counts_dict = {
+            4: (2, 0, 2),
+            5: (2, 1, 2),
+            6: (2, 2, 2),
+            7: (3, 1, 3),
+            8: (3, 2, 3)
+        }
+
+        queue = []
+        while character_q:
+            ch = character_q.pop()
+            already_in = len([c for c in queue if c.alleg == ch.alleg])
+            if (already_in < counts_dict[len(self.players)][ch.alleg]):
+                queue.append(ch)
+
+        assert(len(queue) == len(self.players))
+
         for player in self.players:
-            player.setCharacter(character_q.pop())
+            player.setCharacter(queue.pop())
             player.gc = self
 
 
@@ -68,21 +88,19 @@ class GameContext:
                     self.tell_h("{} ({}: {}) won! {}".format(w.user_id, elements.ALLEGIANCE_MAP[w.character.alleg], w.character.name, w.character.win_cond_desc))
             return winners
 
-
     def play(self):
-        for z in range(len(self.zones)):
-            self.tell_h("Zone {} contains: {}.".format(z+1, ', '.join([a.name for a in self.zones[z].areas])))
-        for p in self.players:
-            self.direct_h("You ({}) are {} ({}).".format(p.user_id, p.character.name, elements.ALLEGIANCE_MAP[p.character.alleg]), p.socket_id)
+        turn = random.randint(0, len(self.turn_order) - 1)
         while True:
-            living = self.getLivePlayers()
-            while len(living):
-                player = living.pop()
-                player.takeTurn()
-                winners = self.checkWinConditions()
-                living = [p for p in living if p.state != 0]
-                if winners:
-                    return winners
+            current_player = self.turn_order[turn]
+            if current_player.state:
+                current_player.takeTurn()
+            winners = self.checkWinConditions()
+            if winners:
+                return winners
+            turn += 1
+            if turn >= len(self.turn_order):
+                turn = 0
+                self.turn_order = list(self.players)
 
     def dump(self):
         public_zones = [z.dump() for z in self.zones]

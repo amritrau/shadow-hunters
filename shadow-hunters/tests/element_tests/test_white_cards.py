@@ -25,5 +25,3 @@ def test_holy_water():
 
 def test_holy_robe():
     assert 1
-
-
