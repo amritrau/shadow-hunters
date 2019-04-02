@@ -58,6 +58,24 @@ body {
     top:400px;
 }
 
+#reveal {
+    position: absolute;
+    left:70px;
+    top:460px;
+}
+
+.reveal {
+    border-radius: 15px;
+    background-color: #b786b0;
+    border: none;
+    color: white;
+    padding: 5px 25px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+}
+
 .button1 {
   background-color: #b786b0;
   border-radius: 15px;

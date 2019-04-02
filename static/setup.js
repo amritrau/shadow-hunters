@@ -7,6 +7,7 @@ $('document').ready(function() {
     $('#confirm').hide();
     $('#yesno').hide();
     $('#select').hide();
+    $('#reveal').hide();
     if(usrctx.spectate) $('#start').remove();
 
     // Initial connection
@@ -28,6 +29,13 @@ $('document').ready(function() {
         var start_form = $('#start').on('submit', function(e) {
             e.preventDefault();
             socket.emit('start');
+        });
+
+        // Reveal button
+        var reveal_form = $('#reveal').on('submit', function(e) {
+            e.preventDefault();
+            socket.emit('reveal');
+            $('#reveal').hide();
         });
 
         // Form type 1

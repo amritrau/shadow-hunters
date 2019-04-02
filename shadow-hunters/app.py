@@ -200,7 +200,7 @@ def on_start():
     start_game(room_id, names)
 
 @socketio.on('reveal')
-def on_reveal(json):
+def on_reveal():
 
     # Get info about user in game
     room_id = connections[request.sid]['room_id']
