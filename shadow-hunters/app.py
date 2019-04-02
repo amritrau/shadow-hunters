@@ -99,6 +99,13 @@ def start_game(room_id, players):
 
     gc.update_h = lambda: server_update(gc.dump()[0], room_id)
 
+    # Send playable characters to frontend
+    socketio.emit(
+        'playable_characters',
+        {'playable_characters': [ch.dump() for ch in gc.playable]}
+        room = room_id
+    )
+
     # gc.dump() can be called at any time to return a tuple of public,
     # private state. The public state is a self-explanatory dictionary; the
     # private state is keyed by socket_id (not by user_id!). This makes it

@@ -14,6 +14,7 @@ class GameContext:
         # Instantiate gameplay objects
         self.players = players
         self.characters = characters
+        self.playable = copy.deepcopy(characters)
         self.black_cards = black_cards
         self.white_cards = white_cards
         self.green_cards = green_cards
