@@ -117,7 +117,8 @@ def start_game(room_id, names):
     gc.update_h = lambda: server_update(gc.dump()[0], room_id)
     rooms[room_id]['gc'] = gc
 
-    gc.tell_h("Started a game with players: {}".format([", ".join(p.user_id for p in players])))
+    gc.tell_h(
+        "Started a game with players: {}".format(", ".join([p.user_id for p in players])))
 
     # Fix hermit tests
     # Write single use tests
