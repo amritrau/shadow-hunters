@@ -15,6 +15,7 @@ class GameContext:
         self.players = players
         self.turn_order = list(players)
         self.characters = characters
+        self.playable = copy.deepcopy(characters)
         self.black_cards = black_cards
         self.white_cards = white_cards
         self.green_cards = green_cards
@@ -44,8 +45,27 @@ class GameContext:
         # Randomly assign characters and point game context
         character_q = copy.deepcopy(characters)
         random.shuffle(character_q)
+
+        # Figure out how many of each allegiance there has to be
+        counts_dict = {
+            4: (2, 0, 2),
+            5: (2, 1, 2),
+            6: (2, 2, 2),
+            7: (3, 1, 3),
+            8: (3, 2, 3)
+        }
+
+        queue = []
+        while character_q:
+            ch = character_q.pop()
+            already_in = len([c for c in queue if c.alleg == ch.alleg])
+            if (already_in < counts_dict[len(self.players)][ch.alleg]):
+                queue.append(ch)
+
+        assert(len(queue) == len(self.players))
+
         for player in self.players:
-            player.setCharacter(character_q.pop())
+            player.setCharacter(queue.pop())
             player.gc = self
 
 
