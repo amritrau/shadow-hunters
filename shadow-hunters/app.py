@@ -307,4 +307,4 @@ def on_disconnect():
         socketio.emit('message', {'data': msg, 'color': S_COLOR}, room=room_id)
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True, host="0.0.0.0", port=80)
+    socketio.run(app, debug=True, host="0.0.0.0", port=5000)
