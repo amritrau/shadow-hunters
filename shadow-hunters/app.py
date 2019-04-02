@@ -199,6 +199,17 @@ def on_start():
     socketio.sleep(SOCKET_SLEEP)
     start_game(room_id, names)
 
+@socketio.on('reveal')
+def on_reveal(json):
+
+    # Get info about user in game
+    room_id = connections[request.sid]['room_id']
+    gc = rooms[room_id]['gc']
+    player = [p for p in gc.players if p.socket_id == request.sid][0]
+
+    # Reveal them
+    player.reveal()
+
 @socketio.on('answer')
 def on_answer(json):
 
