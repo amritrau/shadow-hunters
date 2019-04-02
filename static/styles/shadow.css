@@ -114,24 +114,32 @@ body {
 }
 
 #chatbox {
-    width:1066px;
-    height: 200px;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width:200px;
+    height: 250px;
     margin: auto;
+    /* background-color: rgba(255, 255, 255, .5); for some reason making text see-through*/
     background-color: #FFFFFF;
     text-align: left;
-    font-size: 14px;
+    font-size: 12px;
     color: #000000;
 }
 
 #message_holder {
     overflow:scroll;
-    width: 1066px;
-    height: 140px;
+    width: 180px;
+    height: 190px;
     padding: 10px;
 }
 
 #chat {
     height: 50px;
+}
+
+#message {
+    width: 130px;
 }
 
 input[type=text]{

@@ -34,6 +34,10 @@ var GameBoard = new Phaser.Class ({
         //y coordinates of all possible spots on health bar
         this.hpSpots = [585];
         this.hpStart = 585;
+        this.zoneCards = [[],[],[]];
+        this.zoneSpots = [[382.000, 201.500, 433.000, 113.250],
+                          [633.000, 113.250, 684.250, 201.750],
+                          [482.000, 382.712, 584.000, 382.712]];
     },
 
     //function to initialize the data sent into gameboard from waiting room
@@ -42,9 +46,11 @@ var GameBoard = new Phaser.Class ({
         this.gameData = data;
         if("private" in this.gameData) this.charInfo = this.gameData.private.character;
         this.allPlayersInfo = this.gameData.public.players;
+
+        // DEBUGGING
         // console.log(this.charInfo);
         // console.log(typeof this.charInfo);
-        // console.log("game data", this.gameData.public);
+        // console.log(this.gameData.public);
         // console.log(this.gameData.public.players);
         // var key = Object.keys(this.otherPlayersInfo)[0];
         // console.log(this.otherPlayersInfo[key].user_id);
@@ -60,6 +66,8 @@ var GameBoard = new Phaser.Class ({
         // load background and health bar
         this.load.svg('background', gfx + 'background.svg', {width: 1066, height: 600});
         this.load.image("customTip", "/static/assets/customTip.png");
+        this.load.image("popup_right", "/static/assets/popup_right.png");
+        this.load.image("popup_left", "/static/assets/popup_left.png");
         this.load.image('text', '/static/assets/text.png');
         this.load.image('health', '/static/assets/health.png');
 
@@ -80,6 +88,11 @@ var GameBoard = new Phaser.Class ({
         this.load.svg('player3', gfx + 'green-person.svg', {width: 50.5, height: 37.5});
         this.load.svg('player4', gfx + 'blue-person.svg', {width: 50.5, height: 37.5});
         this.load.svg('player5', gfx + 'pink-person.svg', {width: 50.5, height: 37.5});
+        this.load.svg('circle1', gfx + 'white_circle.svg', {width: 123.633, height: 123.633});
+        this.load.svg('circle2', gfx + 'black_circle.svg', {width: 123.633, height: 123.633});
+        this.load.svg('circle3', gfx + 'green_circle.svg', {width: 123.633, height: 123.633});
+        this.load.svg('circle4', gfx + 'blue_circle.svg', {width: 123.633, height: 123.633});
+        this.load.svg('circle5', gfx + 'pink_circle.svg', {width: 123.633, height: 123.633});
 
         this.load.svg('hpp1', gfx + 'whiteDot.svg', {width: 15, height: 15});
         this.load.svg('hpp2', gfx + 'blackDot.svg', {width: 15, height: 15});
@@ -98,6 +111,20 @@ var GameBoard = new Phaser.Class ({
         this.load.svg('V', gfx + 'v.svg', {width: 36.657, height: 36.657});
         this.load.svg('F', gfx + 'f.svg', {width: 36.657, height: 36.657});
         this.load.svg('G', gfx + 'g.svg', {width: 36.657, height: 36.657});
+        // will replace with actual art as I make them
+        // possible later implementation: loop through dumped list of playable characters to load images?
+        this.load.image('Allie', '/static/assets/Allie.png');
+        this.load.image('George', '/static/assets/George.png');
+        this.load.image('Fu-ka', '/static/assets/Fu-ka.png');
+        this.load.image('Valkyrie', '/static/assets/Valkyrie.png');
+        this.load.image('Vampire', '/static/assets/Vampire.png');
+        this.load.image('Bob', '/static/assets/anon.png');
+        this.load.image('Catherine', '/static/assets/anon.png');
+        this.load.image('Franklin', '/static/assets/anon.png');
+        this.load.image('Ellen', '/static/assets/anon.png');
+        this.load.image('Ultra Soul', '/static/assets/anon.png');
+        this.load.image('Werewolf', '/static/assets/anon.png');
+        //this.load.svg('Allie', '/static/assets/Allie.svg', {width: 123, height: 123});
     },
 
     //the create function is where everything is added to the canvas
@@ -107,18 +134,19 @@ var GameBoard = new Phaser.Class ({
         //this adds our background image. the x, y coordinates provided are the center of the canvas
         var background = this.add.image(533, 300, 'background');
         background.setScale(1);
-
+      
         // Add healthbar
         this.healthBar = this.makeHealthBar();
         this.healthBar.on('clicked', this.clickHandler, this.box);
 
         // Place locations based on given order
-        this.add.image(382.000,201.500, this.gameData.public.zones[0][0].name).setScale(1).angle = -60;
-        this.add.image(433.000,113.250, this.gameData.public.zones[0][1].name).setScale(1).angle = -60;
-        this.add.image(633.000,113.250, this.gameData.public.zones[1][0].name).setScale(1).angle = 60;
-        this.add.image(684.250,201.750, this.gameData.public.zones[1][1].name).setScale(1).angle = 60;
-        this.add.image(482.000,382.712, this.gameData.public.zones[2][0].name).setScale(1).angle = 0;
-        this.add.image(584.000,382.712, this.gameData.public.zones[2][1].name).setScale(1).angle = 0;
+
+        for (var i = 0; i < 3; i++) {
+            for (var j = 0; j < 2; j++) {
+                this.zoneCards[i][j] = this.makeZones(i,j);
+                this.zoneCards[i][j].on('clicked', this.clickHandler, this.zoneCards[i][j]);
+            }
+        }
 
         //this loop creates all players: self and enemies.
         sorted_keys = Object.keys(this.allPlayersInfo).sort(); // Hack to force keys into a deterministic order
@@ -202,6 +230,11 @@ var GameBoard = new Phaser.Class ({
                 'Special Ability: ' + this.infoBox.data.get('special')
             ]);
 
+        this.add.image(100, 366.975, "circle" + String(this.player.number));
+        this.add.image(100, 366.975, this.charInfo.name);
+        this.add.image(60.442, 322.289, this.charInfo.name[0]);
+        this.add.image(137.489, 412.722, String(this.charInfo.max_damage) + "hp");
+
             this.add.image(100, 366.975, "charImage");
             this.add.image(60.442, 322.289, this.charInfo.name[0]);
             this.add.image(137.489, 412.722, String(this.charInfo.max_damage) + "hp");
@@ -237,6 +270,43 @@ var GameBoard = new Phaser.Class ({
         sprite.displayInfo.depth = 30;
         sprite.setInteractive();
         return sprite;
+    },
+
+    // this adds the zones to the board and makes them interactive on click
+    makeZones: function(zone_num, card_num) {
+        var zone = this.add.image(this.zoneSpots[zone_num][card_num*2],this.zoneSpots[zone_num][card_num*2 + 1], this.gameData.public.zones[zone_num][card_num].name);
+        if (zone_num == 0) {
+            zone.setScale(1).angle = -60;
+            zone.infoBox = this.add.image(zone.x-90, zone.y, "popup_left");
+            zone.displayInfo = this.add.text(zone.infoBox.x - 80, zone.infoBox.y - 40, " ", { font: '12px Arial', fill: '#FFFFFF', wordWrap: { width: 130, useAdvancedWrap: true }});
+        }
+        else if (zone_num == 1) {
+            zone.setScale(1).angle = 60;
+            zone.infoBox = this.add.image(zone.x+90, zone.y, "popup_right");
+            zone.displayInfo = this.add.text(zone.infoBox.x - 60, zone.infoBox.y - 40, " ", { font: '12px Arial', fill: '#FFFFFF', wordWrap: { width: 130, useAdvancedWrap: true }});
+        }
+        else {
+            if(card_num == 0) {
+                zone.infoBox = this.add.image(zone.x-90, zone.y, "popup_left");
+                zone.displayInfo = this.add.text(zone.infoBox.x - 80, zone.infoBox.y - 40, " ", { font: '12px Arial', fill: '#FFFFFF', wordWrap: { width: 130, useAdvancedWrap: true }});
+            }
+            else {
+                zone.infoBox = this.add.image(zone.x+90, zone.y, "popup_right");
+                zone.displayInfo = this.add.text(zone.infoBox.x - 60, zone.infoBox.y - 40, " ", { font: '12px Arial', fill: '#FFFFFF', wordWrap: { width: 130, useAdvancedWrap: true }});
+            }
+        }
+
+        zone.displayInfo.setText([
+            "Area: " + this.gameData.public.zones[zone_num][card_num].name,
+            this.gameData.public.zones[zone_num][card_num].desc
+        ]);
+
+        zone.infoBox.setVisible(false);
+        zone.displayInfo.setVisible(false);
+        zone.infoBox.depth = 30;
+        zone.displayInfo.depth = 30;
+        zone.setInteractive();
+        return zone;
     },
 
     //the makePlayer function is what creates our sprite and adds him to the board.
@@ -292,10 +362,23 @@ var GameBoard = new Phaser.Class ({
             }
             player.x = player.spots[data.location.name].x;
             player.y = player.spots[data.location.name].y;
-            player.infoBox.x = player.x;
-            player.infoBox.y = player.y -60;
-            player.displayInfo.x = player.infoBox.x - 120;
-            player.displayInfo.y = player.infoBox.y - 40;
+
+            if(player.y-60-45 < 0) {
+                player.infoBox.angle = 180;
+                player.infoBox.x = player.x;
+                player.infoBox.y = player.y + 60;
+                player.displayInfo.x = player.infoBox.x - 120;
+                player.displayInfo.y = player.infoBox.y - 20;
+            }
+            else {
+                if (player.infoBox.angle != 0) {
+                    player.infoBox.angle = 0;
+                }
+                player.infoBox.x = player.x;
+                player.infoBox.y = player.y -60;
+                player.displayInfo.x = player.infoBox.x - 120;
+                player.displayInfo.y = player.infoBox.y - 40;
+            }
         }
 
         // Update hp
