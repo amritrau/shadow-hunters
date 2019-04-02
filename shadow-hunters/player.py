@@ -246,9 +246,9 @@ class Player:
             eq = self.equipment.pop()
             if eq.color == 1: # Black
                 self.gc.black_cards.addToDiscard(eq)
-            else if eq.color == 2: # Green
+            elif eq.color == 2: # Green
                 self.gc.green_cards.addToDiscard(eq)
-            else if eq.color == 3: # White
+            elif eq.color == 3: # White
                 self.gc.white_cards.addToDiscard(eq)
 
     def move(self, location):
