@@ -209,7 +209,7 @@ class Player:
 
     def checkDeath(self, attacker):
         if self.damage >= self.character.max_damage:
-            self.die()
+            self.die(attacker)
         self.gc.update_h()
 
     def die(self, attacker):
@@ -227,16 +227,19 @@ class Player:
         # Get dead player and their equipment
         data = {'options': [eq.title for eq in self.equipment]}
 
-        # Choose which equipment to take
-        equip = attacker.ask_h('select', data, attacker.user_id)['value']
-        equip_Equipment = [eq for eq in self.equipment if eq.title == equip][0]
+        if len(data['options']):
 
-        # Transfer equipment from one player to the other
-        i = self.equipment.index(equip_Equipment)
-        equip_Equipment = self.equipment.pop(i)
-        attacker.equipment.append(equip_Equipment)
-        equip_Equipment.holder = attacker
-        self.gc.tell_h("{} took {}'s {}!".format(attacker.user_id, self.user_id, equip_Equipment.title))
+            # Choose which equipment to take
+            attacker.ask_h('confirm', {'options': 'Take equipment from {}'.format(self.user_id)}, attacker.user_id)
+            equip = attacker.ask_h('select', data, attacker.user_id)['value']
+            equip_Equipment = [eq for eq in self.equipment if eq.title == equip][0]
+
+            # Transfer equipment from one player to the other
+            i = self.equipment.index(equip_Equipment)
+            equip_Equipment = self.equipment.pop(i)
+            attacker.equipment.append(equip_Equipment)
+            equip_Equipment.holder = attacker
+            self.gc.tell_h("{} took {}'s {}!".format(attacker.user_id, self.user_id, equip_Equipment.title))
 
         # Update the game board
         self.gc.update_h()

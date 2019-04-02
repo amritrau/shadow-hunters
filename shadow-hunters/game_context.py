@@ -41,11 +41,23 @@ class GameContext:
             for a in z.areas:
                 a.zone = z
 
+        # get pool of characters for this game
+        all_characters = copy.deepcopy(characters)
+        map = elements.TEAMS_MAP[len(players)]
+        hunters = [c for c in all_characters if c.alleg == 2]
+        shadows = [c for c in all_characters if c.alleg == 0]
+        neutrals = [c for c in all_characters if c.alleg == 1]
+        random.shuffle(hunters)
+        random.shuffle(shadows)
+        random.shuffle(neutrals)
+        characters_in_game = ([shadows.pop() for _ in range(map[0])] +
+                              [neutrals.pop() for _ in range(map[1])] +
+                              [hunters.pop() for _ in range(map[2])])
+
         # Randomly assign characters and point game context
-        character_q = copy.deepcopy(characters)
-        random.shuffle(character_q)
+        random.shuffle(characters_in_game)
         for player in self.players:
-            player.setCharacter(character_q.pop())
+            player.setCharacter(characters_in_game.pop())
             player.gc = self
 
 
@@ -65,7 +77,12 @@ class GameContext:
             winners = self._checkWinConditions()  # Hack to collect Allie
             if tell:
                 for w in winners:
-                    self.tell_h("{} ({}: {}) won! {}".format(w.user_id, elements.ALLEGIANCE_MAP[w.character.alleg], w.character.name, w.character.win_cond_desc))
+                    self.tell_h("{} ({}: {}) won! {}".format(
+                        w.user_id,
+                        elements.ALLEGIANCE_MAP[w.character.alleg],
+                        w.character.name,
+                        w.character.win_cond_desc
+                    ))
             return winners
 
     def play(self):

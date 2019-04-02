@@ -14,7 +14,6 @@ def test_fields():
         color = 1,
         holder = None,
         is_equip = False,
-        force_use = False,
         use = lambda: 5,
     )
 
@@ -24,7 +23,6 @@ def test_fields():
     assert c.color == 1
     assert c.holder is None
     assert not c.is_equipment
-    assert not c.force_use
     assert c.use() == 5
 
     # test dump

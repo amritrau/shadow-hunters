@@ -16,7 +16,7 @@ def test_hunters_win():
     assert not h.character.win_cond(gc, h)
     for p in gc.players:
         if p != h:
-            p.setDamage(14)
+            p.setDamage(14, p)
     assert h.character.win_cond(gc, h)
 
 def test_shadows_win():
@@ -27,7 +27,7 @@ def test_shadows_win():
     assert not s.character.win_cond(gc, s)
     for p in gc.players:
         if p != s:
-            p.setDamage(14)
+            p.setDamage(14, p)
     assert s.character.win_cond(gc, s)
 
     # TODO: Check that shadows win if three neutrals are dead
@@ -44,7 +44,7 @@ def test_allie_win():
         for p in gc.players:
             if p.character.name == "Allie":
                 allie = p
-    
+
     # Check that Allie hasn't won if the game isn't over
     assert not allie.character.win_cond(gc, allie)
 
@@ -53,6 +53,11 @@ def test_allie_win():
     assert allie.character.win_cond(gc, allie)
 
     # Check that Allie doesn't win if she's dead
-    allie.setDamage(14)
+    allie.setDamage(14, allie)
     assert not allie.character.win_cond(gc, allie)
 
+def test_bob_win():
+    assert 0
+
+def test_catherine_win():
+    assert 0

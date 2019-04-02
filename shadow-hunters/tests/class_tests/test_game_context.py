@@ -59,7 +59,7 @@ def test_getLivePlayers():
     assert gc.getLivePlayers() == gc.players
 
     # Check that dead players are not included in alive players
-    gc.players[0].setDamage(14)
+    gc.players[0].setDamage(14, gc.players[1])
     assert gc.getLivePlayers() == gc.players[1:]
 
 def test_getDeadPlayers():
@@ -69,7 +69,7 @@ def test_getDeadPlayers():
     assert not gc.getDeadPlayers()
 
     # Check that dead players are properly included
-    gc.players[0].setDamage(14)
+    gc.players[0].setDamage(14, gc.players[1])
     assert gc.getDeadPlayers() == [gc.players[0]]
 
 def test_checkWinConditions():
@@ -86,15 +86,15 @@ def test_checkWinConditions():
     gc, ef = helpers.fresh_gc_ef()
     for p in gc.players:
         if p.character.alleg != 2:
-            p.setDamage(14)
-    assert all([p.character.alleg == 2 for p in gc.checkWinConditions()])
+            p.setDamage(14, p)
+    assert len([p for p in gc.checkWinConditions()]) != 0 and all([p.character.alleg == 2 for p in gc.checkWinConditions()])
 
     # Check that shadows win when everyone else is dead
     gc, ef = helpers.fresh_gc_ef()
     for p in gc.players:
         if p.character.alleg != 0:
-            p.setDamage(14)
-    assert all([p.character.alleg == 0 for p in gc.checkWinConditions()])
+            p.setDamage(14, p)
+    assert len([p for p in gc.checkWinConditions()]) != 0 and all([p.character.alleg == 0 for p in gc.checkWinConditions()])
 
 def test_play():
     gc, ef = helpers.fresh_gc_ef()

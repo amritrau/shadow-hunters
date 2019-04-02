@@ -12,6 +12,15 @@ ALLEGIANCE_MAP = {
     2: "Hunter"
 }
 
+## Enum for team sizes in N-player games
+TEAMS_MAP = {
+    4: (2, 0, 2),
+    5: (2, 1, 2),
+    6: (2, 2, 2),
+    7: (2, 3, 2),
+    8: (3, 2, 3)
+}
+
 ## Enum for card types
 CARD_COLOR_MAP = {
     0: "White",
@@ -56,7 +65,7 @@ class ElementFactory:
             target = args['self'].ask_h('select', data, args['self'].user_id)['value']
 
             # Set selected player to 7 damage
-            [p for p in args['self'].gc.getLivePlayers() if p.user_id == target][0].setDamage(7)
+            [p for p in args['self'].gc.getLivePlayers() if p.user_id == target][0].setDamage(7, args['self'])
 
         def use_judgement(args):
 
