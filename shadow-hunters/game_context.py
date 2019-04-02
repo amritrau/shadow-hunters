@@ -43,6 +43,7 @@ class GameContext:
                 a.zone = z
 
         # Randomly assign characters and point game context
+
         character_q = copy.deepcopy(characters)
         random.shuffle(character_q)
 
@@ -85,7 +86,12 @@ class GameContext:
             winners = self._checkWinConditions()  # Hack to collect Allie
             if tell:
                 for w in winners:
-                    self.tell_h("{} ({}: {}) won! {}".format(w.user_id, elements.ALLEGIANCE_MAP[w.character.alleg], w.character.name, w.character.win_cond_desc))
+                    self.tell_h("{} ({}: {}) won! {}".format(
+                        w.user_id,
+                        elements.ALLEGIANCE_MAP[w.character.alleg],
+                        w.character.name,
+                        w.character.win_cond_desc
+                    ))
             return winners
 
     def play(self):

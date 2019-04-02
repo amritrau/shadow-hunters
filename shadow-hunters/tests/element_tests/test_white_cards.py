@@ -8,20 +8,36 @@ from tests import helpers
 # test_white_cards.py
 # Tests the usage of each white card
 
-# TODO: Tests unwritten because implementation is subject to change
-
 # single-use
 
 def test_flare_judgement():
-    assert 1
+    assert 0
 
 def test_first_aid():
-    assert 1
+    assert 0
 
 def test_holy_water():
-    assert 1
+    assert 0
+
+def test_advent():
+    assert 0
+
+def test_blessing():
+    assert 0
+
+def test_disenchant_mirror():
+    assert 0
+
+def test_chocolate():
+    assert 0
+
+def test_concealed_knowledge():
+    assert 0
+
+def test_guardian_angel():
+    assert 0
 
 # equipment
 
 def test_holy_robe():
-    assert 1
+    assert 0

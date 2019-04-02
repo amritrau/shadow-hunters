@@ -67,55 +67,51 @@ def test_reveal():
     p.reveal()
     assert p.state == 1
 
-def test_takeTurn():
-    # TODO: Unclear how to meaningfully test this function
-    assert 1
-
 def test_drawCard():
-    # TODO: Unclear how to meaningfully test this function
-    assert 1
+    assert 0
 
 def test_attack():
-    # TODO: Test unwritten because implementation is subject to change
-    assert 1
+    assert 0
 
 def test_defend():
-    # TODO: Test unwritten because implementation is subject to change
-    assert 1
+    assert 0
 
 def test_moveDamage():
     p = helpers.fresh_gc_ef()[0].players[0]
 
     # Check in-bounds movement
-    p.moveDamage(-5)
+    p.moveDamage(-5, p)
     assert p.damage == 5
 
     # Check ceiling of max_damage
-    p.moveDamage(-50)
+    p.moveDamage(-50, p)
     assert p.damage == p.character.max_damage
 
     # Check floor of 0
-    p.moveDamage(100)
+    p.moveDamage(100, p)
     assert p.damage == 0
 
 def test_setDamage():
     p = helpers.fresh_gc_ef()[0].players[0]
 
     # Check setting damage changes player damage
-    p.setDamage(5)
+    p.setDamage(5, p)
     assert p.damage == 5
 
 def test_checkDeath():
     p = helpers.fresh_gc_ef()[0].players[0]
 
     # Check that player is initially not dead
-    p.checkDeath()
+    p.checkDeath(p)
     assert p.state == 2
 
     # Check that player dies when damage > max_damage
     p.damage = 20
-    p.checkDeath()
+    p.checkDeath(p)
     assert p.state == 0
+
+def test_die():
+    assert 0
 
 def test_move():
     p = helpers.fresh_gc_ef()[0].players[0]

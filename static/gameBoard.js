@@ -134,13 +134,13 @@ var GameBoard = new Phaser.Class ({
         //this adds our background image. the x, y coordinates provided are the center of the canvas
         var background = this.add.image(533, 300, 'background');
         background.setScale(1);
-      
+
         // Add healthbar
         this.healthBar = this.makeHealthBar();
         this.healthBar.on('clicked', this.clickHandler, this.box);
 
         // Place locations based on given order
-
+      
         for (var i = 0; i < 3; i++) {
             for (var j = 0; j < 2; j++) {
                 this.zoneCards[i][j] = this.makeZones(i,j);
@@ -362,7 +362,6 @@ var GameBoard = new Phaser.Class ({
             }
             player.x = player.spots[data.location.name].x;
             player.y = player.spots[data.location.name].y;
-
             if(player.y-60-45 < 0) {
                 player.infoBox.angle = 180;
                 player.infoBox.x = player.x;
