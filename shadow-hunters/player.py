@@ -194,26 +194,27 @@ class Player:
 
         # Return damage dealt
         dealt = amount
-        self.moveDamage(-dealt)
+        self.moveDamage(-dealt, attacker = other)
         return dealt
 
-    def moveDamage(self, damage_change):
+    def moveDamage(self, damage_change, attacker):
         self.damage = min(self.damage - damage_change, self.character.max_damage)
         self.damage = max(0, self.damage)
-        self.checkDeath()
+        self.checkDeath(attacker)
         return self.damage
 
-    def setDamage(self, damage):
+    def setDamage(self, damage, attacker):
         self.damage = damage
-        self.checkDeath()
+        self.checkDeath(attacker)
 
-    def checkDeath(self):
+    def checkDeath(self, attacker):
         if self.damage >= self.character.max_damage:
             self.state = 0
-            self.gc.tell_h("{} ({}: {}) died!".format(
+            self.gc.tell_h("{} ({}: {}) was killed by {}!".format(
                 self.user_id,
                 elements.ALLEGIANCE_MAP[self.character.alleg],
-                self.character.name
+                self.character.name,
+                attacker.user_id
             ))
         self.gc.update_h()
 

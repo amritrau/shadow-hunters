@@ -64,13 +64,13 @@ class ElementFactory:
             args['self'].ask_h('confirm', {'options': ["Unleash judgement"]}, args['self'].user_id)
             for p in args['self'].gc.getLivePlayers():
                 if p != args['self']:
-                    p.moveDamage(-2)
+                    p.moveDamage(-2, args['self'])
 
         def use_holy_water(args):
 
             # Heal user by 2 damage
             args['self'].ask_h('confirm', {'options': ["Heal yourself"]}, args['self'].user_id)
-            args['self'].moveDamage(2)
+            args['self'].moveDamage(2, args['self'])
 
         def use_advent(args):
 
@@ -88,9 +88,9 @@ class ElementFactory:
                 args['self'].gc.tell_h("{} did nothing.".format(args['self'].user_id))
             elif decision == "Reveal and heal fully":
                 args['self'].reveal()
-                args['self'].setDamage(0)
+                args['self'].setDamage(0, args['self'])
             else:
-                args['self'].setDamage(0)
+                args['self'].setDamage(0, args['self'])
 
         def use_disenchant_mirror(args):
 
@@ -120,7 +120,7 @@ class ElementFactory:
             args['self'].gc.tell_h("{} rolled a {}!".format(args['self'].user_id, roll_result))
 
             # Heal target player
-            target.moveDamage(roll_result)
+            target.moveDamage(roll_result, args['self'])
 
         def use_chocolate(args):
 
@@ -138,9 +138,9 @@ class ElementFactory:
                 args['self'].gc.tell_h("{} did nothing.".format(args['self'].user_id))
             elif decision == "Reveal and heal fully":
                 args['self'].reveal()
-                args['self'].setDamage(0)
+                args['self'].setDamage(0, args['self'])
             else:
-                args['self'].setDamage(0)
+                args['self'].setDamage(0, args['self'])
 
         def use_concealed_knowledge(args):
 
@@ -260,8 +260,8 @@ class ElementFactory:
             target = choose_player(args)
 
             # Both the target and the user take 2 damage
-            target.moveDamage(-2)
-            args['self'].moveDamage(-2)
+            target.moveDamage(-2, args['self'])
+            args['self'].moveDamage(-2, args['self'])
 
         def use_vampire_bat(args):
 
@@ -270,8 +270,8 @@ class ElementFactory:
             target = choose_player(args)
 
             # Target takes 2 damage, user heals 1 damage
-            target.moveDamage(-2)
-            args['self'].moveDamage(1)
+            target.moveDamage(-2, args['self'])
+            args['self'].moveDamage(1, args['self'])
 
         def use_moody_goblin(args):
 
@@ -322,7 +322,7 @@ class ElementFactory:
                 args['self'].gc.tell_h("{} did nothing.".format(args['self'].user_id))
             else:
                 args['self'].reveal()
-                args['self'].setDamage(0)
+                args['self'].setDamage(0, args['self'])
 
         def use_banana_peel(args):
 
@@ -356,7 +356,7 @@ class ElementFactory:
             else:
 
                 # Take 1 damage
-                args['self'].moveDamage(-1)
+                args['self'].moveDamage(-1, args['self'])
 
         def use_dynamite(args):
 
@@ -390,7 +390,7 @@ class ElementFactory:
                 args['self'].gc.tell_h("Dynamite blew up the {}!".format(destination))
                 affected_players = [p for p in args['self'].gc.players if p.location == destination_Area]
                 for p in affected_players:
-                    p.moveDamage(-3)
+                    p.moveDamage(-3, args['self'])
 
         def use_spiritual_doll(args):
 
@@ -407,9 +407,9 @@ class ElementFactory:
 
             # If roll is >= 5, user takes 3 damage. Otherwise, target takes 3 damage.
             if roll_result >= 5:
-                args['self'].moveDamage(-3)
+                args['self'].moveDamage(-3, args['self'])
             else:
-                target.moveDamage(-3)
+                target.moveDamage(-3, args['self'])
 
         ## Initialize black cards
 
@@ -564,7 +564,7 @@ class ElementFactory:
                 else:
 
                     # Target takes 1 damage
-                    new_damage = target.moveDamage(-1)
+                    new_damage = target.moveDamage(-1, args['self'])
                     target.gc.tell_h("{} took 1 damage!".format(target.user_id))
 
             else:
@@ -613,7 +613,7 @@ class ElementFactory:
                 else:
 
                     # Target takes 1 damage
-                    new_damage = target.moveDamage(-1)
+                    new_damage = target.moveDamage(-1, args['self'])
                     target.gc.tell_h("{} took 1 damage!".format(target.user_id))
 
             else:
@@ -661,7 +661,7 @@ class ElementFactory:
                 else:
 
                     # Target takes 1 damage
-                    new_damage = target.moveDamage(-1)
+                    new_damage = target.moveDamage(-1, args['self'])
                     target.gc.tell_h("{} took 1 damage!".format(target.user_id))
 
             else:
@@ -688,7 +688,7 @@ class ElementFactory:
                 target.ask_h('confirm', data, target.user_id)
 
                 # Give 1 damage to target
-                new_damage = target.moveDamage(-1)
+                new_damage = target.moveDamage(-1, args['self'])
                 target.gc.tell_h("{} took 1 damage!".format(target.user_id))
             else:
 
@@ -714,7 +714,7 @@ class ElementFactory:
                 target.ask_h('confirm', data, target.user_id)
 
                 # Give 1 damage to target
-                new_damage = target.moveDamage(-1)
+                new_damage = target.moveDamage(-1, args['self'])
                 target.gc.tell_h("{} took 1 damage!".format(target.user_id))
 
             else:
@@ -741,7 +741,7 @@ class ElementFactory:
                 target.ask_h('confirm', data, target.user_id)
 
                 # Give 2 damage to target
-                new_damage = target.moveDamage(-2)
+                new_damage = target.moveDamage(-2, args['self'])
                 target.gc.tell_h("{} took 2 damage!".format(target.user_id))
 
             else:
@@ -771,7 +771,7 @@ class ElementFactory:
                     target.ask_h('confirm', data, target.user_id)
 
                     # Give target 1 damage
-                    new_damage = target.moveDamage(-1)
+                    new_damage = target.moveDamage(-1, args['self'])
                     target.gc.tell_h("{} took 1 damage!".format(target.user_id))
 
                 else:
@@ -781,7 +781,7 @@ class ElementFactory:
                     target.ask_h('confirm', data, target.user_id)
 
                     # Heal target 1 damage
-                    new_damage = target.moveDamage(1)
+                    new_damage = target.moveDamage(1, args['self'])
                     target.gc.tell_h("{} healed 1 damage!".format(target.user_id))
 
             else:
@@ -811,7 +811,7 @@ class ElementFactory:
                     target.ask_h('confirm', data, target.user_id)
 
                     # Give target 1 damage
-                    new_damage = target.moveDamage(-1)
+                    new_damage = target.moveDamage(-1, args['self'])
                     target.gc.tell_h("{} took 1 damage!".format(target.user_id))
 
                 else:
@@ -821,7 +821,7 @@ class ElementFactory:
                     target.ask_h('confirm', data, target.user_id)
 
                     # Heal target 1 damage
-                    new_damage = target.moveDamage(1)
+                    new_damage = target.moveDamage(1, args['self'])
                     target.gc.tell_h("{} healed 1 damage!".format(target.user_id))
 
             else:
@@ -851,7 +851,7 @@ class ElementFactory:
                     target.ask_h('confirm', data, target.user_id)
 
                     # Give target 1 damage
-                    new_damage = target.moveDamage(-1)
+                    new_damage = target.moveDamage(-1, args['self'])
                     target.gc.tell_h("{} took 1 damage!".format(target.user_id))
 
                 else:
@@ -861,7 +861,7 @@ class ElementFactory:
                     target.ask_h('confirm', data, target.user_id)
 
                     # Heal target 1 damage
-                    new_damage = target.moveDamage(1)
+                    new_damage = target.moveDamage(1, args['self'])
                     target.gc.tell_h("{} healed 1 damage!".format(target.user_id))
 
             else:
@@ -888,7 +888,7 @@ class ElementFactory:
                 target.ask_h('confirm', data, target.user_id)
 
                 # Give 2 damage to target
-                new_damage = target.moveDamage(-2)
+                new_damage = target.moveDamage(-2, args['self'])
                 target.gc.tell_h("{} took 2 damage!".format(target.user_id))
 
             else:
@@ -915,7 +915,7 @@ class ElementFactory:
                 target.ask_h('confirm', data, target.user_id)
 
                 # Give 1 damage to target
-                new_damage = target.moveDamage(-1)
+                new_damage = target.moveDamage(-1, args['self'])
                 target.gc.tell_h("{} took 1 damage!".format(target.user_id))
 
             else:
