@@ -1125,8 +1125,8 @@ class ElementFactory:
         def catherine_win_cond(gc, player):
 
             # Catherine wins if she is the first to die or one of the last 2 remaining
-            first_to_die = (player in gc.getDeadPlayers()) and (len(gc.getDeadPlayers) == 1)
-            last_two = (player in gc.getLivePlayers()) and (len(gc.getLivePlayers) <= 2)
+            first_to_die = (player in gc.getDeadPlayers()) and (len(gc.getDeadPlayers()) == 1)
+            last_two = (player in gc.getLivePlayers()) and (len(gc.getLivePlayers()) <= 2)
             return first_to_die or last_two
 
         ## Initialize characters
