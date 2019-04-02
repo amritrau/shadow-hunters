@@ -215,7 +215,7 @@ class Player:
     def die(self, attacker):
         # Set state to 0 (DEAD)
         self.state = 0
-
+        
         # Report to console
         self.gc.tell_h("{} ({}: {}) was killed by {}!".format(
             self.user_id,
@@ -226,7 +226,6 @@ class Player:
 
         # Get dead player and their equipment
         data = {'options': [eq.title for eq in self.equipment]}
-
         if len(data['options']):
 
             # Choose which equipment to take

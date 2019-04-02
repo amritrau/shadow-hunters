@@ -15,6 +15,7 @@ class GameContext:
         self.players = players
         self.turn_order = list(players)
         self.characters = characters
+        self.playable = copy.deepcopy(characters)
         self.black_cards = black_cards
         self.white_cards = white_cards
         self.green_cards = green_cards
@@ -41,23 +42,31 @@ class GameContext:
             for a in z.areas:
                 a.zone = z
 
-        # get pool of characters for this game
-        all_characters = copy.deepcopy(characters)
-        map = elements.TEAMS_MAP[len(players)]
-        hunters = [c for c in all_characters if c.alleg == 2]
-        shadows = [c for c in all_characters if c.alleg == 0]
-        neutrals = [c for c in all_characters if c.alleg == 1]
-        random.shuffle(hunters)
-        random.shuffle(shadows)
-        random.shuffle(neutrals)
-        characters_in_game = ([shadows.pop() for _ in range(map[0])] +
-                              [neutrals.pop() for _ in range(map[1])] +
-                              [hunters.pop() for _ in range(map[2])])
-
         # Randomly assign characters and point game context
-        random.shuffle(characters_in_game)
+
+        character_q = copy.deepcopy(characters)
+        random.shuffle(character_q)
+
+        # Figure out how many of each allegiance there has to be
+        counts_dict = {
+            4: (2, 0, 2),
+            5: (2, 1, 2),
+            6: (2, 2, 2),
+            7: (3, 1, 3),
+            8: (3, 2, 3)
+        }
+
+        queue = []
+        while character_q:
+            ch = character_q.pop()
+            already_in = len([c for c in queue if c.alleg == ch.alleg])
+            if (already_in < counts_dict[len(self.players)][ch.alleg]):
+                queue.append(ch)
+
+        assert(len(queue) == len(self.players))
+
         for player in self.players:
-            player.setCharacter(characters_in_game.pop())
+            player.setCharacter(queue.pop())
             player.gc = self
 
 

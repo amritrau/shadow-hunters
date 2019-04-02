@@ -12,15 +12,6 @@ ALLEGIANCE_MAP = {
     2: "Hunter"
 }
 
-## Enum for team sizes in N-player games
-TEAMS_MAP = {
-    4: (2, 0, 2),
-    5: (2, 1, 2),
-    6: (2, 2, 2),
-    7: (2, 3, 2),
-    8: (3, 2, 3)
-}
-
 ## Enum for card types
 CARD_COLOR_MAP = {
     0: "White",
@@ -58,7 +49,7 @@ class ElementFactory:
         ## White card usage functions
 
         def use_first_aid(args):
-
+          
             # Select a player to use card on (includes user)
             args['self'].ask_h('confirm', {'options': ["Use First Aid"]}, args['self'].user_id)
             data = {'options': [t.user_id for t in args['self'].gc.getLivePlayers()]}
@@ -68,7 +59,7 @@ class ElementFactory:
             [p for p in args['self'].gc.getLivePlayers() if p.user_id == target][0].setDamage(7, args['self'])
 
         def use_judgement(args):
-
+          
             # Give all players except user 2 damage
             args['self'].ask_h('confirm', {'options': ["Unleash judgement"]}, args['self'].user_id)
             for p in args['self'].gc.getLivePlayers():
@@ -127,7 +118,6 @@ class ElementFactory:
             args['self'].ask_h('confirm', data, args['self'].user_id)
             roll_result = args['self'].gc.die6.roll()
             args['self'].gc.tell_h("{} rolled a {}!".format(args['self'].user_id, roll_result))
-
             # Heal target player
             target.moveDamage(roll_result, args['self'])
 
@@ -743,7 +733,6 @@ class ElementFactory:
 
             # If shadow, take 2 damage
             if target.character.alleg == 0:
-
                 # Prompt target to receive 2 damage
                 target.gc.direct_h("You are a {}.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ["Receive 2 damage"]}
@@ -770,7 +759,6 @@ class ElementFactory:
 
             # If neutral, heal 1 damage (unless at 0, then take 1 damage)
             if target.character.alleg == 1:
-
                 # Branch on hp value
                 target.gc.direct_h("You are a {}.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 if target.damage == 0:
@@ -810,7 +798,6 @@ class ElementFactory:
 
             # If hunter, heal 1 damage (unless at 0, then take 1 damage)
             if target.character.alleg == 2:
-
                 # Branch on hp value
                 target.gc.direct_h("You are a {}.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 if target.damage == 0:
@@ -850,7 +837,6 @@ class ElementFactory:
 
             # If shadow, heal 1 damage (unless at 0, then take 1 damage)
             if target.character.alleg == 0:
-
                 # Branch on hp value
                 target.gc.direct_h("You are a {}.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 if target.damage == 0:
@@ -936,7 +922,6 @@ class ElementFactory:
                 target.gc.tell_h("{} did nothing.".format(target.user_id))
 
         def hermit_prediction(args):
-
             # Choose a player to give the card to
             args['self'].ask_h('confirm', {'options': ["Use Hermit's Prediction"]}, args['self'].user_id)
             target = choose_player(args)
@@ -957,7 +942,7 @@ class ElementFactory:
             target.gc.direct_h("Their win condition: {}.".format(target.character.win_cond_desc), args['self'].socket_id)
             target.gc.direct_h("Their special ability: {}.".format("None"), args['self'].socket_id)
             target.gc.tell_h("{} revealed their identity secretly to {}!".format(target.user_id, args['self'].user_id))
-
+       
         ## Initialize hermit cards
 
         GREEN_CARDS = [
@@ -1138,6 +1123,21 @@ class ElementFactory:
             last_two = (player in gc.getLivePlayers()) and (len(gc.getLivePlayers()) <= 2)
             return first_to_die or last_two
 
+        ## Specials
+        def allie_special(gc, player):
+            if !player.modifiers['special']:
+                # Full heal
+                player.setDamage(0, player)
+
+                # Update modifiers
+                player.modifiers['special'] = True
+
+                # Tell
+                gc.tell_h("Allie used her special ability: {}".format(player.character.special_desc))
+            else:
+                # Already used special
+                gc.direct_h("This special ability can be used only once.", player.socket_id)
+
         ## Initialize characters
 
         self.CHARACTERS = [
@@ -1148,6 +1148,7 @@ class ElementFactory:
                 win_cond = shadow_win_cond,
                 win_cond_desc = "All the Hunter characters are dead or 3 Neutral characters are dead",
                 special = lambda: 0,  # TODO
+                special_desc = "todo",
                 resource_id = "valkyrie"
             ),
             character.Character(
@@ -1157,6 +1158,7 @@ class ElementFactory:
                 win_cond = shadow_win_cond,
                 win_cond_desc = "All the Hunter characters are dead or 3 Neutral characters are dead",
                 special = lambda: 0,  # TODO
+                special_desc = "todo",
                 resource_id = "vampire"
             ),
             character.Character(
@@ -1166,6 +1168,7 @@ class ElementFactory:
                 win_cond = shadow_win_cond,
                 win_cond_desc = "All the Hunter characters are dead or 3 Neutral characters are dead",
                 special = lambda: 0,  # TODO
+                special_desc = "todo",
                 resource_id = "werewolf"
             ),
             character.Character(
@@ -1175,6 +1178,27 @@ class ElementFactory:
                 win_cond = shadow_win_cond,
                 win_cond_desc = "All the Hunter characters are dead or 3 Neutral characters are dead",
                 special = lambda: 0,  # TODO
+                special_desc = "todo",
+                resource_id = "vampire"
+            ),
+            character.Character(
+                name = "Werewolf",
+                alleg = 0,  # Shadow
+                max_damage = 14,
+                win_cond = shadow_win_cond,
+                win_cond_desc = "All the Hunter characters are dead or 3 Neutral characters are dead",
+                special = lambda: 0,  # TODO
+                special_desc = "todo",
+                resource_id = "werewolf"
+            ),
+            character.Character(
+                name = "Ultra Soul",
+                alleg = 0,  # Shadow
+                max_damage = 11,
+                win_cond = shadow_win_cond,
+                win_cond_desc = "All the Hunter characters are dead or 3 Neutral characters are dead",
+                special = lambda: 0,  # TODO
+                special_desc = "todo",
                 resource_id = "vampire"
             ),
             character.Character(
@@ -1183,7 +1207,8 @@ class ElementFactory:
                 max_damage = 8,
                 win_cond = allie_win_cond,
                 win_cond_desc = "You're not dead when the game is over",
-                special = lambda: 0,  # TODO
+                special = lambda args: args[''],  # TODO
+                special_desc = "Fully heal your damage",
                 resource_id = "allie"
             ),
             character.Character(
@@ -1193,6 +1218,7 @@ class ElementFactory:
                 win_cond = bob_win_cond,
                 win_cond_desc = "You have 5 or more equipment cards",
                 special = lambda: 0,  # TODO
+                special_desc = "todo",
                 resource_id = "bob"
             ),
             character.Character(
@@ -1202,6 +1228,7 @@ class ElementFactory:
                 win_cond = catherine_win_cond,
                 win_cond_desc = "You are the first to die or you are one of the last two characters remaining",
                 special = lambda: 0,  # TODO
+                special_desc = "todo",
                 resource_id = "catherine"
             ),
             character.Character(
@@ -1211,6 +1238,7 @@ class ElementFactory:
                 win_cond = hunter_win_cond,
                 win_cond_desc = "All the Shadow characters are dead",
                 special = lambda: 0,  # TODO
+                special_desc = "todo",
                 resource_id = "george"
             ),
             character.Character(
@@ -1220,6 +1248,7 @@ class ElementFactory:
                 win_cond = hunter_win_cond,
                 win_cond_desc = "All the Shadow characters are dead",
                 special = lambda: 0,  # TODO
+                special_desc = "todo",
                 resource_id = "fu-ka"
             ),
             character.Character(
@@ -1229,6 +1258,7 @@ class ElementFactory:
                 win_cond = hunter_win_cond,
                 win_cond_desc = "All the Shadow characters are dead",
                 special = lambda: 0,  # TODO
+                special_desc = "todo",
                 resource_id = "franklin"
             ),
             character.Character(
@@ -1238,6 +1268,7 @@ class ElementFactory:
                 win_cond = hunter_win_cond,
                 win_cond_desc = "All the Shadow characters are dead",
                 special = lambda: 0,  # TODO
+                special_desc = "todo",
                 resource_id = "ellen"
             )
         ]

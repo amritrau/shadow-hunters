@@ -128,7 +128,7 @@ def start_game(room_id, names):
     # Send public and private game states to frontend
     public_state, private_state = gc.dump()
     for k in private_state:
-        data = {'public': public_state, 'private': private_state[k]}
+        data = {'public': public_state, 'private': private_state[k], 'playable_chars': [ch.dump() for ch in gc.playable]}
         socketio.emit('game_start', data, room = k)
 
     # Initiate gameplay loop
