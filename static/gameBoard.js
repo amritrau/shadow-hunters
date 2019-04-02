@@ -104,11 +104,18 @@ var GameBoard = new Phaser.Class ({
 
         this.load.svg('charImage', gfx + 'charImage.svg', {width: 123.633, height: 123.633});
         this.load.svg('8hp', gfx + '8hp.svg', {width: 30.14, height: 30.14});
+        this.load.svg('10hp', gfx + '8hp.svg', {width: 30.14, height: 30.14});
+        this.load.svg('11hp', gfx + '8hp.svg', {width: 30.14, height: 30.14});
         this.load.svg('12hp', gfx + '12hp.svg', {width: 30.14, height: 30.14});
         this.load.svg('13hp', gfx + '13hp.svg', {width: 30.14, height: 30.14});
         this.load.svg('14hp', gfx + '14hp.svg', {width: 30.14, height: 30.14});
         this.load.svg('A', gfx + 'a.svg', {width: 36.657, height: 36.657});
+        this.load.svg('B', gfx + 'a.svg', {width: 36.657, height: 36.657});
+        this.load.svg('C', gfx + 'a.svg', {width: 36.657, height: 36.657});
+        this.load.svg('U', gfx + 'v.svg', {width: 36.657, height: 36.657});
         this.load.svg('V', gfx + 'v.svg', {width: 36.657, height: 36.657});
+        this.load.svg('W', gfx + 'v.svg', {width: 36.657, height: 36.657});
+        this.load.svg('E', gfx + 'f.svg', {width: 36.657, height: 36.657});
         this.load.svg('F', gfx + 'f.svg', {width: 36.657, height: 36.657});
         this.load.svg('G', gfx + 'g.svg', {width: 36.657, height: 36.657});
         // will replace with actual art as I make them
@@ -140,7 +147,7 @@ var GameBoard = new Phaser.Class ({
         this.healthBar.on('clicked', this.clickHandler, this.box);
 
         // Place locations based on given order
-      
+
         for (var i = 0; i < 3; i++) {
             for (var j = 0; j < 2; j++) {
                 this.zoneCards[i][j] = this.makeZones(i,j);
