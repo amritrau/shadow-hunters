@@ -112,7 +112,7 @@ $('document').ready(function() {
             }
             $('#'+data.form).append(option);
 
-            // add click handler to each button
+            // Add click handler to each button
             $('form [name="inputs"]').click(function() {
                 $('[name="inputs"]', $(this).parents("form")).removeAttr("clicked");
                 $(this).attr("clicked", "true");

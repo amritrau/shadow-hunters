@@ -26,6 +26,7 @@ class Player:
         self.gc.update_h()
 
         # Broadcast reveal
+        # TODO: tell_h(json)
         self.gc.tell_h("{} revealed themselves as {}, a {} with {} hp!".format(
             self.user_id,
             self.character.name,
@@ -52,6 +53,7 @@ class Player:
         roll_result_4 = self.gc.die4.roll()
         roll_result_6 = self.gc.die6.roll()
         roll_result = roll_result_4 + roll_result_6
+        # TODO: tell_h(json)
         self.gc.tell_h("{} rolled {} + {} = {}!".format(self.user_id, roll_result_4, roll_result_6, roll_result))
 
         if "Mystic Compass" in [e.title for e in self.equipment]:
@@ -63,6 +65,7 @@ class Player:
             roll_result_4 = self.gc.die4.roll()
             roll_result_6 = self.gc.die6.roll()
             second_roll = roll_result_4 + roll_result_6
+            # TODO: tell_h(json)
             self.gc.tell_h("{} rolled {} + {} = {}!".format(self.user_id, roll_result_4, roll_result_6, second_roll))
 
             # Pick the preferred roll
@@ -155,8 +158,10 @@ class Player:
             # Only roll with the 4 sided die if player has Muramasa
             if "Cursed Sword Masamune" in [e.title for e in self.equipment]:
                 roll_result = roll_result_4
+                # TODO: tell_h(json)
                 self.gc.tell_h("{} rolled a {} using the Masamune!".format(self.user_id, roll_result))
             else:
+                # TODO: tell_h(json)
                 self.gc.tell_h(
                     "{} rolled a {} - {} = {}!".format(
                         self.user_id,
@@ -193,8 +198,10 @@ class Player:
         self.gc.tell_h("{} drew {}!".format(self.user_id, public_title))
         if drawn.color != 2:
             self.gc.tell_h("{}: {}".format(drawn.title, drawn.desc))
+            # TODO: tell_h(json)
         else:
             self.gc.direct_h("{}: {}".format(drawn.title, drawn.desc), self.socket_id)
+            # TODO: tell_h(json)
 
         # Use card if it's single-use, or add to arsenal if it's equipment
         if drawn.is_equipment:
@@ -263,6 +270,7 @@ class Player:
         self.state = 0
 
         # Report to console
+        # TODO: tell_h(json)
         self.gc.tell_h("{} ({}: {}) was killed by {}!".format(
             self.user_id,
             elements.ALLEGIANCE_MAP[self.character.alleg],

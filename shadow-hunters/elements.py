@@ -117,7 +117,9 @@ class ElementFactory:
             data = {'options': ['Roll the 6-sided die']}
             args['self'].ask_h('confirm', data, args['self'].user_id)
             roll_result = args['self'].gc.die6.roll()
+            # TODO: tell_h(json)
             args['self'].gc.tell_h("{} rolled a {}!".format(args['self'].user_id, roll_result))
+            
             # Heal target player
             target.moveDamage(roll_result, args['self'])
 
@@ -414,6 +416,7 @@ class ElementFactory:
             roll_result_4 = args['self'].gc.die4.roll()
             roll_result_6 = args['self'].gc.die6.roll()
             roll_result = roll_result_4 + roll_result_6
+            # TODO: tell_h(json)
             args['self'].gc.tell_h("{} rolled {} + {} = {}!".format(args['self'].user_id, roll_result_4, roll_result_6, roll_result))
 
             # Hit area corresponding to roll number
@@ -452,6 +455,7 @@ class ElementFactory:
             data = {'options': ['Roll the 6-sided die']}
             args['self'].ask_h('confirm', data, args['self'].user_id)
             roll_result = args['self'].gc.die6.roll()
+            # TODO: tell_h(json)
             args['self'].gc.tell_h("{} rolled a {}!".format(args['self'].user_id, roll_result))
 
             # If roll is >= 5, user takes 3 damage. Otherwise, target takes 3 damage.
@@ -1007,6 +1011,7 @@ class ElementFactory:
             target.ask_h('confirm', data, target.user_id)
 
             # Send target's information to user
+            # TODO: tell_h(json)
             target.gc.direct_h("{}\'s character is {}, a {} with {} hp.".format(
                 target.user_id,
                 target.character.name,
