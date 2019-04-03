@@ -158,6 +158,47 @@ class ElementFactory:
 
         WHITE_CARDS = [
             card.Card(
+                title = "Mystic Compass",
+                desc = "When you move, you may roll twice and choose which result to use.",
+                color = 0,
+                holder = None,
+                is_equip = True,
+                use = None
+            ),
+            card.Card(
+                title = "Talisman",
+                desc = "You receive no damage from Black cards 'Bloodthirsty Spider', 'Vampire Bat', or 'Dynamite'.",
+                color = 0,
+                holder = None,
+                is_equip = True,
+                use = None
+            ),
+            card.Card(
+                title = "Fortune Brooch",
+                desc = "You receive no damage from the area card 'Weird Woods'. You can still be healed by it.",
+                color = 0,
+                holder = None,
+                is_equip = True,
+                use = None
+            ),
+            card.Card(
+                title = "Silver Rosary",
+                desc = "If you kill another character, you take all of their equipment cards.",
+                color = 0,
+                holder = None,
+                is_equip = True,
+                use = None
+            ),
+            card.Card(
+                title = "Spear of Longinus",
+                desc = ("If you are a Hunter who has revealed their identity and your attack is successful, "
+                        "you give 2 points of extra damage."),
+                color = 0,
+                holder = None,
+                is_equip = True,
+                use = None
+            ),
+            card.Card(
                 title = "Advent",
                 desc = ("If you are a Hunter, you may reveal your identity. "
                         "If you do, or if you are already revealed, you heal fully."),
@@ -259,7 +300,10 @@ class ElementFactory:
             target = choose_player(args)
 
             # Both the target and the user take 2 damage
-            target.moveDamage(-2, args['self'])
+            if "Talisman" in [e.title for e in target.equipment]:
+                args['self'].gc.tell_h("{}'s Talisman protected them from damage!".format(target.user_id))
+            else:
+                target.moveDamage(-2, args['self'])
             args['self'].moveDamage(-2, args['self'])
 
         def use_vampire_bat(args):
@@ -269,8 +313,11 @@ class ElementFactory:
             target = choose_player(args)
 
             # Target takes 2 damage, user heals 1 damage
-            target.moveDamage(-2, args['self'])
-            args['self'].moveDamage(1, args['self'])
+            if "Talisman" in [e.title for e in target.equipment]:
+                args['self'].gc.tell_h("{}'s Talisman protected them from damage!".format(target.user_id))
+            else:
+                target.moveDamage(-2, args['self'])
+                args['self'].moveDamage(1, args['self'])
 
         def use_moody_goblin(args):
 
@@ -389,7 +436,10 @@ class ElementFactory:
                 args['self'].gc.tell_h("Dynamite blew up the {}!".format(destination))
                 affected_players = [p for p in args['self'].gc.players if p.location == destination_Area]
                 for p in affected_players:
-                    p.moveDamage(-3, args['self'])
+                    if "Talisman" in [e.title for e in p.equipment]:
+                        args['self'].gc.tell_h("{}'s Talisman protected them from damage!".format(p.user_id))
+                    else:
+                        p.moveDamage(-3, args['self'])
 
         def use_spiritual_doll(args):
 
@@ -414,9 +464,33 @@ class ElementFactory:
 
         BLACK_CARDS = [
             card.Card(
+                title = "Cursed Sword Masamune",
+                desc = "You must attack another character on your turn. This attack uses the 4-sided die.",
+                color = 1, # 1 : BLACK
+                holder = None,
+                is_equip = True,
+                use = None
+            ),
+            card.Card(
+                title = "Machine Gun",
+                desc = "Your attack will affect all characters in your attack range (the dice are rolled only once).",
+                color = 1,
+                holder = None,
+                is_equip = True,
+                use = None
+            ),
+            card.Card(
+                title = "Handgun",
+                desc = "All ranges but yours become your attack range.",
+                color = 1,
+                holder = None,
+                is_equip = True,
+                use = None
+            ),
+            card.Card(
                 title = "Butcher Knife",
                 desc = "If your attack is successful, you give 1 point of extra damage.",
-                color = 1, # 1 : BLACK
+                color = 1,
                 holder = None,
                 is_equip = True,
                 use = lambda is_attack, successful, amt: amt + 1 if (is_attack and successful) else amt
@@ -1300,9 +1374,14 @@ class ElementFactory:
             data = {'options': ["Heal 1 damage", "Give 2 damage"]}
             amount = player.ask_h('select', data, player.user_id)['value']
             if amount == "Heal 1 damage":
+                gc.tell_h("The power of the Weird Woods healed {}!".format(target_Player.user_id))
                 target_Player.moveDamage(1, player)
             else:
-                target_Player.moveDamage(-2, player)
+                if "Fortune Brooch" in [e.title for e in target_Player.equipment]:
+                    gc.tell_h("{}'s Fortune Brooch protected them from damage!".format(target_Player.user_id))
+                else:
+                    gc.tell_h("The power of the Weird Woods damaged {}!".format(target_Player.user_id))
+                    target_Player.moveDamage(-2, player)
 
         def erstwhile_altar_action(gc, player):
 
