@@ -35,7 +35,6 @@ $('document').ready(function() {
         var reveal_form = $('#reveal').on('submit', function(e) {
             e.preventDefault();
             socket.emit('reveal');
-            $('#reveal').hide();
         });
 
         // Form type 1

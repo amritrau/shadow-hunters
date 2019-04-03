@@ -207,88 +207,88 @@ class ElementFactory:
                 is_equip = False,
                 use = use_advent
             ),
-            # card.Card(
-            #     title = "Disenchant Mirror",
-            #     desc = "If you are a Shadow, except for Unknown, you must reveal your identity.",
-            #     color = 0,
-            #     holder = None,
-            #     is_equip = False,
-            #     use = use_disenchant_mirror
-            # ),
-            # card.Card(
-            #     title = "Blessing",
-            #     desc = ("Pick a character other than yourself and roll the 6-sided die. "
-            #             "That character heals an amount of damage equal to the die roll."),
-            #     color = 0,
-            #     holder = None,
-            #     is_equip = False,
-            #     use = use_blessing
-            # ),
-            # card.Card(
-            #     title = "Chocolate",
-            #     desc = ("If you are Allie, Agnes, Emi, Ellen, Unknown, or Ultra Soul, you may reveal your identity. "
-            #             "If you do, or if you are already revealed, you heal fully."),
-            #     color = 0,
-            #     holder = None,
-            #     is_equip = False,
-            #     use = use_chocolate
-            # ),
-            # card.Card(
-            #     title = "Concealed Knowledge",
-            #     desc = "When this turn is over, it will be your turn again.",
-            #     color = 0,
-            #     holder = None,
-            #     is_equip = False,
-            #     use = use_concealed_knowledge
-            # ),
-            # card.Card(
-            #     title = "Guardian Angel",
-            #     desc = "You take no damage from the direct attacks of other characters until the start of your next turn.",
-            #     color = 0,
-            #     holder = None,
-            #     is_equip = False,
-            #     use = use_guardian_angel
-            # ),
-            # card.Card(
-            #     title = "Holy Robe",
-            #     desc = "Your attacks do 1 less damage and the amount of damage you receive from attacks is reduced by 1 point.",
-            #     color = 0, # 0 : WHITE
-            #     holder = None,
-            #     is_equip = True,
-            #     use = lambda is_attack, successful, amt: max(0, amt - 1) # applies to both attack and defend
-            # ),
-            # card.Card(
-            #     title = "Flare of Judgement",
-            #     desc = "All characters except yourself receive 2 points of damage.",
-            #     color = 0,
-            #     holder = None,
-            #     is_equip = False,
-            #     use = use_judgement
-            # ),
-            # card.Card(
-            #     title = "First Aid",
-            #     desc = "Place a character's damage marker to 7 (You can choose yourself).",
-            #     color = 0,
-            #     holder = None,
-            #     is_equip = False,
-            #     use = use_first_aid
-            # ),
-            # card.Card(
-            #     title = "Holy Water of Healing",
-            #     desc = "Heal 2 points of your damage.",
-            #     color = 0,
-            #     holder = None,
-            #     is_equip = False,
-            #     use = use_holy_water
-            # ),
-            # card.Card(
-            #     title = "Holy Water of Healing",
-            #     desc = "Heal 2 points of your damage.",
-            #     color = 0,
-            #     holder = None,
-            #     is_equip = False,
-            #     use = use_holy_water
-            # )
+            card.Card(
+                title = "Disenchant Mirror",
+                desc = "If you are a Shadow, except for Unknown, you must reveal your identity.",
+                color = 0,
+                holder = None,
+                is_equip = False,
+                use = use_disenchant_mirror
+            ),
+            card.Card(
+                title = "Blessing",
+                desc = ("Pick a character other than yourself and roll the 6-sided die. "
+                        "That character heals an amount of damage equal to the die roll."),
+                color = 0,
+                holder = None,
+                is_equip = False,
+                use = use_blessing
+            ),
+            card.Card(
+                title = "Chocolate",
+                desc = ("If you are Allie, Agnes, Emi, Ellen, Unknown, or Ultra Soul, you may reveal your identity. "
+                        "If you do, or if you are already revealed, you heal fully."),
+                color = 0,
+                holder = None,
+                is_equip = False,
+                use = use_chocolate
+            ),
+            card.Card(
+                title = "Concealed Knowledge",
+                desc = "When this turn is over, it will be your turn again.",
+                color = 0,
+                holder = None,
+                is_equip = False,
+                use = use_concealed_knowledge
+            ),
+            card.Card(
+                title = "Guardian Angel",
+                desc = "You take no damage from the direct attacks of other characters until the start of your next turn.",
+                color = 0,
+                holder = None,
+                is_equip = False,
+                use = use_guardian_angel
+            ),
+            card.Card(
+                title = "Holy Robe",
+                desc = "Your attacks do 1 less damage and the amount of damage you receive from attacks is reduced by 1 point.",
+                color = 0, # 0 : WHITE
+                holder = None,
+                is_equip = True,
+                use = lambda is_attack, successful, amt: max(0, amt - 1) # applies to both attack and defend
+            ),
+            card.Card(
+                title = "Flare of Judgement",
+                desc = "All characters except yourself receive 2 points of damage.",
+                color = 0,
+                holder = None,
+                is_equip = False,
+                use = use_judgement
+            ),
+            card.Card(
+                title = "First Aid",
+                desc = "Place a character's damage marker to 7 (You can choose yourself).",
+                color = 0,
+                holder = None,
+                is_equip = False,
+                use = use_first_aid
+            ),
+            card.Card(
+                title = "Holy Water of Healing",
+                desc = "Heal 2 points of your damage.",
+                color = 0,
+                holder = None,
+                is_equip = False,
+                use = use_holy_water
+            ),
+            card.Card(
+                title = "Holy Water of Healing",
+                desc = "Heal 2 points of your damage.",
+                color = 0,
+                holder = None,
+                is_equip = False,
+                use = use_holy_water
+            )
         ]
 
         ## Black card usage functions
@@ -487,46 +487,46 @@ class ElementFactory:
                 is_equip = True,
                 use = None
             ),
-            # card.Card(
-            #     title = "Butcher Knife",
-            #     desc = "If your attack is successful, you give 1 point of extra damage.",
-            #     color = 1,
-            #     holder = None,
-            #     is_equip = True,
-            #     use = lambda is_attack, successful, amt: amt + 1 if (is_attack and successful) else amt
-            # ),
-            # card.Card(
-            #     title = "Chainsaw",
-            #     desc = "If your attack is successful, you give 1 point of extra damage.",
-            #     color = 1,
-            #     holder = None,
-            #     is_equip = True,
-            #     use = lambda is_attack, successful, amt: amt + 1 if (is_attack and successful) else amt
-            # ),
-            # card.Card(
-            #     title = "Rusted Broad Axe",
-            #     desc = "If your attack is successful, you give 1 point of extra damage.",
-            #     color = 1,
-            #     holder = None,
-            #     is_equip = True,
-            #     use = lambda is_attack, successful, amt: amt + 1 if (is_attack and successful) else amt
-            # ),
-            # card.Card(
-            #     title = "Moody Goblin",
-            #     desc = "You steal an equipment card from any character.",
-            #     color = 1,
-            #     holder = None,
-            #     is_equip = False,
-            #     use = use_moody_goblin
-            # ),
-            # card.Card(
-            #     title = "Moody Goblin",
-            #     desc = "You steal an equipment card from any character.",
-            #     color = 1,
-            #     holder = None,
-            #     is_equip = False,
-            #     use = use_moody_goblin
-            # ),
+            card.Card(
+                title = "Butcher Knife",
+                desc = "If your attack is successful, you give 1 point of extra damage.",
+                color = 1,
+                holder = None,
+                is_equip = True,
+                use = lambda is_attack, successful, amt: amt + 1 if (is_attack and successful) else amt
+            ),
+            card.Card(
+                title = "Chainsaw",
+                desc = "If your attack is successful, you give 1 point of extra damage.",
+                color = 1,
+                holder = None,
+                is_equip = True,
+                use = lambda is_attack, successful, amt: amt + 1 if (is_attack and successful) else amt
+            ),
+            card.Card(
+                title = "Rusted Broad Axe",
+                desc = "If your attack is successful, you give 1 point of extra damage.",
+                color = 1,
+                holder = None,
+                is_equip = True,
+                use = lambda is_attack, successful, amt: amt + 1 if (is_attack and successful) else amt
+            ),
+            card.Card(
+                title = "Moody Goblin",
+                desc = "You steal an equipment card from any character.",
+                color = 1,
+                holder = None,
+                is_equip = False,
+                use = use_moody_goblin
+            ),
+            card.Card(
+                title = "Moody Goblin",
+                desc = "You steal an equipment card from any character.",
+                color = 1,
+                holder = None,
+                is_equip = False,
+                use = use_moody_goblin
+            ),
             card.Card(
                 title = "Bloodthirsty Spider",
                 desc = "You give 2 points of damage to any character and receive 2 points of damage yourself.",
@@ -559,42 +559,42 @@ class ElementFactory:
                 is_equip = False,
                 use = use_vampire_bat
             ),
-            # card.Card(
-            #     title = "Diabolic Ritual",
-            #     desc = "If you are a Shadow, you may reveal your identity. If you do, you fully heal you damage.",
-            #     color = 1,
-            #     holder = None,
-            #     is_equip = False,
-            #     use = use_diabolic_ritual
-            # ),
-            # card.Card(
-            #     title = "Banana Peel",
-            #     desc = ("Give one of your equipment cards to another character. "
-            #             "If you have no equipment cards, you receive 1 point of damage."),
-            #     color = 1,
-            #     holder = None,
-            #     is_equip = False,
-            #     use = use_banana_peel
-            # ),
-            # card.Card(
-            #     title = "Dynamite",
-            #     desc = ("Roll 2 dice and give 3 points of damage to all characters in the area designated "
-            #             "by the total number rolled (nothing happens if a 7 is rolled)."),
-            #     color = 1,
-            #     holder = None,
-            #     is_equip = False,
-            #     use = use_dynamite
-            # ),
-            # card.Card(
-            #     title = "Spiritual Doll",
-            #     desc = ("Pick a character and roll the 6-sided die. "
-            #             "If the die number is 1 to 4, you give 3 points of damage to that character. "
-            #             "If the die number is 5 or 6, you get 3 points of damage."),
-            #     color = 1,
-            #     holder = None,
-            #     is_equip = False,
-            #     use = use_spiritual_doll
-            # )
+            card.Card(
+                title = "Diabolic Ritual",
+                desc = "If you are a Shadow, you may reveal your identity. If you do, you fully heal you damage.",
+                color = 1,
+                holder = None,
+                is_equip = False,
+                use = use_diabolic_ritual
+            ),
+            card.Card(
+                title = "Banana Peel",
+                desc = ("Give one of your equipment cards to another character. "
+                        "If you have no equipment cards, you receive 1 point of damage."),
+                color = 1,
+                holder = None,
+                is_equip = False,
+                use = use_banana_peel
+            ),
+            card.Card(
+                title = "Dynamite",
+                desc = ("Roll 2 dice and give 3 points of damage to all characters in the area designated "
+                        "by the total number rolled (nothing happens if a 7 is rolled)."),
+                color = 1,
+                holder = None,
+                is_equip = False,
+                use = use_dynamite
+            ),
+            card.Card(
+                title = "Spiritual Doll",
+                desc = ("Pick a character and roll the 6-sided die. "
+                        "If the die number is 1 to 4, you give 3 points of damage to that character. "
+                        "If the die number is 5 or 6, you get 3 points of damage."),
+                color = 1,
+                holder = None,
+                is_equip = False,
+                use = use_spiritual_doll
+            )
         ]
 
         ## Hermit card usage functions

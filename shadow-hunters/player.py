@@ -134,7 +134,7 @@ class Player:
 
         # If player has Muramasa, can't decline unless there are no options
         data = {'options': [t.user_id for t in targets]}
-        if ("Cursed Sword Muramasa" not in [e.title for e in self.equipment]) or len(data['options']) == 0:
+        if ("Cursed Sword Masamune" not in [e.title for e in self.equipment]) or len(data['options']) == 0:
             data['options'].append("Decline")
         answer = self.ask_h('select', data, self.user_id)['value']
 
@@ -153,9 +153,9 @@ class Player:
             roll_result = abs(roll_result_4 - roll_result_6)
 
             # Only roll with the 4 sided die if player has Muramasa
-            if "Cursed Sword Muramasa" in [e.title for e in self.equipment]:
+            if "Cursed Sword Masamune" in [e.title for e in self.equipment]:
                 roll_result = roll_result_4
-                self.gc.tell_h("{} rolled a {} using the Muramasa!".format(self.user_id, roll_result))
+                self.gc.tell_h("{} rolled a {} using the Masamune!".format(self.user_id, roll_result))
             else:
                 self.gc.tell_h(
                     "{} rolled a {} - {} = {}!".format(
@@ -284,7 +284,7 @@ class Player:
             else:
 
                 # Choose which equipment to take
-                attacker.ask_h('confirm', {'options': 'Take equipment from {}'.format(self.user_id)}, attacker.user_id)
+                attacker.ask_h('confirm', {'options': ['Take equipment from {}'.format(self.user_id)]}, attacker.user_id)
                 equip = attacker.ask_h('select', data, attacker.user_id)['value']
                 equip_Equipment = [eq for eq in self.equipment if eq.title == equip][0]
 
