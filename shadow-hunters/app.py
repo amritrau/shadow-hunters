@@ -92,10 +92,9 @@ def room(methods=['GET','POST']):
 
 # GAMEPLAY FUNCTIONS
 
-def start_game(room_id, names):
+def start_game(room_id, names, n_players):
 
     # Initialize human and AI players
-    n_players = 5 # random.randrange(max(len(names), 4), 9, 1) ## TODO Replace with dropdown response
     human_players = [Player(n, get_sid[(n, room_id)], lambda x, y, z: server_ask(x, y, z, room_id), False) for n in names]
     ai_players = [Player("CPU_{}".format(i), str(i), ai_ask, True) for i in range(1, n_players - len(human_players) + 1)]
     players = human_players + ai_players
@@ -178,7 +177,7 @@ def server_update(data, room_id):
 # SOCKET HANDLERS
 
 @socketio.on('start')
-def on_start():
+def on_start(json):
 
     # Mark game as in progress so no one else can start it
     room_id = connections[request.sid]['room_id']
@@ -197,7 +196,7 @@ def on_start():
     # Begin game
     names = [x['name'] for x in connections.values() if x['room_id'] == room_id]
     socketio.sleep(SOCKET_SLEEP)
-    start_game(room_id, names)
+    start_game(room_id, names, json['n_players'])
 
 @socketio.on('reveal')
 def on_reveal():
