@@ -213,6 +213,21 @@ class Player:
             args = {'self': self, 'card': drawn}
             drawn.use(args)
 
+    def rollDice(self):
+        return 0
+
+    def giveEquipment(self, receiver, eq):
+
+        # Transfer equipment
+        i = self.equipment.index(eq)
+        eq = self.equipment.pop(i)
+        receiver.equipment.append(eq)
+        eq.holder = receiver
+
+        # Tell frontend about transfer
+        self.gc.tell_h("{} gave {} their {}!".format(self.user_id, receiver.user_id, eq.title))
+        self.gc.update_h()
+
     def attack(self, other, amount):
 
         # Compose equipment functions
@@ -222,6 +237,7 @@ class Player:
             if eq.use:
                 amount = eq.use(is_attack, successful, amount)
 
+        # Check for spear of longinus
         has_spear = "Spear of Longinus" in [e.title for e in self.equipment]
         if successful and self.character.alleg == 2 and self.state == 1 and has_spear:
             self.gc.tell_h("{} strikes with their Spear of Longinus!".format(self.user_id))
@@ -287,7 +303,10 @@ class Player:
                 # Steal all of the player's equipment
                 self.gc.tell_h("{}'s Silver Rosary let them steal all of {}'s equipment!".format(attacker.user_id, self.user_id))
                 attacker.equipment += self.equipment
+                for eq in attacker.equipment:
+                    eq.holder = attacker
                 self.equipment = []
+                self.gc.update_h()
 
             else:
 
@@ -297,14 +316,7 @@ class Player:
                 equip_Equipment = [eq for eq in self.equipment if eq.title == equip][0]
 
                 # Transfer equipment from one player to the other
-                i = self.equipment.index(equip_Equipment)
-                equip_Equipment = self.equipment.pop(i)
-                attacker.equipment.append(equip_Equipment)
-                equip_Equipment.holder = attacker
-                self.gc.tell_h("{} took {}'s {}!".format(attacker.user_id, self.user_id, equip_Equipment.title))
-
-        # Update the game board
-        self.gc.update_h()
+                self.giveEquipment(attacker, equip_Equipment)
 
         # Put remaining equipment back in the deck (discard pile)
         while self.equipment:

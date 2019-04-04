@@ -343,14 +343,7 @@ class ElementFactory:
                 equip_Equipment = [eq for eq in target_Player.equipment if eq.title == equip][0]
 
                 # Transfer equipment from one player to the other
-                i = target_Player.equipment.index(equip_Equipment)
-                equip_Equipment = target_Player.equipment.pop(i)
-                args['self'].equipment.append(equip_Equipment)
-                equip_Equipment.holder = args['self']
-                args['self'].gc.tell_h("{} stole {}'s {}!".format(args['self'].user_id, target_Player.user_id, equip_Equipment.title))
-
-                # Update frontend with transfer
-                args['self'].gc.update_h()
+                target_Player.giveEquipment(args['self'], equip_Equipment)
 
             else:
 
@@ -388,18 +381,9 @@ class ElementFactory:
                 args['self'].gc.tell_h("{} is choosing an equipment card to give away...".format(args['self'].user_id))
                 eq = choose_equipment(args['self'], args['self'])
 
-                # Choose someone to give to
+                # Give away equipment
                 receiver = choose_player(args)
-
-                # Transfer equipment from one player to the other
-                i = args['self'].equipment.index(eq)
-                eq = args['self'].equipment.pop(i)
-                receiver.equipment.append(eq)
-                eq.holder = receiver
-                args['self'].gc.tell_h("{} gave {} their {}!".format(args['self'].user_id, receiver.user_id, eq.title))
-
-                # Update frontend
-                args['self'].gc.update_h()
+                args['self'].giveEquipment(receiver, eq)
 
             else:
 
@@ -629,14 +613,7 @@ class ElementFactory:
                     eq = choose_equipment(target, target)
 
                     # Transfer equipment from target to user
-                    i = target.equipment.index(eq)
-                    eq = target.equipment.pop(i)
-                    args['self'].equipment.append(eq)
-                    eq.holder = args['self']
-                    args['self'].gc.tell_h("{} gave {} their {}!".format(target.user_id, args['self'].user_id, eq.title))
-
-                    # Update frontend with transfer
-                    target.gc.update_h()
+                    target.giveEquipment(args['self'], eq)
 
                 else:
 
@@ -678,14 +655,7 @@ class ElementFactory:
                     eq = choose_equipment(target, target)
 
                     # Transfer equipment from target to user
-                    i = target.equipment.index(eq)
-                    eq = target.equipment.pop(i)
-                    args['self'].equipment.append(eq)
-                    eq.holder = args['self']
-                    args['self'].gc.tell_h("{} gave {} their {}!".format(target.user_id, args['self'].user_id, eq.title))
-
-                    # Update frontend with transfer
-                    target.gc.update_h()
+                    target.giveEquipment(args['self'], eq)
 
                 else:
 
@@ -727,14 +697,8 @@ class ElementFactory:
                     eq = choose_equipment(target, target)
 
                     # Transfer equipment from target to user
-                    i = target.equipment.index(eq)
-                    eq = target.equipment.pop(i)
-                    args['self'].equipment.append(eq)
-                    eq.holder = args['self']
-                    args['self'].gc.tell_h("{} gave {} their {}!".format(target.user_id, args['self'].user_id, eq.title))
+                    target.giveEquipment(args['self'], eq)
 
-                    # Update frontend with transfer
-                    target.gc.update_h()
                 else:
 
                     # Target takes 1 damage
@@ -767,6 +731,7 @@ class ElementFactory:
                 # Give 1 damage to target
                 new_damage = target.moveDamage(-1, args['self'])
                 target.gc.tell_h("{} took 1 damage!".format(target.user_id))
+
             else:
 
                 # Target is not a hunter, nothing happens
@@ -1407,14 +1372,7 @@ class ElementFactory:
                 equip_Equipment = [eq for eq in target_Player.equipment if eq.title == equip][0]
 
                 # Transfer equipment from one player to the other
-                i = target_Player.equipment.index(equip_Equipment)
-                equip_Equipment = target_Player.equipment.pop(i)
-                player.equipment.append(equip_Equipment)
-                equip_Equipment.holder = player
-                gc.tell_h("{} stole {}'s {}!".format(player.user_id, target_Player.user_id, equip_Equipment.title))
-
-                # Update frontend with transfer
-                gc.update_h()
+                target_Player.giveEquipment(player, equip_Equipment)
 
             else:
 
