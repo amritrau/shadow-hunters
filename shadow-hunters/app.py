@@ -120,7 +120,6 @@ def start_game(room_id, names, n_players):
             green_cards = ef.GREEN_DECK,
             areas = ef.AREAS,
             tell_h = server_msg,
-            direct_h = server_msg,
             update_h = lambda x: server_update(x, room_id)
     )
     gc.update_h = lambda: server_update(gc.dump()[0], room_id)

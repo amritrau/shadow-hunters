@@ -200,7 +200,7 @@ class Player:
             self.gc.tell_h("{}: {}".format(drawn.title, drawn.desc))
             # TODO: tell_h(json)
         else:
-            self.gc.direct_h("{}: {}".format(drawn.title, drawn.desc), self.socket_id)
+            self.gc.tell_h("{}: {}".format(drawn.title, drawn.desc), self.socket_id)
             # TODO: tell_h(json)
 
         # Use card if it's single-use, or add to arsenal if it's equipment

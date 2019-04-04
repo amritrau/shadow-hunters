@@ -30,7 +30,6 @@ def fresh_gc_ef(ask_function = lambda x, y, z: {'value': random.choice(y['option
         green_cards = ef.GREEN_DECK,
         areas = ef.AREAS,
         tell_h = lambda x: 0,
-        direct_h = lambda x, sid: 0,
         update_h = lambda: 0
     )
     return (gc, ef)
