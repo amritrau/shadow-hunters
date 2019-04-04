@@ -23,7 +23,8 @@ def test_fields():
         green_cards = ef.GREEN_DECK,
         areas = ef.AREAS,
         tell_h = lambda x: 5,
-        update_h = lambda: 5
+        show_h = lambda x: 4,
+        update_h = lambda: 3
     )
 
     # test fields
@@ -33,7 +34,8 @@ def test_fields():
     assert gc.white_cards == ef.WHITE_DECK
     assert gc.green_cards == ef.GREEN_DECK
     assert gc.tell_h(0) == 5
-    assert gc.update_h() == 5
+    assert gc.show_h(0) == 4
+    assert gc.update_h() == 3
     assert not gc.modifiers
     assert gc.die4.n_sides == 4
     assert gc.die6.n_sides == 6

@@ -9,7 +9,7 @@ import elements
 # Implements a GameContext.
 
 class GameContext:
-    def __init__(self, players, characters, black_cards, white_cards, green_cards, areas, tell_h, update_h, modifiers = dict()):
+    def __init__(self, players, characters, black_cards, white_cards, green_cards, areas, tell_h, show_h, update_h, modifiers = dict()):
 
         # Instantiate gameplay objects
         self.players = players
@@ -25,6 +25,7 @@ class GameContext:
 
         # Instantiate message handlers
         self.tell_h = tell_h
+        self.show_h = show_h
         self.update_h = update_h
 
         # Assign modifiers

@@ -99,14 +99,19 @@ def start_game(room_id, names, n_players):
     ai_players = [Player("CPU_{}".format(i), str(i), ai_ask, True) for i in range(1, n_players - len(human_players) + 1)]
     players = human_players + ai_players
 
-    # Define message/display function for communicating info to frontend
-    def server_msg(data, room_id=None, type='text'):
+    # Define message function for communicating text info to chat log
+    def socket_tell(data, room_id=None):
         if not room_id:
             room_id = server_msg.room
-        if type == 'text':
-            socketio.emit('message', {'data': data, 'color': S_COLOR}, room=room_id)
-        elif type == 'json':
-            socketio.emit('display', {'data': data}, room=room_id)
+        socketio.emit('message', {'data': data, 'color': S_COLOR}, room=room_id)
+        socketio.sleep(SOCKET_SLEEP)
+    server_msg.room = room_id
+
+    # Define display function for communicating visual info to frontend
+    def socket_show(data, room_id=None):
+        if not room_id:
+            room_id = server_msg.room
+        socketio.emit('display', data, room=room_id)
         socketio.sleep(SOCKET_SLEEP)
     server_msg.room = room_id
 
@@ -119,7 +124,8 @@ def start_game(room_id, names, n_players):
             white_cards = ef.WHITE_DECK,
             green_cards = ef.GREEN_DECK,
             areas = ef.AREAS,
-            tell_h = server_msg,
+            tell_h = socket_tell,
+            show_h = socket_show,
             update_h = lambda x: server_update(x, room_id)
     )
     gc.update_h = lambda: server_update(gc.dump()[0], room_id)
