@@ -52,6 +52,7 @@ def test_setCharacter():
         max_damage = 10,
         win_cond = lambda: 5,
         win_cond_desc = "win_desc",
+        special_desc = "special_desc",
         special = lambda: 5,
         resource_id = "r_id"
     )

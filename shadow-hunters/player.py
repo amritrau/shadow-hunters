@@ -26,6 +26,7 @@ class Player:
         self.gc.update_h()
 
         # Broadcast reveal
+        # TODO: tell_h(json)
         self.gc.tell_h("{} revealed themselves as {}, a {} with {} hp!".format(
             self.user_id,
             self.character.name,
@@ -52,7 +53,25 @@ class Player:
         roll_result_4 = self.gc.die4.roll()
         roll_result_6 = self.gc.die6.roll()
         roll_result = roll_result_4 + roll_result_6
+        # TODO: tell_h(json)
         self.gc.tell_h("{} rolled {} + {} = {}!".format(self.user_id, roll_result_4, roll_result_6, roll_result))
+
+        if "Mystic Compass" in [e.title for e in self.equipment]:
+
+            # If player has mystic compass, roll again
+            self.gc.tell_h("{}'s Mystic Compass lets them roll again!".format(self.user_id))
+            data = {'options': ['Roll again!']}
+            self.ask_h('confirm', data, self.user_id)
+            roll_result_4 = self.gc.die4.roll()
+            roll_result_6 = self.gc.die6.roll()
+            second_roll = roll_result_4 + roll_result_6
+            # TODO: tell_h(json)
+            self.gc.tell_h("{} rolled {} + {} = {}!".format(self.user_id, roll_result_4, roll_result_6, second_roll))
+
+            # Pick the preferred roll
+            data = {'options': ["Use {}".format(roll_result), "Use {}".format(second_roll)]}
+            answer = self.ask_h('yesno', data, self.user_id)['value']
+            roll_result = int(answer[4:])
 
         # Figure out area to move to
         if roll_result == 7:
@@ -106,10 +125,20 @@ class Player:
             return
 
         # Attack
+        self.ask_h('confirm', {'options': ["Attack other players!"]}, self.user_id)
         self.gc.tell_h("{} is picking whom to attack...".format(self.user_id))
+
+        # Get attackable players
         live_players = [p for p in self.gc.getLivePlayers() if p.location]
         targets = [p for p in live_players if (p.location.zone == self.location.zone and p != self)]
-        data = {'options': [t.user_id for t in targets] + ['Decline']}
+        if "Handgun" in [e.title for e in self.equipment]:
+            self.gc.tell_h("{}'s Handgun reverses their attack range.".format(self.user_id))
+            targets = [p for p in live_players if (p.location.zone != self.location.zone and p != self)]
+
+        # If player has Muramasa, can't decline unless there are no options
+        data = {'options': [t.user_id for t in targets]}
+        if ("Cursed Sword Masamune" not in [e.title for e in self.equipment]) or len(data['options']) == 0:
+            data['options'].append("Decline")
         answer = self.ask_h('select', data, self.user_id)['value']
 
         if answer != 'Decline':
@@ -125,18 +154,32 @@ class Player:
             roll_result_4 = self.gc.die4.roll()
             roll_result_6 = self.gc.die6.roll()
             roll_result = abs(roll_result_4 - roll_result_6)
-            self.gc.tell_h(
-                "{} rolled a {} - {} = {}!".format(
-                    self.user_id,
-                    max(roll_result_6, roll_result_4),
-                    min(roll_result_6, roll_result_4),
-                    roll_result
-                )
-            )
 
-            # Get damage dealt
-            damage_dealt = self.attack(target_Player, roll_result)
-            self.gc.tell_h("{} hit {} for {} damage!".format(self.user_id, target_name, damage_dealt))
+            # Only roll with the 4 sided die if player has Muramasa
+            if "Cursed Sword Masamune" in [e.title for e in self.equipment]:
+                roll_result = roll_result_4
+                # TODO: tell_h(json)
+                self.gc.tell_h("{} rolled a {} using the Masamune!".format(self.user_id, roll_result))
+            else:
+                # TODO: tell_h(json)
+                self.gc.tell_h(
+                    "{} rolled a {} - {} = {}!".format(
+                        self.user_id,
+                        max(roll_result_6, roll_result_4),
+                        min(roll_result_6, roll_result_4),
+                        roll_result
+                    )
+                )
+
+            # If player has Machine Gun, launch attack on everyone in the zone. Otherwise, attack the target
+            if "Machine Gun" in [e.title for e in self.equipment]:
+                self.gc.tell_h("{}'s Machine Gun hits everyone in their attack range!".format(self.user_id))
+                for t in targets:
+                    damage_dealt = self.attack(t, roll_result)
+                    self.gc.tell_h("{} hit {} for {} damage!".format(self.user_id, target_name, damage_dealt))
+            else:
+                damage_dealt = self.attack(target_Player, roll_result)
+                self.gc.tell_h("{} hit {} for {} damage!".format(self.user_id, target_name, damage_dealt))
         else:
             self.gc.tell_h("{} declined to attack.".format(self.user_id))
 
@@ -155,11 +198,14 @@ class Player:
         self.gc.tell_h("{} drew {}!".format(self.user_id, public_title))
         if drawn.color != 2:
             self.gc.tell_h("{}: {}".format(drawn.title, drawn.desc))
+            # TODO: tell_h(json)
         else:
             self.gc.direct_h("{}: {}".format(drawn.title, drawn.desc), self.socket_id)
+            # TODO: tell_h(json)
 
         # Use card if it's single-use, or add to arsenal if it's equipment
         if drawn.is_equipment:
+            self.ask_h('confirm', {'options': ["Add {} to arsenal".format(drawn.title)]}, self.user_id)
             self.gc.tell_h("{} added {} to their arsenal!".format(self.user_id, public_title))
             self.equipment.append(drawn)
             self.gc.update_h()
@@ -173,7 +219,13 @@ class Player:
         is_attack = True
         successful = (amount != 0)
         for eq in self.equipment:
-            amount = eq.use(is_attack, successful, amount)
+            if eq.use:
+                amount = eq.use(is_attack, successful, amount)
+
+        has_spear = "Spear of Longinus" in [e.title for e in self.equipment]
+        if successful and self.character.alleg == 2 and self.state == 1 and has_spear:
+            self.gc.tell_h("{} strikes with their Spear of Longinus!".format(self.user_id))
+            amount += 2
 
         # Return damage dealt
         dealt = other.defend(self, amount)
@@ -190,7 +242,8 @@ class Player:
         is_attack = False
         successful = False
         for eq in self.equipment:
-            amount = eq.use(is_attack, successful, amount)
+            if eq.use:
+                amount = eq.use(is_attack, successful, amount)
 
         # Return damage dealt
         dealt = amount
@@ -215,8 +268,9 @@ class Player:
     def die(self, attacker):
         # Set state to 0 (DEAD)
         self.state = 0
-        
+
         # Report to console
+        # TODO: tell_h(json)
         self.gc.tell_h("{} ({}: {}) was killed by {}!".format(
             self.user_id,
             elements.ALLEGIANCE_MAP[self.character.alleg],
@@ -228,17 +282,26 @@ class Player:
         data = {'options': [eq.title for eq in self.equipment]}
         if len(data['options']):
 
-            # Choose which equipment to take
-            attacker.ask_h('confirm', {'options': 'Take equipment from {}'.format(self.user_id)}, attacker.user_id)
-            equip = attacker.ask_h('select', data, attacker.user_id)['value']
-            equip_Equipment = [eq for eq in self.equipment if eq.title == equip][0]
+            if "Silver Rosary" in [e.title for e in attacker.equipment]:
 
-            # Transfer equipment from one player to the other
-            i = self.equipment.index(equip_Equipment)
-            equip_Equipment = self.equipment.pop(i)
-            attacker.equipment.append(equip_Equipment)
-            equip_Equipment.holder = attacker
-            self.gc.tell_h("{} took {}'s {}!".format(attacker.user_id, self.user_id, equip_Equipment.title))
+                # Steal all of the player's equipment
+                self.gc.tell_h("{}'s Silver Rosary let them steal all of {}'s equipment!".format(attacker.user_id, self.user_id))
+                attacker.equipment += self.equipment
+                self.equipment = []
+
+            else:
+
+                # Choose which equipment to take
+                attacker.ask_h('confirm', {'options': ['Take equipment from {}'.format(self.user_id)]}, attacker.user_id)
+                equip = attacker.ask_h('select', data, attacker.user_id)['value']
+                equip_Equipment = [eq for eq in self.equipment if eq.title == equip][0]
+
+                # Transfer equipment from one player to the other
+                i = self.equipment.index(equip_Equipment)
+                equip_Equipment = self.equipment.pop(i)
+                attacker.equipment.append(equip_Equipment)
+                equip_Equipment.holder = attacker
+                self.gc.tell_h("{} took {}'s {}!".format(attacker.user_id, self.user_id, equip_Equipment.title))
 
         # Update the game board
         self.gc.update_h()

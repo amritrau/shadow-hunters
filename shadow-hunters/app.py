@@ -92,14 +92,23 @@ def room(methods=['GET','POST']):
 
 # GAMEPLAY FUNCTIONS
 
-def start_game(room_id, names):
+def start_game(room_id, names, n_players):
 
     # Initialize human and AI players
-    n_players = 5 # random.randrange(max(len(names), 4), 9, 1) ## TODO Replace with dropdown response
     human_players = [Player(n, get_sid[(n, room_id)], lambda x, y, z: server_ask(x, y, z, room_id), False) for n in names]
     ai_players = [Player("CPU_{}".format(i), str(i), ai_ask, True) for i in range(1, n_players - len(human_players) + 1)]
     players = human_players + ai_players
 
+    # Define message/display function for communicating info to frontend
+    def server_msg(data, room_id=None, type='text'):
+        if not room_id:
+            room_id = server_msg.room
+        if type == 'text':
+            socketio.emit('message', {'data': data, 'color': S_COLOR}, room=room_id)
+        elif type == 'json':
+            socketio.emit('display', {'data': data}, room=room_id)
+        socketio.sleep(SOCKET_SLEEP)
+    server_msg.room = room_id
 
     # Initialize game context with players and match room with game context
     ef = elements.ElementFactory()
@@ -110,20 +119,14 @@ def start_game(room_id, names):
             white_cards = ef.WHITE_DECK,
             green_cards = ef.GREEN_DECK,
             areas = ef.AREAS,
-            tell_h = lambda x: server_msg(x, room_id),
-            direct_h = lambda x, sid: server_msg(x, sid),
+            tell_h = server_msg,
+            direct_h = server_msg,
             update_h = lambda x: server_update(x, room_id)
     )
     gc.update_h = lambda: server_update(gc.dump()[0], room_id)
     rooms[room_id]['gc'] = gc
 
-    gc.tell_h(
-        "Started a game with players {}".format(", ".join([p.user_id for p in players])))
-
-    # Fix hermit tests
-    # Write single use tests
-    # change tell_h and direct_h to have type json
-    # reveals (backend, then frontend)
+    gc.tell_h("Started a game with players {}".format(", ".join([p.user_id for p in players])))
 
     # Send public and private game states to frontend
     public_state, private_state = gc.dump()
@@ -135,7 +138,7 @@ def start_game(room_id, names):
     winners = gc.play()
 
     # Send winners to frontend in socket emission for game-over screen
-    # TODO
+    # TODO: tell_h(json)
 
 def server_ask(form, data, user_id, room_id):
 
@@ -167,9 +170,9 @@ def ai_ask(x, y, z):
     socketio.sleep(AI_SLEEP)
     return {'value': random.choice(y['options'])}
 
-def server_msg(data, room_id):
-    socketio.emit('message', {'data': data, 'color': S_COLOR}, room=room_id)
-    socketio.sleep(SOCKET_SLEEP)
+# def server_msg(data, room_id):
+#     socketio.emit('message', {'data': data, 'color': S_COLOR}, room=room_id)
+#     socketio.sleep(SOCKET_SLEEP)
 
 def server_update(data, room_id):
     socketio.emit('update', data, room=room_id)
@@ -178,7 +181,7 @@ def server_update(data, room_id):
 # SOCKET HANDLERS
 
 @socketio.on('start')
-def on_start():
+def on_start(json):
 
     # Mark game as in progress so no one else can start it
     room_id = connections[request.sid]['room_id']
@@ -197,10 +200,10 @@ def on_start():
     # Begin game
     names = [x['name'] for x in connections.values() if x['room_id'] == room_id]
     socketio.sleep(SOCKET_SLEEP)
-    start_game(room_id, names)
+    start_game(room_id, names, json['n_players'])
 
 @socketio.on('reveal')
-def on_reveal(json):
+def on_reveal():
 
     # Get info about user in game
     room_id = connections[request.sid]['room_id']
