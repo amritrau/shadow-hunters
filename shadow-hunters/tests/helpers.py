@@ -19,6 +19,12 @@ def answer_sequence(answers):
 def fresh_gc_ef(ask_function = lambda x, y, z: {'value': random.choice(y['options'])}):
     '''return a fresh game and element factory with the specified ask function'''
 
+    def dummy_tell(data, client=None):
+        return 0
+
+    def dummy_show(data, client=None):
+        return 0
+
     player_names = ['Amrit', 'Max', 'Gia', 'Joanna', 'Vishal']
     players = [player.Player(user_id, 'unused', ask_function, True) for user_id in player_names]
     ef = elements.ElementFactory()
@@ -29,8 +35,8 @@ def fresh_gc_ef(ask_function = lambda x, y, z: {'value': random.choice(y['option
         white_cards = ef.WHITE_DECK,
         green_cards = ef.GREEN_DECK,
         areas = ef.AREAS,
-        tell_h = lambda x: 0,
-        show_h = lambda x: 0,
+        tell_h = dummy_tell,
+        show_h = dummy_show,
         update_h = lambda: 0
     )
     return (gc, ef)

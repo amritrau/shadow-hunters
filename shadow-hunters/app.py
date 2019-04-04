@@ -100,20 +100,20 @@ def start_game(room_id, names, n_players):
     players = human_players + ai_players
 
     # Define message function for communicating text info to chat log
-    def socket_tell(data, room_id=None):
-        if not room_id:
-            room_id = server_msg.room
-        socketio.emit('message', {'data': data, 'color': S_COLOR}, room=room_id)
+    def socket_tell(data, client=None):
+        if not client:
+            client = server_msg.entire_room
+        socketio.emit('message', {'data': data, 'color': S_COLOR}, room=client)
         socketio.sleep(SOCKET_SLEEP)
-    server_msg.room = room_id
+    socket_tell.entire_room = room_id
 
     # Define display function for communicating visual info to frontend
-    def socket_show(data, room_id=None):
-        if not room_id:
-            room_id = server_msg.room
-        socketio.emit('display', data, room=room_id)
+    def socket_show(data, client=None):
+        if not client:
+            client = server_msg.entire_room
+        socketio.emit('display', data, room=client)
         socketio.sleep(SOCKET_SLEEP)
-    server_msg.room = room_id
+    socket_show.entire_room = room_id
 
     # Initialize game context with players and match room with game context
     ef = elements.ElementFactory()
