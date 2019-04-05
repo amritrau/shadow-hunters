@@ -418,10 +418,17 @@ var GameBoard = new Phaser.Class ({
             for(var i = datasize; i < this.num_equip_slots; i++) {
                 this.equip_text[i].setText([""]);
             }
+
+            // remove reveal button on person's screen if they are revealed
+            if(data.state == 1 && player.info.state == 2) {
+                $('#reveal').remove();
+            }
         }
 
-        // Update infobox
+        // Update player info to contain new data
         player.info = data;
+
+        // Update infobox
         if(Object.keys(player.info.location).length == 0) {
             player.info.location.name = "None";
         }
