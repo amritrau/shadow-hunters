@@ -95,22 +95,23 @@ def room(methods=['GET','POST']):
 def start_game(room_id, names, n_players):
 
     # Initialize human and AI players
-    human_players = [Player(n, get_sid[(n, room_id)], lambda x, y, z: server_ask(x, y, z, room_id), False) for n in names]
+    human_players = [Player(n, get_sid[(n, room_id)], lambda x, y, z: socket_ask(x, y, z, room_id), False) for n in names]
     ai_players = [Player("CPU_{}".format(i), str(i), ai_ask, True) for i in range(1, n_players - len(human_players) + 1)]
     players = human_players + ai_players
 
     # Define message function for communicating text info to chat log
     def socket_tell(data, client=None):
         if not client:
-            client = server_msg.entire_room
+            client = socket_tell.entire_room
         socketio.emit('message', {'data': data, 'color': S_COLOR}, room=client)
         socketio.sleep(SOCKET_SLEEP)
     socket_tell.entire_room = room_id
 
     # Define display function for communicating visual info to frontend
     def socket_show(data, client=None):
+        assert data['type'] in ["die", "win", "reveal", "roll", "draw"]
         if not client:
-            client = server_msg.entire_room
+            client = socket_show.entire_room
         socketio.emit('display', data, room=client)
         socketio.sleep(SOCKET_SLEEP)
     socket_show.entire_room = room_id
@@ -126,9 +127,9 @@ def start_game(room_id, names, n_players):
             areas = ef.AREAS,
             tell_h = socket_tell,
             show_h = socket_show,
-            update_h = lambda x: server_update(x, room_id)
+            update_h = lambda x: socket_update(x, room_id)
     )
-    gc.update_h = lambda: server_update(gc.dump()[0], room_id)
+    gc.update_h = lambda: socket_update(gc.dump()[0], room_id)
     rooms[room_id]['gc'] = gc
 
     gc.tell_h("Started a game with players {}".format(", ".join([p.user_id for p in players])))
@@ -145,7 +146,7 @@ def start_game(room_id, names, n_players):
     # Send winners to frontend in socket emission for game-over screen
     # TODO: tell_h(json)
 
-def server_ask(form, data, user_id, room_id):
+def socket_ask(form, data, user_id, room_id):
 
     # Emit ask
     sid = get_sid[(user_id, room_id)]
@@ -175,11 +176,7 @@ def ai_ask(x, y, z):
     socketio.sleep(AI_SLEEP)
     return {'value': random.choice(y['options'])}
 
-# def server_msg(data, room_id):
-#     socketio.emit('message', {'data': data, 'color': S_COLOR}, room=room_id)
-#     socketio.sleep(SOCKET_SLEEP)
-
-def server_update(data, room_id):
+def socket_update(data, room_id):
     socketio.emit('update', data, room=room_id)
     socketio.sleep(SOCKET_SLEEP)
 

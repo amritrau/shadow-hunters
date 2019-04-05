@@ -113,12 +113,7 @@ class ElementFactory:
             target = choose_player(args)
 
             # Roll dice to get value to heal by
-            args['self'].gc.tell_h("{} is rolling the 6-sided die...".format(args['self'].user_id))
-            data = {'options': ['Roll the 6-sided die']}
-            args['self'].ask_h('confirm', data, args['self'].user_id)
-            roll_result = args['self'].gc.die6.roll()
-            # TODO: tell_h(json)
-            args['self'].gc.tell_h("{} rolled a {}!".format(args['self'].user_id, roll_result))
+            args['self'].rollDice('6')
 
             # Heal target player
             target.moveDamage(roll_result, args['self'])
@@ -395,13 +390,7 @@ class ElementFactory:
             # Roll to find out which area gets hit
             args['self'].ask_h('confirm', {'options': ["Light the fuse"]}, args['self'].user_id)
             args['self'].gc.tell_h("{} is rolling for where the dynamite lands...".format(args['self'].user_id))
-            data = {'options': ['Roll for area']}
-            args['self'].ask_h('confirm', data, args['self'].user_id)
-            roll_result_4 = args['self'].gc.die4.roll()
-            roll_result_6 = args['self'].gc.die6.roll()
-            roll_result = roll_result_4 + roll_result_6
-            # TODO: tell_h(json)
-            args['self'].gc.tell_h("{} rolled {} + {} = {}!".format(args['self'].user_id, roll_result_4, roll_result_6, roll_result))
+            roll_result = args['self'].rollDice('area')
 
             # Hit area corresponding to roll number
             if roll_result == 7:
@@ -435,12 +424,7 @@ class ElementFactory:
             target = choose_player(args)
 
             # Roll 6-sided die
-            args['self'].gc.tell_h("{} is rolling the 6-sided die...".format(args['self'].user_id))
-            data = {'options': ['Roll the 6-sided die']}
-            args['self'].ask_h('confirm', data, args['self'].user_id)
-            roll_result = args['self'].gc.die6.roll()
-            # TODO: tell_h(json)
-            args['self'].gc.tell_h("{} rolled a {}!".format(args['self'].user_id, roll_result))
+            roll_result = args['self'].rollDice('6')
 
             # If roll is >= 5, user takes 3 damage. Otherwise, target takes 3 damage.
             if roll_result >= 5:

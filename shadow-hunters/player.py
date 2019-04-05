@@ -48,25 +48,13 @@ class Player:
 
         # Roll dice
         self.gc.tell_h("{} is rolling for movement...".format(self.user_id))
-        data = {'options': ['Roll for movement!']}
-        self.ask_h('confirm', data, self.user_id)
-        roll_result_4 = self.gc.die4.roll()
-        roll_result_6 = self.gc.die6.roll()
-        roll_result = roll_result_4 + roll_result_6
-        # TODO: tell_h(json)
-        self.gc.tell_h("{} rolled {} + {} = {}!".format(self.user_id, roll_result_4, roll_result_6, roll_result))
+        roll_result = self.rollDice('area')
 
         if "Mystic Compass" in [e.title for e in self.equipment]:
 
             # If player has mystic compass, roll again
             self.gc.tell_h("{}'s Mystic Compass lets them roll again!".format(self.user_id))
-            data = {'options': ['Roll again!']}
-            self.ask_h('confirm', data, self.user_id)
-            roll_result_4 = self.gc.die4.roll()
-            roll_result_6 = self.gc.die6.roll()
-            second_roll = roll_result_4 + roll_result_6
-            # TODO: tell_h(json)
-            self.gc.tell_h("{} rolled {} + {} = {}!".format(self.user_id, roll_result_4, roll_result_6, second_roll))
+            second_roll = self.rollDice('area')
 
             # Pick the preferred roll
             data = {'options': ["Use {}".format(roll_result), "Use {}".format(second_roll)]}
@@ -143,33 +131,18 @@ class Player:
 
         if answer != 'Decline':
 
-            # Get target and ask for roll
+            # Get target
             target_name = answer
             target_Player = [p for p in self.gc.getLivePlayers() if p.user_id == target_name][0]
             self.gc.tell_h("{} is attacking {}!".format(self.user_id, target_name))
-            data = {'options': ['Roll for damage!']}
-            self.ask_h('confirm', data, self.user_id)
 
-            # Get attack roll
-            roll_result_4 = self.gc.die4.roll()
-            roll_result_6 = self.gc.die6.roll()
-            roll_result = abs(roll_result_4 - roll_result_6)
-
-            # Only roll with the 4 sided die if player has Muramasa
+            # Roll with the 4-sided die if the player has masamune
+            roll_result = 0
             if "Cursed Sword Masamune" in [e.title for e in self.equipment]:
-                roll_result = roll_result_4
-                # TODO: tell_h(json)
-                self.gc.tell_h("{} rolled a {} using the Masamune!".format(self.user_id, roll_result))
+                self.gc.tell_h("{} rolls with the 4-sided die using the Masamune!".format(self.user_id, roll_result))
+                roll_result = self.rollDice('4')
             else:
-                # TODO: tell_h(json)
-                self.gc.tell_h(
-                    "{} rolled a {} - {} = {}!".format(
-                        self.user_id,
-                        max(roll_result_6, roll_result_4),
-                        min(roll_result_6, roll_result_4),
-                        roll_result
-                    )
-                )
+                roll_result = self.rollDice('attack')
 
             # If player has Machine Gun, launch attack on everyone in the zone. Otherwise, attack the target
             if "Machine Gun" in [e.title for e in self.equipment]:
@@ -213,8 +186,42 @@ class Player:
             args = {'self': self, 'card': drawn}
             drawn.use(args)
 
-    def rollDice(self):
-        return 0
+    def rollDice(self, type):
+
+        # Preprocess all rolls
+        assert type in ["area", "attack", "6", "4"]
+        roll_4 = self.gc.die4.roll()
+        roll_6 = self.gc.die6.roll()
+        diff = abs(roll_result_4 - roll_result_6)
+        sum = roll_result_4 + roll_result_6
+
+        # Set values based on type of roll
+        if type == "area":
+            ask_data = {'options': ['Roll for area!']}
+            display_data = {}
+            message = "{} rolled {} + {} = {}!".format(self.user_id, roll_4, roll_6, sum)
+            result = sum
+        elif type == "attack":
+            ask_data = {'options': ['Roll for damage!']}
+            display_data = {}
+            message = "{} rolled a {} - {} = {}!".format(self.user_id, max(roll_6, roll_4), min(roll_6, roll_4), diff)
+            result = diff
+        elif type == "6":
+            ask_data = {'options': ['Roll the 6-sided die!']}
+            display_data = {}
+            message = "{} rolled a {}!".format(self.user_id, roll_6)
+            result = roll_6
+        elif type == "4":
+            ask_data = {'options': ['Roll the 4-sided die!']}
+            display_data = {}
+            message = "{} rolled a {}!".format(self.user_id, roll_4)
+            result = roll_4
+
+        # Ask for confirmation and display results
+        self.ask_h('confirm', ask_data, self.user_id)
+        self.gc.show_h(display_data)
+        self.gc.tell_h(message)
+        return result
 
     def giveEquipment(self, receiver, eq):
 
