@@ -107,7 +107,7 @@ def start_game(room_id, names, n_players):
         socketio.sleep(SOCKET_SLEEP)
     socket_tell.entire_room = room_id
 
-    # Define display function for communicating visual info to frontend
+    # Define display function for communicating visual info to canvas
     def socket_show(data, client=None):
         assert data['type'] in ["die", "win", "reveal", "roll", "draw"]
         if not client:
@@ -138,6 +138,15 @@ def start_game(room_id, names, n_players):
     for k in private_state:
         data = {'public': public_state, 'private': private_state[k], 'playable_chars': [ch.dump() for ch in gc.playable]}
         socketio.emit('game_start', data, room = k)
+
+    # Change colors of players chat messages to match their in-game colors
+    color_strings = ['rgb(200,200,200)', 'rgb(0,0,0)',     'rgb(79,182,78)',  'rgb(62,99,171)',
+                     'rgb(197,97,163)',  'rgb(219,62,62)', 'rgb(249,234,48)', 'rgb(239,136,43)']
+    socket_ids = [p.socket_id for p in players]
+    for s in sorted(socket_ids):
+        c = color_strings.pop(0)
+        if s in connections:
+            connections[s]['color'] = c
 
     # Initiate gameplay loop
     gc.play()
@@ -197,6 +206,7 @@ def on_start(json):
 
     # Begin game
     names = [x['name'] for x in connections.values() if x['room_id'] == room_id]
+    names = names[:8] # Maximum of 8 players
     socketio.sleep(SOCKET_SLEEP)
     start_game(room_id, names, json['n_players'])
 
@@ -240,9 +250,8 @@ def on_join(json):
     # Add new player to active connections
     room_id = json['room_id']
     name = json['name']
-    rgb = [str(random.randint(25,150)), str(random.randint(25,150)), str(random.randint(25,150))]
     connections[request.sid] = { 'name': name, 'room_id': room_id }
-    connections[request.sid]['color'] = 'rgb('+rgb[0]+','+rgb[1]+','+rgb[2]+')'
+    connections[request.sid]['color'] = 'rgb(125,125,125)'
     get_sid[(name, room_id)] = request.sid
 
     # Emit join message to other players

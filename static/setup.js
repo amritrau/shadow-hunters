@@ -44,8 +44,9 @@ $('document').ready(function() {
         // Form type 1
         var confirm_form = $('#confirm').on('submit', function(e) {
             e.preventDefault();
-            console.log(e);
-            socket.emit('answer', { 'form': 'confirm', 'value': $('#confirm [name="inputs"][clicked=true]').val() });
+            var val = $('#confirm [name="inputs"][clicked=true]').val();
+            console.log("value, "+val);
+            socket.emit('answer', { 'form': 'confirm', 'value': val });
             $('#confirm').hide();
             $('#confirm').empty();
         });
@@ -53,7 +54,6 @@ $('document').ready(function() {
         // Form type 2
         var yesno_form = $('#yesno').on('submit', function(e) {
             e.preventDefault();
-            console.log(e);
             socket.emit('answer', { 'form': 'yesno', 'value': $('#yesno [name="inputs"][clicked=true]').val() });
             $('#yesno').hide();
             $('#yesno').empty();

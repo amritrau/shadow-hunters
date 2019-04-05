@@ -88,6 +88,11 @@ var GameBoard = new Phaser.Class ({
         this.load.svg('player3', gfx + 'green-person.svg', {width: 50.5, height: 37.5});
         this.load.svg('player4', gfx + 'blue-person.svg', {width: 50.5, height: 37.5});
         this.load.svg('player5', gfx + 'pink-person.svg', {width: 50.5, height: 37.5});
+        // Note: Please use this ordering for the final three! Or it'll be mismatched on backend
+        // RED
+        // YELLOW
+        // ORANGE
+
         this.load.svg('circle1', gfx + 'white_circle.svg', {width: 123.633, height: 123.633});
         this.load.svg('circle2', gfx + 'black_circle.svg', {width: 123.633, height: 123.633});
         this.load.svg('circle3', gfx + 'green_circle.svg', {width: 123.633, height: 123.633});
