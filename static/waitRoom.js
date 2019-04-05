@@ -35,6 +35,10 @@ var WaitingRoom = new Phaser.Class ({
         socket.on("game_start", function (data) {
             $('#start').remove();
             $('#reveal').show();
+            window.onbeforeunload = function() {
+                return 'If you leave this page, you will be removed from the game. ' +
+                       'Are you sure you want to leave?';
+            };
             self.scene.start('board', data);
         });
     }
