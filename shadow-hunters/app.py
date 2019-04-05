@@ -28,7 +28,7 @@ def after_request(response):
 # constants
 SOCKET_SLEEP = 0.25
 AI_SLEEP = 3.0
-S_COLOR = 'rgb(37,25,64)'
+S_COLOR = 'rgb(200,200,200)'
 
 # connection/room management data structures
 connections = {}
@@ -140,8 +140,8 @@ def start_game(room_id, names, n_players):
         socketio.emit('game_start', data, room = k)
 
     # Change colors of players chat messages to match their in-game colors
-    color_strings = ['rgb(200,200,200)', 'rgb(0,0,0)',     'rgb(79,182,78)',  'rgb(62,99,171)',
-                     'rgb(197,97,163)',  'rgb(219,62,62)', 'rgb(249,234,48)', 'rgb(239,136,43)']
+    color_strings = ['rgb(255,255,255)', 'rgb(50,50,50)', 'rgb(79,182,78)', 'rgb(62,99,171)',
+                     'rgb(197,97,163)', 'rgb(219,62,62)', 'rgb(249,234,48)', 'rgb(239,136,43)']
     socket_ids = [p.socket_id for p in players]
     for s in sorted(socket_ids):
         c = color_strings.pop(0)
@@ -251,7 +251,7 @@ def on_join(json):
     room_id = json['room_id']
     name = json['name']
     connections[request.sid] = { 'name': name, 'room_id': room_id }
-    connections[request.sid]['color'] = 'rgb(125,125,125)'
+    connections[request.sid]['color'] = 'rgb(200,200,200)'
     get_sid[(name, room_id)] = request.sid
 
     # Emit join message to other players

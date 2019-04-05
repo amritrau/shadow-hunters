@@ -43,6 +43,10 @@ var GameBoard = new Phaser.Class ({
     //function to initialize the data sent into gameboard from waiting room
     init: function (data)
     {
+        // Remove start button
+        $('#start').remove();
+
+        // Store data
         this.gameData = data;
         if("private" in this.gameData) this.charInfo = this.gameData.private.character;
         this.allPlayersInfo = this.gameData.public.players;
@@ -152,7 +156,6 @@ var GameBoard = new Phaser.Class ({
         this.healthBar.on('clicked', this.clickHandler, this.box);
 
         // Place locations based on given order
-
         for (var i = 0; i < 3; i++) {
             for (var j = 0; j < 2; j++) {
                 this.zoneCards[i][j] = this.makeZones(i,j);
@@ -252,6 +255,9 @@ var GameBoard = new Phaser.Class ({
             Phaser.Display.Align.In.TopLeft(text, this.add.zone(110, 560, 200, 130));
         }
 
+        // Display reveal button
+        $('#reveal').show();
+
         // Initial update to synchronize spectators
         self.updateBoard(this.gameData.public);
 
@@ -259,6 +265,12 @@ var GameBoard = new Phaser.Class ({
         socket.on('update', function(data) {
             self.updateBoard(data);
         });
+
+        // Warn players that they'll be disconnected if they leave
+        window.onbeforeunload = function() {
+            return 'If you leave this page, you will be removed from the game. ' +
+                   'Are you sure you want to leave?';
+        };
     },
 
     makeHealthBar: function() {
