@@ -12,6 +12,5 @@ from tests import helpers
 def test_gameplay():
     for _ in range(10000):
         gc, ef = helpers.fresh_gc_ef()
-        winners = gc.play()
-        assert winners
+        gc.play()
     assert 1

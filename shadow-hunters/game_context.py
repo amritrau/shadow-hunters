@@ -85,6 +85,8 @@ class GameContext:
             self.game_over = True
             winners = self._checkWinConditions()  # Hack to collect Allie
             if tell:
+                display_data = {'type': 'win', 'winners': [p.dump() for p in winners]}
+                self.show_h(display_data)
                 for w in winners:
                     self.tell_h("{} ({}: {}) won! {}".format(
                         w.user_id,
@@ -102,7 +104,7 @@ class GameContext:
                 current_player.takeTurn()
             winners = self.checkWinConditions()
             if winners:
-                return winners
+                break
             turn += 1
             if turn >= len(self.turn_order):
                 turn = 0

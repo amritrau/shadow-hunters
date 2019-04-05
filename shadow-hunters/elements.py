@@ -113,7 +113,7 @@ class ElementFactory:
             target = choose_player(args)
 
             # Roll dice to get value to heal by
-            args['self'].rollDice('6')
+            roll_result = args['self'].rollDice('6')
 
             # Heal target player
             target.moveDamage(roll_result, args['self'])
@@ -960,7 +960,8 @@ class ElementFactory:
             target.ask_h('confirm', data, target.user_id)
 
             # Send target's information to user
-            # TODO: tell_h(json)
+            display_data = {'type': 'reveal', 'player': target.dump()}
+            args['self'].gc.show_h(display_data, args['self'].socket_id)
             target.gc.tell_h("{}\'s character is {}, a {} with {} hp.".format(
                 target.user_id,
                 target.character.name,

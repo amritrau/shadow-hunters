@@ -99,6 +99,5 @@ def test_checkWinConditions():
 def test_play():
     gc, ef = helpers.fresh_gc_ef()
 
-    # Check that someone wins when a game is played
-    winners = gc.play()
-    assert winners
+    # Check that a game plays to completion
+    gc.play()

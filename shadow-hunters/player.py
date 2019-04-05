@@ -26,7 +26,8 @@ class Player:
         self.gc.update_h()
 
         # Broadcast reveal
-        # TODO: tell_h(json)
+        display_data = {'type': 'reveal', 'player': self.dump()}
+        self.gc.show_h(display_data)
         self.gc.tell_h("{} revealed themselves as {}, a {} with {} hp!".format(
             self.user_id,
             self.character.name,
@@ -165,16 +166,18 @@ class Player:
 
     def drawCard(self, deck):
 
-        # Draw card and tell people about it
+        # Draw card and tell frontend about it
         drawn = deck.drawCard()
         public_title = drawn.title if drawn.color != 2 else 'a Hermit Card'
         self.gc.tell_h("{} drew {}!".format(self.user_id, public_title))
         if drawn.color != 2:
             self.gc.tell_h("{}: {}".format(drawn.title, drawn.desc))
-            # TODO: tell_h(json)
+            display_data = {'type': 'draw', 'title': drawn.title, 'desc': drawn.desc}
+            self.gc.show_h(display_data)
         else:
             self.gc.tell_h("{}: {}".format(drawn.title, drawn.desc), client=self.socket_id)
-            # TODO: tell_h(json)
+            display_data = {'type': 'draw', 'title': drawn.title, 'desc': drawn.desc}
+            self.gc.show_h(display_data, client=self.socket_id)
 
         # Use card if it's single-use, or add to arsenal if it's equipment
         if drawn.is_equipment:
@@ -192,28 +195,28 @@ class Player:
         assert type in ["area", "attack", "6", "4"]
         roll_4 = self.gc.die4.roll()
         roll_6 = self.gc.die6.roll()
-        diff = abs(roll_result_4 - roll_result_6)
-        sum = roll_result_4 + roll_result_6
+        diff = abs(roll_4 - roll_6)
+        sum = roll_4 + roll_6
 
         # Set values based on type of roll
         if type == "area":
-            ask_data = {'options': ['Roll for area!']}
-            display_data = {}
+            ask_data = {'options': ['Roll the dice!']}
+            display_data = {'type': 'roll', '4-sided': roll_4, '6-sided': roll_6}
             message = "{} rolled {} + {} = {}!".format(self.user_id, roll_4, roll_6, sum)
             result = sum
         elif type == "attack":
             ask_data = {'options': ['Roll for damage!']}
-            display_data = {}
+            display_data = {'type': 'roll', '4-sided': roll_4, '6-sided': roll_6}
             message = "{} rolled a {} - {} = {}!".format(self.user_id, max(roll_6, roll_4), min(roll_6, roll_4), diff)
             result = diff
         elif type == "6":
             ask_data = {'options': ['Roll the 6-sided die!']}
-            display_data = {}
+            display_data = {'type': 'roll', '4-sided': 0, '6-sided': roll_6}
             message = "{} rolled a {}!".format(self.user_id, roll_6)
             result = roll_6
         elif type == "4":
             ask_data = {'options': ['Roll the 4-sided die!']}
-            display_data = {}
+            display_data = {'type': 'roll', '4-sided': roll_4, '6-sided': 0}
             message = "{} rolled a {}!".format(self.user_id, roll_4)
             result = roll_4
 
@@ -293,7 +296,8 @@ class Player:
         self.state = 0
 
         # Report to console
-        # TODO: tell_h(json)
+        display_data = {'type': 'die', 'player': self.dump()}
+        self.gc.show_h(display_data)
         self.gc.tell_h("{} ({}: {}) was killed by {}!".format(
             self.user_id,
             elements.ALLEGIANCE_MAP[self.character.alleg],

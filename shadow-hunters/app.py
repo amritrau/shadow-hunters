@@ -131,7 +131,6 @@ def start_game(room_id, names, n_players):
     )
     gc.update_h = lambda: socket_update(gc.dump()[0], room_id)
     rooms[room_id]['gc'] = gc
-
     gc.tell_h("Started a game with players {}".format(", ".join([p.user_id for p in players])))
 
     # Send public and private game states to frontend
@@ -141,10 +140,7 @@ def start_game(room_id, names, n_players):
         socketio.emit('game_start', data, room = k)
 
     # Initiate gameplay loop
-    winners = gc.play()
-
-    # Send winners to frontend in socket emission for game-over screen
-    # TODO: tell_h(json)
+    gc.play()
 
 def socket_ask(form, data, user_id, room_id):
 
