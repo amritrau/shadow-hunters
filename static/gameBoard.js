@@ -43,6 +43,10 @@ var GameBoard = new Phaser.Class ({
     //function to initialize the data sent into gameboard from waiting room
     init: function (data)
     {
+        // Remove start button
+        $('#start').remove();
+
+        // Store data
         this.gameData = data;
         if("private" in this.gameData) this.charInfo = this.gameData.private.character;
         this.allPlayersInfo = this.gameData.public.players;
@@ -88,6 +92,11 @@ var GameBoard = new Phaser.Class ({
         this.load.svg('player3', gfx + 'green-person.svg', {width: 50.5, height: 37.5});
         this.load.svg('player4', gfx + 'blue-person.svg', {width: 50.5, height: 37.5});
         this.load.svg('player5', gfx + 'pink-person.svg', {width: 50.5, height: 37.5});
+        // Note: Please use this ordering for the final three! Or it'll be mismatched on backend
+        // RED
+        // YELLOW
+        // ORANGE
+
         this.load.svg('circle1', gfx + 'white_circle.svg', {width: 123.633, height: 123.633});
         this.load.svg('circle2', gfx + 'black_circle.svg', {width: 123.633, height: 123.633});
         this.load.svg('circle3', gfx + 'green_circle.svg', {width: 123.633, height: 123.633});
@@ -147,7 +156,6 @@ var GameBoard = new Phaser.Class ({
         this.healthBar.on('clicked', this.clickHandler, this.box);
 
         // Place locations based on given order
-
         for (var i = 0; i < 3; i++) {
             for (var j = 0; j < 2; j++) {
                 this.zoneCards[i][j] = this.makeZones(i,j);
@@ -247,6 +255,9 @@ var GameBoard = new Phaser.Class ({
             Phaser.Display.Align.In.TopLeft(text, this.add.zone(110, 560, 200, 130));
         }
 
+        // Display reveal button
+        $('#reveal').show();
+
         // Initial update to synchronize spectators
         self.updateBoard(this.gameData.public);
 
@@ -254,6 +265,12 @@ var GameBoard = new Phaser.Class ({
         socket.on('update', function(data) {
             self.updateBoard(data);
         });
+
+        // Warn players that they'll be disconnected if they leave
+        window.onbeforeunload = function() {
+            return 'If you leave this page, you will be removed from the game. ' +
+                   'Are you sure you want to leave?';
+        };
     },
 
     makeHealthBar: function() {
@@ -413,10 +430,17 @@ var GameBoard = new Phaser.Class ({
             for(var i = datasize; i < this.num_equip_slots; i++) {
                 this.equip_text[i].setText([""]);
             }
+
+            // remove reveal button on person's screen if they are revealed
+            if((data.state == 1 || data.state == 0) && $('#reveal').length) {
+                $('#reveal').remove();
+            }
         }
 
-        // Update infobox
+        // Update player info to contain new data
         player.info = data;
+
+        // Update infobox
         if(Object.keys(player.info.location).length == 0) {
             player.info.location.name = "None";
         }

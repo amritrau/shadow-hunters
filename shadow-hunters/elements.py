@@ -113,11 +113,8 @@ class ElementFactory:
             target = choose_player(args)
 
             # Roll dice to get value to heal by
-            args['self'].gc.tell_h("{} is rolling the 6-sided die...".format(args['self'].user_id))
-            data = {'options': ['Roll the 6-sided die']}
-            args['self'].ask_h('confirm', data, args['self'].user_id)
-            roll_result = args['self'].gc.die6.roll()
-            args['self'].gc.tell_h("{} rolled a {}!".format(args['self'].user_id, roll_result))
+            roll_result = args['self'].rollDice('6')
+
             # Heal target player
             target.moveDamage(roll_result, args['self'])
 
@@ -157,6 +154,47 @@ class ElementFactory:
         ## Initialize white cards
 
         WHITE_CARDS = [
+            card.Card(
+                title = "Mystic Compass",
+                desc = "When you move, you may roll twice and choose which result to use.",
+                color = 0,
+                holder = None,
+                is_equip = True,
+                use = None
+            ),
+            card.Card(
+                title = "Talisman",
+                desc = "You receive no damage from Black cards 'Bloodthirsty Spider', 'Vampire Bat', or 'Dynamite'.",
+                color = 0,
+                holder = None,
+                is_equip = True,
+                use = None
+            ),
+            card.Card(
+                title = "Fortune Brooch",
+                desc = "You receive no damage from the area card 'Weird Woods'. You can still be healed by it.",
+                color = 0,
+                holder = None,
+                is_equip = True,
+                use = None
+            ),
+            card.Card(
+                title = "Silver Rosary",
+                desc = "If you kill another character, you take all of their equipment cards.",
+                color = 0,
+                holder = None,
+                is_equip = True,
+                use = None
+            ),
+            card.Card(
+                title = "Spear of Longinus",
+                desc = ("If you are a Hunter who has revealed their identity and your attack is successful, "
+                        "you give 2 points of extra damage."),
+                color = 0,
+                holder = None,
+                is_equip = True,
+                use = None
+            ),
             card.Card(
                 title = "Advent",
                 desc = ("If you are a Hunter, you may reveal your identity. "
@@ -259,7 +297,10 @@ class ElementFactory:
             target = choose_player(args)
 
             # Both the target and the user take 2 damage
-            target.moveDamage(-2, args['self'])
+            if "Talisman" in [e.title for e in target.equipment]:
+                args['self'].gc.tell_h("{}'s Talisman protected them from damage!".format(target.user_id))
+            else:
+                target.moveDamage(-2, args['self'])
             args['self'].moveDamage(-2, args['self'])
 
         def use_vampire_bat(args):
@@ -269,8 +310,11 @@ class ElementFactory:
             target = choose_player(args)
 
             # Target takes 2 damage, user heals 1 damage
-            target.moveDamage(-2, args['self'])
-            args['self'].moveDamage(1, args['self'])
+            if "Talisman" in [e.title for e in target.equipment]:
+                args['self'].gc.tell_h("{}'s Talisman protected them from damage!".format(target.user_id))
+            else:
+                target.moveDamage(-2, args['self'])
+                args['self'].moveDamage(1, args['self'])
 
         def use_moody_goblin(args):
 
@@ -294,14 +338,7 @@ class ElementFactory:
                 equip_Equipment = [eq for eq in target_Player.equipment if eq.title == equip][0]
 
                 # Transfer equipment from one player to the other
-                i = target_Player.equipment.index(equip_Equipment)
-                equip_Equipment = target_Player.equipment.pop(i)
-                args['self'].equipment.append(equip_Equipment)
-                equip_Equipment.holder = args['self']
-                args['self'].gc.tell_h("{} stole {}'s {}!".format(args['self'].user_id, target_Player.user_id, equip_Equipment.title))
-
-                # Update frontend with transfer
-                args['self'].gc.update_h()
+                target_Player.giveEquipment(args['self'], equip_Equipment)
 
             else:
 
@@ -339,18 +376,9 @@ class ElementFactory:
                 args['self'].gc.tell_h("{} is choosing an equipment card to give away...".format(args['self'].user_id))
                 eq = choose_equipment(args['self'], args['self'])
 
-                # Choose someone to give to
+                # Give away equipment
                 receiver = choose_player(args)
-
-                # Transfer equipment from one player to the other
-                i = args['self'].equipment.index(eq)
-                eq = args['self'].equipment.pop(i)
-                receiver.equipment.append(eq)
-                eq.holder = receiver
-                args['self'].gc.tell_h("{} gave {} their {}!".format(args['self'].user_id, receiver.user_id, eq.title))
-
-                # Update frontend
-                args['self'].gc.update_h()
+                args['self'].giveEquipment(receiver, eq)
 
             else:
 
@@ -362,12 +390,7 @@ class ElementFactory:
             # Roll to find out which area gets hit
             args['self'].ask_h('confirm', {'options': ["Light the fuse"]}, args['self'].user_id)
             args['self'].gc.tell_h("{} is rolling for where the dynamite lands...".format(args['self'].user_id))
-            data = {'options': ['Roll for area']}
-            args['self'].ask_h('confirm', data, args['self'].user_id)
-            roll_result_4 = args['self'].gc.die4.roll()
-            roll_result_6 = args['self'].gc.die6.roll()
-            roll_result = roll_result_4 + roll_result_6
-            args['self'].gc.tell_h("{} rolled {} + {} = {}!".format(args['self'].user_id, roll_result_4, roll_result_6, roll_result))
+            roll_result = args['self'].rollDice('area')
 
             # Hit area corresponding to roll number
             if roll_result == 7:
@@ -389,7 +412,10 @@ class ElementFactory:
                 args['self'].gc.tell_h("Dynamite blew up the {}!".format(destination))
                 affected_players = [p for p in args['self'].gc.players if p.location == destination_Area]
                 for p in affected_players:
-                    p.moveDamage(-3, args['self'])
+                    if "Talisman" in [e.title for e in p.equipment]:
+                        args['self'].gc.tell_h("{}'s Talisman protected them from damage!".format(p.user_id))
+                    else:
+                        p.moveDamage(-3, args['self'])
 
         def use_spiritual_doll(args):
 
@@ -398,11 +424,7 @@ class ElementFactory:
             target = choose_player(args)
 
             # Roll 6-sided die
-            args['self'].gc.tell_h("{} is rolling the 6-sided die...".format(args['self'].user_id))
-            data = {'options': ['Roll the 6-sided die']}
-            args['self'].ask_h('confirm', data, args['self'].user_id)
-            roll_result = args['self'].gc.die6.roll()
-            args['self'].gc.tell_h("{} rolled a {}!".format(args['self'].user_id, roll_result))
+            roll_result = args['self'].rollDice('6')
 
             # If roll is >= 5, user takes 3 damage. Otherwise, target takes 3 damage.
             if roll_result >= 5:
@@ -414,9 +436,33 @@ class ElementFactory:
 
         BLACK_CARDS = [
             card.Card(
+                title = "Cursed Sword Masamune",
+                desc = "You must attack another character on your turn. This attack uses the 4-sided die.",
+                color = 1, # 1 : BLACK
+                holder = None,
+                is_equip = True,
+                use = None
+            ),
+            card.Card(
+                title = "Machine Gun",
+                desc = "Your attack will affect all characters in your attack range (the dice are rolled only once).",
+                color = 1,
+                holder = None,
+                is_equip = True,
+                use = None
+            ),
+            card.Card(
+                title = "Handgun",
+                desc = "All ranges but yours become your attack range.",
+                color = 1,
+                holder = None,
+                is_equip = True,
+                use = None
+            ),
+            card.Card(
                 title = "Butcher Knife",
                 desc = "If your attack is successful, you give 1 point of extra damage.",
-                color = 1, # 1 : BLACK
+                color = 1,
                 holder = None,
                 is_equip = True,
                 use = lambda is_attack, successful, amt: amt + 1 if (is_attack and successful) else amt
@@ -530,13 +576,13 @@ class ElementFactory:
             # Choose a player to give the card to
             args['self'].ask_h('confirm', {'options': ["Use Hermit's Blackmail"]}, args['self'].user_id)
             target = choose_player(args)
-            args['self'].gc.direct_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
+            args['self'].gc.tell_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
 
             # If target is neutral or hunter, must give equipment or take 1 damage
             if target.character.alleg > 0:
 
                 # Target is neutral or hunter, get decision
-                target.gc.direct_h("You are a {}. Make a choice.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
+                target.gc.tell_h("You are a {}. Make a choice.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 if len(target.equipment):
                     data = {'options': ["Give an equipment card", "Receive 1 damage"]}
                 else:
@@ -551,14 +597,7 @@ class ElementFactory:
                     eq = choose_equipment(target, target)
 
                     # Transfer equipment from target to user
-                    i = target.equipment.index(eq)
-                    eq = target.equipment.pop(i)
-                    args['self'].equipment.append(eq)
-                    eq.holder = args['self']
-                    args['self'].gc.tell_h("{} gave {} their {}!".format(target.user_id, args['self'].user_id, eq.title))
-
-                    # Update frontend with transfer
-                    target.gc.update_h()
+                    target.giveEquipment(args['self'], eq)
 
                 else:
 
@@ -569,7 +608,7 @@ class ElementFactory:
             else:
 
                 # Target is a shadow, nothing happens
-                target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
+                target.gc.tell_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ['Do nothing']}
                 target.ask_h('confirm', data, target.user_id)
                 target.gc.tell_h("{} did nothing.".format(target.user_id))
@@ -579,13 +618,13 @@ class ElementFactory:
             # Choose a player to give the card to
             args['self'].ask_h('confirm', {'options': ["Use Hermit's Greed"]}, args['self'].user_id)
             target = choose_player(args)
-            args['self'].gc.direct_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
+            args['self'].gc.tell_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
 
             # If target is neutral or shadow, must give equipment or take 1 damage
             if target.character.alleg < 2:
 
                 # Target is neutral or shadow, get decision
-                target.gc.direct_h("You are a {}. Make a choice.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
+                target.gc.tell_h("You are a {}. Make a choice.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 if len(target.equipment):
                     data = {'options': ["Give an equipment card", "Receive 1 damage"]}
                 else:
@@ -600,14 +639,7 @@ class ElementFactory:
                     eq = choose_equipment(target, target)
 
                     # Transfer equipment from target to user
-                    i = target.equipment.index(eq)
-                    eq = target.equipment.pop(i)
-                    args['self'].equipment.append(eq)
-                    eq.holder = args['self']
-                    args['self'].gc.tell_h("{} gave {} their {}!".format(target.user_id, args['self'].user_id, eq.title))
-
-                    # Update frontend with transfer
-                    target.gc.update_h()
+                    target.giveEquipment(args['self'], eq)
 
                 else:
 
@@ -618,7 +650,7 @@ class ElementFactory:
             else:
 
                 # Target is a hunter, nothing happens
-                target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
+                target.gc.tell_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ['Do nothing']}
                 target.ask_h('confirm', data, target.user_id)
                 target.gc.tell_h("{} did nothing.".format(target.user_id))
@@ -628,13 +660,13 @@ class ElementFactory:
             # Choose a player to give the card to
             args['self'].ask_h('confirm', {'options': ["Use Hermit's Anger"]}, args['self'].user_id)
             target = choose_player(args)
-            args['self'].gc.direct_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
+            args['self'].gc.tell_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
 
             # If target is hunter or shadow, must give equipment or take 1 damage
             if target.character.alleg in [0, 2]:
 
                 # Target is hunter or shadow, get decision
-                target.gc.direct_h("You are a {}. Make a choice.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
+                target.gc.tell_h("You are a {}. Make a choice.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 if len(target.equipment):
                     data = {'options': ["Give an equipment card", "Receive 1 damage"]}
                 else:
@@ -649,14 +681,8 @@ class ElementFactory:
                     eq = choose_equipment(target, target)
 
                     # Transfer equipment from target to user
-                    i = target.equipment.index(eq)
-                    eq = target.equipment.pop(i)
-                    args['self'].equipment.append(eq)
-                    eq.holder = args['self']
-                    args['self'].gc.tell_h("{} gave {} their {}!".format(target.user_id, args['self'].user_id, eq.title))
+                    target.giveEquipment(args['self'], eq)
 
-                    # Update frontend with transfer
-                    target.gc.update_h()
                 else:
 
                     # Target takes 1 damage
@@ -666,7 +692,7 @@ class ElementFactory:
             else:
 
                 # Target is a neutral, nothing happens
-                target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
+                target.gc.tell_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ['Do nothing']}
                 target.ask_h('confirm', data, target.user_id)
                 target.gc.tell_h("{} did nothing.".format(target.user_id))
@@ -676,23 +702,24 @@ class ElementFactory:
             # Choose a player to give the card to
             args['self'].ask_h('confirm', {'options': ["Use Hermit's Slap"]}, args['self'].user_id)
             target = choose_player(args)
-            args['self'].gc.direct_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
+            args['self'].gc.tell_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
 
             # If hunter, take 1 damage
             if target.character.alleg == 2:
 
                 # Prompt target to receive 1 damage
-                target.gc.direct_h("You are a {}.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
+                target.gc.tell_h("You are a {}.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ["Receive 1 damage"]}
                 target.ask_h('confirm', data, target.user_id)
 
                 # Give 1 damage to target
                 new_damage = target.moveDamage(-1, args['self'])
                 target.gc.tell_h("{} took 1 damage!".format(target.user_id))
+
             else:
 
                 # Target is not a hunter, nothing happens
-                target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
+                target.gc.tell_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ['Do nothing']}
                 target.ask_h('confirm', data, target.user_id)
                 target.gc.tell_h("{} did nothing.".format(target.user_id))
@@ -702,13 +729,13 @@ class ElementFactory:
             # Choose a player to give the card to
             args['self'].ask_h('confirm', {'options': ["Use Hermit's Spell"]}, args['self'].user_id)
             target = choose_player(args)
-            args['self'].gc.direct_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
+            args['self'].gc.tell_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
 
             # If shadow, take 1 damage
             if target.character.alleg == 0:
 
                 # Prompt target to receive 1 damage
-                target.gc.direct_h("You are a {}.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
+                target.gc.tell_h("You are a {}.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ["Receive 1 damage"]}
                 target.ask_h('confirm', data, target.user_id)
 
@@ -719,7 +746,7 @@ class ElementFactory:
             else:
 
                 # Target is not a shadow, nothing happens
-                target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
+                target.gc.tell_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ['Do nothing']}
                 target.ask_h('confirm', data, target.user_id)
                 target.gc.tell_h("{} did nothing.".format(target.user_id))
@@ -729,12 +756,12 @@ class ElementFactory:
             # Choose a player to give the card to
             args['self'].ask_h('confirm', {'options': ["Use Hermit's Exorcism"]}, args['self'].user_id)
             target = choose_player(args)
-            args['self'].gc.direct_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
+            args['self'].gc.tell_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
 
             # If shadow, take 2 damage
             if target.character.alleg == 0:
                 # Prompt target to receive 2 damage
-                target.gc.direct_h("You are a {}.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
+                target.gc.tell_h("You are a {}.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ["Receive 2 damage"]}
                 target.ask_h('confirm', data, target.user_id)
 
@@ -745,7 +772,7 @@ class ElementFactory:
             else:
 
                 # Target is not a shadow, nothing happens
-                target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
+                target.gc.tell_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ['Do nothing']}
                 target.ask_h('confirm', data, target.user_id)
                 target.gc.tell_h("{} did nothing.".format(target.user_id))
@@ -755,12 +782,12 @@ class ElementFactory:
             # Choose a player to give the card to
             args['self'].ask_h('confirm', {'options': ["Use Hermit's Nurturance"]}, args['self'].user_id)
             target = choose_player(args)
-            args['self'].gc.direct_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
+            args['self'].gc.tell_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
 
             # If neutral, heal 1 damage (unless at 0, then take 1 damage)
             if target.character.alleg == 1:
                 # Branch on hp value
-                target.gc.direct_h("You are a {}.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
+                target.gc.tell_h("You are a {}.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 if target.damage == 0:
 
                     # Hp is 0, prompt to receive 1 damage
@@ -784,7 +811,7 @@ class ElementFactory:
             else:
 
                 # Target is not a neutral, nothing happens
-                target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
+                target.gc.tell_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ['Do nothing']}
                 target.ask_h('confirm', data, target.user_id)
                 target.gc.tell_h("{} did nothing.".format(target.user_id))
@@ -794,12 +821,12 @@ class ElementFactory:
             # Choose a player to give the card to
             args['self'].ask_h('confirm', {'options': ["Use Hermit's Aid"]}, args['self'].user_id)
             target = choose_player(args)
-            args['self'].gc.direct_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
+            args['self'].gc.tell_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
 
             # If hunter, heal 1 damage (unless at 0, then take 1 damage)
             if target.character.alleg == 2:
                 # Branch on hp value
-                target.gc.direct_h("You are a {}.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
+                target.gc.tell_h("You are a {}.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 if target.damage == 0:
 
                     # Hp is 0, prompt to receive 1 damage
@@ -823,7 +850,7 @@ class ElementFactory:
             else:
 
                 # Target is not a hunter, nothing happens
-                target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
+                target.gc.tell_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ['Do nothing']}
                 target.ask_h('confirm', data, target.user_id)
                 target.gc.tell_h("{} did nothing.".format(target.user_id))
@@ -833,12 +860,12 @@ class ElementFactory:
             # Choose a player to give the card to
             args['self'].ask_h('confirm', {'options': ["Use Hermit's Huddle"]}, args['self'].user_id)
             target = choose_player(args)
-            args['self'].gc.direct_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
+            args['self'].gc.tell_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
 
             # If shadow, heal 1 damage (unless at 0, then take 1 damage)
             if target.character.alleg == 0:
                 # Branch on hp value
-                target.gc.direct_h("You are a {}.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
+                target.gc.tell_h("You are a {}.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 if target.damage == 0:
 
                     # Hp is 0, prompt to receive 1 damage
@@ -862,7 +889,7 @@ class ElementFactory:
             else:
 
                 # Target is not a shadow, nothing happens
-                target.gc.direct_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
+                target.gc.tell_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
                 data = {'options': ['Do nothing']}
                 target.ask_h('confirm', data, target.user_id)
                 target.gc.tell_h("{} did nothing.".format(target.user_id))
@@ -872,13 +899,13 @@ class ElementFactory:
             # Choose a player to give the card to
             args['self'].ask_h('confirm', {'options': ["Use Hermit's Lesson"]}, args['self'].user_id)
             target = choose_player(args)
-            args['self'].gc.direct_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
+            args['self'].gc.tell_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
 
             # If target's hp is >= 12, they take 2 damage.
             if target.character.max_damage >= 12:
 
                 # Prompt target to receive 2 damage
-                target.gc.direct_h("Your maximum hp ({}) is 12 or more.".format(target.character.max_damage), target.socket_id)
+                target.gc.tell_h("Your maximum hp ({}) is 12 or more.".format(target.character.max_damage), target.socket_id)
                 data = {'options': ["Receive 2 damage"]}
                 target.ask_h('confirm', data, target.user_id)
 
@@ -889,7 +916,7 @@ class ElementFactory:
             else:
 
                 # Target's hp is < 12, nothing happens
-                target.gc.direct_h("Your maximum hp is less than 12. Do nothing.".format(target.character.max_damage), target.socket_id)
+                target.gc.tell_h("Your maximum hp is less than 12. Do nothing.".format(target.character.max_damage), target.socket_id)
                 data = {'options': ['Do nothing']}
                 target.ask_h('confirm', data, target.user_id)
                 target.gc.tell_h("{} did nothing.".format(target.user_id))
@@ -899,13 +926,13 @@ class ElementFactory:
             # Choose a player to give the card to
             args['self'].ask_h('confirm', {'options': ["Use Hermit's Bully"]}, args['self'].user_id)
             target = choose_player(args)
-            args['self'].gc.direct_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
+            args['self'].gc.tell_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
 
             # If target's hp is <= 11, they take 1 damage.
             if target.character.max_damage <= 11:
 
                 # Prompt target to receive 1 damage
-                target.gc.direct_h("Your maximum hp ({}) is 11 or less.".format(target.character.max_damage), target.socket_id)
+                target.gc.tell_h("Your maximum hp ({}) is 11 or less.".format(target.character.max_damage), target.socket_id)
                 data = {'options': ["Receive 1 damage"]}
                 target.ask_h('confirm', data, target.user_id)
 
@@ -916,7 +943,7 @@ class ElementFactory:
             else:
 
                 # Target's hp is > 11, nothing happens
-                target.gc.direct_h("Your maximum hp is greater than 11. Do nothing.".format(target.character.max_damage), target.socket_id)
+                target.gc.tell_h("Your maximum hp is greater than 11. Do nothing.".format(target.character.max_damage), target.socket_id)
                 data = {'options': ['Do nothing']}
                 target.ask_h('confirm', data, target.user_id)
                 target.gc.tell_h("{} did nothing.".format(target.user_id))
@@ -925,22 +952,24 @@ class ElementFactory:
             # Choose a player to give the card to
             args['self'].ask_h('confirm', {'options': ["Use Hermit's Prediction"]}, args['self'].user_id)
             target = choose_player(args)
-            args['self'].gc.direct_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
+            args['self'].gc.tell_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
 
             # Prompt target to reveal themself
-            target.gc.direct_h("You have no choice. Reveal yourself to {}.".format(args['self'].user_id), target.socket_id)
+            target.gc.tell_h("You have no choice. Reveal yourself to {}.".format(args['self'].user_id), target.socket_id)
             data = {'options': ["Reveal"]}
             target.ask_h('confirm', data, target.user_id)
 
             # Send target's information to user
-            target.gc.direct_h("{}\'s character is {}, a {} with {} hp.".format(
+            display_data = {'type': 'reveal', 'player': target.dump()}
+            args['self'].gc.show_h(display_data, args['self'].socket_id)
+            target.gc.tell_h("{}\'s character is {}, a {} with {} hp.".format(
                 target.user_id,
                 target.character.name,
                 ALLEGIANCE_MAP[target.character.alleg],
                 target.character.max_damage
             ), args['self'].socket_id)
-            target.gc.direct_h("Their win condition: {}.".format(target.character.win_cond_desc), args['self'].socket_id)
-            target.gc.direct_h("Their special ability: {}.".format("None"), args['self'].socket_id)
+            target.gc.tell_h("Their win condition: {}.".format(target.character.win_cond_desc), args['self'].socket_id)
+            target.gc.tell_h("Their special ability: {}.".format("None"), args['self'].socket_id)
             target.gc.tell_h("{} revealed their identity secretly to {}!".format(target.user_id, args['self'].user_id))
 
         ## Initialize hermit cards
@@ -1136,7 +1165,7 @@ class ElementFactory:
                 gc.tell_h("Allie used her special ability: {}".format(player.character.special_desc))
             else:
                 # Already used special
-                gc.direct_h("This special ability can be used only once.", player.socket_id)
+                gc.tell_h("This special ability can be used only once.", player.socket_id)
 
         ## Initialize characters
 
@@ -1300,9 +1329,14 @@ class ElementFactory:
             data = {'options': ["Heal 1 damage", "Give 2 damage"]}
             amount = player.ask_h('select', data, player.user_id)['value']
             if amount == "Heal 1 damage":
+                gc.tell_h("The power of the Weird Woods healed {}!".format(target_Player.user_id))
                 target_Player.moveDamage(1, player)
             else:
-                target_Player.moveDamage(-2, player)
+                if "Fortune Brooch" in [e.title for e in target_Player.equipment]:
+                    gc.tell_h("{}'s Fortune Brooch protected them from damage!".format(target_Player.user_id))
+                else:
+                    gc.tell_h("The power of the Weird Woods damaged {}!".format(target_Player.user_id))
+                    target_Player.moveDamage(-2, player)
 
         def erstwhile_altar_action(gc, player):
 
@@ -1323,14 +1357,7 @@ class ElementFactory:
                 equip_Equipment = [eq for eq in target_Player.equipment if eq.title == equip][0]
 
                 # Transfer equipment from one player to the other
-                i = target_Player.equipment.index(equip_Equipment)
-                equip_Equipment = target_Player.equipment.pop(i)
-                player.equipment.append(equip_Equipment)
-                equip_Equipment.holder = player
-                gc.tell_h("{} stole {}'s {}!".format(player.user_id, target_Player.user_id, equip_Equipment.title))
-
-                # Update frontend with transfer
-                gc.update_h()
+                target_Player.giveEquipment(player, equip_Equipment)
 
             else:
 

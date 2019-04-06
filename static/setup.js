@@ -28,21 +28,25 @@ $('document').ready(function() {
         // Start game button
         var start_form = $('#start').on('submit', function(e) {
             e.preventDefault();
-            socket.emit('start');
+            // TODO: the value for n_players should come from a drop down or
+            // some other selection mechanism. It should be in the range [4,8].
+            // make sure it's cast to an integer!
+            socket.emit('start', { 'n_players': 5 });
+            // TODO: Hide selection mechanism after socket emission
         });
 
         // Reveal button
         var reveal_form = $('#reveal').on('submit', function(e) {
             e.preventDefault();
             socket.emit('reveal');
-            $('#reveal').hide();
         });
 
         // Form type 1
         var confirm_form = $('#confirm').on('submit', function(e) {
             e.preventDefault();
-            console.log(e);
-            socket.emit('answer', { 'form': 'confirm', 'value': $('#confirm [name="inputs"][clicked=true]').val() });
+            var val = $('#confirm [name="inputs"][clicked=true]').val();
+            console.log("value, "+val);
+            socket.emit('answer', { 'form': 'confirm', 'value': val });
             $('#confirm').hide();
             $('#confirm').empty();
         });
@@ -50,7 +54,6 @@ $('document').ready(function() {
         // Form type 2
         var yesno_form = $('#yesno').on('submit', function(e) {
             e.preventDefault();
-            console.log(e);
             socket.emit('answer', { 'form': 'yesno', 'value': $('#yesno [name="inputs"][clicked=true]').val() });
             $('#yesno').hide();
             $('#yesno').empty();
@@ -109,7 +112,7 @@ $('document').ready(function() {
             }
             $('#'+data.form).append(option);
 
-            // add click handler to each button
+            // Add click handler to each button
             $('form [name="inputs"]').click(function() {
                 $('[name="inputs"]', $(this).parents("form")).removeAttr("clicked");
                 $(this).attr("clicked", "true");

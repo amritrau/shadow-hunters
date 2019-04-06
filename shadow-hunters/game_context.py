@@ -9,7 +9,7 @@ import elements
 # Implements a GameContext.
 
 class GameContext:
-    def __init__(self, players, characters, black_cards, white_cards, green_cards, areas, tell_h, direct_h, update_h, modifiers = dict()):
+    def __init__(self, players, characters, black_cards, white_cards, green_cards, areas, tell_h, show_h, update_h, modifiers = dict()):
 
         # Instantiate gameplay objects
         self.players = players
@@ -25,7 +25,7 @@ class GameContext:
 
         # Instantiate message handlers
         self.tell_h = tell_h
-        self.direct_h = direct_h
+        self.show_h = show_h
         self.update_h = update_h
 
         # Assign modifiers
@@ -85,6 +85,8 @@ class GameContext:
             self.game_over = True
             winners = self._checkWinConditions()  # Hack to collect Allie
             if tell:
+                display_data = {'type': 'win', 'winners': [p.dump() for p in winners]}
+                self.show_h(display_data)
                 for w in winners:
                     self.tell_h("{} ({}: {}) won! {}".format(
                         w.user_id,
@@ -102,7 +104,7 @@ class GameContext:
                 current_player.takeTurn()
             winners = self.checkWinConditions()
             if winners:
-                return winners
+                break
             turn += 1
             if turn >= len(self.turn_order):
                 turn = 0
