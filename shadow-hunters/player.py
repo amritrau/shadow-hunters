@@ -339,6 +339,9 @@ class Player:
             elif eq.color == 3: # White
                 self.gc.white_cards.addToDiscard(eq)
 
+        # Set self to null location
+        self.location = None
+
     def move(self, location):
         self.location = location
         self.gc.update_h()
