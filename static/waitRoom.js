@@ -23,6 +23,7 @@ var WaitingRoom = new Phaser.Class ({
         if(usrctx.spectate)
         {
             // Start board
+            $('#reveal').remove();
             self.scene.start('board', usrctx.gc_data);
             return;
         }

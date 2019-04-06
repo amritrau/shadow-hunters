@@ -150,7 +150,7 @@ class Player:
                 self.gc.tell_h("{}'s Machine Gun hits everyone in their attack range!".format(self.user_id))
                 for t in targets:
                     damage_dealt = self.attack(t, roll_result)
-                    self.gc.tell_h("{} hit {} for {} damage!".format(self.user_id, target_name, damage_dealt))
+                    self.gc.tell_h("{} hit {} for {} damage!".format(self.user_id, t.user_id, damage_dealt))
             else:
                 damage_dealt = self.attack(target_Player, roll_result)
                 self.gc.tell_h("{} hit {} for {} damage!".format(self.user_id, target_name, damage_dealt))
