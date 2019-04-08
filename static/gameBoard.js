@@ -134,7 +134,7 @@ var GameBoard = new Phaser.Class ({
         this.load.image('Fu-ka', '/static/assets/Fu-ka.png');
         this.load.image('Valkyrie', '/static/assets/Valkyrie.png');
         this.load.image('Vampire', '/static/assets/Vampire.png');
-        this.load.image('Bob', '/static/assets/anon.png');
+        this.load.image('Bob', '/static/assets/Bob.png');
         this.load.image('Catherine', '/static/assets/anon.png');
         this.load.image('Franklin', '/static/assets/anon.png');
         this.load.image('Ellen', '/static/assets/anon.png');
