@@ -432,7 +432,7 @@ var GameBoard = new Phaser.Class ({
             }
 
             // remove reveal button on person's screen if they are revealed
-            if(data.state == 1 && player.info.state == 2) {
+            if((data.state == 1 || data.state == 0) && $('#reveal').length) {
                 $('#reveal').remove();
             }
         }
