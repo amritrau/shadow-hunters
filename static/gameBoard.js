@@ -21,7 +21,7 @@ var GameBoard = new Phaser.Class ({
         this.gameData;
         this.charInfo;
         this.infoBox;
-        this.gameEnd = {winners: []};
+        this.gameEnd = {image: [], winners: [], players_info: []};
         this.startSpots = [[490, 220], [530, 220], [570, 220], [510, 260], [550, 260]]; //list of x, y coordinates for 5 players
 
         // Player location coordinates (row = player number, even columns are x coords, odd columns are y coords)
@@ -143,6 +143,8 @@ var GameBoard = new Phaser.Class ({
         this.load.image('Ultra Soul', '/static/assets/anon.png');
         this.load.image('Werewolf', '/static/assets/anon.png');
         //this.load.svg('Allie', '/static/assets/Allie.svg', {width: 123, height: 123});
+
+        this.load.svg('gameOver', '/static/assets/gameOver.svg', {width: 642, height: 590});
     },
 
     //the create function is where everything is added to the canvas
@@ -275,12 +277,33 @@ var GameBoard = new Phaser.Class ({
                     console.log("in case win, data.type is: " + data.type);
                     console.log(data.winners);
                     var nWinners = data.winners.length;
-                    // this.gameEnd.names = [];
-                    // this.gameEnd.characters = [];
-                    // this.gameEnd.teams = [];
-                    // this.gameEnd.winCondition = [];
+                    self.gameEnd.image = self.add.image(530.543, 303.9, "gameOver");
+                    self.gameEnd.image.depth = 40;
                     for(var i = 0; i < nWinners; i++) {
-                        self.gameEnd.winners[i] = self.add.image(500 + i*70, 300, data.winners[i].character.name);
+                        if(i%2 == 0) {
+                            self.gameEnd.winners[i] = self.add.image(283, 140 + 130*(i/2), data.winners[i].character.name);
+                            self.gameEnd.players_info[i] = self.add.text(352, 78.183 + 130*(i/2), " ", { font: '12px Arial', fill: '#000000', wordWrap: { width: 160, useAdvancedWrap: true }});
+                        }
+                        else {
+                            self.gameEnd.winners[i] = self.add.image(583, 140 + 130*((i-1)/2), data.winners[i].character.name);
+                            self.gameEnd.players_info[i] = self.add.text(652, 78.183 + 130*((i-1)/2), " ", { font: '12px Arial', fill: '#000000', wordWrap: { width: 160, useAdvancedWrap: true }});
+                        }
+                        if(data.winners[i].character.alleg == 1){
+                            data.winners[i].character.alleg = "Neutral";
+                        }
+                        else if (data.winners[i].character.alleg == 0) {
+                            data.winners[i].character.alleg = "Shadow";
+                        }
+                        else {
+                            data.winners[i].character.alleg = "Hunter";
+                        }
+                        self.gameEnd.winners[i].depth = 40;
+                        self.gameEnd.players_info[i].depth = 40;
+                        self.gameEnd.players_info[i].setText([
+                            'Player: ' + data.winners[i].user_id,
+                            'Team: ' + data.winners[i].character.alleg,
+                            'Win Condition: ' + data.winners[i].character.win_cond_desc
+                        ]);
                     }
 
                     if($('#reveal').length) {
