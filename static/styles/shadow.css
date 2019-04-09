@@ -52,6 +52,23 @@ body {
     color: black;
 }
 
+select {
+   -webkit-appearance: none;
+   -moz-appearance: none;
+   appearance: none;       /* remove default arrow */
+   /* background-image: url();   /* add custom arrow */
+}
+
+#selectPlayers {
+    position: absolute;
+    left: 475px;
+    top: 400px;
+}
+
+#nPlayers {
+
+}
+
 #ingame {
     position: absolute;
     left:750px;

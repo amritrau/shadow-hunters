@@ -46,6 +46,7 @@ var GameBoard = new Phaser.Class ({
     {
         // Remove start button
         $('#start').remove();
+        $('#selectPlayers').remove();
 
         // Store data
         this.gameData = data;
