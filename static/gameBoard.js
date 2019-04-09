@@ -21,6 +21,7 @@ var GameBoard = new Phaser.Class ({
         this.gameData;
         this.charInfo;
         this.infoBox;
+        this.gameEnd = {winners: []};
         this.startSpots = [[490, 220], [530, 220], [570, 220], [510, 260], [550, 260]]; //list of x, y coordinates for 5 players
 
         // Player location coordinates (row = player number, even columns are x coords, odd columns are y coords)
@@ -266,6 +267,42 @@ var GameBoard = new Phaser.Class ({
             self.updateBoard(data);
         });
 
+        //socet receiver for displaying stuff
+        socket.on('display', function(data) {
+            switch(data.type) {
+                case "win":
+                    console.log("in case win, data.type is: " + data.type);
+                    console.log(data.winners);
+                    var nWinners = data.winners.length;
+                    // this.gameEnd.names = [];
+                    // this.gameEnd.characters = [];
+                    // this.gameEnd.teams = [];
+                    // this.gameEnd.winCondition = [];
+                    for(var i = 0; i < nWinners; i++) {
+                        self.gameEnd.winners[i] = self.add.image(500 + i*70, 300, data.winners[i].character.name);
+                    }
+                    break;
+                case "draw":
+                    console.log("in case draw, data.type is: " + data.type);
+                    //TO DO: add card popups to bottom left free space on board
+                    break;
+                case "reveal":
+                    console.log("in case reveal, data.type is: " + data.type);
+                    //TO DO: make character card pop up
+                    break;
+                case "roll":
+                    //TO DO: @Joanna write the code to display the dice here!
+                    break;
+                case "die":
+                    console.log("in case die, data.type is: " + data.type);
+                    //TO DO: make a popup annoucing death / revealing character
+                    break;
+                default:
+                    console.log("what are you doing? data.type is: " + data.type);
+                    break;
+            };
+        });
+
         // Warn players that they'll be disconnected if they leave
         window.onbeforeunload = function() {
             return 'If you leave this page, you will be removed from the game. ' +
@@ -495,5 +532,10 @@ var GameBoard = new Phaser.Class ({
             player.infoBox.setVisible(false);
             player.displayInfo.setVisible(false);
         }
+    },
+    //click handler for popups that will delete them
+    deletePopup: function(popup)
+    {
+        popup.visible = false;
     }
 });
