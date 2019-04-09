@@ -282,6 +282,11 @@ var GameBoard = new Phaser.Class ({
                     for(var i = 0; i < nWinners; i++) {
                         self.gameEnd.winners[i] = self.add.image(500 + i*70, 300, data.winners[i].character.name);
                     }
+
+                    if($('#reveal').length) {
+                        $('#reveal').remove();
+                    }
+
                     break;
                 case "draw":
                     console.log("in case draw, data.type is: " + data.type);
@@ -301,7 +306,7 @@ var GameBoard = new Phaser.Class ({
                 default:
                     console.log("what are you doing? data.type is: " + data.type);
                     break;
-            };
+            }
         });
 
         // Warn players that they'll be disconnected if they leave
