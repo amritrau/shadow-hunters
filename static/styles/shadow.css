@@ -162,10 +162,21 @@ select {
 }
 
 #message_holder {
-    overflow:scroll;
+    overflow: hidden;
     width: 180px;
     height: 190px;
     padding: 10px;
+}
+
+#message_holder:hover {
+    overflow-y:scroll;
+    width: 180px;
+    height: 190px;
+    padding: 10px;
+}
+
+#message_holder::-webkit-scrollbar {
+    background-color: rgba(0, 0, 0, .1);
 }
 
 #chat {
