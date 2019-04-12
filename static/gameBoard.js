@@ -22,6 +22,7 @@ var GameBoard = new Phaser.Class ({
         this.charInfo;
         this.infoBox;
         this.gameEnd = {image: [], winners: [], players_info: []};
+        this.cards = {cardsDrawn: [], cardText: [], nDrawn: 0};
         this.startSpots = [[490, 220], [530, 220], [570, 220], [510, 260], [550, 260]]; //list of x, y coordinates for 5 players
 
         // Player location coordinates (row = player number, even columns are x coords, odd columns are y coords)
@@ -138,13 +139,18 @@ var GameBoard = new Phaser.Class ({
         this.load.image('Vampire', '/static/assets/Vampire.png');
         this.load.image('Bob', '/static/assets/Bob.png');
         this.load.image('Catherine', '/static/assets/anon.png');
-        this.load.image('Franklin', '/static/assets/anon.png');
+        this.load.image('Franklin', '/static/assets/Franklin.png');
         this.load.image('Ellen', '/static/assets/anon.png');
         this.load.image('Ultra Soul', '/static/assets/anon.png');
         this.load.image('Werewolf', '/static/assets/anon.png');
         //this.load.svg('Allie', '/static/assets/Allie.svg', {width: 123, height: 123});
 
+        //display popups
         this.load.svg('gameOver', '/static/assets/gameOver.svg', {width: 642, height: 590});
+        this.load.svg('whitecard', '/static/assets/whitecard.svg', {width: 154.604, height: 199.212});
+        this.load.svg('blackcard', '/static/assets/blackcard.svg', {width: 154.604, height: 199.212});
+        this.load.svg('greencard', '/static/assets/greencard.svg', {width: 154.604, height: 199.212});
+
     },
 
     //the create function is where everything is added to the canvas
@@ -274,46 +280,10 @@ var GameBoard = new Phaser.Class ({
         socket.on('display', function(data) {
             switch(data.type) {
                 case "win":
-                    console.log("in case win, data.type is: " + data.type);
-                    console.log(data.winners);
-                    var nWinners = data.winners.length;
-                    self.gameEnd.image = self.add.image(530.543, 303.9, "gameOver");
-                    self.gameEnd.image.depth = 40;
-                    for(var i = 0; i < nWinners; i++) {
-                        if(i%2 == 0) {
-                            self.gameEnd.winners[i] = self.add.image(283, 140 + 130*(i/2), data.winners[i].character.name);
-                            self.gameEnd.players_info[i] = self.add.text(352, 78.183 + 130*(i/2), " ", { font: '12px Arial', fill: '#000000', wordWrap: { width: 160, useAdvancedWrap: true }});
-                        }
-                        else {
-                            self.gameEnd.winners[i] = self.add.image(583, 140 + 130*((i-1)/2), data.winners[i].character.name);
-                            self.gameEnd.players_info[i] = self.add.text(652, 78.183 + 130*((i-1)/2), " ", { font: '12px Arial', fill: '#000000', wordWrap: { width: 160, useAdvancedWrap: true }});
-                        }
-                        if(data.winners[i].character.alleg == 1){
-                            data.winners[i].character.alleg = "Neutral";
-                        }
-                        else if (data.winners[i].character.alleg == 0) {
-                            data.winners[i].character.alleg = "Shadow";
-                        }
-                        else {
-                            data.winners[i].character.alleg = "Hunter";
-                        }
-                        self.gameEnd.winners[i].depth = 40;
-                        self.gameEnd.players_info[i].depth = 40;
-                        self.gameEnd.players_info[i].setText([
-                            'Player: ' + data.winners[i].user_id,
-                            'Team: ' + data.winners[i].character.alleg,
-                            'Win Condition: ' + data.winners[i].character.win_cond_desc
-                        ]);
-                    }
-
-                    if($('#reveal').length) {
-                        $('#reveal').remove();
-                    }
-
+                    self.onGameOver(data.winners);
                     break;
                 case "draw":
-                    console.log("in case draw, data.type is: " + data.type);
-                    //TO DO: add card popups to bottom left free space on board
+                    self.onDraw(data);
                     break;
                 case "reveal":
                     console.log("in case reveal, data.type is: " + data.type);
@@ -563,8 +533,63 @@ var GameBoard = new Phaser.Class ({
         }
     },
     //click handler for popups that will delete them
-    deletePopup: function(popup)
+    cardHandler: function(card)
     {
-        popup.visible = false;
+        card.cardText.visible = false;
+        card.visible = false;
+    },
+
+    //game over displays
+    onGameOver: function(winners) {
+        var nWinners = winners.length;
+        this.gameEnd.image = this.add.image(530.543, 303.9, "gameOver");
+        this.gameEnd.image.depth = 40;
+        for(var i = 0; i < nWinners; i++) {
+            if(i%2 == 0) {
+                this.gameEnd.winners[i] = this.add.image(283, 140 + 130*(i/2), winners[i].character.name);
+                this.gameEnd.players_info[i] = this.add.text(352, 78.183 + 130*(i/2), " ", { font: '12px Arial', fill: '#000000', wordWrap: { width: 160, useAdvancedWrap: true }});
+            }
+            else {
+                this.gameEnd.winners[i] = this.add.image(583, 140 + 130*((i-1)/2), winners[i].character.name);
+                this.gameEnd.players_info[i] = this.add.text(652, 78.183 + 130*((i-1)/2), " ", { font: '12px Arial', fill: '#000000', wordWrap: { width: 160, useAdvancedWrap: true }});
+            }
+            if(winners[i].character.alleg == 1){
+                winners[i].character.alleg = "Neutral";
+            }
+            else if (winners[i].character.alleg == 0) {
+                winners[i].character.alleg = "Shadow";
+            }
+            else {
+                winners[i].character.alleg = "Hunter";
+            }
+            this.gameEnd.winners[i].depth = 40;
+            this.gameEnd.players_info[i].depth = 40;
+            this.gameEnd.players_info[i].setText([
+                'Player: ' + winners[i].user_id,
+                'Team: ' + winners[i].character.alleg,
+                'Win Condition: ' + winners[i].character.win_cond_desc
+            ]);
+        }
+
+        if($('#reveal').length) {
+            $('#reveal').remove();
+        }
+    },
+
+    //drawn card displays
+    onDraw: function(cardInfo) {
+        var cardsOut = this.cards.nDrawn;
+
+        //card color will change once that's given in data
+        this.cards.cardsDrawn[cardsOut] = this.add.image(281.321, 368.964, "whitecard");
+        this.cards.cardsDrawn[cardsOut].cardText = this.add.text(211.654, 365.668, " ", { font: '10px Arial', fill: '#000000', wordWrap: { width: 139, useAdvancedWrap: true }});
+        this.cards.cardsDrawn[cardsOut].cardText.setText([
+            cardInfo.title,
+            cardInfo.desc
+        ]);
+
+        this.cards.cardsDrawn[cardsOut].setInteractive();
+        this.cards.cardsDrawn[cardsOut].on('clicked', this.cardHandler, this.cards.cardsDrawn[cardsOut]);
+        this.cards.nDrawn = cardsOut + 1;
     }
 });
