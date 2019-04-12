@@ -1211,26 +1211,6 @@ class ElementFactory:
                 resource_id = "vampire"
             ),
             character.Character(
-                name = "Werewolf",
-                alleg = 0,  # Shadow
-                max_damage = 14,
-                win_cond = shadow_win_cond,
-                win_cond_desc = "All the Hunter characters are dead or 3 Neutral characters are dead",
-                special = lambda: 0,  # TODO
-                special_desc = "todo",
-                resource_id = "werewolf"
-            ),
-            character.Character(
-                name = "Ultra Soul",
-                alleg = 0,  # Shadow
-                max_damage = 11,
-                win_cond = shadow_win_cond,
-                win_cond_desc = "All the Hunter characters are dead or 3 Neutral characters are dead",
-                special = lambda: 0,  # TODO
-                special_desc = "todo",
-                resource_id = "vampire"
-            ),
-            character.Character(
                 name = "Allie",
                 alleg = 1,  # Neutral
                 max_damage = 8,

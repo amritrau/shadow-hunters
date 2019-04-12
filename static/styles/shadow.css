@@ -52,6 +52,23 @@ body {
     color: black;
 }
 
+select {
+   -webkit-appearance: none;
+   -moz-appearance: none;
+   appearance: none;       /* remove default arrow */
+   /* background-image: url();   /* add custom arrow */
+}
+
+#selectPlayers {
+    position: absolute;
+    left: 475px;
+    top: 400px;
+}
+
+#nPlayers {
+
+}
+
 #ingame {
     position: absolute;
     left:750px;
@@ -145,10 +162,21 @@ body {
 }
 
 #message_holder {
-    overflow:scroll;
+    overflow: hidden;
     width: 180px;
     height: 190px;
     padding: 10px;
+}
+
+#message_holder:hover {
+    overflow-y:scroll;
+    width: 180px;
+    height: 190px;
+    padding: 10px;
+}
+
+#message_holder::-webkit-scrollbar {
+    background-color: rgba(0, 0, 0, .1);
 }
 
 #chat {
