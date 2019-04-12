@@ -580,9 +580,20 @@ var GameBoard = new Phaser.Class ({
     onDraw: function(cardInfo) {
         var cardsOut = this.cards.nDrawn;
 
-        //card color will change once that's given in data
-        this.cards.cardsDrawn[cardsOut] = this.add.image(281.321, 368.964, "whitecard");
-        this.cards.cardsDrawn[cardsOut].cardText = this.add.text(211.654, 365.668, " ", { font: '10px Arial', fill: '#000000', wordWrap: { width: 139, useAdvancedWrap: true }});
+        if(cardInfo.color == 0) {
+            this.cards.cardsDrawn[cardsOut] = this.add.image(281.321, 368.964, "whitecard");
+            this.cards.cardsDrawn[cardsOut].cardText = this.add.text(211.654, 365.668, " ", { font: '10px Arial', fill: '#000000', wordWrap: { width: 139, useAdvancedWrap: true }});
+        }
+
+        else if (cardInfo.color == 1) {
+            this.cards.cardsDrawn[cardsOut] = this.add.image(281.321, 368.964, "blackcard");
+            this.cards.cardsDrawn[cardsOut].cardText = this.add.text(211.654, 365.668, " ", { font: '10px Arial', fill: '#FFFFFF', wordWrap: { width: 139, useAdvancedWrap: true }});
+        }
+        else {
+            this.cards.cardsDrawn[cardsOut] = this.add.image(281.321, 368.964, "greencard");
+            this.cards.cardsDrawn[cardsOut].cardText = this.add.text(211.654, 365.668, " ", { font: '10px Arial', fill: '#FFFFFF', wordWrap: { width: 139, useAdvancedWrap: true }});
+        }
+
         this.cards.cardsDrawn[cardsOut].cardText.setText([
             cardInfo.title,
             cardInfo.desc
