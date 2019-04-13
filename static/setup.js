@@ -129,7 +129,7 @@ $('document').ready(function() {
 
         // Configure game
         var config = {
-            type: Phaser.CANVAS,
+            type: Phaser.AUTO,
             width: 1066,
             height: 600,
             pixelArt: false,
