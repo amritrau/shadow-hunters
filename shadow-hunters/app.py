@@ -242,7 +242,9 @@ def on_message(msg):
     room_id = connections[request.sid]['room_id']
     msg['name'] = connections[request.sid]['name']
     msg['color'] = connections[request.sid]['color']
-    socketio.emit('message', msg, room=room_id)
+
+    if 'data' in msg and msg['data'].strip():
+        socketio.emit('message', msg, room=room_id)
 
 @socketio.on('join')
 def on_join(json):
