@@ -26,7 +26,8 @@ class Player:
         self.gc.update_h()
 
         # Broadcast reveal
-        # TODO: tell_h(json)
+        display_data = {'type': 'reveal', 'player': self.dump()}
+        self.gc.show_h(display_data)
         self.gc.tell_h("{} revealed themselves as {}, a {} with {} hp!".format(
             self.user_id,
             self.character.name,
@@ -48,25 +49,13 @@ class Player:
 
         # Roll dice
         self.gc.tell_h("{} is rolling for movement...".format(self.user_id))
-        data = {'options': ['Roll for movement!']}
-        self.ask_h('confirm', data, self.user_id)
-        roll_result_4 = self.gc.die4.roll()
-        roll_result_6 = self.gc.die6.roll()
-        roll_result = roll_result_4 + roll_result_6
-        # TODO: tell_h(json)
-        self.gc.tell_h("{} rolled {} + {} = {}!".format(self.user_id, roll_result_4, roll_result_6, roll_result))
+        roll_result = self.rollDice('area')
 
         if "Mystic Compass" in [e.title for e in self.equipment]:
 
             # If player has mystic compass, roll again
             self.gc.tell_h("{}'s Mystic Compass lets them roll again!".format(self.user_id))
-            data = {'options': ['Roll again!']}
-            self.ask_h('confirm', data, self.user_id)
-            roll_result_4 = self.gc.die4.roll()
-            roll_result_6 = self.gc.die6.roll()
-            second_roll = roll_result_4 + roll_result_6
-            # TODO: tell_h(json)
-            self.gc.tell_h("{} rolled {} + {} = {}!".format(self.user_id, roll_result_4, roll_result_6, second_roll))
+            second_roll = self.rollDice('area')
 
             # Pick the preferred roll
             data = {'options': ["Use {}".format(roll_result), "Use {}".format(second_roll)]}
@@ -143,40 +132,25 @@ class Player:
 
         if answer != 'Decline':
 
-            # Get target and ask for roll
+            # Get target
             target_name = answer
             target_Player = [p for p in self.gc.getLivePlayers() if p.user_id == target_name][0]
             self.gc.tell_h("{} is attacking {}!".format(self.user_id, target_name))
-            data = {'options': ['Roll for damage!']}
-            self.ask_h('confirm', data, self.user_id)
 
-            # Get attack roll
-            roll_result_4 = self.gc.die4.roll()
-            roll_result_6 = self.gc.die6.roll()
-            roll_result = abs(roll_result_4 - roll_result_6)
-
-            # Only roll with the 4 sided die if player has Muramasa
+            # Roll with the 4-sided die if the player has masamune
+            roll_result = 0
             if "Cursed Sword Masamune" in [e.title for e in self.equipment]:
-                roll_result = roll_result_4
-                # TODO: tell_h(json)
-                self.gc.tell_h("{} rolled a {} using the Masamune!".format(self.user_id, roll_result))
+                self.gc.tell_h("{} rolls with the 4-sided die using the Masamune!".format(self.user_id, roll_result))
+                roll_result = self.rollDice('4')
             else:
-                # TODO: tell_h(json)
-                self.gc.tell_h(
-                    "{} rolled a {} - {} = {}!".format(
-                        self.user_id,
-                        max(roll_result_6, roll_result_4),
-                        min(roll_result_6, roll_result_4),
-                        roll_result
-                    )
-                )
+                roll_result = self.rollDice('attack')
 
             # If player has Machine Gun, launch attack on everyone in the zone. Otherwise, attack the target
             if "Machine Gun" in [e.title for e in self.equipment]:
                 self.gc.tell_h("{}'s Machine Gun hits everyone in their attack range!".format(self.user_id))
                 for t in targets:
                     damage_dealt = self.attack(t, roll_result)
-                    self.gc.tell_h("{} hit {} for {} damage!".format(self.user_id, target_name, damage_dealt))
+                    self.gc.tell_h("{} hit {} for {} damage!".format(self.user_id, t.user_id, damage_dealt))
             else:
                 damage_dealt = self.attack(target_Player, roll_result)
                 self.gc.tell_h("{} hit {} for {} damage!".format(self.user_id, target_name, damage_dealt))
@@ -192,16 +166,18 @@ class Player:
 
     def drawCard(self, deck):
 
-        # Draw card and tell people about it
+        # Draw card and tell frontend about it
         drawn = deck.drawCard()
         public_title = drawn.title if drawn.color != 2 else 'a Hermit Card'
         self.gc.tell_h("{} drew {}!".format(self.user_id, public_title))
+        display_data = drawn.dump()
+        display_data['type'] = 'draw'
         if drawn.color != 2:
             self.gc.tell_h("{}: {}".format(drawn.title, drawn.desc))
-            # TODO: tell_h(json)
+            self.gc.show_h(display_data)
         else:
-            self.gc.direct_h("{}: {}".format(drawn.title, drawn.desc), self.socket_id)
-            # TODO: tell_h(json)
+            self.gc.tell_h("{}: {}".format(drawn.title, drawn.desc), client=self.socket_id)
+            self.gc.show_h(display_data, client=self.socket_id)
 
         # Use card if it's single-use, or add to arsenal if it's equipment
         if drawn.is_equipment:
@@ -213,6 +189,55 @@ class Player:
             args = {'self': self, 'card': drawn}
             drawn.use(args)
 
+    def rollDice(self, type):
+
+        # Preprocess all rolls
+        assert type in ["area", "attack", "6", "4"]
+        roll_4 = self.gc.die4.roll()
+        roll_6 = self.gc.die6.roll()
+        diff = abs(roll_4 - roll_6)
+        sum = roll_4 + roll_6
+
+        # Set values based on type of roll
+        if type == "area":
+            ask_data = {'options': ['Roll the dice!']}
+            display_data = {'type': 'roll', '4-sided': roll_4, '6-sided': roll_6}
+            message = "{} rolled {} + {} = {}!".format(self.user_id, roll_4, roll_6, sum)
+            result = sum
+        elif type == "attack":
+            ask_data = {'options': ['Roll for damage!']}
+            display_data = {'type': 'roll', '4-sided': roll_4, '6-sided': roll_6}
+            message = "{} rolled a {} - {} = {}!".format(self.user_id, max(roll_6, roll_4), min(roll_6, roll_4), diff)
+            result = diff
+        elif type == "6":
+            ask_data = {'options': ['Roll the 6-sided die!']}
+            display_data = {'type': 'roll', '4-sided': 0, '6-sided': roll_6}
+            message = "{} rolled a {}!".format(self.user_id, roll_6)
+            result = roll_6
+        elif type == "4":
+            ask_data = {'options': ['Roll the 4-sided die!']}
+            display_data = {'type': 'roll', '4-sided': roll_4, '6-sided': 0}
+            message = "{} rolled a {}!".format(self.user_id, roll_4)
+            result = roll_4
+
+        # Ask for confirmation and display results
+        self.ask_h('confirm', ask_data, self.user_id)
+        self.gc.show_h(display_data)
+        self.gc.tell_h(message)
+        return result
+
+    def giveEquipment(self, receiver, eq):
+
+        # Transfer equipment
+        i = self.equipment.index(eq)
+        eq = self.equipment.pop(i)
+        receiver.equipment.append(eq)
+        eq.holder = receiver
+
+        # Tell frontend about transfer
+        self.gc.tell_h("{} gave {} their {}!".format(self.user_id, receiver.user_id, eq.title))
+        self.gc.update_h()
+
     def attack(self, other, amount):
 
         # Compose equipment functions
@@ -222,6 +247,7 @@ class Player:
             if eq.use:
                 amount = eq.use(is_attack, successful, amount)
 
+        # Check for spear of longinus
         has_spear = "Spear of Longinus" in [e.title for e in self.equipment]
         if successful and self.character.alleg == 2 and self.state == 1 and has_spear:
             self.gc.tell_h("{} strikes with their Spear of Longinus!".format(self.user_id))
@@ -270,7 +296,8 @@ class Player:
         self.state = 0
 
         # Report to console
-        # TODO: tell_h(json)
+        display_data = {'type': 'die', 'player': self.dump()}
+        self.gc.show_h(display_data)
         self.gc.tell_h("{} ({}: {}) was killed by {}!".format(
             self.user_id,
             elements.ALLEGIANCE_MAP[self.character.alleg],
@@ -287,7 +314,10 @@ class Player:
                 # Steal all of the player's equipment
                 self.gc.tell_h("{}'s Silver Rosary let them steal all of {}'s equipment!".format(attacker.user_id, self.user_id))
                 attacker.equipment += self.equipment
+                for eq in attacker.equipment:
+                    eq.holder = attacker
                 self.equipment = []
+                self.gc.update_h()
 
             else:
 
@@ -297,14 +327,7 @@ class Player:
                 equip_Equipment = [eq for eq in self.equipment if eq.title == equip][0]
 
                 # Transfer equipment from one player to the other
-                i = self.equipment.index(equip_Equipment)
-                equip_Equipment = self.equipment.pop(i)
-                attacker.equipment.append(equip_Equipment)
-                equip_Equipment.holder = attacker
-                self.gc.tell_h("{} took {}'s {}!".format(attacker.user_id, self.user_id, equip_Equipment.title))
-
-        # Update the game board
-        self.gc.update_h()
+                self.giveEquipment(attacker, equip_Equipment)
 
         # Put remaining equipment back in the deck (discard pile)
         while self.equipment:
@@ -315,6 +338,9 @@ class Player:
                 self.gc.green_cards.addToDiscard(eq)
             elif eq.color == 3: # White
                 self.gc.white_cards.addToDiscard(eq)
+
+        # Set self to null location
+        self.location = None
 
     def move(self, location):
         self.location = location

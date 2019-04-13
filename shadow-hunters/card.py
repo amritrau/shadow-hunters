@@ -16,5 +16,6 @@ class Card:
     def dump(self):
         return {
             'title': self.title,
-            'desc': self.desc
+            'desc': self.desc,
+            'color': self.color
         }
