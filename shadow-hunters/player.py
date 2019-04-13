@@ -173,10 +173,8 @@ class Player:
         display_data = drawn.dump()
         display_data['type'] = 'draw'
         if drawn.color != 2:
-            self.gc.tell_h("{}: {}".format(drawn.title, drawn.desc))
             self.gc.show_h(display_data)
         else:
-            self.gc.tell_h("{}: {}".format(drawn.title, drawn.desc), client=self.socket_id)
             self.gc.show_h(display_data, client=self.socket_id)
 
         # Use card if it's single-use, or add to arsenal if it's equipment
