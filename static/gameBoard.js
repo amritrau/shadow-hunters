@@ -23,7 +23,17 @@ var GameBoard = new Phaser.Class ({
         this.infoBox;
         this.gameEnd = {image: [], winners: [], players_info: []};
         this.cards = {cardsDrawn: [], cardText: [], nDrawn: 0};
-        this.startSpots = [[490, 220], [530, 220], [570, 220], [510, 260], [550, 260]]; //list of x, y coordinates for 5 players
+        
+        // list of x, y coordinates for 8 players' starting spots
+        this.startSpots = [[562, 245],
+                           [504, 245], 
+                           [533, 215], 
+                           [533, 275], 
+                           [591, 275],
+                           [510, 185],
+                           [556, 185],
+                           [475, 275]
+                           ];
 
         // Player location coordinates (row = player number, even columns are x coords, odd columns are y coords)
         this.allSpots = [[398.483,220.233,468.420,163.359,601.778,163.359,671.715,220.233,514.936,437.763,561.010,390.301],
