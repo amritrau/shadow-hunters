@@ -68,6 +68,9 @@ def room(methods=['GET','POST']):
         if username == "undefined" or room_id == "undefined":
             flash("Nice try.")
             return redirect('/')
+        if username.isdigit() or username.startswith('CPU'):
+            flash("The username you chose is reserved")
+            return redirect('/')
 
         # check for username taken
         if (username, room_id) in get_sid:

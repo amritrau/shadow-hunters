@@ -133,6 +133,8 @@ $('document').ready(function() {
         // Disconnect handler
         socket.on('disconnect', function(reason) {
             window.onbeforeunload = function() {};
+            alert("You have lost connection to the server – click 'Ok' to return to the home page, " +
+                  "where you may reconnect.");
             window.location = "/";
         });
 
