@@ -47,8 +47,9 @@ var GameBoard = new Phaser.Class ({
                      ];
 
         //y coordinates of all possible spots on health bar
-        this.hpSpots = [585];
-        this.hpStart = 585;
+        // Why are there two of these - not sure which to change, so changed both
+        this.hpSpots = [589.5];
+        this.hpStart = 589.5;
         this.zoneCards = [[],[],[]];
         this.zoneSpots = [[382.000, 201.500, 433.000, 113.250],
                           [633.000, 113.250, 684.250, 201.750],
@@ -456,7 +457,7 @@ var GameBoard = new Phaser.Class ({
         }
 
         // Update hp
-        player.hpTracker.y = this.hpStart - 40*data.damage;
+        player.hpTracker.y = this.hpStart - 38.25*data.damage;
 
         // Kill player if dead
         if(data.state == 0) {
