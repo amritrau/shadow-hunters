@@ -132,6 +132,7 @@ $('document').ready(function() {
 
         // Disconnect handler
         socket.on('disconnect', function(reason) {
+            window.onbeforeunload = function() {};
             window.location = "/";
         });
 
