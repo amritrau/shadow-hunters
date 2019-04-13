@@ -81,9 +81,17 @@ $('document').ready(function() {
                 html += msg.data+'</b></p>';
             }
 
-            // Put message in chatbox
-            $('#message_holder').append(html);
-            $("#message_holder").scrollTop($("#message_holder")[0].scrollHeight);
+            // Put message in chatbox and snap to bottom if already at bottom
+            var chat = $("#message_holder");
+            if (chat.scrollTop() == chat[0].scrollHeight - chat[0].clientHeight)
+            {
+                chat.append(html);
+                chat.scrollTop(chat[0].scrollHeight);
+            }
+            else
+            {
+                chat.append(html);
+            }
         });
 
         // Receive an ask

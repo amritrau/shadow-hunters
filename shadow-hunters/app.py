@@ -238,11 +238,12 @@ def on_answer(json):
 @socketio.on('message')
 def on_message(msg):
 
-    # Broadcast message to all players
+    # Message fields
     room_id = connections[request.sid]['room_id']
     msg['name'] = connections[request.sid]['name']
     msg['color'] = connections[request.sid]['color']
 
+    # Broadcast non-empty message
     if 'data' in msg and msg['data'].strip():
         socketio.emit('message', msg, room=room_id)
 
