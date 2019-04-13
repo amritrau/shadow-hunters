@@ -24,11 +24,14 @@ var GameBoard = new Phaser.Class ({
         this.startSpots = [[490, 220], [530, 220], [570, 220], [510, 260], [550, 260]]; //list of x, y coordinates for 5 players
 
         // Player location coordinates (row = player number, even columns are x coords, odd columns are y coords)
-        this.allSpots = [[336.909,199.411,383.466,117.760,682.109,117.760,728.666,199.411,457.000,342.000,560.000,342.000],
-                         [361.909,156.110,408.466, 74.459,657.109, 74.459,703.666,156.110,507.000,342.000,610.000,342.000],
-                         [382.965,197.134,429.522,115.483,636.053,115.483,682.610,197.134,482.000,380.747,585.000,380.747],
-                         [406.191,239.411,452.748,157.760,612.827,157.760,659.384,239.411,457.000,422.000,560.000,422.000],
-                         [431.191,196.110,477.748,114.459,587.827,114.459,634.384,196.110,507.000,422.000,610.000,422.000]
+        this.allSpots = [[398.483,220.233,468.420,163.359,601.778,163.359,671.715,220.233,514.936,437.763,561.010,561.010],
+                         [423.487,208.877,472.424,122.003,597.774,122.003,646.711,208.877,457.931,390.407,576.005,428.945],
+                         [419.487,247.874,448.424,132.000,621.774,132.000,650.711,247.874,471.931,420.404,624.005,389.942],
+                         [394.972,180.750,448.737, 91.851,621.461, 91.851,675.226,180.750,521.618,387.255,595.521,393.817],
+                         [444.304,203.018,423.086,137.467,647.112,137.467,625.894,203.018,494.025,394.626,608.189,437.086],
+                         [378.242,228.124,499.237,113.250,570.961,113.250,691.956,228.124,449.118,434.654,550.251,428.192],
+                         [346.934,152.375,373.233, 97.393,696.965, 97.393,723.264,152.375,509.887,326.988,613.559,330.442],
+                         [323.822,194.484,403.492, 64.687,666.706, 64.687,746.376,194.484,453.340,329.579,562.671,326.552]
                      ];
 
         //y coordinates of all possible spots on health bar
@@ -88,17 +91,27 @@ var GameBoard = new Phaser.Class ({
         this.load.svg('player3', gfx + 'green-person.svg', {width: 50.5, height: 37.5});
         this.load.svg('player4', gfx + 'blue-person.svg', {width: 50.5, height: 37.5});
         this.load.svg('player5', gfx + 'pink-person.svg', {width: 50.5, height: 37.5});
+        this.load.svg('player6', gfx + 'orange-person.svg', {width: 50.5, height: 37.5});
+        this.load.svg('player7', gfx + 'yellow-person.svg', {width: 50.5, height: 37.5});
+        this.load.svg('player8', gfx + 'red-person.svg', {width: 50.5, height: 37.5});
+        
         this.load.svg('circle1', gfx + 'white_circle.svg', {width: 123.633, height: 123.633});
         this.load.svg('circle2', gfx + 'black_circle.svg', {width: 123.633, height: 123.633});
         this.load.svg('circle3', gfx + 'green_circle.svg', {width: 123.633, height: 123.633});
         this.load.svg('circle4', gfx + 'blue_circle.svg', {width: 123.633, height: 123.633});
         this.load.svg('circle5', gfx + 'pink_circle.svg', {width: 123.633, height: 123.633});
+        this.load.svg('circle6', gfx + 'orange_circle.svg', {width: 123.633, height: 123.633});
+        this.load.svg('circle7', gfx + 'yellow_circle.svg', {width: 123.633, height: 123.633});
+        this.load.svg('circle8', gfx + 'red_circle.svg', {width: 123.633, height: 123.633});
 
         this.load.svg('hpp1', gfx + 'whiteDot.svg', {width: 15, height: 15});
         this.load.svg('hpp2', gfx + 'blackDot.svg', {width: 15, height: 15});
         this.load.svg('hpp3', gfx + 'greenDot.svg', {width: 15, height: 15});
         this.load.svg('hpp4', gfx + 'blueDot.svg', {width: 15, height: 15});
         this.load.svg('hpp5', gfx + 'pinkDot.svg', {width: 15, height: 15});
+        this.load.svg('hpp6', gfx + 'orangeDot.svg', {width: 15, height: 15});
+        this.load.svg('hpp7', gfx + 'yellowDot.svg', {width: 15, height: 15});
+        this.load.svg('hpp8', gfx + 'redDot.svg', {width: 15, height: 15});
 
         this.load.image('box', '/static/assets/box.png');
 
@@ -118,6 +131,7 @@ var GameBoard = new Phaser.Class ({
         this.load.svg('E', '/static/assets/e.svg', {width: 36.657, height: 36.657});
         this.load.svg('F', gfx + 'f.svg', {width: 36.657, height: 36.657});
         this.load.svg('G', gfx + 'g.svg', {width: 36.657, height: 36.657});
+        
         // will replace with actual art as I make them
         // possible later implementation: loop through dumped list of playable characters to load images?
         this.load.image('Allie', '/static/assets/Allie.png');
@@ -237,7 +251,7 @@ var GameBoard = new Phaser.Class ({
                 'Special Ability: ' + this.infoBox.data.get('special')
             ]);
 
-            this.add.image(100, 366.975, "circle" + String(this.player.number));
+            this.add.image(100, 366.975, "circle" + String(this.player.number)).setScale(1.1);
             this.add.image(100, 366.975, this.charInfo.name);
             this.add.image(60.442, 322.289, this.charInfo.name[0]);
             this.add.image(137.489, 412.722, String(this.charInfo.max_damage) + "hp");
