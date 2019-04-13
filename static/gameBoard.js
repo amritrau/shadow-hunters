@@ -264,7 +264,7 @@ var GameBoard = new Phaser.Class ({
                 'Special Ability: ' + this.infoBox.data.get('special')
             ]);
 
-            this.add.image(100, 366.975, "circle" + String(this.player.number)).setScale(1.1);
+            this.add.image(100, 366.975, "circle" + String(this.player.number)).setScale(1.025);
             this.add.image(100, 366.975, this.charInfo.name);
             this.add.image(60.442, 322.289, this.charInfo.name[0]);
             this.add.image(137.489, 412.722, String(this.charInfo.max_damage) + "hp");
