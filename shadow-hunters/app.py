@@ -140,7 +140,7 @@ def start_game(room_id, names, n_players):
         socketio.emit('game_start', data, room = k)
 
     # Change colors of players chat messages to match their in-game colors
-    color_strings = ['rgb(255,255,255)', 'rgb(50,50,50)', 'rgb(79,182,78)', 'rgb(62,99,171)',
+    color_strings = ['rgb(255,255,255)', 'rgb(100,100,100)', 'rgb(79,182,78)', 'rgb(62,99,171)',
                      'rgb(197,97,163)', 'rgb(219,62,62)', 'rgb(249,234,48)', 'rgb(239,136,43)']
     socket_ids = [p.socket_id for p in players]
     for s in sorted(socket_ids):
