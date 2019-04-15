@@ -111,9 +111,12 @@ class GameContext:
                 self.turn_order = list(self.players)
 
     def dump(self):
+        # Note that public_players and private_state are no longer keyed by
+        # socket_ids
         public_zones = [z.dump() for z in self.zones]
         private_players = {p.socket_id: p.dump() for p in self.players}
         public_players = copy.deepcopy(private_players)
+        public_players = public_players.values()
 
         # Hide character information if player hasn't revealed themselves
         for k,v in public_players.items():
@@ -126,7 +129,7 @@ class GameContext:
             'players': public_players,
             'characters': [c.dump() for c in self.characters]
         }
-        private_state = private_players
+        private_state = private_players.values()
 
 
         return public_state, private_state
