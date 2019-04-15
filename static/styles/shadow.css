@@ -8,7 +8,7 @@ body {
 .container {
     margin: auto;
     width: 1100px;
-    height: 100%;
+    height: 600px;
     position: relative;
 }
 .header {
@@ -61,7 +61,7 @@ select {
 
 #selectPlayers {
     position: absolute;
-    left: 475px;
+    left: 480px;
     top: 400px;
 }
 
