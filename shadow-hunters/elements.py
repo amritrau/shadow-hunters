@@ -1327,7 +1327,7 @@ class ElementFactory:
                 # Present player with list of attack options
                 targets = [p for p in gc.getLivePlayers() if p.location.name == "Underworld Gate"]
                 gc.tell_h("{} (Ultra Soul) is choosing a target for their Murder Ray...".format(player.user_id))
-                data = {'options': [p.user_id for p targets if p != player]}
+                data = {'options': [p.user_id for p in targets if p != player]}
                 target = player.ask_h('select', data, player.user_id)['value']
                 target_Player = [p for p in gc.getLivePlayers() if p.user_id == target][0]
                 gc.tell_h("{} chose {}!".format(player.user_id, target))
