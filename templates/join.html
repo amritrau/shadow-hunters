@@ -38,7 +38,7 @@
 		<div class="centered">
 			<body>
 				<center>
-					<div style="width: 500px; border: 5px solid; padding: 10px; box-shadow: 5px 10px #000000; background-color: #DFDFDF">
+					<div style="width: 350px; border: 5px solid; padding: 10px; box-shadow: 5px 10px #000000; background-color: #DFDFDF;height: 60px; position: fixed; left: -191px">
 						<form action="/room" method="POST">
 							<center>
 								<div><b style="color: #3f2b6d">Enter a screen name and a room ID to join a game!</b></div>
@@ -53,14 +53,12 @@
 				</center>
 				<div><br /></div>
 				<center>
-					<div style="color: #FFFFFF; background-color: #F93F2A; opacity: .75">
+					<div style="color: #FFFFFF; background-color: #000000; opacity: .5; position: absolute; top: 125px; left: -75px">
 						{% with messages = get_flashed_messages() %}
 						{% if messages %}
-						<p class=flashes>
+						<p class=flashes style="width: 150px; height: 0px">
 							{% for message in messages %}
-							<br />
 							<p>{{ message }}</p>
-							<br />
 							{% endfor %}
 						</p>
 						{% endif %}
