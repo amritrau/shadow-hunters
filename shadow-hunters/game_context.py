@@ -116,7 +116,6 @@ class GameContext:
         public_zones = [z.dump() for z in self.zones]
         private_players = {p.socket_id: p.dump() for p in self.players}
         public_players = copy.deepcopy(private_players)
-        public_players = public_players.values()
 
         # Hide character information if player hasn't revealed themselves
         for k,v in public_players.items():
@@ -126,10 +125,10 @@ class GameContext:
         # Collect the public states
         public_state = {
             'zones': public_zones,
-            'players': public_players,
+            'players': list(public_players.values()),
             'characters': [c.dump() for c in self.characters]
         }
-        private_state = private_players.values()
+        private_state = list(private_players.values())
 
 
         return public_state, private_state

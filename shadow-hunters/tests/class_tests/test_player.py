@@ -23,7 +23,7 @@ def test_fields():
     assert not p.character
     assert not p.location
     assert not p.equipment
-    assert not p.modifiers
+    assert p.modifiers['attack_dice_type'] == 'attack'
     assert p.damage == 0
     assert p.ai == False
     assert p.ask_h(0, 0, 0) == 5
