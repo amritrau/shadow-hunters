@@ -78,7 +78,7 @@ select {
 #reveal {
     position: absolute;
     left:70px;
-    top:460px;
+    top:457px;
 }
 
 .reveal {
@@ -153,7 +153,7 @@ select {
     top: 20px;
     left: 20px;
     width:200px;
-    height: 250px;
+    height: 295px;
     margin: auto;
     background-color: rgba(0, 0, 0, .1);
     text-align: left;
@@ -164,15 +164,17 @@ select {
 #message_holder {
     overflow: hidden;
     width: 180px;
-    height: 190px;
+    height: 225px;
     padding: 10px;
+    margin-bottom: 0px;
 }
 
 #message_holder:hover {
     overflow-y:scroll;
     width: 180px;
-    height: 190px;
+    height: 225px;
     padding: 10px;
+    margin-bottom: 0px;
 }
 
 #message_holder::-webkit-scrollbar {
