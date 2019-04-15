@@ -1153,6 +1153,9 @@ class ElementFactory:
             return first_to_die or last_two
 
         ## Specials
+
+        ########## Neutrals
+
         def allie_special(gc, player, turn_pos):
             # ANY TIME
             if turn_pos == 'now':
@@ -1177,6 +1180,8 @@ class ElementFactory:
 
                 # Tell
                 gc.tell_h("Catherine used her special ability: {}".format(player.character.special_desc))
+
+        ########## Hunters
 
         def george_special(gc, player, turn_pos):
             # START OF TURN
@@ -1286,6 +1291,42 @@ class ElementFactory:
                     # Already used special
                     gc.tell_h("This special ability can be used only once.", player.socket_id)
 
+        ########## Shadows
+
+        def valkyrie_special(gc, player, turn_pos):
+            if not player.modifiers['special_active']:
+                # Tell
+                gc.tell_h("Valkyrie used her special ability: {}".format(player.character.special_desc))
+                player.modifiers['attack_dice_type'] = "4"
+                player.modifiers['special_active'] = True
+
+        def vampire_special(gc, player, turn_pos):
+            if not player.modifiers['special_active']:
+                # Tell
+                gc.tell_h("Vampire used his special ability: {}".format(player.character.special_desc))
+                player.modifiers['damage_dealt_fn'] = lambda player: player.moveDamage(-2, player)
+                player.modifiers['special_active'] = True
+
+        def werewolf_special(gc, player, turn_pos):
+            if not player.modifiers['special_active']:
+                # Tell
+                gc.tell_h("Werewolf used their special ability: {}".format(player.character.special_desc))
+                player.modifiers['counterattack'] = True
+                player.modifiers['special_active'] = True
+
+        def ultra_soul_special(gc, player, turn_pos):
+            # START OF TURN
+            if turn_pos == 'start':
+                # Present player with list of attack options
+                targets = [p for p in gc.getLivePlayers() if p.location.name == "Underworld Gate"]
+                gc.tell_h("{} (Ultra Soul) is choosing a target for their Murder Ray...".format(player.user_id))
+                data = {'options': [p.user_id for p targets if p != player]}
+                target = player.ask_h('select', data, player.user_id)['value']
+                target_Player = [p for p in gc.getLivePlayers() if p.user_id == target][0]
+                gc.tell_h("{} chose {}!".format(player.user_id, target))
+                dealt = player.attack(target_Player, 3)
+                gc.tell_h("{} (Ultra Soul)'s Murder Ray gave {} {} damage!".format(player.user_id, target, dealt))
+
         ## Initialize characters
 
         self.CHARACTERS = [
@@ -1295,7 +1336,7 @@ class ElementFactory:
                 max_damage = 13,
                 win_cond = shadow_win_cond,
                 win_cond_desc = "All the Hunter characters are dead or 3 Neutral characters are dead",
-                special = lambda: 0,  # TODO
+                special = valkyrie_special,
                 special_desc = "todo",
                 resource_id = "valkyrie"
             ),
@@ -1305,7 +1346,7 @@ class ElementFactory:
                 max_damage = 13,
                 win_cond = shadow_win_cond,
                 win_cond_desc = "All the Hunter characters are dead or 3 Neutral characters are dead",
-                special = lambda: 0,  # TODO
+                special = vampire_special,
                 special_desc = "todo",
                 resource_id = "vampire"
             ),
@@ -1315,7 +1356,7 @@ class ElementFactory:
                 max_damage = 14,
                 win_cond = shadow_win_cond,
                 win_cond_desc = "All the Hunter characters are dead or 3 Neutral characters are dead",
-                special = lambda: 0,  # TODO
+                special = werewolf_special,
                 special_desc = "todo",
                 resource_id = "werewolf"
             ),
@@ -1325,9 +1366,9 @@ class ElementFactory:
                 max_damage = 11,
                 win_cond = shadow_win_cond,
                 win_cond_desc = "All the Hunter characters are dead or 3 Neutral characters are dead",
-                special = lambda: 0,  # TODO
+                special = ultra_soul_special,
                 special_desc = "todo",
-                resource_id = "vampire"
+                resource_id = "ultra-soul"
             ),
             character.Character(
                 name = "Allie",
@@ -1345,7 +1386,7 @@ class ElementFactory:
                 max_damage = 10,
                 win_cond = bob_win_cond,
                 win_cond_desc = "You have 5 or more equipment cards",
-                special = lambda: 0,  # TODO
+                special = lambda x, y, z: 0,  # TODO
                 special_desc = "todo",
                 resource_id = "bob"
             ),

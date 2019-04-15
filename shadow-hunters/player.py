@@ -12,6 +12,7 @@ class Player:
         self.damage = 0
         self.location = None
         self.modifiers = defaultdict(lambda: False)
+        self.modifiers['attack_dice_type'] = "attack"
         self.ask_h = ask_h
         self.ai = ai
 
@@ -127,7 +128,7 @@ class Player:
             return
 
         # Attack
-        self.attackSequence()
+        self.attackSequence(dice_type = self.modifiers['attack_dice_type'])
 
         # The current player could have died -- if so end their turn
         if self.state == 0:
@@ -272,6 +273,12 @@ class Player:
 
         # Return damage dealt
         dealt = other.defend(self, amount)
+
+        # If we dealt damage, some specials might have external effects
+        if dealt > 0:
+            if 'damage_dealt_fn' in self.modifiers:
+                self.modifiers['damage_dealt_fn'](self)
+
         return dealt
 
     def defend(self, other, amount):
@@ -291,6 +298,25 @@ class Player:
         # Return damage dealt
         dealt = amount
         self.moveDamage(-dealt, attacker = other)
+
+        # Check for counterattack
+        if self.modifiers['counterattack']:
+            # Ask if player wants to counterattack
+            answer = self.gc.ask_h('confirm', {'options': ["Counterattack", "Decline"]}, self.user_id)['value']
+
+            if answer != "Decline":
+                self.gc.tell_h("{} is counterattacking!".format(self.user_id))
+                # Roll with the 4-sided die if the player has masamune
+                roll_result = 0
+                if "Cursed Sword Masamune" in [e.title for e in self.equipment]:
+                    self.gc.tell_h("{} rolls with the 4-sided die using the Masamune!".format(self.user_id, roll_result))
+                    roll_result = self.rollDice('4')
+                else:
+                    roll_result = self.rollDice(self.modifiers['attack_dice_type'])
+                self.attack(other, roll_result)
+            else:
+                self.gc.tell_h("{} declined to counterattack.".format(self.user_id))
+
         return dealt
 
     def moveDamage(self, damage_change, attacker):
