@@ -1172,6 +1172,13 @@ class ElementFactory:
                     # Already used special
                     gc.tell_h("This special ability can be used only once.", player.socket_id)
 
+        def bob_special(gc, player, turn_pos):
+            if 4 <= len(gc.players) <= 6:
+                return # TODO
+            else:
+                return # TODO
+
+
         def catherine_special(gc, player, turn_pos):
             # START OF TURN
             if turn_pos == 'start':
@@ -1327,6 +1334,7 @@ class ElementFactory:
                 dealt = player.attack(target_Player, 3)
                 gc.tell_h("{} (Ultra Soul)'s Murder Ray gave {} {} damage!".format(player.user_id, target, dealt))
 
+
         ## Initialize characters
 
         self.CHARACTERS = [
@@ -1386,7 +1394,7 @@ class ElementFactory:
                 max_damage = 10,
                 win_cond = bob_win_cond,
                 win_cond_desc = "You have 5 or more equipment cards",
-                special = lambda x, y, z: 0,  # TODO
+                special = bob_special,
                 special_desc = "todo",
                 resource_id = "bob"
             ),
