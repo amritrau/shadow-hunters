@@ -48,8 +48,8 @@ var GameBoard = new Phaser.Class ({
 
         //y coordinates of all possible spots on health bar
         // Why are there two of these - not sure which to change, so changed both
-        this.hpSpots = [589.5];
-        this.hpStart = 589.5;
+        this.hpSpots = [582];
+        this.hpStart = 582;
         this.zoneCards = [[],[],[]];
         this.zoneSpots = [[382.000, 201.500, 433.000, 113.250],
                           [633.000, 113.250, 684.250, 201.750],
@@ -90,10 +90,10 @@ var GameBoard = new Phaser.Class ({
         this.load.image("popup_right", "/static/assets/popup_right.png");
         this.load.image("popup_left", "/static/assets/popup_left.png");
         this.load.image('text', '/static/assets/text.png');
-        this.load.image('health', '/static/assets/health.png');
+        this.load.svg('health', gfx + 'health.svg', {width: 206.681, height: 589.442});
 
         // load arsenal
-        this.load.image('arsenal', '/static/assets/arsenal.png');
+        this.load.image('arsenal', gfx + 'arsenal.svg', {width: 640, height: 125.683});
 
         // load the location cards
         this.load.svg('Hermit\'s Cabin', gfx + 'hermits_cabin.svg', {width: 101, height: 150});
@@ -131,6 +131,7 @@ var GameBoard = new Phaser.Class ({
         this.load.svg('hpp7', gfx + 'yellowDot.svg', {width: 15, height: 15});
         this.load.svg('hpp8', gfx + 'orangeDot.svg', {width: 15, height: 15});
 
+        this.load.image('playerinfo', gfx + 'playerinfo.svg', {width: 209, height: 125});
         this.load.image('box', '/static/assets/box.png');
 
         this.load.svg('charImage', gfx + 'charImage.svg', {width: 123.633, height: 123.633});
@@ -226,7 +227,7 @@ var GameBoard = new Phaser.Class ({
             this.add.image(533, 537.5, 'arsenal');
 
             //create the information box for the bottom left corner
-            this.infoBox = this.add.image(100, 537.5, 'box');
+            this.infoBox = this.add.image(104.500, 537.500, 'playerinfo');
 
             //amrit sets character allegance to a number. we convert it to a team
             if(this.charInfo.alleg == 1){
@@ -330,7 +331,7 @@ var GameBoard = new Phaser.Class ({
     },
 
     makeHealthBar: function() {
-        var sprite  = this.add.image(966, 300, 'health');
+        var sprite  = this.add.image(960.160, 302.279, 'health');
         sprite.infoBox = this.add.image(750, 150, 'text');
         sprite.infoBox.setVisible(false);
         sprite.infoBox.depth = 30;
