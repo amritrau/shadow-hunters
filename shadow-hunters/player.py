@@ -1,4 +1,5 @@
 import elements
+from collections import defaultdict
 
 class Player:
     def __init__(self, user_id, socket_id, ask_h, ai):
@@ -10,7 +11,7 @@ class Player:
         self.equipment = []
         self.damage = 0
         self.location = None
-        self.modifiers = {}
+        self.modifiers = defaultdict(lambda: False)
         self.ask_h = ask_h
         self.ai = ai
 
@@ -38,6 +39,18 @@ class Player:
         self.gc.tell_h("Their special ability: {}.".format("None"))
 
     def takeTurn(self):
+        # Before turn check for special ability
+        if self.modifiers['special_active']:
+            self.character.special(self.gc, self, turn_pos = 'start')
+
+        # takeTurn
+        self._takeTurn()
+
+        # After turn check for special ability
+        if self.modifiers['special_active']:
+            self.character.special(self.gc, self, turn_pos = 'end')
+
+    def _takeTurn(self):
 
         # Announce player
         self.gc.tell_h("It's {}'s turn!".format(self.user_id))
@@ -114,6 +127,16 @@ class Player:
             return
 
         # Attack
+        self.attackSequence()
+
+        # The current player could have died -- if so end their turn
+        if self.state == 0:
+            return
+
+        # Turn is over
+        self.gc.tell_h("{}'s turn is over.".format(self.user_id))
+
+    def attackSequence(self, dice_type = "attack"):
         self.ask_h('confirm', {'options': ["Attack other players!"]}, self.user_id)
         self.gc.tell_h("{} is picking whom to attack...".format(self.user_id))
 
@@ -125,6 +148,7 @@ class Player:
             targets = [p for p in live_players if (p.location.zone != self.location.zone and p != self)]
 
         # If player has Muramasa, can't decline unless there are no options
+        # TODO is this a bug?
         data = {'options': [t.user_id for t in targets]}
         if ("Cursed Sword Masamune" not in [e.title for e in self.equipment]) or len(data['options']) == 0:
             data['options'].append("Decline")
@@ -143,7 +167,7 @@ class Player:
                 self.gc.tell_h("{} rolls with the 4-sided die using the Masamune!".format(self.user_id, roll_result))
                 roll_result = self.rollDice('4')
             else:
-                roll_result = self.rollDice('attack')
+                roll_result = self.rollDice(dice_type)
 
             # If player has Machine Gun, launch attack on everyone in the zone. Otherwise, attack the target
             if "Machine Gun" in [e.title for e in self.equipment]:
@@ -156,13 +180,6 @@ class Player:
                 self.gc.tell_h("{} hit {} for {} damage!".format(self.user_id, target_name, damage_dealt))
         else:
             self.gc.tell_h("{} declined to attack.".format(self.user_id))
-
-        # The current player could have died -- if so end their turn
-        if self.state == 0:
-            return
-
-        # Turn is over
-        self.gc.tell_h("{}'s turn is over.".format(self.user_id))
 
     def drawCard(self, deck):
 

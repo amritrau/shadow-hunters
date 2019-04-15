@@ -10,6 +10,9 @@ class Area:
         self.action = action
         self.resource_id = resource_id
 
+    def getAdjacent(self):
+        return [a in self.zone.areas if a != self][0]
+
     def dump(self):
         return {
             'name': self.name,

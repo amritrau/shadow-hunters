@@ -221,6 +221,17 @@ def on_reveal():
     # Reveal them
     player.reveal()
 
+@socketio.on('special')
+def on_special():
+
+    # Get info about user in game
+    room_id = connections[request.sid]['room_id']
+    gc = rooms[room_id]['gc']
+    player = [p for p in gc.players if p.socket_id == request.sid][0]
+
+    # Use special
+    player.character.special(gc, player, turn_pos = 'now')
+
 @socketio.on('answer')
 def on_answer(json):
 
