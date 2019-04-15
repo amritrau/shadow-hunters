@@ -49,7 +49,7 @@ def test_fields():
 
     # test dump
     public, private = gc.dump()
-    assert private == {p.socket_id: p.dump() for p in gc.players}
+    assert private == [p.dump() for p in gc.players]
     assert public['zones'] == [z.dump() for z in gc.zones]
 
 def test_getLivePlayers():
