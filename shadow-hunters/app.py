@@ -34,12 +34,6 @@ S_COLOR = 'rgb(200,200,200)'
 connections = {}
 rooms = {}
 get_sid = {}
-answer_bins = {
-    'answered': False,
-    'sid': '',
-    'form': '',
-    'data': {}
-}
 
 # APP ROUTES
 
@@ -98,15 +92,17 @@ def room(methods=['GET','POST']):
 def start_game(room_id, names, n_players):
 
     # Initialize human and AI players
-    human_players = [Player(n, get_sid[(n, room_id)], lambda x, y, z: socket_ask(x, y, z, room_id), False) for n in names]
-    ai_players = [Player("CPU_{}".format(i), str(i), ai_ask, True) for i in range(1, n_players - len(human_players) + 1)]
+    rgb = ['rgb(255,255,255)', 'rgb(100,100,100)', 'rgb(79,182,78)', 'rgb(62,99,171)',
+           'rgb(197,97,163)', 'rgb(219,62,62)', 'rgb(249,234,48)', 'rgb(239,136,43)']
+    human_players = [Player(n, get_sid[(n, room_id)], rgb.pop(0), False) for n in names]
+    ai_players = [Player("CPU_{}".format(i), str(i), rgb.pop(0), True) for i in range(1, n_players - len(human_players) + 1)]
     players = human_players + ai_players
 
     # Define message function for communicating text info to chat log
     def socket_tell(data, client=None):
         if not client:
             client = socket_tell.entire_room
-        socketio.emit('message', {'data': data, 'color': S_COLOR}, room=client)
+        socketio.emit('message', {'strings': [data], 'colors': [S_COLOR]}, room=client)
         socketio.sleep(SOCKET_SLEEP)
     socket_tell.entire_room = room_id
 
@@ -119,7 +115,7 @@ def start_game(room_id, names, n_players):
         socketio.sleep(SOCKET_SLEEP)
     socket_show.entire_room = room_id
 
-    # Initialize game context with players and match room with game context
+    # Initialize game context with players and emission functions
     ef = elements.ElementFactory()
     gc = GameContext(
             players = players,
@@ -128,61 +124,61 @@ def start_game(room_id, names, n_players):
             white_cards = ef.WHITE_DECK,
             green_cards = ef.GREEN_DECK,
             areas = ef.AREAS,
+            ask_h = lambda x, y, z: socket_ask(x, y, z, room_id),
             tell_h = socket_tell,
             show_h = socket_show,
-            update_h = lambda x: socket_update(x, room_id)
+            update_h = None
     )
     gc.update_h = lambda: socket_update(gc.dump()[0], room_id)
+
+    # Assign game to room
+    if rooms[room_id]['status'] == 'GAME':
+        return
     rooms[room_id]['gc'] = gc
-    gc.tell_h("Started a game with players {}".format(", ".join([p.user_id for p in players])))
+    rooms[room_id]['status'] = 'GAME'
 
     # Send public and private game states to frontend
+    gc.tell_h("Started a game with players {}".format(", ".join([p.user_id for p in players])))
     public_state, private_state = gc.dump()
     for k in private_state:
         data = {'public': public_state, 'private': private_state[k], 'playable_chars': [ch.dump() for ch in gc.playable]}
         socketio.emit('game_start', data, room = k)
-
-    # Change colors of players chat messages to match their in-game colors
-    color_strings = ['rgb(255,255,255)', 'rgb(100,100,100)', 'rgb(79,182,78)', 'rgb(62,99,171)',
-                     'rgb(197,97,163)', 'rgb(219,62,62)', 'rgb(249,234,48)', 'rgb(239,136,43)']
-    socket_ids = [p.socket_id for p in players]
-    for s in sorted(socket_ids):
-        c = color_strings.pop(0)
-        if s in connections:
-            connections[s]['color'] = c
 
     # Initiate gameplay loop
     gc.play()
 
 def socket_ask(form, data, user_id, room_id):
 
-    # Emit ask
+    # Get player and socket id
+    player = [p for p in rooms[room_id]['gc'].players if p.user_id == user_id][0]
+
+    # If player is a CPU, choose randomly from options
+    if player.ai:
+        socketio.sleep(AI_SLEEP)
+        return {'value': random.choice(data['options'])}
+
+    # Otherwise, emit ask
     sid = get_sid[(user_id, room_id)]
-    player = [p for p in rooms[room_id]['gc'].players if p.socket_id == sid][0]
+    bin = rooms[room_id]['gc'].answer_bin
     data['form'] = form
-    answer_bins[room_id]['answered'] = False
+    bin['answered'] = False
     socketio.emit('ask', data, room=sid)
 
     # Loop until an answer is received
-    while not answer_bins[room_id]['answered']:
-        while not answer_bins[room_id]['answered']:
+    while not bin['answered']:
+        while not bin['answered']:
             # If a player swaps out for an AI during an ask, the AI answers for them
             if player.ai:
                 return {'value': random.choice(data['options'])}
             socketio.sleep(SOCKET_SLEEP)
 
         # Validate answerer and answer
-        if (answer_bins[room_id]['sid'] != sid or answer_bins[room_id]['form'] != form
-        or answer_bins[room_id]['data']['value'] not in data['options']):
-            answer_bins[room_id]['answered'] = False
+        if bin['sid'] != sid or bin['data']['value'] not in data['options']:
+            bin['answered'] = False
 
     # Return answer
-    answer_bins[room_id]['answered'] = False
-    return answer_bins[room_id]['data']
-
-def ai_ask(x, y, z):
-    socketio.sleep(AI_SLEEP)
-    return {'value': random.choice(y['options'])}
+    bin['answered'] = False
+    return bin['data']
 
 def socket_update(data, room_id):
     socketio.emit('update', data, room=room_id)
@@ -193,25 +189,19 @@ def socket_update(data, room_id):
 @socketio.on('start')
 def on_start(json):
 
-    # Mark game as in progress so no one else can start it
+    # Get room
     room_id = connections[request.sid]['room_id']
-    if rooms[room_id]['status'] == 'GAME':
-        return
-    rooms[room_id]['status'] = 'GAME'
 
-    # Set default values for this room's answer bin
-    answer_bins[room_id] = {
-        'answered': False,
-        'sid': '',
-        'form': '',
-        'data': {}
-    }
+    # Get number of players
+    n_players = max(min(int(json['n_players']), 8), 4)
+    names = [x['name'] for x in connections.values() if x['room_id'] == room_id]
+    if len(names) > n_players:
+        socketio.emit('false_start', {'field':n_players, 'actual':len(names)}, room=request.sid)
+        return
 
     # Begin game
-    names = [x['name'] for x in connections.values() if x['room_id'] == room_id]
-    names = names[:8] # Maximum of 8 players
     socketio.sleep(SOCKET_SLEEP)
-    start_game(room_id, names, int(json['n_players']))
+    start_game(room_id, names, n_players)
 
 @socketio.on('reveal')
 def on_reveal():
@@ -221,34 +211,40 @@ def on_reveal():
     gc = rooms[room_id]['gc']
     player = [p for p in gc.players if p.socket_id == request.sid][0]
 
-    # Reveal them
-    player.reveal()
+    # Reveal them (if they're alive and unrevealed)
+    if player.state == 2:
+        player.reveal()
 
 @socketio.on('answer')
 def on_answer(json):
 
     # Make sure an answer isn't already being processed
     room_id = connections[request.sid]['room_id']
-    if answer_bins[room_id]['answered']:
+    if rooms[room_id]['status'] != 'GAME' or rooms[room_id]['gc'].answer_bin['answered']:
         return
+    bin = rooms[room_id]['gc'].answer_bin
 
     # Fill answer bin
-    answer_bins[room_id]['form'] = json.pop('form', None)
-    answer_bins[room_id]['data'] = json
-    answer_bins[room_id]['sid'] = request.sid
-    answer_bins[room_id]['answered'] = True
+    bin['data'] = json
+    bin['sid'] = request.sid
+    bin['answered'] = True
 
 @socketio.on('message')
-def on_message(msg):
+def on_message(json):
 
     # Message fields
     room_id = connections[request.sid]['room_id']
-    msg['name'] = connections[request.sid]['name']
-    msg['color'] = connections[request.sid]['color']
+    json['name'] = connections[request.sid]['name']
+
+    # If player is not in game, or spectating, their color is grey
+    if (rooms[room_id]['status'] != 'GAME') or (request.sid not in [p.socket_id for p in rooms[room_id]['gc'].players]):
+        json['color'] = S_COLOR
+    else:
+        json['color'] = [p.color for p in rooms[room_id]['gc'].players if p.socket_id == request.sid][0]
 
     # Broadcast non-empty message
-    if 'data' in msg and msg['data'].strip():
-        socketio.emit('message', msg, room=room_id)
+    if 'data' in json and json['data'].strip():
+        socketio.emit('message', json, room=room_id)
 
 @socketio.on('join')
 def on_join(json):
@@ -264,7 +260,7 @@ def on_join(json):
     join_msg = name+' has joined the room!'
     if json['spectate']:
         join_msg = name+' has joined the room as a spectator!'
-    data = {'data': join_msg, 'color': S_COLOR}
+    data = {'strings': [join_msg], 'colors': [S_COLOR]}
     socketio.emit('message', data, room=room_id)
 
     # Join room
@@ -274,7 +270,7 @@ def on_join(json):
     join_msg = 'Welcome to Shadow Hunters Room: '+room_id
     if json['spectate']:
         join_msg = 'You are now spectating Shadow Hunters Room: '+room_id
-    data = {'data': join_msg, 'color': S_COLOR}
+    data = {'strings': [join_msg], 'colors': [S_COLOR]}
     socketio.emit('message', data, room=request.sid)
 
     # Tell player about other room members
@@ -282,7 +278,7 @@ def on_join(json):
     msg = 'There\'s no one else here!'
     if members:
         msg = 'Other players in the room: '+', '.join(members)
-    data = {'data': msg, 'color': S_COLOR}
+    data = {'strings': [msg], 'colors': [S_COLOR]}
     socketio.emit('message', data, room=request.sid)
 
 @socketio.on('disconnect')
@@ -291,7 +287,8 @@ def on_disconnect():
     # Tell everyone in the room about the disconnect
     name = connections[request.sid]['name']
     room_id = connections[request.sid]['room_id']
-    socketio.emit('message', {'data': name+' has left the room', 'color': S_COLOR}, room=room_id)
+    msg = name+' has left the room'
+    socketio.emit('message', {'strings': [msg], 'colors': [S_COLOR]}, room=room_id)
 
     # Remove user from all connection data structures
     connections.pop(request.sid)
@@ -315,12 +312,11 @@ def on_disconnect():
         # Swap player for AI
         player = player_in_game[0]
         player.user_id = 'CPU_{}'.format(name)
-        player.ask_h = ai_ask
         player.ai = True
 
         # Tell everyone about the swap
         msg = 'A computer player, {} has taken {}\'s place!'.format(player.user_id, name)
-        socketio.emit('message', {'data': msg, 'color': S_COLOR}, room=room_id)
+        socketio.emit('message', {'strings': [msg], 'colors': [S_COLOR]}, room=room_id)
 
 if __name__ == '__main__':
     socketio.run(app, debug=True, host="0.0.0.0", port=80)

@@ -9,7 +9,7 @@ import elements
 # Implements a GameContext.
 
 class GameContext:
-    def __init__(self, players, characters, black_cards, white_cards, green_cards, areas, tell_h, show_h, update_h, modifiers = dict()):
+    def __init__(self, players, characters, black_cards, white_cards, green_cards, areas, ask_h, tell_h, show_h, update_h, modifiers = dict()):
 
         # Instantiate gameplay objects
         self.players = players
@@ -24,9 +24,17 @@ class GameContext:
         self.game_over = False
 
         # Instantiate message handlers
+        self.ask_h = ask_h
         self.tell_h = tell_h
         self.show_h = show_h
         self.update_h = update_h
+
+        # Instantiate answer bin
+        self.answer_bin = {
+            'answered': False,
+            'sid': '',
+            'data': {}
+        }
 
         # Assign modifiers
         self.modifiers = modifiers
@@ -43,7 +51,6 @@ class GameContext:
                 a.zone = z
 
         # Randomly assign characters and point game context
-
         character_q = copy.deepcopy(characters)
         random.shuffle(character_q)
 

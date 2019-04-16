@@ -1,9 +1,10 @@
 import elements
 
 class Player:
-    def __init__(self, user_id, socket_id, ask_h, ai):
+    def __init__(self, user_id, socket_id, color, ai):
         self.user_id = user_id
         self.socket_id = socket_id
+        self.color = color
         self.gc = None # game context (abbreviated for convenience)
         self.state = 2 #  2 for ALIVE_ANON, 1 for ALIVE_KNOWN, 0 for DEAD
         self.character = None
@@ -11,7 +12,6 @@ class Player:
         self.damage = 0
         self.location = None
         self.modifiers = {}
-        self.ask_h = ask_h
         self.ai = ai
 
     def setCharacter(self, character):
@@ -59,7 +59,7 @@ class Player:
 
             # Pick the preferred roll
             data = {'options': ["Use {}".format(roll_result), "Use {}".format(second_roll)]}
-            answer = self.ask_h('yesno', data, self.user_id)['value']
+            answer = self.gc.ask_h('yesno', data, self.user_id)['value']
             roll_result = int(answer[4:])
 
         # Figure out area to move to
@@ -72,7 +72,7 @@ class Player:
                 for a in z.areas:
                     area_options.append(a.name)
             data = {'options': area_options}
-            destination = self.ask_h('select', data, self.user_id)['value']
+            destination = self.gc.ask_h('select', data, self.user_id)['value']
 
             # Get Area object from area name
             destination_Area = None
@@ -99,7 +99,7 @@ class Player:
 
         # Take area action
         data = {'options': [destination_Area.desc, 'Decline']}
-        answer = self.ask_h('yesno', data, self.user_id)['value']
+        answer = self.gc.ask_h('yesno', data, self.user_id)['value']
         if answer != 'Decline':
             self.location.action(self.gc, self)
         else:
@@ -114,7 +114,7 @@ class Player:
             return
 
         # Attack
-        self.ask_h('confirm', {'options': ["Attack other players!"]}, self.user_id)
+        self.gc.ask_h('confirm', {'options': ["Attack other players!"]}, self.user_id)
         self.gc.tell_h("{} is picking whom to attack...".format(self.user_id))
 
         # Get attackable players
@@ -128,7 +128,7 @@ class Player:
         data = {'options': [t.user_id for t in targets]}
         if ("Cursed Sword Masamune" not in [e.title for e in self.equipment]) or len(data['options']) == 0:
             data['options'].append("Decline")
-        answer = self.ask_h('select', data, self.user_id)['value']
+        answer = self.gc.ask_h('select', data, self.user_id)['value']
 
         if answer != 'Decline':
 
@@ -179,7 +179,7 @@ class Player:
 
         # Use card if it's single-use, or add to arsenal if it's equipment
         if drawn.is_equipment:
-            self.ask_h('confirm', {'options': ["Add {} to arsenal".format(drawn.title)]}, self.user_id)
+            self.gc.ask_h('confirm', {'options': ["Add {} to arsenal".format(drawn.title)]}, self.user_id)
             self.gc.tell_h("{} added {} to their arsenal!".format(self.user_id, public_title))
             self.equipment.append(drawn)
             self.gc.update_h()
@@ -219,7 +219,7 @@ class Player:
             result = roll_4
 
         # Ask for confirmation and display results
-        self.ask_h('confirm', ask_data, self.user_id)
+        self.gc.ask_h('confirm', ask_data, self.user_id)
         self.gc.show_h(display_data)
         self.gc.tell_h(message)
         return result
@@ -320,8 +320,8 @@ class Player:
             else:
 
                 # Choose which equipment to take
-                attacker.ask_h('confirm', {'options': ['Take equipment from {}'.format(self.user_id)]}, attacker.user_id)
-                equip = attacker.ask_h('select', data, attacker.user_id)['value']
+                self.gc.ask_h('confirm', {'options': ['Take equipment from {}'.format(self.user_id)]}, attacker.user_id)
+                equip = self.gc.ask_h('select', data, attacker.user_id)['value']
                 equip_Equipment = [eq for eq in self.equipment if eq.title == equip][0]
 
                 # Transfer equipment from one player to the other
