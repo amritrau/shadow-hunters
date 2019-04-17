@@ -172,7 +172,7 @@ class Player:
         if drawn.color != 2:
             self.gc.show_h(display_data)
         else:
-            self.gc.show_h(display_data, client=self.socket_id)
+            self.gc.show_h(display_data, self.socket_id)
 
         # Use card if it's single-use, or add to arsenal if it's equipment
         if drawn.is_equipment:

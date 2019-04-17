@@ -21,12 +21,21 @@ CARD_COLOR_MAP = {
 
 TEXT_COLORS = {
     's': 'rgb(200,200,200)',
-    'number': 'rgb(102,153,153)',
+    'number': 'rgb(153,204,255)',
     'card': 'rgb(102,204,255)',
+    'White': 'rgb(255,255,255)',
+    'Black': 'rgb(75,75,75)',
+    'Green': 'rgb(143,194,0)',
     'shadow': 'rgb(102,0,51)',
     'neutral': 'rgb(255,255,153)',
     'hunter': 'rgb(51,51,255)',
     'area': 'rgb(153,204,0)',
+    'Weird Woods': 'rgb(102,153,153)',
+    'Church': 'rgb(255,255,255)',
+    'Cemetery': 'rgb(75,75,75)',
+    'Erstwhile Altar': 'rgb(128,0,0)',
+    'Hermit\'s Cabin': 'rgb(143,194,0)',
+    'Underworld Gate': 'rgb(150,0,150)'
 }
 
 class ElementFactory:
@@ -584,7 +593,7 @@ class ElementFactory:
             target = choose_player(args)
             display_data = args['card'].dump()
             display_data['type'] = 'draw'
-            args['self'].gc.show_h(display_data, client=target.socket_id)
+            args['self'].gc.show_h(display_data, target.socket_id)
 
             # If target is neutral or hunter, must give equipment or take 1 damage
             if target.character.alleg > 0:
@@ -628,7 +637,7 @@ class ElementFactory:
             target = choose_player(args)
             display_data = args['card'].dump()
             display_data['type'] = 'draw'
-            args['self'].gc.show_h(display_data, client=target.socket_id)
+            args['self'].gc.show_h(display_data, target.socket_id)
 
             # If target is neutral or shadow, must give equipment or take 1 damage
             if target.character.alleg < 2:
@@ -672,7 +681,7 @@ class ElementFactory:
             target = choose_player(args)
             display_data = args['card'].dump()
             display_data['type'] = 'draw'
-            args['self'].gc.show_h(display_data, client=target.socket_id)
+            args['self'].gc.show_h(display_data, target.socket_id)
 
             # If target is hunter or shadow, must give equipment or take 1 damage
             if target.character.alleg in [0, 2]:
@@ -716,7 +725,7 @@ class ElementFactory:
             target = choose_player(args)
             display_data = args['card'].dump()
             display_data['type'] = 'draw'
-            args['self'].gc.show_h(display_data, client=target.socket_id)
+            args['self'].gc.show_h(display_data, target.socket_id)
 
             # If hunter, take 1 damage
             if target.character.alleg == 2:
@@ -745,7 +754,7 @@ class ElementFactory:
             target = choose_player(args)
             display_data = args['card'].dump()
             display_data['type'] = 'draw'
-            args['self'].gc.show_h(display_data, client=target.socket_id)
+            args['self'].gc.show_h(display_data, target.socket_id)
 
             # If shadow, take 1 damage
             if target.character.alleg == 0:
@@ -774,7 +783,7 @@ class ElementFactory:
             target = choose_player(args)
             display_data = args['card'].dump()
             display_data['type'] = 'draw'
-            args['self'].gc.show_h(display_data, client=target.socket_id)
+            args['self'].gc.show_h(display_data, target.socket_id)
 
             # If shadow, take 2 damage
             if target.character.alleg == 0:
@@ -802,7 +811,7 @@ class ElementFactory:
             target = choose_player(args)
             display_data = args['card'].dump()
             display_data['type'] = 'draw'
-            args['self'].gc.show_h(display_data, client=target.socket_id)
+            args['self'].gc.show_h(display_data, target.socket_id)
 
             # If neutral, heal 1 damage (unless at 0, then take 1 damage)
             if target.character.alleg == 1:
@@ -843,7 +852,7 @@ class ElementFactory:
             target = choose_player(args)
             display_data = args['card'].dump()
             display_data['type'] = 'draw'
-            args['self'].gc.show_h(display_data, client=target.socket_id)
+            args['self'].gc.show_h(display_data, target.socket_id)
 
             # If hunter, heal 1 damage (unless at 0, then take 1 damage)
             if target.character.alleg == 2:
@@ -884,7 +893,7 @@ class ElementFactory:
             target = choose_player(args)
             display_data = args['card'].dump()
             display_data['type'] = 'draw'
-            args['self'].gc.show_h(display_data, client=target.socket_id)
+            args['self'].gc.show_h(display_data, target.socket_id)
 
             # If shadow, heal 1 damage (unless at 0, then take 1 damage)
             if target.character.alleg == 0:
@@ -925,7 +934,7 @@ class ElementFactory:
             target = choose_player(args)
             display_data = args['card'].dump()
             display_data['type'] = 'draw'
-            args['self'].gc.show_h(display_data, client=target.socket_id)
+            args['self'].gc.show_h(display_data, target.socket_id)
 
             # If target's hp is >= 12, they take 2 damage.
             if target.character.max_damage >= 12:
@@ -954,7 +963,7 @@ class ElementFactory:
             target = choose_player(args)
             display_data = args['card'].dump()
             display_data['type'] = 'draw'
-            args['self'].gc.show_h(display_data, client=target.socket_id)
+            args['self'].gc.show_h(display_data, target.socket_id)
 
             # If target's hp is <= 11, they take 1 damage.
             if target.character.max_damage <= 11:
@@ -982,7 +991,7 @@ class ElementFactory:
             target = choose_player(args)
             display_data = args['card'].dump()
             display_data['type'] = 'draw'
-            args['self'].gc.show_h(display_data, client=target.socket_id)
+            args['self'].gc.show_h(display_data, target.socket_id)
 
             # Prompt target to reveal themself
             target.gc.tell_h("You have no choice. Reveal yourself to {}.", [args['self'].user_id], target.socket_id)

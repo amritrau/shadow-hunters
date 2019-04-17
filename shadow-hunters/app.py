@@ -97,7 +97,7 @@ def room(methods=['GET','POST']):
 def start_game(room_id, names, n_players):
 
     # Initialize human and AI players
-    rgb = ['rgb(255,255,255)', 'rgb(100,100,100)', 'rgb(79,182,78)', 'rgb(62,99,171)',
+    rgb = ['rgb(245,245,245)', 'rgb(100,100,100)', 'rgb(79,182,78)', 'rgb(62,99,171)',
            'rgb(197,97,163)', 'rgb(219,62,62)', 'rgb(249,234,48)', 'rgb(239,136,43)']
     human_players = [Player(n, get_sid[(n, room_id)], rgb.pop(0), False) for n in names]
     ai_players = [Player("CPU_{}".format(i), str(i), rgb.pop(0), True) for i in range(1, n_players - len(human_players) + 1)]
@@ -117,8 +117,8 @@ def start_game(room_id, names, n_players):
             show_h = None,
             update_h = None
     )
-    gc.tell_h = lambda x, y, *z: socket_tell(x, y, gc, room_id, client=z)
-    gc.show_h = lambda x, *y: socket_show(x, gc, room_id, client=y)
+    gc.tell_h = lambda x, y, *z: socket_tell(x, y, gc, room_id, z)
+    gc.show_h = lambda x, *y: socket_show(x, gc, room_id, y)
     gc.update_h = lambda: socket_update(gc.dump()[0], room_id)
 
     # Assign game to room
@@ -126,6 +126,9 @@ def start_game(room_id, names, n_players):
         return
     rooms[room_id]['gc'] = gc
     rooms[room_id]['status'] = 'GAME'
+
+    for p in gc.players:
+        print("{}, {}".format(p.user_id, p.color))
 
     # Send public and private game states to frontend
     gc.tell_h("Started a game with players {}".format(", ".join([p.user_id for p in players])), [])

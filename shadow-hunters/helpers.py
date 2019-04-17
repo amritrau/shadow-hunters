@@ -10,7 +10,8 @@ def color_format(str, args, gc):
 
     # get all elements by name
     ef = elements.ElementFactory()
-    cards = [c.title for c in ef.WHITE_DECK.cards + ef.BLACK_DECK.cards + ef.GREEN_DECK.cards]
+    all_cards = ef.WHITE_DECK.cards + ef.BLACK_DECK.cards + ef.GREEN_DECK.cards
+    cards = [c.title for c in all_cards]
     shadows = [ch.name for ch in ef.CHARACTERS if ch.alleg == 0]
     hunters = [ch.name for ch in ef.CHARACTERS if ch.alleg == 2]
     neutrals = [ch.name for ch in ef.CHARACTERS if ch.alleg == 1]
@@ -24,7 +25,10 @@ def color_format(str, args, gc):
         if isinstance(n, int):
             colors.append(elements.TEXT_COLORS['number'])
         elif n in cards:
-            colors.append(elements.TEXT_COLORS['card'])
+            card_color = elements.CARD_COLOR_MAP[([c for c in all_cards if c.title == n][0]).color]
+            colors.append(elements.TEXT_COLORS[card_color])
+        elif n == 'a Hermit Card':
+            colors.append(elements.TEXT_COLORS['Green'])
         elif n in shadows:
             colors.append(elements.TEXT_COLORS['shadow'])
         elif n in hunters:
@@ -32,7 +36,7 @@ def color_format(str, args, gc):
         elif n in neutrals:
             colors.append(elements.TEXT_COLORS['neutral'])
         elif n in areas:
-            colors.append(elements.TEXT_COLORS['area'])
+            colors.append(elements.TEXT_COLORS[n])
         elif gc and p:
             colors.append(p[0].color)
         else:
