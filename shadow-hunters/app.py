@@ -28,7 +28,7 @@ def after_request(response):
 
 # constants
 SOCKET_SLEEP = 0.25
-AI_SLEEP = 3.0
+AI_SLEEP = 2.0
 
 # connection/room management data structures
 connections = {}
@@ -131,7 +131,7 @@ def start_game(room_id, names, n_players):
         print("{}, {}".format(p.user_id, p.color))
 
     # Send public and private game states to frontend
-    gc.tell_h("Started a game with players {}".format(", ".join([p.user_id for p in players])), [])
+    gc.tell_h("Started a game with players {}".format(", ".join(['{}']*len(players))), [p.user_id for p in players])
     public_state, private_state = gc.dump()
     for k in private_state:
         data = {'public': public_state, 'private': private_state[k], 'playable_chars': [ch.dump() for ch in gc.playable]}

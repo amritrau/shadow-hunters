@@ -29,11 +29,11 @@ def color_format(str, args, gc):
             colors.append(elements.TEXT_COLORS[card_color])
         elif n == 'a Hermit Card':
             colors.append(elements.TEXT_COLORS['Green'])
-        elif n in shadows:
+        elif n in shadows or n == 'Shadow':
             colors.append(elements.TEXT_COLORS['shadow'])
-        elif n in hunters:
+        elif n in hunters or n == 'Hunter':
             colors.append(elements.TEXT_COLORS['hunter'])
-        elif n in neutrals:
+        elif n in neutrals or n == 'Neutral':
             colors.append(elements.TEXT_COLORS['neutral'])
         elif n in areas:
             colors.append(elements.TEXT_COLORS[n])
@@ -50,9 +50,20 @@ def color_format(str, args, gc):
     # return tuple of strings and colors
     return (strings, colors)
 
-def answer_sequence(answers):
-    '''create an ask function that will return a specific sequence of answers'''
+def get_card_by_title(ef, title):
+    all_cards = ef.WHITE_DECK.cards + ef.BLACK_DECK.cards + ef.GREEN_DECK.cards
+    return [c for c in all_cards if c.title == title][0]
 
+def get_area_by_name(gc, name):
+    for z in gc.zones:
+        for a in z.areas:
+            if a.name == name:
+                return a
+
+def get_character_by_name(ef, name):
+    return [c for c in ef.CHARACTERS if c.name == name][0]
+
+def answer_sequence(answers):
     def ask_function(x, y, z):
         val = ask_function.sequence.pop(0)
         assert (val in y['options'])
@@ -61,7 +72,6 @@ def answer_sequence(answers):
     return ask_function
 
 def fresh_gc_ef(ask_function = lambda x, y, z: {'value': random.choice(y['options'])}):
-    '''return a fresh game and element factory with the specified ask function'''
 
     def dummy_tell(data, client=None):
         return 0
@@ -93,16 +103,3 @@ def get_a_shadow(gc):
 
 def get_a_neutral(gc):
     return [p for p in gc.players if p.character.alleg == 1][0]
-
-def get_card_by_title(ef, title):
-    all_cards = ef.WHITE_DECK.cards + ef.BLACK_DECK.cards + ef.GREEN_DECK.cards
-    return [c for c in all_cards if c.title == title][0]
-
-def get_area_by_name(gc, name):
-    for z in gc.zones:
-        for a in z.areas:
-            if a.name == name:
-                return a
-
-def get_character_by_name(ef, name):
-    return [c for c in ef.CHARACTERS if c.name == name][0]
