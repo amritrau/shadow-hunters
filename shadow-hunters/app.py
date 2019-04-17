@@ -148,6 +148,8 @@ def socket_ask(form, data, user_id, room_id):
     # If player is a CPU, choose randomly from options
     if player.ai:
         socketio.sleep(AI_SLEEP)
+        if 'Decline' in data['options'] and len(data['options']) > 1:
+            data['options'].remove('Decline')
         return {'value': random.choice(data['options'])}
 
     # Otherwise, emit ask
@@ -162,6 +164,8 @@ def socket_ask(form, data, user_id, room_id):
         while not bin['answered']:
             # If a player swaps out for an AI during an ask, the AI answers for them
             if player.ai:
+                if 'Decline' in data['options'] and len(data['options']) > 1:
+                    data['options'].remove('Decline')
                 return {'value': random.choice(data['options'])}
             socketio.sleep(SOCKET_SLEEP)
 
@@ -245,7 +249,7 @@ def on_message(json):
 
     # If player is not in game, or spectating, their color is grey
     if (rooms[room_id]['status'] != 'GAME') or (request.sid not in [p.socket_id for p in rooms[room_id]['gc'].players]):
-        json['color'] = elements.TEXT_COLORS['s']
+        json['color'] = elements.TEXT_COLORS['server']
     else:
         json['color'] = [p.color for p in rooms[room_id]['gc'].players if p.socket_id == request.sid][0]
 
@@ -260,7 +264,7 @@ def on_join(json):
     room_id = json['room_id']
     name = json['name']
     connections[request.sid] = { 'name': name, 'room_id': room_id }
-    connections[request.sid]['color'] = elements.TEXT_COLORS['s']
+    connections[request.sid]['color'] = elements.TEXT_COLORS['server']
     get_sid[(name, room_id)] = request.sid
 
     # Emit join message to other players

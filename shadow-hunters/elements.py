@@ -20,20 +20,18 @@ CARD_COLOR_MAP = {
 }
 
 TEXT_COLORS = {
-    's': 'rgb(200,200,200)',
-    'number': 'rgb(153,204,255)',
-    'card': 'rgb(102,204,255)',
-    'White': 'rgb(255,255,255)',
-    'Black': 'rgb(75,75,75)',
-    'Green': 'rgb(143,194,0)',
-    'shadow': 'rgb(102,0,51)',
-    'neutral': 'rgb(255,255,153)',
-    'hunter': 'rgb(51,51,255)',
-    'area': 'rgb(153,204,0)',
-    'Weird Woods': 'rgb(102,153,153)',
-    'Church': 'rgb(255,255,255)',
-    'Cemetery': 'rgb(75,75,75)',
-    'Erstwhile Altar': 'rgb(128,0,0)',
+    'server':          'rgb(200,200,200)',
+    'number':          'rgb(153,204,255)',
+    'White':           'rgb(255,255,255)',
+    'Black':           'rgb(75,75,75)',
+    'Green':           'rgb(143,194,0)',
+    'shadow':          'rgb(128,0,0)',
+    'neutral':         'rgb(255,255,153)',
+    'hunter':          'rgb(51,51,255)',
+    'Weird Woods':     'rgb(102,153,153)',
+    'Church':          'rgb(255,255,255)',
+    'Cemetery':        'rgb(75,75,75)',
+    'Erstwhile Altar': 'rgb(204,68,0)',
     'Hermit\'s Cabin': 'rgb(143,194,0)',
     'Underworld Gate': 'rgb(150,0,150)'
 }
@@ -1364,42 +1362,42 @@ class ElementFactory:
         self.AREAS = [
             area.Area(
                 name = "Hermit's Cabin",
-                desc = "You may draw a Hermit Card.",
+                desc = "Draw a Hermit Card.",
                 domain = [2, 3],
                 action = lambda gc, player: player.drawCard(gc.green_cards),
                 resource_id = "hermits-cabin"
             ),
             area.Area(
                 name = "Underworld Gate",
-                desc = "You may draw a card from the stack of your choice.",
+                desc = "Draw a card from the deck of your choice.",
                 domain = [4, 5],
                 action = underworld_gate_action,
                 resource_id = "underworld-gate"
             ),
             area.Area(
                 name = "Church",
-                desc = "You may draw a White Card.",
+                desc = "Draw a White Card.",
                 domain = [6],
                 action = lambda gc, player: player.drawCard(gc.white_cards),
                 resource_id = "church"
             ),
             area.Area(
                 name = "Cemetery",
-                desc = "You may draw a Black Card.",
+                desc = "Draw a Black Card.",
                 domain = [8],
                 action = lambda gc, player: player.drawCard(gc.black_cards),
                 resource_id = "cemetery"
             ),
             area.Area(
                 name = "Weird Woods",
-                desc = "You may either give 2 damage to any player or heal 1 damage of any player.",
+                desc = "Heal 1 damage or give 2 damage to any player.",
                 domain = [9],
                 action = weird_woods_action,
                 resource_id = "weird-woods"
             ),
             area.Area(
                 name = "Erstwhile Altar",
-                desc = "You may steal an equipment card from any player.",
+                desc = "Steal an equipment card from any player.",
                 domain = [10],
                 action = erstwhile_altar_action,
                 resource_id = "erstwhile-altar"

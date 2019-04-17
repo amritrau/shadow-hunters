@@ -18,7 +18,7 @@ def color_format(str, args, gc):
     areas = [a.name for a in ef.AREAS]
 
     # assign colors
-    colors = [elements.TEXT_COLORS['s']]
+    colors = [elements.TEXT_COLORS['server']]
     for n in args:
         if gc:
             p = [p for p in gc.players if p.user_id == n]
@@ -40,8 +40,8 @@ def color_format(str, args, gc):
         elif gc and p:
             colors.append(p[0].color)
         else:
-            colors.append(elements.TEXT_COLORS['s'])
-        colors.append(elements.TEXT_COLORS['s'])
+            colors.append(elements.TEXT_COLORS['server'])
+        colors.append(elements.TEXT_COLORS['server'])
 
     # assign strings
     args += ['']
