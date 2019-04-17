@@ -95,12 +95,12 @@ class GameContext:
                 display_data = {'type': 'win', 'winners': [p.dump() for p in winners]}
                 self.show_h(display_data)
                 for w in winners:
-                    self.tell_h("{} ({}: {}) won! {}".format(
+                    self.tell_h("{} ({}: {}) won! {}", [
                         w.user_id,
                         elements.ALLEGIANCE_MAP[w.character.alleg],
                         w.character.name,
                         w.character.win_cond_desc
-                    ))
+                    ])
             return winners
 
     def play(self):

@@ -3,7 +3,7 @@ import random
 
 import game_context
 import player
-from tests import helpers
+import helpers
 
 # test_hermit_cards.py
 # Tests the usage of each hermit card

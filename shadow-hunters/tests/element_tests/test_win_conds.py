@@ -3,7 +3,7 @@ import random
 
 import game_context
 import player
-from tests import helpers
+import helpers
 
 # test_win_conds.py
 # Tests the win conditions of each character

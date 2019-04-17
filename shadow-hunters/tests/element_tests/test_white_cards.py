@@ -3,7 +3,7 @@ import random
 
 import game_context
 import player
-from tests import helpers
+import helpers
 
 # test_white_cards.py
 # Tests the usage of each white card

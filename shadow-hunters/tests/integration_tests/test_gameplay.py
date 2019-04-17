@@ -4,7 +4,7 @@ import random
 import game_context
 import player
 import elements
-from tests import helpers
+import helpers
 
 # test_gameplay.py
 # Tests random walks through the game state for runtime errors

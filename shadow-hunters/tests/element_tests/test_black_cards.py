@@ -3,7 +3,7 @@ import random
 
 import game_context
 import player
-from tests import helpers
+import helpers
 
 # test_black_cards.py
 # Tests the usage of each black card

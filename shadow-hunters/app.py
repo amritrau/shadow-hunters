@@ -8,6 +8,7 @@ import re
 from game_context import GameContext
 from player import Player
 import elements
+from helpers import color_format
 
 # basic app setup
 template_dir = os.path.abspath('./templates')
@@ -28,7 +29,6 @@ def after_request(response):
 # constants
 SOCKET_SLEEP = 0.25
 AI_SLEEP = 3.0
-S_COLOR = 'rgb(200,200,200)'
 
 # connection/room management data structures
 connections = {}
@@ -49,7 +49,7 @@ def room(methods=['GET','POST']):
         username = request.form.get('username').strip()
         room_id = request.form.get('room_id').strip()
 
-        # check for valid username and room id
+        # check for valid characters in username and room id
         if not username or not room_id:
             flash("Please enter a name and room ID")
             return redirect('/')
@@ -62,7 +62,12 @@ def room(methods=['GET','POST']):
         if username == "undefined" or room_id == "undefined":
             flash("Nice try.")
             return redirect('/')
-        if username.isdigit() or username.startswith('CPU'):
+
+        # Check for reserved usernames
+        ef = elements.ElementFactory()
+        all_cards = ef.WHITE_DECK.cards + ef.BLACK_DECK.cards + ef.GREEN_DECK.cards
+        element_names = [c.title for c in all_cards] + [ch.name for ch in ef.CHARACTERS] + [a.name for a in ef.AREAS]
+        if username.isdigit() or username.startswith('CPU') or username in element_names or username == 'Decline':
             flash("The username you chose is reserved")
             return redirect('/')
 
@@ -98,23 +103,6 @@ def start_game(room_id, names, n_players):
     ai_players = [Player("CPU_{}".format(i), str(i), rgb.pop(0), True) for i in range(1, n_players - len(human_players) + 1)]
     players = human_players + ai_players
 
-    # Define message function for communicating text info to chat log
-    def socket_tell(data, client=None):
-        if not client:
-            client = socket_tell.entire_room
-        socketio.emit('message', {'strings': [data], 'colors': [S_COLOR]}, room=client)
-        socketio.sleep(SOCKET_SLEEP)
-    socket_tell.entire_room = room_id
-
-    # Define display function for communicating visual info to canvas
-    def socket_show(data, client=None):
-        assert data['type'] in ["die", "win", "reveal", "roll", "draw"]
-        if not client:
-            client = socket_show.entire_room
-        socketio.emit('display', data, room=client)
-        socketio.sleep(SOCKET_SLEEP)
-    socket_show.entire_room = room_id
-
     # Initialize game context with players and emission functions
     ef = elements.ElementFactory()
     gc = GameContext(
@@ -125,10 +113,12 @@ def start_game(room_id, names, n_players):
             green_cards = ef.GREEN_DECK,
             areas = ef.AREAS,
             ask_h = lambda x, y, z: socket_ask(x, y, z, room_id),
-            tell_h = socket_tell,
-            show_h = socket_show,
+            tell_h = None,
+            show_h = None,
             update_h = None
     )
+    gc.tell_h = lambda x, y, *z: socket_tell(x, y, gc, room_id, client=z)
+    gc.show_h = lambda x, *y: socket_show(x, gc, room_id, client=y)
     gc.update_h = lambda: socket_update(gc.dump()[0], room_id)
 
     # Assign game to room
@@ -138,7 +128,7 @@ def start_game(room_id, names, n_players):
     rooms[room_id]['status'] = 'GAME'
 
     # Send public and private game states to frontend
-    gc.tell_h("Started a game with players {}".format(", ".join([p.user_id for p in players])))
+    gc.tell_h("Started a game with players {}".format(", ".join([p.user_id for p in players])), [])
     public_state, private_state = gc.dump()
     for k in private_state:
         data = {'public': public_state, 'private': private_state[k], 'playable_chars': [ch.dump() for ch in gc.playable]}
@@ -179,6 +169,20 @@ def socket_ask(form, data, user_id, room_id):
     # Return answer
     bin['answered'] = False
     return bin['data']
+
+def socket_tell(str, args, gc, room_id, client=None):
+    if not client:
+        client = (room_id)
+    data = color_format(str, args, gc)
+    socketio.emit('message', {'strings': data[0], 'colors': data[1]}, room=client[0])
+    socketio.sleep(SOCKET_SLEEP)
+
+def socket_show(data, gc, room_id, client=None):
+    assert data['type'] in ["die", "win", "reveal", "roll", "draw"]
+    if not client:
+        client = (room_id)
+    socketio.emit('display', data, room=client[0])
+    socketio.sleep(SOCKET_SLEEP)
 
 def socket_update(data, room_id):
     socketio.emit('update', data, room=room_id)
@@ -238,7 +242,7 @@ def on_message(json):
 
     # If player is not in game, or spectating, their color is grey
     if (rooms[room_id]['status'] != 'GAME') or (request.sid not in [p.socket_id for p in rooms[room_id]['gc'].players]):
-        json['color'] = S_COLOR
+        json['color'] = elements.TEXT_COLORS['s']
     else:
         json['color'] = [p.color for p in rooms[room_id]['gc'].players if p.socket_id == request.sid][0]
 
@@ -253,15 +257,14 @@ def on_join(json):
     room_id = json['room_id']
     name = json['name']
     connections[request.sid] = { 'name': name, 'room_id': room_id }
-    connections[request.sid]['color'] = 'rgb(200,200,200)'
+    connections[request.sid]['color'] = elements.TEXT_COLORS['s']
     get_sid[(name, room_id)] = request.sid
 
     # Emit join message to other players
     join_msg = name+' has joined the room!'
     if json['spectate']:
         join_msg = name+' has joined the room as a spectator!'
-    data = {'strings': [join_msg], 'colors': [S_COLOR]}
-    socketio.emit('message', data, room=room_id)
+    socket_tell(join_msg, [], None, room_id)
 
     # Join room
     join_room(room_id)
@@ -270,16 +273,14 @@ def on_join(json):
     join_msg = 'Welcome to Shadow Hunters Room: '+room_id
     if json['spectate']:
         join_msg = 'You are now spectating Shadow Hunters Room: '+room_id
-    data = {'strings': [join_msg], 'colors': [S_COLOR]}
-    socketio.emit('message', data, room=request.sid)
+    socket_tell(join_msg, [], None, room_id)
 
     # Tell player about other room members
     members = [x['name'] for x in connections.values() if (x['room_id'] == room_id and x['name'] != name)]
     msg = 'There\'s no one else here!'
     if members:
         msg = 'Other players in the room: '+', '.join(members)
-    data = {'strings': [msg], 'colors': [S_COLOR]}
-    socketio.emit('message', data, room=request.sid)
+    socket_tell(msg, [], None, room_id)
 
 @socketio.on('disconnect')
 def on_disconnect():
@@ -287,8 +288,10 @@ def on_disconnect():
     # Tell everyone in the room about the disconnect
     name = connections[request.sid]['name']
     room_id = connections[request.sid]['room_id']
-    msg = name+' has left the room'
-    socketio.emit('message', {'strings': [msg], 'colors': [S_COLOR]}, room=room_id)
+    gc = None
+    if rooms[room_id]['status'] == 'GAME':
+        gc = rooms[room_id]['gc']
+    socket_tell('{} has left the room', [name], gc, room_id)
 
     # Remove user from all connection data structures
     connections.pop(request.sid)
@@ -301,7 +304,7 @@ def on_disconnect():
         socketio.close_room(room_id)
         rooms.pop(room_id)
 
-    elif rooms[room_id]['status'] == 'GAME' and (not rooms[room_id]['gc'].game_over):
+    elif gc and not gc.game_over:
 
         # If disconnected person was spectating, or dead, or if the game is over,
         # don't swap them for an AI
@@ -315,8 +318,7 @@ def on_disconnect():
         player.ai = True
 
         # Tell everyone about the swap
-        msg = 'A computer player, {} has taken {}\'s place!'.format(player.user_id, name)
-        socketio.emit('message', {'strings': [msg], 'colors': [S_COLOR]}, room=room_id)
+        socket_tell('A computer player, {} has taken their place!', [player.user_id], gc, room_id)
 
 if __name__ == '__main__':
     socketio.run(app, debug=True, host="0.0.0.0", port=80)

@@ -1,4 +1,4 @@
-from tests import helpers
+import helpers
 import pytest
 import random
 

@@ -3,7 +3,7 @@ import random
 
 import game_context
 import player
-from tests import helpers
+import helpers
 
 # test_area_actions.py
 # Tests the possible actions at each area
