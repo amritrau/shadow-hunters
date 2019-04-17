@@ -321,11 +321,10 @@ def on_disconnect():
 
         # Swap player for AI
         player = player_in_game[0]
-        player.user_id = 'CPU_{}'.format(name)
         player.ai = True
 
         # Tell everyone about the swap
-        socket_tell('A computer player, {} has taken their place!', [player.user_id], gc, room_id)
+        socket_tell('A computer player has taken their place!', [], gc, room_id)
 
 if __name__ == '__main__':
     socketio.run(app, debug=True, host="0.0.0.0", port=80)
