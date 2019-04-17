@@ -280,14 +280,14 @@ def on_join(json):
     join_msg = 'Welcome to Shadow Hunters Room: '+room_id
     if json['spectate']:
         join_msg = 'You are now spectating Shadow Hunters Room: '+room_id
-    socket_tell(join_msg, [], None, room_id, client=request.sid)
+    socket_tell(join_msg, [], None, room_id, client=(request.sid,))
 
     # Tell player about other room members
     members = [x['name'] for x in connections.values() if (x['room_id'] == room_id and x['name'] != name)]
     msg = 'There\'s no one else here!'
     if members:
         msg = 'Other players in the room: '+', '.join(members)
-    socket_tell(msg, [], None, room_id, client=request.sid)
+    socket_tell(msg, [], None, room_id, client=(request.sid,))
 
 @socketio.on('disconnect')
 def on_disconnect():
