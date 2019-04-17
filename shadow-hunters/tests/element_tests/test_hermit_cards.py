@@ -13,7 +13,7 @@ def setup_hermit(title):
     Return a game context, element factory, a hunter, shadow
     and neutral from that game, and a card of a given title
     """
-    gc, ef = helpers.fresh_gc_ef()
+    gc, ef = helpers.fresh_gc_ef(random.randint(5,8))
     h = helpers.get_a_hunter(gc)
     s = helpers.get_a_shadow(gc)
     n = helpers.get_a_neutral(gc)

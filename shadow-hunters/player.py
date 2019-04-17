@@ -327,7 +327,7 @@ class Player:
         ])
 
         # Equipment stealing if dead player has equipment
-        if self.equipment:
+        if self.equipment and self != attacker:
 
             if "Silver Rosary" in [e.title for e in attacker.equipment]:
 

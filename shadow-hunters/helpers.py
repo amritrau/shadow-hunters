@@ -100,3 +100,14 @@ def fresh_gc_ef(n_players = random.randint(4,8)):
             update_h = lambda: 0
     )
     return (gc, ef)
+
+def get_game_with_character(name, n_players = random.randint(4,8)):
+    char = None
+    gc = None
+    ef = None
+    while not char:
+        gc, ef = fresh_gc_ef(n_players=n_players)
+        for p in gc.players:
+            if p.character.name == name:
+                char = p
+    return (gc, ef, char)

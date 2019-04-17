@@ -1,4 +1,5 @@
 import pytest
+import random
 
 import game_context
 import player
