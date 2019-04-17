@@ -50,6 +50,7 @@ class ElementFactory:
 
             # Set selected player to 7 damage
             [p for p in args['self'].gc.getLivePlayers() if p.user_id == target][0].setDamage(7, args['self'])
+            args['self'].gc.tell_h("{} applied {} to {}!", [args['self'].user_id, args['card'].title, target.user_id])
 
         def use_judgement(args):
 
@@ -110,6 +111,7 @@ class ElementFactory:
 
             # Heal target player
             target.moveDamage(roll_result, args['self'])
+            args['self'].gc.tell_h("The blessing healed {}!", [target.user_id])
 
         def use_chocolate(args):
 
@@ -134,7 +136,7 @@ class ElementFactory:
         def use_concealed_knowledge(args):
 
             # Change turn order so that current player goes again
-            args['self'].gc.ask_h('confirm', {'options': ["Reveal Concealed Knowledge"]}, args['self'].user_id)
+            args['self'].gc.ask_h('confirm', {'options': ["Use Concealed Knowledge"]}, args['self'].user_id)
             args['self'].gc.turn_order.insert(args['self'].gc.turn_order.index(args['self']), args['self'])
 
         def use_guardian_angel(args):
@@ -372,6 +374,7 @@ class ElementFactory:
             else:
 
                 # Take 1 damage
+                args['self'].gc.tell_h("{} took 1 damage.", [args['self'].user_id])
                 args['self'].moveDamage(-1, args['self'])
 
         def use_dynamite(args):
@@ -418,8 +421,10 @@ class ElementFactory:
             # If roll is >= 5, user takes 3 damage. Otherwise, target takes 3 damage.
             if roll_result >= 5:
                 args['self'].moveDamage(-3, args['self'])
+                args['self'].gc.tell_h('The {} backfired on {}!', [args['card'].title, args['self'].user_id])
             else:
                 target.moveDamage(-3, args['self'])
+                args['self'].gc.tell_h('The {} cursed {}!', [args['card'].title, target.user_id])
 
         ## Initialize black cards
 
