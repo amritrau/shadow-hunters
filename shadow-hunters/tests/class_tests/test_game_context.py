@@ -11,41 +11,29 @@ import elements
 
 def test_fields():
 
-    # test initialization
-    player_names = ['Amrit', 'Max', 'Gia', 'Joanna', 'Vishal']
-    players = [player.Player(user_id, 'unused', lambda x, y, z: { 'value': random.choice(y['options']) }, True) for user_id in player_names]
-    ef = elements.ElementFactory()
-    gc = game_context.GameContext(
-        players = players,
-        characters = ef.CHARACTERS,
-        black_cards = ef.BLACK_DECK,
-        white_cards = ef.WHITE_DECK,
-        green_cards = ef.GREEN_DECK,
-        areas = ef.AREAS,
-        tell_h = lambda x: 5,
-        show_h = lambda x: 4,
-        update_h = lambda: 3
-    )
+    # Multiple runs to get many different shuffles
+    for _ in range(100):
 
-    # test fields
-    assert gc.players == players
-    assert gc.characters == ef.CHARACTERS
-    assert gc.black_cards == ef.BLACK_DECK
-    assert gc.white_cards == ef.WHITE_DECK
-    assert gc.green_cards == ef.GREEN_DECK
-    assert gc.tell_h(0) == 5
-    assert gc.show_h(0) == 4
-    assert gc.update_h() == 3
-    assert not gc.modifiers
-    assert gc.die4.n_sides == 4
-    assert gc.die6.n_sides == 6
-    for p in players:
-        assert p.gc == gc
-        assert p.character is not None
-    for a in ef.AREAS:
-        assert a.zone is not None
-    assert len(gc.zones) == 3
-    assert [len(z.areas) == 2 for z in gc.zones]
+        # test initialization
+        n_players = random.randint(4,8)
+        gc, ef = helpers.fresh_gc_ef(n_players)
+
+        # test fields
+        assert len(gc.players) == n_players
+        assert gc.characters == ef.CHARACTERS
+        assert gc.black_cards == ef.BLACK_DECK
+        assert gc.white_cards == ef.WHITE_DECK
+        assert gc.green_cards == ef.GREEN_DECK
+        assert not gc.modifiers
+        assert gc.die4.n_sides == 4
+        assert gc.die6.n_sides == 6
+        for p in gc.players:
+            assert p.gc == gc
+            assert p.character is not None
+        for a in ef.AREAS:
+            assert a.zone is not None
+        assert len(gc.zones) == 3
+        assert [len(z.areas) == 2 for z in gc.zones]
 
     # test dump
     public, private = gc.dump()
@@ -101,3 +89,4 @@ def test_play():
 
     # Check that a game plays to completion
     gc.play()
+    assert 1

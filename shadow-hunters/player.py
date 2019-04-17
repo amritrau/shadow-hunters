@@ -225,7 +225,7 @@ class Player:
         self.gc.tell_h(message[0], message[1])
         return result
 
-    def choose_player(self):
+    def choosePlayer(self):
 
         # Select a player from all live playerts who arent you
         self.gc.tell_h("{} is choosing a player...", [self.user_id])
@@ -237,7 +237,7 @@ class Player:
         self.gc.tell_h("{} chose {}!", [self.user_id, target])
         return target_Player
 
-    def choose_equipment(self, target):
+    def chooseEquipment(self, target):
 
         # Select an equipment card belonging to the given target
         data = {'options': [eq.title for eq in target.equipment]}
@@ -343,7 +343,7 @@ class Player:
 
                 # Choose which equipment to take
                 self.gc.ask_h('confirm', {'options': ['Take equipment from {}'.format(self.user_id)]}, attacker.user_id)
-                equip_Equipment = attacker.choose_equipment(self)
+                equip_Equipment = attacker.chooseEquipment(self)
 
                 # Transfer equipment from one player to the other
                 self.giveEquipment(attacker, equip_Equipment)
@@ -369,6 +369,7 @@ class Player:
         return {
             'user_id': self.user_id,
             'socket_id': self.socket_id,
+            'color': self.color,
             'state': self.state,
             'equipment': [eq.dump() for eq in self.equipment],
             'damage': self.damage,

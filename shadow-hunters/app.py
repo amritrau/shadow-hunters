@@ -127,9 +127,6 @@ def start_game(room_id, names, n_players):
     rooms[room_id]['gc'] = gc
     rooms[room_id]['status'] = 'GAME'
 
-    for p in gc.players:
-        print("{}, {}".format(p.user_id, p.color))
-
     # Send public and private game states to frontend
     gc.tell_h("Started a game with players {}".format(", ".join(['{}']*len(players))), [p.user_id for p in players])
     public_state, private_state = gc.dump()
