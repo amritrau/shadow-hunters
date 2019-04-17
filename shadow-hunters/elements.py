@@ -40,7 +40,7 @@ TEXT_COLORS = {
 
 class ElementFactory:
     def __init__(self):
-        
+
         ## White card usage functions
 
         def use_first_aid(args):
