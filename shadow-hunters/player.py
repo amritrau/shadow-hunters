@@ -221,6 +221,28 @@ class Player:
         self.gc.tell_h(message[0], message[1])
         return result
 
+    def choose_player(self):
+
+        # Select a player from all live playerts who arent you
+        self.gc.tell_h("{} is choosing a player...", [self.user_id])
+        data = {'options': [p.user_id for p in self.gc.getLivePlayers() if p != self]}
+        target = self.gc.ask_h('select', data, self.user_id)['value']
+
+        # Return the chosen player
+        target_Player = [p for p in self.gc.getLivePlayers() if p.user_id == target][0]
+        self.gc.tell_h("{} chose {}!", [self.user_id, target])
+        return target_Player
+
+    def choose_equipment(self, target):
+
+        # Select an equipment card belonging to the given target
+        data = {'options': [eq.title for eq in target.equipment]}
+        equip = self.gc.ask_h('select', data, self.user_id)['value']
+
+        # Return the selected equipment card
+        equip_Equipment = [eq for eq in target.equipment if eq.title == equip][0]
+        return equip_Equipment
+
     def giveEquipment(self, receiver, eq):
 
         # Transfer equipment
@@ -300,9 +322,8 @@ class Player:
             attacker.user_id
         ])
 
-        # Get dead player and their equipment
-        data = {'options': [eq.title for eq in self.equipment]}
-        if len(data['options']):
+        # Equipment stealing if dead player has equipment
+        if self.equipment:
 
             if "Silver Rosary" in [e.title for e in attacker.equipment]:
 
@@ -318,8 +339,7 @@ class Player:
 
                 # Choose which equipment to take
                 self.gc.ask_h('confirm', {'options': ['Take equipment from {}'.format(self.user_id)]}, attacker.user_id)
-                equip = self.gc.ask_h('select', data, attacker.user_id)['value']
-                equip_Equipment = [eq for eq in self.equipment if eq.title == equip][0]
+                equip_Equipment = attacker.choose_equipment(self)
 
                 # Transfer equipment from one player to the other
                 self.giveEquipment(attacker, equip_Equipment)

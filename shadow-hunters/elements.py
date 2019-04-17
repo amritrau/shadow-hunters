@@ -40,31 +40,7 @@ TEXT_COLORS = {
 
 class ElementFactory:
     def __init__(self):
-
-        ## Helper functions for asking players to make choices
-
-        def choose_player(args):
-
-            # Select a player from all live playerts who arent you
-            args['self'].gc.tell_h("{} is choosing a player...", [args['self'].user_id])
-            data = {'options': [p.user_id for p in args['self'].gc.getLivePlayers() if p != args['self']]}
-            target = args['self'].gc.ask_h('select', data, args['self'].user_id)['value']
-
-            # Return the chosen player
-            target_Player = [p for p in args['self'].gc.getLivePlayers() if p.user_id == target][0]
-            args['self'].gc.tell_h("{} chose {}!", [args['self'].user_id, target])
-            return target_Player
-
-        def choose_equipment(player, target):
-
-            # Select an equipment card belonging to the given target
-            data = {'options': [eq.title for eq in target.equipment]}
-            equip = player.gc.ask_h('select', data, player.user_id)['value']
-
-            # Return the selected equipment card
-            equip_Equipment = [eq for eq in target.equipment if eq.title == equip][0]
-            return equip_Equipment
-
+        
         ## White card usage functions
 
         def use_first_aid(args):
@@ -129,7 +105,7 @@ class ElementFactory:
 
             # Choose a player to use blessing on
             args['self'].gc.ask_h('confirm', {'options': ["Bless someone"]}, args['self'].user_id)
-            target = choose_player(args)
+            target = args['self'].choose_player()
 
             # Roll dice to get value to heal by
             roll_result = args['self'].rollDice('6')
@@ -313,7 +289,7 @@ class ElementFactory:
 
             # Choose a player to attack
             args['self'].gc.ask_h('confirm', {'options': ["Summon a Bloodthirsty Spider"]}, args['self'].user_id)
-            target = choose_player(args)
+            target = args['self'].choose_player()
 
             # Both the target and the user take 2 damage
             if "Talisman" in [e.title for e in target.equipment]:
@@ -326,7 +302,7 @@ class ElementFactory:
 
             # Choose a player to attack
             args['self'].gc.ask_h('confirm', {'options': ["Summon a Vampire Bat"]}, args['self'].user_id)
-            target = choose_player(args)
+            target = args['self'].choose_player()
 
             # Target takes 2 damage, user heals 1 damage
             if "Talisman" in [e.title for e in target.equipment]:
@@ -350,7 +326,7 @@ class ElementFactory:
 
                 # Take equipment from target player
                 target_Player = [p for p in args['self'].gc.getLivePlayers() if p.user_id == target][0]
-                equip_Equipment = choose_equipment(args['self'], target_Player)
+                equip_Equipment = args['self'].choose_equipment(target_Player)
 
                 # Transfer equipment from one player to the other
                 target_Player.giveEquipment(args['self'], equip_Equipment)
@@ -389,10 +365,10 @@ class ElementFactory:
 
                 # Choose an equipment card to give away
                 args['self'].gc.tell_h("{} is choosing an equipment card to give away...", [args['self'].user_id])
-                eq = choose_equipment(args['self'], args['self'])
+                eq = args['self'].choose_equipment(args['self'])
 
                 # Give away equipment
-                receiver = choose_player(args)
+                receiver = args['self'].choose_player()
                 args['self'].giveEquipment(receiver, eq)
 
             else:
@@ -436,7 +412,7 @@ class ElementFactory:
 
             # Choose a player to target
             args['self'].gc.ask_h('confirm', {'options': ["Use Spiritual Doll"]}, args['self'].user_id)
-            target = choose_player(args)
+            target = args['self'].choose_player()
 
             # Roll 6-sided die
             roll_result = args['self'].rollDice('6')
@@ -590,7 +566,7 @@ class ElementFactory:
 
             # Choose a player to give the card to
             args['self'].gc.ask_h('confirm', {'options': ["Use Hermit's Blackmail"]}, args['self'].user_id)
-            target = choose_player(args)
+            target = args['self'].choose_player()
             display_data = args['card'].dump()
             display_data['type'] = 'draw'
             args['self'].gc.show_h(display_data, target.socket_id)
@@ -611,7 +587,7 @@ class ElementFactory:
 
                     # Target chooses an equipment card to give away
                     target.gc.tell_h("{} is choosing an equipment card to give to {}...", [target.user_id, args['self'].user_id])
-                    eq = choose_equipment(target, target)
+                    eq = target.choose_equipment(target)
 
                     # Transfer equipment from target to user
                     target.giveEquipment(args['self'], eq)
@@ -634,7 +610,7 @@ class ElementFactory:
 
             # Choose a player to give the card to
             args['self'].gc.ask_h('confirm', {'options': ["Use Hermit's Greed"]}, args['self'].user_id)
-            target = choose_player(args)
+            target = args['self'].choose_player()
             display_data = args['card'].dump()
             display_data['type'] = 'draw'
             args['self'].gc.show_h(display_data, target.socket_id)
@@ -655,7 +631,7 @@ class ElementFactory:
 
                     # Target chooses an equipment card to give away
                     target.gc.tell_h("{} is choosing an equipment card to give to {}...", [target.user_id, args['self'].user_id])
-                    eq = choose_equipment(target, target)
+                    eq = target.choose_equipment(target)
 
                     # Transfer equipment from target to user
                     target.giveEquipment(args['self'], eq)
@@ -678,7 +654,7 @@ class ElementFactory:
 
             # Choose a player to give the card to
             args['self'].gc.ask_h('confirm', {'options': ["Use Hermit's Anger"]}, args['self'].user_id)
-            target = choose_player(args)
+            target = args['self'].choose_player()
             display_data = args['card'].dump()
             display_data['type'] = 'draw'
             args['self'].gc.show_h(display_data, target.socket_id)
@@ -699,7 +675,7 @@ class ElementFactory:
 
                     # Target chooses an equipment card to give away
                     target.gc.tell_h("{} is choosing an equipment card to give to {}...", [target.user_id, args['self'].user_id])
-                    eq = choose_equipment(target, target)
+                    eq = target.choose_equipment(target)
 
                     # Transfer equipment from target to user
                     target.giveEquipment(args['self'], eq)
@@ -722,7 +698,7 @@ class ElementFactory:
 
             # Choose a player to give the card to
             args['self'].gc.ask_h('confirm', {'options': ["Use Hermit's Slap"]}, args['self'].user_id)
-            target = choose_player(args)
+            target = args['self'].choose_player()
             display_data = args['card'].dump()
             display_data['type'] = 'draw'
             args['self'].gc.show_h(display_data, target.socket_id)
@@ -751,7 +727,7 @@ class ElementFactory:
 
             # Choose a player to give the card to
             args['self'].gc.ask_h('confirm', {'options': ["Use Hermit's Spell"]}, args['self'].user_id)
-            target = choose_player(args)
+            target = args['self'].choose_player()
             display_data = args['card'].dump()
             display_data['type'] = 'draw'
             args['self'].gc.show_h(display_data, target.socket_id)
@@ -780,7 +756,7 @@ class ElementFactory:
 
             # Choose a player to give the card to
             args['self'].gc.ask_h('confirm', {'options': ["Use Hermit's Exorcism"]}, args['self'].user_id)
-            target = choose_player(args)
+            target = args['self'].choose_player()
             display_data = args['card'].dump()
             display_data['type'] = 'draw'
             args['self'].gc.show_h(display_data, target.socket_id)
@@ -808,7 +784,7 @@ class ElementFactory:
 
             # Choose a player to give the card to
             args['self'].gc.ask_h('confirm', {'options': ["Use Hermit's Nurturance"]}, args['self'].user_id)
-            target = choose_player(args)
+            target = args['self'].choose_player()
             display_data = args['card'].dump()
             display_data['type'] = 'draw'
             args['self'].gc.show_h(display_data, target.socket_id)
@@ -849,7 +825,7 @@ class ElementFactory:
 
             # Choose a player to give the card to
             args['self'].gc.ask_h('confirm', {'options': ["Use Hermit's Aid"]}, args['self'].user_id)
-            target = choose_player(args)
+            target = args['self'].choose_player()
             display_data = args['card'].dump()
             display_data['type'] = 'draw'
             args['self'].gc.show_h(display_data, target.socket_id)
@@ -890,7 +866,7 @@ class ElementFactory:
 
             # Choose a player to give the card to
             args['self'].gc.ask_h('confirm', {'options': ["Use Hermit's Huddle"]}, args['self'].user_id)
-            target = choose_player(args)
+            target = args['self'].choose_player()
             display_data = args['card'].dump()
             display_data['type'] = 'draw'
             args['self'].gc.show_h(display_data, target.socket_id)
@@ -931,7 +907,7 @@ class ElementFactory:
 
             # Choose a player to give the card to
             args['self'].gc.ask_h('confirm', {'options': ["Use Hermit's Lesson"]}, args['self'].user_id)
-            target = choose_player(args)
+            target = args['self'].choose_player()
             display_data = args['card'].dump()
             display_data['type'] = 'draw'
             args['self'].gc.show_h(display_data, target.socket_id)
@@ -960,7 +936,7 @@ class ElementFactory:
 
             # Choose a player to give the card to
             args['self'].gc.ask_h('confirm', {'options': ["Use Hermit's Bully"]}, args['self'].user_id)
-            target = choose_player(args)
+            target = args['self'].choose_player()
             display_data = args['card'].dump()
             display_data['type'] = 'draw'
             args['self'].gc.show_h(display_data, target.socket_id)
@@ -988,7 +964,7 @@ class ElementFactory:
         def hermit_prediction(args):
             # Choose a player to give the card to
             args['self'].gc.ask_h('confirm', {'options': ["Use Hermit's Prediction"]}, args['self'].user_id)
-            target = choose_player(args)
+            target = args['self'].choose_player()
             display_data = args['card'].dump()
             display_data['type'] = 'draw'
             args['self'].gc.show_h(display_data, target.socket_id)
