@@ -73,16 +73,16 @@ def test_checkWinConditions():
     # Check that hunters win when everyone else is dead
     gc, ef = helpers.fresh_gc_ef()
     for p in gc.players:
-        if p.character.alleg != 2:
+        if p.character.alleg == 0:
             p.setDamage(14, p)
-    assert len([p for p in gc.checkWinConditions()]) != 0 and all([p.character.alleg == 2 for p in gc.checkWinConditions()])
+    assert [p for p in gc.checkWinConditions() if p.character.alleg == 2]
 
     # Check that shadows win when everyone else is dead
     gc, ef = helpers.fresh_gc_ef()
     for p in gc.players:
-        if p.character.alleg != 0:
+        if p.character.alleg == 2:
             p.setDamage(14, p)
-    assert len([p for p in gc.checkWinConditions()]) != 0 and all([p.character.alleg == 0 for p in gc.checkWinConditions()])
+    assert [p for p in gc.checkWinConditions() if p.character.alleg == 0]
 
 def test_play():
     gc, ef = helpers.fresh_gc_ef()

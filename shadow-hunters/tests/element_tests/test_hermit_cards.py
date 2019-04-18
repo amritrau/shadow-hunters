@@ -8,12 +8,12 @@ import helpers
 # test_hermit_cards.py
 # Tests the usage of each hermit card
 
-def setup_hermit(title):
+def setup_hermit(title, n_players = random.randint(5,8)):
     """
     Return a game context, element factory, a hunter, shadow
     and neutral from that game, and a card of a given title
     """
-    gc, ef = helpers.fresh_gc_ef(random.randint(5,8))
+    gc, ef = helpers.fresh_gc_ef(n_players)
     h = helpers.get_a_hunter(gc)
     s = helpers.get_a_shadow(gc)
     n = helpers.get_a_neutral(gc)
@@ -324,10 +324,62 @@ def test_hermit_huddle():
     assert s.damage == 1
 
 def test_hermit_lesson():
-    assert 1
+
+    # setup rigged gc
+    gc, ef, h, s, n, c = setup_hermit("Hermit\'s Lesson", n_players=8)
+    high_p = [p for p in gc.players if p.character.max_damage >= 12][0]
+    low_p = [p for p in gc.players if p.character.max_damage <= 11][0]
+    gc.ask_h = helpers.answer_sequence([
+        "Use Hermit\'s Lesson",
+        low_p.user_id, 'Do nothing',        # test for low hp
+        "Use Hermit\'s Lesson",
+        high_p.user_id, 'Receive 2 damage', # test for high hp
+    ])
+
+    # Check that characters with hp <= 11 do nothing
+    init_damage = low_p.damage
+    c.use({ 'self': high_p, 'card': c })
+    assert low_p.damage == init_damage
+
+    # Check that characters with hp >= 12 take 2 damage
+    init_damage = high_p.damage
+    c.use({ 'self': low_p, 'card': c })
+    assert high_p.damage == init_damage + 2
 
 def test_hermit_bully():
-    assert 1
+
+    # setup rigged gc
+    gc, ef, h, s, n, c = setup_hermit("Hermit\'s Bully", n_players=8)
+    high_p = [p for p in gc.players if p.character.max_damage >= 12][0]
+    low_p = [p for p in gc.players if p.character.max_damage <= 11][0]
+    gc.ask_h = helpers.answer_sequence([
+        "Use Hermit\'s Bully",
+        high_p.user_id, 'Do nothing',      # test for high hp
+        "Use Hermit\'s Bully",
+        low_p.user_id, 'Receive 1 damage', # test for low hp
+    ])
+
+    # Check that characters with hp >= 12 do nothing
+    init_damage = high_p.damage
+    c.use({ 'self': low_p, 'card': c })
+    assert high_p.damage == init_damage
+
+    # Check that characters with hp <= 11 take 1 damage
+    init_damage = low_p.damage
+    c.use({ 'self': high_p, 'card': c })
+    assert low_p.damage == init_damage + 1
 
 def test_hermit_prediction():
+
+    # setup rigged gc
+    gc, ef, h, s, n, c = setup_hermit("Hermit\'s Prediction")
+    gc.ask_h = helpers.answer_sequence([
+        "Use Hermit\'s Prediction",
+        h.user_id, 'Reveal',
+    ])
+
+    # Check that using the card works
+    c.use({ 'self': s, 'card': c })
+
+    # Effects no change on the game state
     assert 1
