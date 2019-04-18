@@ -13,7 +13,7 @@ class GameContext:
 
         # Instantiate gameplay objects
         self.players = players
-        self.turn_order = list(players)
+        self.turn_order = copy.copy(players)
         self.characters = characters
         self.playable = copy.deepcopy(characters)
         self.black_cards = black_cards

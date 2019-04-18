@@ -101,7 +101,7 @@ def fresh_gc_ef(n_players = random.randint(4,8)):
     )
     return (gc, ef)
 
-def get_game_with_character(name, n_players = random.randint(4,8)):
+def get_game_with_character(name, n_players = random.randint(5,8)):
     char = None
     gc = None
     ef = None
