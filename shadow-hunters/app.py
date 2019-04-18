@@ -33,7 +33,6 @@ AI_SLEEP = 2.0
 # connection/room management data structures
 connections = {}
 rooms = {}
-get_sid = {}
 
 # APP ROUTES
 
@@ -72,7 +71,7 @@ def room(methods=['GET','POST']):
             return redirect('/')
 
         # check for username taken
-        if (username, room_id) in get_sid:
+        if [x for x in connections.values() if x['room_id'] == room_id and x['name'] == username]:
             flash("Someone in the room has taken your name")
             return redirect('/')
 
@@ -92,14 +91,85 @@ def room(methods=['GET','POST']):
     else:
         return redirect('/')
 
-# GAMEPLAY FUNCTIONS
+# SOCKET EMITTERS
 
-def start_game(room_id, names, n_players):
+def socket_ask(form, data, user_id, room_id):
+
+    # Get player and socket id
+    player = [p for p in rooms[room_id]['gc'].players if p.user_id == user_id][0]
+
+    # If player is a CPU, choose randomly from options
+    if player.ai:
+        socketio.sleep(AI_SLEEP)
+        if 'Decline' in data['options'] and len(data['options']) > 1:
+            data['options'].remove('Decline')
+        return {'value': random.choice(data['options'])}
+
+    # Otherwise, emit ask
+    sid = player.socket_id
+    bin = rooms[room_id]['gc'].answer_bin
+    data['form'] = form
+    bin['answered'] = False
+    socketio.emit('ask', data, room=sid)
+
+    # Loop until an answer is received
+    while not bin['answered']:
+        while not bin['answered']:
+            # If a player swaps out for an AI during an ask, the AI answers for them
+            if player.ai or player.socket_id != sid:
+                if 'Decline' in data['options'] and len(data['options']) > 1:
+                    data['options'].remove('Decline')
+                return {'value': random.choice(data['options'])}
+            socketio.sleep(SOCKET_SLEEP)
+
+        # Validate answerer and answer
+        if bin['sid'] != sid or bin['data']['value'] not in data['options']:
+            bin['answered'] = False
+
+    # Return answer
+    bin['answered'] = False
+    return bin['data']
+
+def socket_tell(str, args, gc, room_id, client=None):
+    if not client:
+        client = (room_id)
+    data = color_format(str, args, gc)
+    socketio.emit('message', {'strings': data[0], 'colors': data[1]}, room=client[0])
+    socketio.sleep(SOCKET_SLEEP)
+
+def socket_show(data, gc, room_id, client=None):
+    assert data['type'] in ["die", "win", "reveal", "roll", "draw"]
+    if not client:
+        client = (room_id)
+    socketio.emit('display', data, room=client[0])
+    socketio.sleep(SOCKET_SLEEP)
+
+def socket_update(data, room_id):
+    socketio.emit('update', data, room=room_id)
+    socketio.sleep(SOCKET_SLEEP)
+
+# SOCKET RECEIVERS
+
+@socketio.on('start')
+def on_start(json):
+
+    # Get room
+    room_id = connections[request.sid]['room_id']
+
+    # Get number of players
+    n_players = max(min(int(json['n_players']), 8), 4)
+    names_and_sids = [(connections[x]['name'], x) for x in connections.keys() if connections[x]['room_id'] == room_id]
+    if len(names_and_sids) > n_players:
+        socketio.emit('false_start', {'field':n_players, 'actual':len(names_and_sids)}, room=request.sid)
+        return
+
+    # Begin game
+    socketio.sleep(SOCKET_SLEEP)
 
     # Initialize human and AI players
     rgb = ['rgb(245,245,245)', 'rgb(100,100,100)', 'rgb(79,182,78)', 'rgb(62,99,171)',
            'rgb(197,97,163)', 'rgb(219,62,62)', 'rgb(249,234,48)', 'rgb(239,136,43)']
-    human_players = [Player(n, get_sid[(n, room_id)], rgb.pop(0), False) for n in names]
+    human_players = [Player(n[0], n[1], rgb.pop(0), False) for n in names_and_sids]
     ai_players = [Player("CPU_{}".format(i), str(i), rgb.pop(0), True) for i in range(1, n_players - len(human_players) + 1)]
     players = human_players + ai_players
 
@@ -136,80 +206,6 @@ def start_game(room_id, names, n_players):
 
     # Initiate gameplay loop
     gc.play()
-
-def socket_ask(form, data, user_id, room_id):
-
-    # Get player and socket id
-    player = [p for p in rooms[room_id]['gc'].players if p.user_id == user_id][0]
-
-    # If player is a CPU, choose randomly from options
-    if player.ai:
-        socketio.sleep(AI_SLEEP)
-        if 'Decline' in data['options'] and len(data['options']) > 1:
-            data['options'].remove('Decline')
-        return {'value': random.choice(data['options'])}
-
-    # Otherwise, emit ask
-    sid = get_sid[(user_id, room_id)]
-    bin = rooms[room_id]['gc'].answer_bin
-    data['form'] = form
-    bin['answered'] = False
-    socketio.emit('ask', data, room=sid)
-
-    # Loop until an answer is received
-    while not bin['answered']:
-        while not bin['answered']:
-            # If a player swaps out for an AI during an ask, the AI answers for them
-            if player.ai:
-                if 'Decline' in data['options'] and len(data['options']) > 1:
-                    data['options'].remove('Decline')
-                return {'value': random.choice(data['options'])}
-            socketio.sleep(SOCKET_SLEEP)
-
-        # Validate answerer and answer
-        if bin['sid'] != sid or bin['data']['value'] not in data['options']:
-            bin['answered'] = False
-
-    # Return answer
-    bin['answered'] = False
-    return bin['data']
-
-def socket_tell(str, args, gc, room_id, client=None):
-    if not client:
-        client = (room_id)
-    data = color_format(str, args, gc)
-    socketio.emit('message', {'strings': data[0], 'colors': data[1]}, room=client[0])
-    socketio.sleep(SOCKET_SLEEP)
-
-def socket_show(data, gc, room_id, client=None):
-    assert data['type'] in ["die", "win", "reveal", "roll", "draw"]
-    if not client:
-        client = (room_id)
-    socketio.emit('display', data, room=client[0])
-    socketio.sleep(SOCKET_SLEEP)
-
-def socket_update(data, room_id):
-    socketio.emit('update', data, room=room_id)
-    socketio.sleep(SOCKET_SLEEP)
-
-# SOCKET HANDLERS
-
-@socketio.on('start')
-def on_start(json):
-
-    # Get room
-    room_id = connections[request.sid]['room_id']
-
-    # Get number of players
-    n_players = max(min(int(json['n_players']), 8), 4)
-    names = [x['name'] for x in connections.values() if x['room_id'] == room_id]
-    if len(names) > n_players:
-        socketio.emit('false_start', {'field':n_players, 'actual':len(names)}, room=request.sid)
-        return
-
-    # Begin game
-    socketio.sleep(SOCKET_SLEEP)
-    start_game(room_id, names, n_players)
 
 @socketio.on('reveal')
 def on_reveal():
@@ -262,7 +258,6 @@ def on_join(json):
     name = json['name']
     connections[request.sid] = { 'name': name, 'room_id': room_id }
     connections[request.sid]['color'] = elements.TEXT_COLORS['server']
-    get_sid[(name, room_id)] = request.sid
 
     # Emit join message to other players
     join_msg = name+' has joined the room!'
@@ -297,10 +292,6 @@ def on_disconnect():
         gc = rooms[room_id]['gc']
     socket_tell('{} has left the room', [name], gc, room_id)
 
-    # Remove user from all connection data structures
-    connections.pop(request.sid)
-    get_sid.pop((name, room_id))
-
     # Close room if it is now empty, or replace player with AI if it's in game
     if len([x for x in connections.values() if x['room_id'] == room_id]) == 0:
 
@@ -322,6 +313,9 @@ def on_disconnect():
 
         # Tell everyone about the swap
         socket_tell('A computer player has taken their place!', [], gc, room_id)
+
+    # Remove user from all connection data structures
+    connections.pop(request.sid)
 
 if __name__ == '__main__':
     socketio.run(app, debug=True, host="0.0.0.0", port=80)
