@@ -1,5 +1,5 @@
 from game_context import GameContext
-from player import Player
+import player
 import elements
 import random
 
@@ -84,7 +84,7 @@ def answer_sequence(answers):
     return ask_function
 
 def fresh_gc_ef(n_players = random.randint(4,8)):
-    players = [Player("CPU_{}".format(i), 'unused', 'unused', True) for i in range(1, n_players+1)]
+    players = [player.Player("CPU_{}".format(i), 'unused', 'unused', True) for i in range(1, n_players+1)]
     ef = elements.ElementFactory()
 
     gc = GameContext(
