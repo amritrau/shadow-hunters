@@ -6,7 +6,7 @@ import player
 import helpers
 
 # test_white_cards.py
-# Tests the usage of each white card
+# Tests the usage of each white single-use card
 
 def test_flare_judgement():
     assert 1

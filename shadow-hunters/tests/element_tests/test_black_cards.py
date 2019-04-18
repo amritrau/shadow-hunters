@@ -6,7 +6,7 @@ import player
 import helpers
 
 # test_black_cards.py
-# Tests the usage of each black card
+# Tests the usage of each black single-use card
 
 def test_bloodthirsty_spider():
     assert 1

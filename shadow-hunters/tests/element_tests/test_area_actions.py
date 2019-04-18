@@ -1,5 +1,6 @@
 import pytest
 import random
+import copy
 
 import game_context
 import player
@@ -10,10 +11,6 @@ import helpers
 
 # Tests on hermit's cabin, church, and cemetery
 # are subsumed by tests of player.drawCard()
-
-def test_underworld_gate():
-    # Unclear how to test
-    assert 1
 
 def test_weird_woods():
 
@@ -69,3 +66,17 @@ def test_erstwhile_altar():
     area.action(gc, actor)
     assert actor.equipment == [chainsaw, roly_hobe]
     assert target.equipment == [axe]
+
+def test_underworld_gate():
+
+    # Set up rigged game context
+    gc, ef = helpers.fresh_gc_ef()
+    p1 = gc.players[0]
+    area = helpers.get_area_by_name(gc, "Underworld Gate")
+    whites = copy.copy(gc.white_cards.cards)
+    blacks = copy.copy(gc.black_cards.cards)
+    greens = copy.copy(gc.green_cards.cards)
+
+    # Make sure one of the card piles was taken from
+    area.action(gc, p1)
+    assert gc.white_cards.cards != whites or gc.black_cards.cards != blacks or gc.green_cards.cards != greens

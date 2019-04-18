@@ -256,7 +256,7 @@ class Player:
         eq.holder = receiver
 
         # Tell frontend about transfer
-        self.gc.tell_h("{} gave {} their {}!", [self.user_id, receiver.user_id, eq.title])
+        self.gc.tell_h("{} forfeited their {} to {}!", [self.user_id, receiver.user_id, eq.title])
         self.gc.update_h()
 
     def attack(self, other, amount):
