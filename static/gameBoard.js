@@ -23,12 +23,13 @@ var GameBoard = new Phaser.Class ({
         this.infoBox;
         this.gameEnd = {image: [], winners: [], players_info: []};
         this.cards = {cardsDrawn: [], cardText: [], nDrawn: 0};
-        
+        this.infoKnown;
+
         // list of x, y coordinates for 8 players' starting spots
         this.startSpots = [[562, 245],
-                           [504, 245], 
-                           [533, 215], 
-                           [533, 275], 
+                           [504, 245],
+                           [533, 215],
+                           [533, 275],
                            [591, 275],
                            [510, 185],
                            [556, 185],
@@ -148,7 +149,7 @@ var GameBoard = new Phaser.Class ({
         this.load.svg('E', '/static/assets/e.svg', {width: 36.657, height: 36.657});
         this.load.svg('F', gfx + 'f.svg', {width: 36.657, height: 36.657});
         this.load.svg('G', gfx + 'g.svg', {width: 36.657, height: 36.657});
-        
+
         // will replace with actual art as I make them
         // possible later implementation: loop through dumped list of playable characters to load images?
         this.load.image('Allie', '/static/assets/Allie.png');
@@ -159,7 +160,7 @@ var GameBoard = new Phaser.Class ({
         this.load.image('Bob', '/static/assets/Bob.png');
         this.load.image('Catherine', '/static/assets/anon.png');
         this.load.image('Franklin', '/static/assets/Franklin.png');
-        this.load.image('Ellen', '/static/assets/anon.png');
+        this.load.image('Ellen', '/static/assets/Ellen.png');
         this.load.image('Ultra Soul', '/static/assets/anon.png');
         this.load.image('Werewolf', '/static/assets/anon.png');
         //this.load.svg('Allie', '/static/assets/Allie.svg', {width: 123, height: 123});
@@ -306,6 +307,8 @@ var GameBoard = new Phaser.Class ({
                     break;
                 case "reveal":
                     console.log("in case reveal, data.type is: " + data.type);
+                    console.log(data);
+                    self.onReveal(data);
                     //TO DO: make character card pop up
                     break;
                 case "roll":
@@ -555,6 +558,11 @@ var GameBoard = new Phaser.Class ({
     cardHandler: function(card)
     {
         card.cardText.visible = false;
+
+        if(card.char) {
+          card.charImage.visible = false;
+        }
+
         card.visible = false;
     },
 
@@ -613,9 +621,41 @@ var GameBoard = new Phaser.Class ({
             this.cards.cardsDrawn[cardsOut].cardText = this.add.text(211.654, 365.668, " ", { font: '10px Arial', fill: '#FFFFFF', wordWrap: { width: 139, useAdvancedWrap: true }});
         }
 
+        this.cards.cardsDrawn[cardsOut].char = false;
         this.cards.cardsDrawn[cardsOut].cardText.setText([
             cardInfo.title,
             cardInfo.desc
+        ]);
+
+        this.cards.cardsDrawn[cardsOut].setInteractive();
+        this.cards.cardsDrawn[cardsOut].on('clicked', this.cardHandler, this.cards.cardsDrawn[cardsOut]);
+        this.cards.nDrawn = cardsOut + 1;
+    },
+
+    //character card displays
+    onReveal: function(charInfo) {
+        var cardsOut = this.cards.nDrawn;
+
+        if(charInfo.player.character.alleg == 1){
+            charInfo.player.character.alleg = "Neutral";
+        }
+        else if (charInfo.player.character.alleg == 0) {
+            charInfo.player.character.alleg = "Shadow";
+        }
+        else {
+            charInfo.player.character.alleg = "Hunter";
+        }
+
+        this.cards.cardsDrawn[cardsOut] = this.add.image(281.321, 368.964, "blackcard");
+        this.cards.cardsDrawn[cardsOut].char = true;
+        this.cards.cardsDrawn[cardsOut].charImage = this.add.image(281.321, 300, charInfo.player.character.name);
+        this.cards.cardsDrawn[cardsOut].cardText = this.add.text(211.654, 365.668, " ", { font: '10px Arial', fill: '#FFFFFF', wordWrap: { width: 139, useAdvancedWrap: true }});
+
+        this.cards.cardsDrawn[cardsOut].cardText.setText([
+            charInfo.player.character.name,
+            "Team: " + charInfo.player.character.alleg,
+            "Win Condition: " + charInfo.player.character.win_cond_desc,
+            "Special Ability: " + charInfo.player.character.special_desc
         ]);
 
         this.cards.cardsDrawn[cardsOut].setInteractive();
