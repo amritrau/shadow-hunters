@@ -36,6 +36,9 @@ TEXT_COLORS = {
     'Underworld Gate': 'rgb(150,0,150)'
 }
 
+# Lock for manipulating reveals
+### LOCK HERE
+
 class ElementFactory:
     def __init__(self):
 
@@ -141,8 +144,7 @@ class ElementFactory:
 
         def use_guardian_angel(args):
 
-            # user can't take damage until their next turn (this is checked in player.defend()
-            # and player.takeTurn()
+            # user can't take damage until their next turn - this is checked in player.defend() and player.takeTurn()
             args['self'].gc.ask_h('confirm', {'options': ["Summon a Guardian Angel"]}, args['self'].user_id)
             args['self'].modifiers['guardian_angel'] = True
 

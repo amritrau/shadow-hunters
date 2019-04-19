@@ -51,6 +51,13 @@ def color_format(str, args, gc):
 
 ## Helper functions for data retrieval
 
+def get_room_id(rooms, sid):
+    candidates = [r for r in rooms.keys() if sid in rooms[r]['connections'].keys()]
+    if not candidates:
+        return None
+    else:
+        return candidates[0]
+
 def get_card_by_title(ef, title):
     all_cards = ef.WHITE_DECK.cards + ef.BLACK_DECK.cards + ef.GREEN_DECK.cards
     return [c for c in all_cards if c.title == title][0]

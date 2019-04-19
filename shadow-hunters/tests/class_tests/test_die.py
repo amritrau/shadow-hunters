@@ -17,6 +17,8 @@ def test_fields():
     assert d4.state == r
 
 def test_roll():
+
+    # Initialize
     d4 = die.Die(n_sides = 4)
     d6 = die.Die(n_sides = 6)
 

@@ -313,8 +313,11 @@ class Player:
         self.gc.update_h()
 
     def die(self, attacker):
+
+        ### GRAB REVEAL LOCK
         # Set state to 0 (DEAD)
         self.state = 0
+        ### RELEASE REVEAL LOCK
 
         # Report to console
         display_data = {'type': 'die', 'player': self.dump()}

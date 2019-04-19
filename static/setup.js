@@ -136,7 +136,7 @@ $('document').ready(function() {
         socket.on('disconnect', function(reason) {
             window.onbeforeunload = function() {};
             alert("You have lost connection to the server – click 'Ok' to return to the home page, " +
-                  "where you may reconnect.");
+                  "where you may reconnect if you were in a game.");
             window.location = "/";
         });
 
