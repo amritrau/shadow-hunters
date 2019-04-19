@@ -136,7 +136,7 @@ class Player:
         self.gc.tell_h("{}'s turn is over.".format(self.user_id))
 
     def attackSequence(self, dice_type = "attack"):
-        self.ask_h('confirm', {'options': ["Attack other players!"]}, self.user_id)
+        self.gc.ask_h('confirm', {'options': ["Attack other players!"]}, self.user_id)
         self.gc.tell_h("{} is picking whom to attack...".format(self.user_id))
 
         # Get attackable players
@@ -178,7 +178,7 @@ class Player:
         else:
             self.gc.tell_h("{} declined to attack.", [self.user_id])
 
-      
+
     def drawCard(self, deck):
 
         # Draw card and tell frontend about it
@@ -345,7 +345,7 @@ class Player:
             if damage_change >= 2:
                 # Ask attacker whether to steal equipment or deal damage
                 data = {'options': ["Steal equipment", "Deal {} damage".format(damage_change)]}
-                choose_steal = (attacker.ask_h('select', data, attacker.user_id)['value'] == "Steal equipment")
+                choose_steal = (attacker.gc.ask_h('select', data, attacker.user_id)['value'] == "Steal equipment")
 
                 if choose_steal:
                     desired_eq = attacker.chooseEquipment(self)
@@ -398,7 +398,7 @@ class Player:
                     self.gc.tell_h("{}'s {} let them steal all of {}'s equipment!", [attacker.user_id, "Silver Rosary", self.user_id])
                 else:
                     self.gc.tell_h("{} stole all of {}'s equipment!", [attacker.user_id, self.user_id])
-                
+
                 attacker.equipment += self.equipment
                 for eq in attacker.equipment:
                     eq.holder = attacker
