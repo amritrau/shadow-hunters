@@ -95,7 +95,8 @@ var GameBoard = new Phaser.Class ({
         this.load.svg('popup_right', gfx + 'player-popright.svg', {width: 175.424, height: 84.961});
         this.load.svg('health', gfx + 'health.svg', {width: 206.681, height: 589.442});
         this.load.svg('health_popup', gfx + 'health-popup.svg', {width: 100, height: 335});
-        this.load.image("playerinfo", "/static/assets/scroll.png");
+        this.load.image('summary', '/static/assets/scroll.png');
+        this.load.image('info', '/static/assets/info.png')
 
         // load arsenal
         this.load.image('arsenal', gfx + 'arsenal.svg', {width: 640, height: 125.683});
@@ -201,7 +202,7 @@ var GameBoard = new Phaser.Class ({
         this.popupInfo.displayInfo = this.add.text(this.popupInfo.infoBox.x - 80,
                                                   this.popupInfo.infoBox.y - 40,
                                                   "Click on things to see more information! Click on the i button to close this popup",
-                                                  { font: '12px Arial', fill: '#FFFFFF',
+                                                  { font: '12px Palatino', fill: '#FFFFFF',
                                                   wordWrap: { width: 130, useAdvancedWrap: true }});
         this.popupInfo.displayInfo.depth = 30;
         this.popupInfo.setInteractive();
@@ -404,21 +405,20 @@ var GameBoard = new Phaser.Class ({
         sprite.infoBox = this.add.image(800, 175, 'health_popup');
         sprite.infoBox.setVisible(false);
         sprite.infoBox.depth = 30;
-<<<<<<< HEAD
         sprite.displayInfo = this.add.text(760, 10, " ", { font: '10px Palatino', fill: '#FFFFFF', wordWrap: { width: 250, useAdvancedWrap: true }});
 
         sprite.displayInfo.lineSpacing = -2.5;
     
-        sprite.displayInfo.setText(["Player: " + this.gameData.public.characters[0].name, "Dies At HP: " + this.gameData.public.characters[0].max_damage,
-            "Player: " + this.gameData.public.characters[1].name, "Dies At HP: " + this.gameData.public.characters[1].max_damage, 
-            "Player: " + this.gameData.public.characters[2].name, "Dies At HP: " + this.gameData.public.characters[2].max_damage, 
-            "Player: " + this.gameData.public.characters[3].name, "Dies At HP: " + this.gameData.public.characters[3].max_damage, 
-            "Player: " + this.gameData.public.characters[4].name, "Dies At HP: " + this.gameData.public.characters[4].max_damage, 
-            "Player: " + this.gameData.public.characters[5].name, "Dies At HP: " + this.gameData.public.characters[5].max_damage, 
-            "Player: " + this.gameData.public.characters[6].name, "Dies At HP: " + this.gameData.public.characters[6].max_damage, 
-            "Player: " + this.gameData.public.characters[7].name, "Dies At HP: " + this.gameData.public.characters[7].max_damage, 
-            "Player: " + this.gameData.public.characters[8].name, "Dies At HP: " + this.gameData.public.characters[8].max_damage, 
-            "Player: " + this.gameData.public.characters[9].name, "Dies At HP: " + this.gameData.public.characters[9].max_damage, 
+        sprite.displayInfo.setText(["Player: " + this.gameData.public.characters[0].name, "Dies At HP: " + this.gameData.public.characters[0].max_damage + "\n",
+            "Player: " + this.gameData.public.characters[1].name, "Dies At HP: " + this.gameData.public.characters[1].max_damage + "\n",
+            "Player: " + this.gameData.public.characters[2].name, "Dies At HP: " + this.gameData.public.characters[2].max_damage + "\n",
+            "Player: " + this.gameData.public.characters[3].name, "Dies At HP: " + this.gameData.public.characters[3].max_damage + "\n",
+            "Player: " + this.gameData.public.characters[4].name, "Dies At HP: " + this.gameData.public.characters[4].max_damage + "\n",
+            "Player: " + this.gameData.public.characters[5].name, "Dies At HP: " + this.gameData.public.characters[5].max_damage + "\n",
+            "Player: " + this.gameData.public.characters[6].name, "Dies At HP: " + this.gameData.public.characters[6].max_damage + "\n",
+            "Player: " + this.gameData.public.characters[7].name, "Dies At HP: " + this.gameData.public.characters[7].max_damage + "\n",
+            "Player: " + this.gameData.public.characters[8].name, "Dies At HP: " + this.gameData.public.characters[8].max_damage + "\n",
+            "Player: " + this.gameData.public.characters[9].name, "Dies At HP: " + this.gameData.public.characters[9].max_damage + "\n",
             "Player: " + this.gameData.public.characters[10].name, "Dies At HP: " + this.gameData.public.characters[10].max_damage
         ]);
 
@@ -467,7 +467,7 @@ var GameBoard = new Phaser.Class ({
 
     // makes summary icon in upper right part of screen interactive
     makeSummary: function() {
-      var summaryIcon = this.add.image(840, 65, 'playerinfo');
+      var summaryIcon = this.add.image(840, 65, 'summary');
       summaryIcon.infoBox = this.add.image(500, 300, "gameOver");
       summaryIcon.infoBox.depth = 40;
 
@@ -582,7 +582,7 @@ var GameBoard = new Phaser.Class ({
 
             // Empty equip text in rest of boxes
             for(var i = datasize; i < this.num_equip_slots; i++) {
-                this.add.image(255 + i*100, 550, "Arsenal Box");
+                this.add.image(265 + i*107.450, 550, 'Arsenal Box');
             }
 
             // remove reveal button on person's screen if they are revealed
