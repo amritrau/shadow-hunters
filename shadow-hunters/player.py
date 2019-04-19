@@ -133,17 +133,17 @@ class Player:
             return
 
         # Turn is over
-        self.gc.tell_h("{}'s turn is over.".format(self.user_id))
+        self.gc.tell_h("{}'s turn is over.", [self.user_id])
 
     def attackSequence(self, dice_type = "attack"):
         self.gc.ask_h('confirm', {'options': ["Attack other players!"]}, self.user_id)
-        self.gc.tell_h("{} is picking whom to attack...".format(self.user_id))
+        self.gc.tell_h("{} is picking whom to attack...", [self.user_id])
 
         # Get attackable players
         live_players = [p for p in self.gc.getLivePlayers() if p.location]
         targets = [p for p in live_players if (p.location.zone == self.location.zone and p != self)]
         if "Handgun" in [e.title for e in self.equipment]:
-            self.gc.tell_h("{}'s Handgun reverses their attack range.".format(self.user_id))
+            self.gc.tell_h("{}'s Handgun reverses their attack range.", [self.user_id])
             targets = [p for p in live_players if (p.location.zone != self.location.zone and p != self)]
 
         # If player has Masamune, can't decline unless there are no options
@@ -157,22 +157,22 @@ class Player:
             # Get target
             target_name = answer
             target_Player = [p for p in self.gc.getLivePlayers() if p.user_id == target_name][0]
-            self.gc.tell_h("{} is attacking {}!".format(self.user_id, target_name))
+            self.gc.tell_h("{} is attacking {}!", [self.user_id, target_name])
 
             # Roll with the 4-sided die if the player has masamune
             roll_result = 0
             if "Cursed Sword Masamune" in [e.title for e in self.equipment]:
-                self.gc.tell_h("{} rolls with the 4-sided die using the Masamune!".format(self.user_id, roll_result))
+                self.gc.tell_h("{} rolls with the 4-sided die using the Masamune!", [self.user_id, roll_result])
                 roll_result = self.rollDice('4')
             else:
                 roll_result = self.rollDice(dice_type)
 
             # If player has Machine Gun, launch attack on everyone in the zone. Otherwise, attack the target
             if "Machine Gun" in [e.title for e in self.equipment]:
-                self.gc.tell_h("{}'s Machine Gun hits everyone in their attack range!".format(self.user_id))
+                self.gc.tell_h("{}'s Machine Gun hits everyone in their attack range!", [self.user_id])
                 for t in targets:
                     damage_dealt = self.attack(t, roll_result)
-                    self.gc.tell_h("{} hit {} for {} damage!".format(self.user_id, t.user_id, damage_dealt))
+                    self.gc.tell_h("{} hit {} for {} damage!", [self.user_id, t.user_id, damage_dealt])
             else:
                 self.gc.tell_h("{} declined to attack.", [self.user_id])
         else:
