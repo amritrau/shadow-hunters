@@ -78,7 +78,7 @@ def room(methods=['GET', 'POST']):
         username_reserved = (username == "undefined") or username.isdigit()
         room_id_reserved = (room_id == "undefined") or room_id.isdigit()
 
-        if not username_reserved or not room_id_reserved:
+        if username_reserved or room_id_reserved:
             flash("The username or room ID you chose is reserved.")
             return redirect('/')
 
