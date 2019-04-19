@@ -1411,7 +1411,7 @@ class ElementFactory:
                 resource_id = "allie"
             ),
             character.Character(
-                name = "Bob46",
+                name = "Bob",
                 alleg = 1,  # Neutral
                 max_damage = 10,
                 win_cond = bob_win_cond,
@@ -1422,7 +1422,7 @@ class ElementFactory:
                 modifiers = {'min_players': 4, 'max_players': 6}
             ),
             character.Character(
-                name = "Bob78",
+                name = "Bob",
                 alleg = 1,  # Neutral
                 max_damage = 10,
                 win_cond = bob_win_cond,
