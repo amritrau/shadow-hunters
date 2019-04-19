@@ -1208,7 +1208,7 @@ class ElementFactory:
                 player.moveDamage(1, player)
 
                 # Tell
-                gc.tell_h("{} used her special ability: {}", ["Catherine", player.character.special_desc]))
+                gc.tell_h("{} used her special ability: {}", ["Catherine", player.character.special_desc])
 
         ########## Hunters
 
