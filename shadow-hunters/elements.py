@@ -1,4 +1,5 @@
 import card, deck, character, area
+from threading import Lock
 
 # elements.py
 # Encodes all characters, win conditions, special abilities,
@@ -19,49 +20,46 @@ CARD_COLOR_MAP = {
     2: "Green"
 }
 
+TEXT_COLORS = {
+    'server':          'rgb(200,200,200)',
+    'number':          'rgb(153,204,255)',
+    'White':           'rgb(255,255,255)',
+    'Black':           'rgb(75,75,75)',
+    'Green':           'rgb(143,194,0)',
+    'shadow':          'rgb(128,0,0)',
+    'neutral':         'rgb(255,255,153)',
+    'hunter':          'rgb(51,51,255)',
+    'Weird Woods':     'rgb(102,153,153)',
+    'Church':          'rgb(255,255,255)',
+    'Cemetery':        'rgb(75,75,75)',
+    'Erstwhile Altar': 'rgb(204,68,0)',
+    'Hermit\'s Cabin': 'rgb(143,194,0)',
+    'Underworld Gate': 'rgb(150,0,150)'
+}
+
+# Lock for manipulating reveals
+reveal_lock = Lock()
+
 class ElementFactory:
     def __init__(self):
-
-        ## Helper functions for asking players to make choices
-
-        def choose_player(args):
-
-            # Select a player from all live playerts who arent you
-            args['self'].gc.tell_h("{} is choosing a player...".format(args['self'].user_id))
-            data = {'options': [p.user_id for p in args['self'].gc.getLivePlayers() if p != args['self']]}
-            target = args['self'].ask_h('select', data, args['self'].user_id)['value']
-
-            # Return the chosen player
-            target_Player = [p for p in args['self'].gc.getLivePlayers() if p.user_id == target][0]
-            args['self'].gc.tell_h("{} chose {}!".format(args['self'].user_id, target))
-            return target_Player
-
-        def choose_equipment(player, target):
-
-            # Select an equipment card belonging to the given target
-            data = {'options': [eq.title for eq in target.equipment]}
-            equip = target.ask_h('select', data, player.user_id)['value']
-
-            # Return the selected equipment card
-            equip_Equipment = [eq for eq in target.equipment if eq.title == equip][0]
-            return equip_Equipment
 
         ## White card usage functions
 
         def use_first_aid(args):
 
             # Select a player to use card on (includes user)
-            args['self'].ask_h('confirm', {'options': ["Use First Aid"]}, args['self'].user_id)
+            args['self'].gc.ask_h('confirm', {'options': ["Use First Aid"]}, args['self'].user_id)
             data = {'options': [t.user_id for t in args['self'].gc.getLivePlayers()]}
-            target = args['self'].ask_h('select', data, args['self'].user_id)['value']
+            target = args['self'].gc.ask_h('select', data, args['self'].user_id)['value']
 
             # Set selected player to 7 damage
             [p for p in args['self'].gc.getLivePlayers() if p.user_id == target][0].setDamage(7, args['self'])
+            args['self'].gc.tell_h("{} applied {} to {}!", [args['self'].user_id, args['card'].title, target])
 
         def use_judgement(args):
 
             # Give all players except user 2 damage
-            args['self'].ask_h('confirm', {'options': ["Unleash judgement"]}, args['self'].user_id)
+            args['self'].gc.ask_h('confirm', {'options': ["Unleash judgement"]}, args['self'].user_id)
             for p in args['self'].gc.getLivePlayers():
                 if p != args['self']:
                     p.moveDamage(-2, args['self'])
@@ -69,7 +67,7 @@ class ElementFactory:
         def use_holy_water(args):
 
             # Heal user by 2 damage
-            args['self'].ask_h('confirm', {'options': ["Heal yourself"]}, args['self'].user_id)
+            args['self'].gc.ask_h('confirm', {'options': ["Heal yourself"]}, args['self'].user_id)
             args['self'].moveDamage(2, args['self'])
 
         def use_advent(args):
@@ -83,9 +81,9 @@ class ElementFactory:
                     data['options'].append("Heal fully")
 
             # Get decision and take corresponding action
-            decision = args['self'].ask_h('yesno', data, args['self'].user_id)['value']
+            decision = args['self'].gc.ask_h('yesno', data, args['self'].user_id)['value']
             if decision == "Do nothing":
-                args['self'].gc.tell_h("{} did nothing.".format(args['self'].user_id))
+                args['self'].gc.tell_h("{} did nothing.", [args['self'].user_id])
             elif decision == "Reveal and heal fully":
                 args['self'].reveal()
                 args['self'].setDamage(0, args['self'])
@@ -100,23 +98,24 @@ class ElementFactory:
                 data = {'options': ["Reveal yourself"]}
 
             # Reveal character, or do nothing if hunter
-            decision = args['self'].ask_h('yesno', data, args['self'].user_id)['value']
+            decision = args['self'].gc.ask_h('yesno', data, args['self'].user_id)['value']
             if decision == "Do nothing":
-                args['self'].gc.tell_h("{} did nothing.".format(args['self'].user_id))
+                args['self'].gc.tell_h("{} did nothing.", [args['self'].user_id])
             else:
                 args['self'].reveal()
 
         def use_blessing(args):
 
             # Choose a player to use blessing on
-            args['self'].ask_h('confirm', {'options': ["Bless someone"]}, args['self'].user_id)
-            target = choose_player(args)
+            args['self'].gc.ask_h('confirm', {'options': ["Bless someone"]}, args['self'].user_id)
+            target = args['self'].choosePlayer()
 
             # Roll dice to get value to heal by
             roll_result = args['self'].rollDice('6')
 
             # Heal target player
             target.moveDamage(roll_result, args['self'])
+            args['self'].gc.tell_h("The blessing healed {}!", [target.user_id])
 
         def use_chocolate(args):
 
@@ -129,9 +128,9 @@ class ElementFactory:
                     data['options'].append("Heal fully")
 
             # Get decision and take corresponding action
-            decision = args['self'].ask_h('yesno', data, args['self'].user_id)['value']
+            decision = args['self'].gc.ask_h('yesno', data, args['self'].user_id)['value']
             if decision == "Do nothing":
-                args['self'].gc.tell_h("{} did nothing.".format(args['self'].user_id))
+                args['self'].gc.tell_h("{} did nothing.", [args['self'].user_id])
             elif decision == "Reveal and heal fully":
                 args['self'].reveal()
                 args['self'].setDamage(0, args['self'])
@@ -141,14 +140,13 @@ class ElementFactory:
         def use_concealed_knowledge(args):
 
             # Change turn order so that current player goes again
-            args['self'].ask_h('confirm', {'options': ["Reveal Concealed Knowledge"]}, args['self'].user_id)
+            args['self'].gc.ask_h('confirm', {'options': ["Use Concealed Knowledge"]}, args['self'].user_id)
             args['self'].gc.turn_order.insert(args['self'].gc.turn_order.index(args['self']), args['self'])
 
         def use_guardian_angel(args):
 
-            # user can't take damage until their next turn (this is checked in player.defend()
-            # and player.takeTurn()
-            args['self'].ask_h('confirm', {'options': ["Summon a Guardian Angel"]}, args['self'].user_id)
+            # user can't take damage until their next turn - this is checked in player.defend() and player.takeTurn()
+            args['self'].gc.ask_h('confirm', {'options': ["Summon a Guardian Angel"]}, args['self'].user_id)
             args['self'].modifiers['guardian_angel'] = True
 
         ## Initialize white cards
@@ -293,12 +291,12 @@ class ElementFactory:
         def use_bloodthirsty_spider(args):
 
             # Choose a player to attack
-            args['self'].ask_h('confirm', {'options': ["Summon a Bloodthirsty Spider"]}, args['self'].user_id)
-            target = choose_player(args)
+            args['self'].gc.ask_h('confirm', {'options': ["Summon a Bloodthirsty Spider"]}, args['self'].user_id)
+            target = args['self'].choosePlayer()
 
             # Both the target and the user take 2 damage
             if "Talisman" in [e.title for e in target.equipment]:
-                args['self'].gc.tell_h("{}'s Talisman protected them from damage!".format(target.user_id))
+                args['self'].gc.tell_h("{}'s {} protected them from damage!", [target.user_id, "Talisman"])
             else:
                 target.moveDamage(-2, args['self'])
             args['self'].moveDamage(-2, args['self'])
@@ -306,12 +304,12 @@ class ElementFactory:
         def use_vampire_bat(args):
 
             # Choose a player to attack
-            args['self'].ask_h('confirm', {'options': ["Summon a Vampire Bat"]}, args['self'].user_id)
-            target = choose_player(args)
+            args['self'].gc.ask_h('confirm', {'options': ["Summon a Vampire Bat"]}, args['self'].user_id)
+            target = args['self'].choosePlayer()
 
             # Target takes 2 damage, user heals 1 damage
             if "Talisman" in [e.title for e in target.equipment]:
-                args['self'].gc.tell_h("{}'s Talisman protected them from damage!".format(target.user_id))
+                args['self'].gc.tell_h("{}'s {} protected them from damage!", [target.user_id, "Talisman"])
             else:
                 target.moveDamage(-2, args['self'])
                 args['self'].moveDamage(1, args['self'])
@@ -319,7 +317,7 @@ class ElementFactory:
         def use_moody_goblin(args):
 
             # Get players who have equipment
-            args['self'].ask_h('confirm', {'options': ["Steal an Equipment Card"]}, args['self'].user_id)
+            args['self'].gc.ask_h('confirm', {'options': ["Steal an Equipment Card"]}, args['self'].user_id)
             players_w_items = [p for p in args['self'].gc.getLivePlayers() if (len(p.equipment) and p != args['self'])]
 
             # If someone has equipment and isn't user, offer choice
@@ -327,15 +325,11 @@ class ElementFactory:
 
                 # Choose who to steal from
                 data = {'options': [p.user_id for p in players_w_items]}
-                target = args['self'].ask_h('select', data, args['self'].user_id)['value']
+                target = args['self'].gc.ask_h('select', data, args['self'].user_id)['value']
 
-                # Get target player and their equipment
+                # Take equipment from target player
                 target_Player = [p for p in args['self'].gc.getLivePlayers() if p.user_id == target][0]
-                data = {'options': [eq.title for eq in target_Player.equipment]}
-
-                # Choose which equipment to take
-                equip = args['self'].ask_h('select', data, args['self'].user_id)['value']
-                equip_Equipment = [eq for eq in target_Player.equipment if eq.title == equip][0]
+                equip_Equipment = args['self'].chooseEquipment(target_Player)
 
                 # Transfer equipment from one player to the other
                 target_Player.giveEquipment(args['self'], equip_Equipment)
@@ -343,7 +337,7 @@ class ElementFactory:
             else:
 
                 # No one has equipment to steal, do nothing
-                args['self'].gc.tell_h("Nobody has any items for {} to steal.".format(args['self'].user_id))
+                args['self'].gc.tell_h("Nobody has any items for {} to steal.", [args['self'].user_id])
 
         def use_diabolic_ritual(args):
 
@@ -353,9 +347,9 @@ class ElementFactory:
                 data['options'].append("Reveal and heal fully")
 
             # Get decision and take corresponding action
-            decision = args['self'].ask_h('yesno', data, args['self'].user_id)['value']
+            decision = args['self'].gc.ask_h('yesno', data, args['self'].user_id)['value']
             if decision == "Do nothing":
-                args['self'].gc.tell_h("{} did nothing.".format(args['self'].user_id))
+                args['self'].gc.tell_h("{} did nothing.", [args['self'].user_id])
             else:
                 args['self'].reveal()
                 args['self'].setDamage(0, args['self'])
@@ -369,34 +363,35 @@ class ElementFactory:
                 data = {'options': ["Receive 1 damage"]}
 
             # Get decision and take action
-            decision = args['self'].ask_h('yesno', data, args['self'].user_id)['value']
+            decision = args['self'].gc.ask_h('yesno', data, args['self'].user_id)['value']
             if decision == "Give an equipment card":
 
                 # Choose an equipment card to give away
-                args['self'].gc.tell_h("{} is choosing an equipment card to give away...".format(args['self'].user_id))
-                eq = choose_equipment(args['self'], args['self'])
+                args['self'].gc.tell_h("{} is choosing an equipment card to give away...", [args['self'].user_id])
+                eq = args['self'].chooseEquipment(args['self'])
 
                 # Give away equipment
-                receiver = choose_player(args)
+                receiver = args['self'].choosePlayer()
                 args['self'].giveEquipment(receiver, eq)
 
             else:
 
                 # Take 1 damage
+                args['self'].gc.tell_h("{} took {} damage.", [args['self'].user_id, "1"])
                 args['self'].moveDamage(-1, args['self'])
 
         def use_dynamite(args):
 
             # Roll to find out which area gets hit
-            args['self'].ask_h('confirm', {'options': ["Light the fuse"]}, args['self'].user_id)
-            args['self'].gc.tell_h("{} is rolling for where the dynamite lands...".format(args['self'].user_id))
+            args['self'].gc.ask_h('confirm', {'options': ["Light the fuse"]}, args['self'].user_id)
+            args['self'].gc.tell_h("{} is rolling for where the dynamite lands...", [args['self'].user_id])
             roll_result = args['self'].rollDice('area')
 
             # Hit area corresponding to roll number
             if roll_result == 7:
 
                 # No area has 7 on it
-                args['self'].gc.tell_h("Nothing happens.")
+                args['self'].gc.tell_h("Nothing happens.", [])
 
             else:
 
@@ -409,19 +404,19 @@ class ElementFactory:
                 destination = destination_Area.name
 
                 # Hit all players in area for 3 damage
-                args['self'].gc.tell_h("Dynamite blew up the {}!".format(destination))
+                args['self'].gc.tell_h("{} blew up the {}!", ["Dynamite", destination])
                 affected_players = [p for p in args['self'].gc.players if p.location == destination_Area]
                 for p in affected_players:
                     if "Talisman" in [e.title for e in p.equipment]:
-                        args['self'].gc.tell_h("{}'s Talisman protected them from damage!".format(p.user_id))
+                        args['self'].gc.tell_h("{}'s {} protected them from damage!", [p.user_id, "Talisman"])
                     else:
                         p.moveDamage(-3, args['self'])
 
         def use_spiritual_doll(args):
 
             # Choose a player to target
-            args['self'].ask_h('confirm', {'options': ["Use Spiritual Doll"]}, args['self'].user_id)
-            target = choose_player(args)
+            args['self'].gc.ask_h('confirm', {'options': ["Use Spiritual Doll"]}, args['self'].user_id)
+            target = args['self'].choosePlayer()
 
             # Roll 6-sided die
             roll_result = args['self'].rollDice('6')
@@ -429,8 +424,10 @@ class ElementFactory:
             # If roll is >= 5, user takes 3 damage. Otherwise, target takes 3 damage.
             if roll_result >= 5:
                 args['self'].moveDamage(-3, args['self'])
+                args['self'].gc.tell_h('The {} backfired on {}!', [args['card'].title, args['self'].user_id])
             else:
                 target.moveDamage(-3, args['self'])
+                args['self'].gc.tell_h('The {} cursed {}!', [args['card'].title, target.user_id])
 
         ## Initialize black cards
 
@@ -574,27 +571,29 @@ class ElementFactory:
         def hermit_blackmail(args):
 
             # Choose a player to give the card to
-            args['self'].ask_h('confirm', {'options': ["Use Hermit's Blackmail"]}, args['self'].user_id)
-            target = choose_player(args)
-            args['self'].gc.tell_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
+            args['self'].gc.ask_h('confirm', {'options': ["Use Hermit's Blackmail"]}, args['self'].user_id)
+            target = args['self'].choosePlayer()
+            display_data = args['card'].dump()
+            display_data['type'] = 'draw'
+            args['self'].gc.show_h(display_data, target.socket_id)
 
             # If target is neutral or hunter, must give equipment or take 1 damage
             if target.character.alleg > 0:
 
                 # Target is neutral or hunter, get decision
-                target.gc.tell_h("You are a {}. Make a choice.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
+                target.gc.tell_h("You are a {}.", [ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
                 if len(target.equipment):
                     data = {'options': ["Give an equipment card", "Receive 1 damage"]}
                 else:
                     data = {'options': ["Receive 1 damage"]}
-                decision = target.ask_h('yesno', data, target.user_id)['value']
+                decision = target.gc.ask_h('yesno', data, target.user_id)['value']
 
                 # Branch on decision
                 if decision == "Give an equipment card":
 
                     # Target chooses an equipment card to give away
-                    target.gc.tell_h("{} is choosing an equipment card to give to {}...".format(target.user_id, args['self'].user_id))
-                    eq = choose_equipment(target, target)
+                    target.gc.tell_h("{} is choosing an equipment card to give to {}...", [target.user_id, args['self'].user_id])
+                    eq = target.chooseEquipment(target)
 
                     # Transfer equipment from target to user
                     target.giveEquipment(args['self'], eq)
@@ -603,40 +602,42 @@ class ElementFactory:
 
                     # Target takes 1 damage
                     new_damage = target.moveDamage(-1, args['self'])
-                    target.gc.tell_h("{} took 1 damage!".format(target.user_id))
+                    target.gc.tell_h("{} took {} damage!", [target.user_id, "1"])
 
             else:
 
                 # Target is a shadow, nothing happens
-                target.gc.tell_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
+                target.gc.tell_h("You are a {}. Do nothing.", [ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
                 data = {'options': ['Do nothing']}
-                target.ask_h('confirm', data, target.user_id)
-                target.gc.tell_h("{} did nothing.".format(target.user_id))
+                target.gc.ask_h('confirm', data, target.user_id)
+                target.gc.tell_h("{} did nothing.", [target.user_id])
 
         def hermit_greed(args):
 
             # Choose a player to give the card to
-            args['self'].ask_h('confirm', {'options': ["Use Hermit's Greed"]}, args['self'].user_id)
-            target = choose_player(args)
-            args['self'].gc.tell_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
+            args['self'].gc.ask_h('confirm', {'options': ["Use Hermit's Greed"]}, args['self'].user_id)
+            target = args['self'].choosePlayer()
+            display_data = args['card'].dump()
+            display_data['type'] = 'draw'
+            args['self'].gc.show_h(display_data, target.socket_id)
 
             # If target is neutral or shadow, must give equipment or take 1 damage
             if target.character.alleg < 2:
 
                 # Target is neutral or shadow, get decision
-                target.gc.tell_h("You are a {}. Make a choice.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
+                target.gc.tell_h("You are a {}.", [ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
                 if len(target.equipment):
                     data = {'options': ["Give an equipment card", "Receive 1 damage"]}
                 else:
                     data = {'options': ["Receive 1 damage"]}
-                decision = target.ask_h('yesno', data, target.user_id)['value']
+                decision = target.gc.ask_h('yesno', data, target.user_id)['value']
 
                 # Branch on decision
                 if decision == "Give an equipment card":
 
                     # Target chooses an equipment card to give away
-                    target.gc.tell_h("{} is choosing an equipment card to give to {}...".format(target.user_id, args['self'].user_id))
-                    eq = choose_equipment(target, target)
+                    target.gc.tell_h("{} is choosing an equipment card to give to {}...", [target.user_id, args['self'].user_id])
+                    eq = target.chooseEquipment(target)
 
                     # Transfer equipment from target to user
                     target.giveEquipment(args['self'], eq)
@@ -645,40 +646,42 @@ class ElementFactory:
 
                     # Target takes 1 damage
                     new_damage = target.moveDamage(-1, args['self'])
-                    target.gc.tell_h("{} took 1 damage!".format(target.user_id))
+                    target.gc.tell_h("{} took {} damage!", [target.user_id, "1"])
 
             else:
 
                 # Target is a hunter, nothing happens
-                target.gc.tell_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
+                target.gc.tell_h("You are a {}. Do nothing.", [ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
                 data = {'options': ['Do nothing']}
-                target.ask_h('confirm', data, target.user_id)
-                target.gc.tell_h("{} did nothing.".format(target.user_id))
+                target.gc.ask_h('confirm', data, target.user_id)
+                target.gc.tell_h("{} did nothing.", [target.user_id])
 
         def hermit_anger(args):
 
             # Choose a player to give the card to
-            args['self'].ask_h('confirm', {'options': ["Use Hermit's Anger"]}, args['self'].user_id)
-            target = choose_player(args)
-            args['self'].gc.tell_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
+            args['self'].gc.ask_h('confirm', {'options': ["Use Hermit's Anger"]}, args['self'].user_id)
+            target = args['self'].choosePlayer()
+            display_data = args['card'].dump()
+            display_data['type'] = 'draw'
+            args['self'].gc.show_h(display_data, target.socket_id)
 
             # If target is hunter or shadow, must give equipment or take 1 damage
             if target.character.alleg in [0, 2]:
 
                 # Target is hunter or shadow, get decision
-                target.gc.tell_h("You are a {}. Make a choice.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
+                target.gc.tell_h("You are a {}.", [ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
                 if len(target.equipment):
                     data = {'options': ["Give an equipment card", "Receive 1 damage"]}
                 else:
                     data = {'options': ["Receive 1 damage"]}
-                decision = target.ask_h('yesno', data, target.user_id)['value']
+                decision = target.gc.ask_h('yesno', data, target.user_id)['value']
 
                 # Branch on decision
                 if decision == "Give an equipment card":
 
                     # Target chooses an equipment card to give away
-                    target.gc.tell_h("{} is choosing an equipment card to give to {}...".format(target.user_id, args['self'].user_id))
-                    eq = choose_equipment(target, target)
+                    target.gc.tell_h("{} is choosing an equipment card to give to {}...", [target.user_id, args['self'].user_id])
+                    eq = target.chooseEquipment(target)
 
                     # Transfer equipment from target to user
                     target.giveEquipment(args['self'], eq)
@@ -687,290 +690,308 @@ class ElementFactory:
 
                     # Target takes 1 damage
                     new_damage = target.moveDamage(-1, args['self'])
-                    target.gc.tell_h("{} took 1 damage!".format(target.user_id))
+                    target.gc.tell_h("{} took {} damage!", [target.user_id, "1"])
 
             else:
 
                 # Target is a neutral, nothing happens
-                target.gc.tell_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
+                target.gc.tell_h("You are a {}. Do nothing.", [ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
                 data = {'options': ['Do nothing']}
-                target.ask_h('confirm', data, target.user_id)
-                target.gc.tell_h("{} did nothing.".format(target.user_id))
+                target.gc.ask_h('confirm', data, target.user_id)
+                target.gc.tell_h("{} did nothing.", [target.user_id])
 
         def hermit_slap(args):
 
             # Choose a player to give the card to
-            args['self'].ask_h('confirm', {'options': ["Use Hermit's Slap"]}, args['self'].user_id)
-            target = choose_player(args)
-            args['self'].gc.tell_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
+            args['self'].gc.ask_h('confirm', {'options': ["Use Hermit's Slap"]}, args['self'].user_id)
+            target = args['self'].choosePlayer()
+            display_data = args['card'].dump()
+            display_data['type'] = 'draw'
+            args['self'].gc.show_h(display_data, target.socket_id)
 
             # If hunter, take 1 damage
             if target.character.alleg == 2:
 
                 # Prompt target to receive 1 damage
-                target.gc.tell_h("You are a {}.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
+                target.gc.tell_h("You are a {}.", [ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
                 data = {'options': ["Receive 1 damage"]}
-                target.ask_h('confirm', data, target.user_id)
+                target.gc.ask_h('confirm', data, target.user_id)
 
                 # Give 1 damage to target
                 new_damage = target.moveDamage(-1, args['self'])
-                target.gc.tell_h("{} took 1 damage!".format(target.user_id))
+                target.gc.tell_h("{} took {} damage!", [target.user_id, "1"])
 
             else:
 
                 # Target is not a hunter, nothing happens
-                target.gc.tell_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
+                target.gc.tell_h("You are a {}. Do nothing.", [ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
                 data = {'options': ['Do nothing']}
-                target.ask_h('confirm', data, target.user_id)
-                target.gc.tell_h("{} did nothing.".format(target.user_id))
+                target.gc.ask_h('confirm', data, target.user_id)
+                target.gc.tell_h("{} did nothing.", [target.user_id])
 
         def hermit_spell(args):
 
             # Choose a player to give the card to
-            args['self'].ask_h('confirm', {'options': ["Use Hermit's Spell"]}, args['self'].user_id)
-            target = choose_player(args)
-            args['self'].gc.tell_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
+            args['self'].gc.ask_h('confirm', {'options': ["Use Hermit's Spell"]}, args['self'].user_id)
+            target = args['self'].choosePlayer()
+            display_data = args['card'].dump()
+            display_data['type'] = 'draw'
+            args['self'].gc.show_h(display_data, target.socket_id)
 
             # If shadow, take 1 damage
             if target.character.alleg == 0:
 
                 # Prompt target to receive 1 damage
-                target.gc.tell_h("You are a {}.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
+                target.gc.tell_h("You are a {}.", [ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
                 data = {'options': ["Receive 1 damage"]}
-                target.ask_h('confirm', data, target.user_id)
+                target.gc.ask_h('confirm', data, target.user_id)
 
                 # Give 1 damage to target
                 new_damage = target.moveDamage(-1, args['self'])
-                target.gc.tell_h("{} took 1 damage!".format(target.user_id))
+                target.gc.tell_h("{} took {} damage!", [target.user_id, "1"])
 
             else:
 
                 # Target is not a shadow, nothing happens
-                target.gc.tell_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
+                target.gc.tell_h("You are a {}. Do nothing.", [ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
                 data = {'options': ['Do nothing']}
-                target.ask_h('confirm', data, target.user_id)
-                target.gc.tell_h("{} did nothing.".format(target.user_id))
+                target.gc.ask_h('confirm', data, target.user_id)
+                target.gc.tell_h("{} did nothing.", [target.user_id])
 
         def hermit_exorcism(args):
 
             # Choose a player to give the card to
-            args['self'].ask_h('confirm', {'options': ["Use Hermit's Exorcism"]}, args['self'].user_id)
-            target = choose_player(args)
-            args['self'].gc.tell_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
+            args['self'].gc.ask_h('confirm', {'options': ["Use Hermit's Exorcism"]}, args['self'].user_id)
+            target = args['self'].choosePlayer()
+            display_data = args['card'].dump()
+            display_data['type'] = 'draw'
+            args['self'].gc.show_h(display_data, target.socket_id)
 
             # If shadow, take 2 damage
             if target.character.alleg == 0:
                 # Prompt target to receive 2 damage
-                target.gc.tell_h("You are a {}.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
+                target.gc.tell_h("You are a {}.", [ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
                 data = {'options': ["Receive 2 damage"]}
-                target.ask_h('confirm', data, target.user_id)
+                target.gc.ask_h('confirm', data, target.user_id)
 
                 # Give 2 damage to target
                 new_damage = target.moveDamage(-2, args['self'])
-                target.gc.tell_h("{} took 2 damage!".format(target.user_id))
+                target.gc.tell_h("{} took {} damage!", [target.user_id, "2"])
 
             else:
 
                 # Target is not a shadow, nothing happens
-                target.gc.tell_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
+                target.gc.tell_h("You are a {}. Do nothing.", [ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
                 data = {'options': ['Do nothing']}
-                target.ask_h('confirm', data, target.user_id)
-                target.gc.tell_h("{} did nothing.".format(target.user_id))
+                target.gc.ask_h('confirm', data, target.user_id)
+                target.gc.tell_h("{} did nothing.", [target.user_id])
 
         def hermit_nurturance(args):
 
             # Choose a player to give the card to
-            args['self'].ask_h('confirm', {'options': ["Use Hermit's Nurturance"]}, args['self'].user_id)
-            target = choose_player(args)
-            args['self'].gc.tell_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
+            args['self'].gc.ask_h('confirm', {'options': ["Use Hermit's Nurturance"]}, args['self'].user_id)
+            target = args['self'].choosePlayer()
+            display_data = args['card'].dump()
+            display_data['type'] = 'draw'
+            args['self'].gc.show_h(display_data, target.socket_id)
 
             # If neutral, heal 1 damage (unless at 0, then take 1 damage)
             if target.character.alleg == 1:
                 # Branch on hp value
-                target.gc.tell_h("You are a {}.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
+                target.gc.tell_h("You are a {}.", [ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
                 if target.damage == 0:
 
                     # Hp is 0, prompt to receive 1 damage
                     data = {'options': ["Receive 1 damage"]}
-                    target.ask_h('confirm', data, target.user_id)
+                    target.gc.ask_h('confirm', data, target.user_id)
 
                     # Give target 1 damage
                     new_damage = target.moveDamage(-1, args['self'])
-                    target.gc.tell_h("{} took 1 damage!".format(target.user_id))
+                    target.gc.tell_h("{} took {} damage!", [target.user_id, "2"])
 
                 else:
 
                     # Hp is nonzero, prompt to heal 1 damage
                     data = {'options': ["Heal 1 damage"]}
-                    target.ask_h('confirm', data, target.user_id)
+                    target.gc.ask_h('confirm', data, target.user_id)
 
                     # Heal target 1 damage
                     new_damage = target.moveDamage(1, args['self'])
-                    target.gc.tell_h("{} healed 1 damage!".format(target.user_id))
+                    target.gc.tell_h("{} healed {} damage!", [target.user_id, "1"])
 
             else:
 
                 # Target is not a neutral, nothing happens
-                target.gc.tell_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
+                target.gc.tell_h("You are a {}. Do nothing.", [ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
                 data = {'options': ['Do nothing']}
-                target.ask_h('confirm', data, target.user_id)
-                target.gc.tell_h("{} did nothing.".format(target.user_id))
+                target.gc.ask_h('confirm', data, target.user_id)
+                target.gc.tell_h("{} did nothing.", [target.user_id])
 
         def hermit_aid(args):
 
             # Choose a player to give the card to
-            args['self'].ask_h('confirm', {'options': ["Use Hermit's Aid"]}, args['self'].user_id)
-            target = choose_player(args)
-            args['self'].gc.tell_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
+            args['self'].gc.ask_h('confirm', {'options': ["Use Hermit's Aid"]}, args['self'].user_id)
+            target = args['self'].choosePlayer()
+            display_data = args['card'].dump()
+            display_data['type'] = 'draw'
+            args['self'].gc.show_h(display_data, target.socket_id)
 
             # If hunter, heal 1 damage (unless at 0, then take 1 damage)
             if target.character.alleg == 2:
                 # Branch on hp value
-                target.gc.tell_h("You are a {}.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
+                target.gc.tell_h("You are a {}.", [ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
                 if target.damage == 0:
 
                     # Hp is 0, prompt to receive 1 damage
                     data = {'options': ["Receive 1 damage"]}
-                    target.ask_h('confirm', data, target.user_id)
+                    target.gc.ask_h('confirm', data, target.user_id)
 
                     # Give target 1 damage
                     new_damage = target.moveDamage(-1, args['self'])
-                    target.gc.tell_h("{} took 1 damage!".format(target.user_id))
+                    target.gc.tell_h("{} took {} damage!", [target.user_id, "1"])
 
                 else:
 
                     # Hp is nonzero, prompt to heal 1 damage
                     data = {'options': ["Heal 1 damage"]}
-                    target.ask_h('confirm', data, target.user_id)
+                    target.gc.ask_h('confirm', data, target.user_id)
 
                     # Heal target 1 damage
                     new_damage = target.moveDamage(1, args['self'])
-                    target.gc.tell_h("{} healed 1 damage!".format(target.user_id))
+                    target.gc.tell_h("{} healed {} damage!", [target.user_id, "1"])
 
             else:
 
                 # Target is not a hunter, nothing happens
-                target.gc.tell_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
+                target.gc.tell_h("You are a {}. Do nothing.", [ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
                 data = {'options': ['Do nothing']}
-                target.ask_h('confirm', data, target.user_id)
-                target.gc.tell_h("{} did nothing.".format(target.user_id))
+                target.gc.ask_h('confirm', data, target.user_id)
+                target.gc.tell_h("{} did nothing.", [target.user_id])
 
         def hermit_huddle(args):
 
             # Choose a player to give the card to
-            args['self'].ask_h('confirm', {'options': ["Use Hermit's Huddle"]}, args['self'].user_id)
-            target = choose_player(args)
-            args['self'].gc.tell_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
+            args['self'].gc.ask_h('confirm', {'options': ["Use Hermit's Huddle"]}, args['self'].user_id)
+            target = args['self'].choosePlayer()
+            display_data = args['card'].dump()
+            display_data['type'] = 'draw'
+            args['self'].gc.show_h(display_data, target.socket_id)
 
             # If shadow, heal 1 damage (unless at 0, then take 1 damage)
             if target.character.alleg == 0:
                 # Branch on hp value
-                target.gc.tell_h("You are a {}.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
+                target.gc.tell_h("You are a {}.", [ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
                 if target.damage == 0:
 
                     # Hp is 0, prompt to receive 1 damage
                     data = {'options': ["Receive 1 damage"]}
-                    target.ask_h('confirm', data, target.user_id)
+                    target.gc.ask_h('confirm', data, target.user_id)
 
                     # Give target 1 damage
                     new_damage = target.moveDamage(-1, args['self'])
-                    target.gc.tell_h("{} took 1 damage!".format(target.user_id))
+                    target.gc.tell_h("{} took {} damage!", [target.user_id, "1"])
 
                 else:
 
                     # Hp is nonzero, prompt to heal 1 damage
                     data = {'options': ["Heal 1 damage"]}
-                    target.ask_h('confirm', data, target.user_id)
+                    target.gc.ask_h('confirm', data, target.user_id)
 
                     # Heal target 1 damage
                     new_damage = target.moveDamage(1, args['self'])
-                    target.gc.tell_h("{} healed 1 damage!".format(target.user_id))
+                    target.gc.tell_h("{} healed {} damage!", [target.user_id, "1"])
 
             else:
 
                 # Target is not a shadow, nothing happens
-                target.gc.tell_h("You are a {}. Do nothing.".format(ALLEGIANCE_MAP[target.character.alleg]), target.socket_id)
+                target.gc.tell_h("You are a {}. Do nothing.", [ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
                 data = {'options': ['Do nothing']}
-                target.ask_h('confirm', data, target.user_id)
-                target.gc.tell_h("{} did nothing.".format(target.user_id))
+                target.gc.ask_h('confirm', data, target.user_id)
+                target.gc.tell_h("{} did nothing.", [target.user_id])
 
         def hermit_lesson(args):
 
             # Choose a player to give the card to
-            args['self'].ask_h('confirm', {'options': ["Use Hermit's Lesson"]}, args['self'].user_id)
-            target = choose_player(args)
-            args['self'].gc.tell_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
+            args['self'].gc.ask_h('confirm', {'options': ["Use Hermit's Lesson"]}, args['self'].user_id)
+            target = args['self'].choosePlayer()
+            display_data = args['card'].dump()
+            display_data['type'] = 'draw'
+            args['self'].gc.show_h(display_data, target.socket_id)
 
             # If target's hp is >= 12, they take 2 damage.
             if target.character.max_damage >= 12:
 
                 # Prompt target to receive 2 damage
-                target.gc.tell_h("Your maximum hp ({}) is 12 or more.".format(target.character.max_damage), target.socket_id)
+                target.gc.tell_h("Your maximum hp ({}) is {} or more.", [target.character.max_damage, "12"], target.socket_id)
                 data = {'options': ["Receive 2 damage"]}
-                target.ask_h('confirm', data, target.user_id)
+                target.gc.ask_h('confirm', data, target.user_id)
 
                 # Give 2 damage to target
                 new_damage = target.moveDamage(-2, args['self'])
-                target.gc.tell_h("{} took 2 damage!".format(target.user_id))
+                target.gc.tell_h("{} took {} damage!", [target.user_id, "1"])
 
             else:
 
                 # Target's hp is < 12, nothing happens
-                target.gc.tell_h("Your maximum hp is less than 12. Do nothing.".format(target.character.max_damage), target.socket_id)
+                target.gc.tell_h("Your maximum hp ({}) is less than {}. Do nothing.", [target.character.max_damage, "12"], target.socket_id)
                 data = {'options': ['Do nothing']}
-                target.ask_h('confirm', data, target.user_id)
-                target.gc.tell_h("{} did nothing.".format(target.user_id))
+                target.gc.ask_h('confirm', data, target.user_id)
+                target.gc.tell_h("{} did nothing.", [target.user_id])
 
         def hermit_bully(args):
 
             # Choose a player to give the card to
-            args['self'].ask_h('confirm', {'options': ["Use Hermit's Bully"]}, args['self'].user_id)
-            target = choose_player(args)
-            args['self'].gc.tell_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
+            args['self'].gc.ask_h('confirm', {'options': ["Use Hermit's Bully"]}, args['self'].user_id)
+            target = args['self'].choosePlayer()
+            display_data = args['card'].dump()
+            display_data['type'] = 'draw'
+            args['self'].gc.show_h(display_data, target.socket_id)
 
             # If target's hp is <= 11, they take 1 damage.
             if target.character.max_damage <= 11:
 
                 # Prompt target to receive 1 damage
-                target.gc.tell_h("Your maximum hp ({}) is 11 or less.".format(target.character.max_damage), target.socket_id)
+                target.gc.tell_h("Your maximum hp ({}) is {} or less.", [target.character.max_damage, "11"], target.socket_id)
                 data = {'options': ["Receive 1 damage"]}
-                target.ask_h('confirm', data, target.user_id)
+                target.gc.ask_h('confirm', data, target.user_id)
 
                 # Give 1 damage to target
                 new_damage = target.moveDamage(-1, args['self'])
-                target.gc.tell_h("{} took 1 damage!".format(target.user_id))
+                target.gc.tell_h("{} took {} damage!", [target.user_id, "1"])
 
             else:
 
                 # Target's hp is > 11, nothing happens
-                target.gc.tell_h("Your maximum hp is greater than 11. Do nothing.".format(target.character.max_damage), target.socket_id)
+                target.gc.tell_h("Your maximum hp ({}) is greater than {}. Do nothing.", [target.character.max_damage, "11"], target.socket_id)
                 data = {'options': ['Do nothing']}
-                target.ask_h('confirm', data, target.user_id)
-                target.gc.tell_h("{} did nothing.".format(target.user_id))
+                target.gc.ask_h('confirm', data, target.user_id)
+                target.gc.tell_h("{} did nothing.", [target.user_id])
 
         def hermit_prediction(args):
             # Choose a player to give the card to
-            args['self'].ask_h('confirm', {'options': ["Use Hermit's Prediction"]}, args['self'].user_id)
-            target = choose_player(args)
-            args['self'].gc.tell_h("{} says: {}".format(args['self'].user_id, args['card'].desc), target.socket_id)
+            args['self'].gc.ask_h('confirm', {'options': ["Use Hermit's Prediction"]}, args['self'].user_id)
+            target = args['self'].choosePlayer()
+            display_data = args['card'].dump()
+            display_data['type'] = 'draw'
+            args['self'].gc.show_h(display_data, target.socket_id)
 
             # Prompt target to reveal themself
-            target.gc.tell_h("You have no choice. Reveal yourself to {}.".format(args['self'].user_id), target.socket_id)
+            target.gc.tell_h("You have no choice. Reveal yourself to {}.", [args['self'].user_id], target.socket_id)
             data = {'options': ["Reveal"]}
-            target.ask_h('confirm', data, target.user_id)
+            target.gc.ask_h('confirm', data, target.user_id)
 
             # Send target's information to user
             display_data = {'type': 'reveal', 'player': target.dump()}
             args['self'].gc.show_h(display_data, args['self'].socket_id)
-            target.gc.tell_h("{}\'s character is {}, a {} with {} hp.".format(
+            target.gc.tell_h("{}\'s character is {}, a {} with {} hp.", [
                 target.user_id,
                 target.character.name,
                 ALLEGIANCE_MAP[target.character.alleg],
                 target.character.max_damage
-            ), args['self'].socket_id)
-            target.gc.tell_h("Their win condition: {}.".format(target.character.win_cond_desc), args['self'].socket_id)
-            target.gc.tell_h("Their special ability: {}.".format("None"), args['self'].socket_id)
-            target.gc.tell_h("{} revealed their identity secretly to {}!".format(target.user_id, args['self'].user_id))
+            ], args['self'].socket_id)
+            target.gc.tell_h("Their win condition: {}.", [target.character.win_cond_desc], args['self'].socket_id)
+            target.gc.tell_h("Their special ability: {}.", ["None"], args['self'].socket_id)
+            target.gc.tell_h("{} revealed their identity secretly to {}!", [target.user_id, args['self'].user_id])
 
         ## Initialize hermit cards
 
@@ -1167,7 +1188,7 @@ class ElementFactory:
                     player.modifiers['special_used'] = True
 
                     # Tell
-                    gc.tell_h("Allie used her special ability: {}".format(player.character.special_desc))
+                    gc.tell_h("{} used her special ability: {}", ["Allie", player.character.special_desc])
                 else:
                     # Already used special
                     gc.tell_h("This special ability can be used only once.", player.socket_id)
@@ -1187,7 +1208,7 @@ class ElementFactory:
                 player.moveDamage(1, player)
 
                 # Tell
-                gc.tell_h("Catherine used her special ability: {}".format(player.character.special_desc))
+                gc.tell_h("{} used her special ability: {}", ["Catherine", player.character.special_desc])
 
         ########## Hunters
 
@@ -1205,7 +1226,7 @@ class ElementFactory:
                         player.modifiers['special_used'] = True
 
                         # Tell
-                        gc.tell_h("George used his special ability: {}".format(player.character.special_desc))
+                        gc.tell_h("{} used his special ability: {}", ["George", player.character.special_desc])
 
                         # Enter attack sequence with 4-sided die
                         player.attackSequence(dice_type = "4")
@@ -1229,13 +1250,13 @@ class ElementFactory:
                         player.modifiers['special_used'] = True
 
                         # Tell
-                        gc.tell_h("Fu-ka used her special ability: {}".format(player.character.special_desc))
+                        gc.tell_h("{} used her special ability: {}", ["Fu-ka", player.character.special_desc])
 
                         # Enter set damage to 7 sequence
                         # Select a player to use special on (includes user)
-                        player.ask_h('confirm', {'options': ["Use special ability"]}, player.user_id)
+                        player.gc.ask_h('confirm', {'options': ["Use special ability"]}, player.user_id)
                         data = {'options': [t.user_id for t in gc.getLivePlayers()]}
-                        target = player.ask_h('select', data, player.user_id)['value']
+                        target = player.gc.ask_h('select', data, player.user_id)['value']
 
                         # Set selected player to 7 damage
                         [p for p in gc.getLivePlayers() if p.user_id == target][0].setDamage(7, player)
@@ -1259,7 +1280,7 @@ class ElementFactory:
                         player.modifiers['special_used'] = True
 
                         # Tell
-                        gc.tell_h("Franklin used his special ability: {}".format(player.character.special_desc))
+                        gc.tell_h("{} used his special ability: {}", ["Franklin", player.character.special_desc])
 
                         # Enter attack sequence with 4-sided die
                         player.attackSequence(dice_type = "6")
@@ -1283,16 +1304,16 @@ class ElementFactory:
                         player.modifiers['special_used'] = True
 
                         # Tell
-                        gc.tell_h("Ellen used her special ability: {}".format(player.character.special_desc))
+                        gc.tell_h("{} used her special ability: {}", ["Ellen", player.character.special_desc])
 
                         # Choose a player to cancel their special
                         # Select a player to use special on (excludes user)
-                        player.ask_h('confirm', {'options': ["Use special ability"]}, player.user_id)
+                        player.gc.ask_h('confirm', {'options': ["Use special ability"]}, player.user_id)
                         data = {'options': [t.user_id for t in gc.getLivePlayers() if t.user_id != player.user_id]}
-                        target = player.ask_h('select', data, player.user_id)['value']
-                        target.special = lambda gc, player, turn_pos: gc.tell_h("Your special has been cancelled.", player.socket_id)
+                        target = player.gc.ask_h('select', data, player.user_id)['value']
+                        target.special = lambda gc, player, turn_pos: gc.tell_h("Your special ability has been cancelled.", player.socket_id)
 
-                        gc.tell_h("Ellen cancelled {}'s special ability for the rest of the game.'".format(target.user_id))
+                        gc.tell_h("{} cancelled {}'s special ability for the rest of the game.", ["Ellen", target.user_id])
 
 
                 else:
@@ -1304,21 +1325,21 @@ class ElementFactory:
         def valkyrie_special(gc, player, turn_pos):
             if not player.modifiers['special_active']:
                 # Tell
-                gc.tell_h("Valkyrie used her special ability: {}".format(player.character.special_desc))
+                gc.tell_h("{} used her special ability: {}", ["Valkyrie", player.character.special_desc])
                 player.modifiers['attack_dice_type'] = "4"
                 player.modifiers['special_active'] = True
 
         def vampire_special(gc, player, turn_pos):
             if not player.modifiers['special_active']:
                 # Tell
-                gc.tell_h("Vampire used his special ability: {}".format(player.character.special_desc))
+                gc.tell_h("{} used his special ability: {}", ["Vampire", player.character.special_desc])
                 player.modifiers['damage_dealt_fn'] = lambda player: player.moveDamage(-2, player)
                 player.modifiers['special_active'] = True
 
         def werewolf_special(gc, player, turn_pos):
             if not player.modifiers['special_active']:
                 # Tell
-                gc.tell_h("Werewolf used their special ability: {}".format(player.character.special_desc))
+                gc.tell_h("{} used their special ability: {}", ["Werewolf", player.character.special_desc])
                 player.modifiers['counterattack'] = True
                 player.modifiers['special_active'] = True
 
@@ -1327,13 +1348,13 @@ class ElementFactory:
             if turn_pos == 'start':
                 # Present player with list of attack options
                 targets = [p for p in gc.getLivePlayers() if p.location.name == "Underworld Gate"]
-                gc.tell_h("{} (Ultra Soul) is choosing a target for their Murder Ray...".format(player.user_id))
+                gc.tell_h("{} ({}) is choosing a target for their Murder Ray...", ["Ultra Soul", player.user_id])
                 data = {'options': [p.user_id for p in targets if p != player]}
-                target = player.ask_h('select', data, player.user_id)['value']
+                target = player.gc.ask_h('select', data, player.user_id)['value']
                 target_Player = [p for p in gc.getLivePlayers() if p.user_id == target][0]
-                gc.tell_h("{} chose {}!".format(player.user_id, target))
+                gc.tell_h("{} chose {}!", [player.user_id, target])
                 dealt = player.attack(target_Player, 3)
-                gc.tell_h("{} (Ultra Soul)'s Murder Ray gave {} {} damage!".format(player.user_id, target, dealt))
+                gc.tell_h("{} ({})'s Murder Ray gave {} {} damage!", ["Ultra Soul", player.user_id, target, dealt])
 
 
         ## Initialize characters
@@ -1390,7 +1411,7 @@ class ElementFactory:
                 resource_id = "allie"
             ),
             character.Character(
-                name = "Bob46",
+                name = "Bob",
                 alleg = 1,  # Neutral
                 max_damage = 10,
                 win_cond = bob_win_cond,
@@ -1401,7 +1422,7 @@ class ElementFactory:
                 modifiers = {'min_players': 4, 'max_players': 6}
             ),
             character.Character(
-                name = "Bob78",
+                name = "Bob",
                 alleg = 1,  # Neutral
                 max_damage = 10,
                 win_cond = bob_win_cond,
@@ -1469,7 +1490,7 @@ class ElementFactory:
 
             # Ask player which deck to draw from
             data = {'options': ["Draw White Card", "Draw Black Card", "Draw Hermit Card"]}
-            answer = player.ask_h('select', data, player.user_id)['value']
+            answer = player.gc.ask_h('select', data, player.user_id)['value']
 
             # Draw from corresponding deck
             if answer == "Draw White Card":
@@ -1483,20 +1504,20 @@ class ElementFactory:
 
             # Choose which player to attack or heal
             data = {'options': [p.user_id for p in gc.getLivePlayers()]}
-            target = player.ask_h('select', data, player.user_id)['value']
+            target = player.gc.ask_h('select', data, player.user_id)['value']
             target_Player = [p for p in gc.getLivePlayers() if p.user_id == target][0]
 
             # Choose whether to attack or heal
             data = {'options': ["Heal 1 damage", "Give 2 damage"]}
-            amount = player.ask_h('select', data, player.user_id)['value']
+            amount = player.gc.ask_h('select', data, player.user_id)['value']
             if amount == "Heal 1 damage":
-                gc.tell_h("The power of the Weird Woods healed {}!".format(target_Player.user_id))
+                gc.tell_h("The power of the {} healed {}!", ["Weird Woods", target_Player.user_id])
                 target_Player.moveDamage(1, player)
             else:
                 if "Fortune Brooch" in [e.title for e in target_Player.equipment]:
-                    gc.tell_h("{}'s Fortune Brooch protected them from damage!".format(target_Player.user_id))
+                    gc.tell_h("{}'s {} protected them from damage!", [target_Player.user_id, "Fortune Brooch"])
                 else:
-                    gc.tell_h("The power of the Weird Woods damaged {}!".format(target_Player.user_id))
+                    gc.tell_h("The power of the {} damaged {}!", ["Weird Woods", target_Player.user_id])
                     target_Player.moveDamage(-2, player)
 
         def erstwhile_altar_action(gc, player):
@@ -1509,12 +1530,12 @@ class ElementFactory:
 
                 # Choose player to steal from
                 data = {'options': [p.user_id for p in players_w_items]}
-                target = player.ask_h('select', data, player.user_id)['value']
+                target = player.gc.ask_h('select', data, player.user_id)['value']
                 target_Player = [p for p in players_w_items if p.user_id == target][0]
 
                 # Choose equipment to take from player
                 data = {'options': [eq.title for eq in target_Player.equipment]}
-                equip = player.ask_h('select', data, player.user_id)['value']
+                equip = player.gc.ask_h('select', data, player.user_id)['value']
                 equip_Equipment = [eq for eq in target_Player.equipment if eq.title == equip][0]
 
                 # Transfer equipment from one player to the other
@@ -1523,49 +1544,49 @@ class ElementFactory:
             else:
 
                 # If no one has equipment to steal, nothing happens
-                gc.tell_h("Nobody has any items for {} to steal.".format(player.user_id))
+                gc.tell_h("Nobody has any items for {} to steal.", [player.user_id])
 
         ## Initialize areas
 
         self.AREAS = [
             area.Area(
                 name = "Hermit's Cabin",
-                desc = "You may draw a Hermit Card.",
+                desc = "Draw a Hermit Card.",
                 domain = [2, 3],
                 action = lambda gc, player: player.drawCard(gc.green_cards),
                 resource_id = "hermits-cabin"
             ),
             area.Area(
                 name = "Underworld Gate",
-                desc = "You may draw a card from the stack of your choice.",
+                desc = "Draw a card from the deck of your choice.",
                 domain = [4, 5],
                 action = underworld_gate_action,
                 resource_id = "underworld-gate"
             ),
             area.Area(
                 name = "Church",
-                desc = "You may draw a White Card.",
+                desc = "Draw a White Card.",
                 domain = [6],
                 action = lambda gc, player: player.drawCard(gc.white_cards),
                 resource_id = "church"
             ),
             area.Area(
                 name = "Cemetery",
-                desc = "You may draw a Black Card.",
+                desc = "Draw a Black Card.",
                 domain = [8],
                 action = lambda gc, player: player.drawCard(gc.black_cards),
                 resource_id = "cemetery"
             ),
             area.Area(
                 name = "Weird Woods",
-                desc = "You may either give 2 damage to any player or heal 1 damage of any player.",
+                desc = "Heal 1 damage or give 2 damage to any player.",
                 domain = [9],
                 action = weird_woods_action,
                 resource_id = "weird-woods"
             ),
             area.Area(
                 name = "Erstwhile Altar",
-                desc = "You may steal an equipment card from any player.",
+                desc = "Steal an equipment card from any player.",
                 domain = [10],
                 action = erstwhile_altar_action,
                 resource_id = "erstwhile-altar"

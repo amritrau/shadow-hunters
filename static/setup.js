@@ -8,7 +8,10 @@ $('document').ready(function() {
     $('#yesno').hide();
     $('#select').hide();
     $('#reveal').hide();
-    if(usrctx.spectate) $('#start').remove();
+    if(usrctx.spectate) {
+        $('#start').remove();
+        $('#reveal').remove();
+    }
 
     // Initial connection
     socket = io.connect('http://' + document.domain + ':' + location.port, {reconnection: false});
@@ -28,11 +31,7 @@ $('document').ready(function() {
         // Start game button
         var start_form = $('#start').on('submit', function(e) {
             e.preventDefault();
-            // TODO: the value for n_players should come from a drop down or
-            // some other selection mechanism. It should be in the range [4,8].
-            // make sure it's cast to an integer!
             socket.emit('start', { 'n_players': $('#nPlayers').val() });
-            // TODO: Hide selection mechanism after socket emission
         });
 
         // Reveal button
@@ -44,9 +43,7 @@ $('document').ready(function() {
         // Form type 1
         var confirm_form = $('#confirm').on('submit', function(e) {
             e.preventDefault();
-            var val = $('#confirm [name="inputs"][clicked=true]').val();
-            console.log("value, "+val);
-            socket.emit('answer', { 'form': 'confirm', 'value': val });
+            socket.emit('answer', { 'value': $('#confirm [name="inputs"][clicked=true]').val() });
             $('#confirm').hide();
             $('#confirm').empty();
         });
@@ -54,7 +51,7 @@ $('document').ready(function() {
         // Form type 2
         var yesno_form = $('#yesno').on('submit', function(e) {
             e.preventDefault();
-            socket.emit('answer', { 'form': 'yesno', 'value': $('#yesno [name="inputs"][clicked=true]').val() });
+            socket.emit('answer', { 'value': $('#yesno [name="inputs"][clicked=true]').val() });
             $('#yesno').hide();
             $('#yesno').empty();
         });
@@ -62,7 +59,7 @@ $('document').ready(function() {
         // Form type 3
         var select_form = $('#select').on('submit', function(e) {
             e.preventDefault();
-            socket.emit('answer', { 'form': 'select', 'value': $('#select [name="inputs"][clicked=true]').val() });
+            socket.emit('answer', { 'value': $('#select [name="inputs"][clicked=true]').val() });
             $('#select').hide();
             $('#select').empty();
         });
@@ -71,19 +68,27 @@ $('document').ready(function() {
         socket.on('message', function(msg) {
 
             // Build message
-            var html = '<p style="margin:0"><b style="color:'+msg.color+'">';
-            if(typeof msg.name !== 'undefined')
-            {
-                html += msg.name+'</b> '+msg.data+'</p>';
+            var html = '';
+            if(typeof msg.name !== 'undefined') {
+                html = '<p style="margin:0"><b style="color:'+msg.color+'">'+msg.name+'</b> '+msg.data+'</p>';
             }
-            else
-            {
-                html += msg.data+'</b></p>';
+            else {
+                html = '<p style="margin:0">';
+                for(var i = 0; i < msg.strings.length; i++) {
+                    html += '<b style="color:'+msg.colors[i]+'">'+msg.strings[i]+'</b>';
+                }
+                html += '</p>';
             }
 
-            // Put message in chatbox
-            $('#message_holder').append(html);
-            $("#message_holder").scrollTop($("#message_holder")[0].scrollHeight);
+            // Put message in chatbox and snap to bottom if already at bottom
+            var chat = $("#message_holder");
+            if (chat.scrollTop() == chat[0].scrollHeight - chat[0].clientHeight) {
+                chat.append(html);
+                chat.scrollTop(chat[0].scrollHeight);
+            }
+            else {
+                chat.append(html);
+            }
         });
 
         // Receive an ask
@@ -122,8 +127,16 @@ $('document').ready(function() {
             $('#'+data.form).show();
         });
 
+        // False start handler
+        socket.on('false_start', function(data) {
+            alert("You cannot start a "+data.field+"-player game when there are "+data.actual+" people in the room.");
+        });
+
         // Disconnect handler
         socket.on('disconnect', function(reason) {
+            window.onbeforeunload = function() {};
+            alert("You have lost connection to the server – click 'Ok' to return to the home page, " +
+                  "where you may reconnect if you were in a game.");
             window.location = "/";
         });
 

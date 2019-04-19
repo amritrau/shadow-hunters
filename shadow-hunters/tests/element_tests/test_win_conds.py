@@ -3,7 +3,7 @@ import random
 
 import game_context
 import player
-from tests import helpers
+import helpers
 
 # test_win_conds.py
 # Tests the win conditions of each character
@@ -30,34 +30,68 @@ def test_shadows_win():
             p.setDamage(14, p)
     assert s.character.win_cond(gc, s)
 
-    # TODO: Check that shadows win if three neutrals are dead
-    # Requires support for 8-player games
+    # Check that shadows win if three neutrals are dead
+    gc, ef = helpers.fresh_gc_ef(7)
+    s = helpers.get_a_shadow(gc)
+    for p in gc.players:
+        if p.character.alleg == 1:
+            p.setDamage(14, p)
+    assert s.character.win_cond(gc, s)
 
 def test_allie_win():
 
-    # Keep creating games until we find Allie
-    allie = None
-    gc = None
-    ef = None
-    while not allie:
-        gc, ef = helpers.fresh_gc_ef()
-        for p in gc.players:
-            if p.character.name == "Allie":
-                allie = p
+    # Get a game containing Allie
+    gc, ef, p = helpers.get_game_with_character("Allie")
 
     # Check that Allie hasn't won if the game isn't over
-    assert not allie.character.win_cond(gc, allie)
+    assert not p.character.win_cond(gc, p)
 
     # Check that Allie wins if the game is over and she is alive
     gc.game_over = True
-    assert allie.character.win_cond(gc, allie)
+    assert p.character.win_cond(gc, p)
 
     # Check that Allie doesn't win if she's dead
-    allie.setDamage(14, allie)
-    assert not allie.character.win_cond(gc, allie)
+    p.setDamage(14, p)
+    assert not p.character.win_cond(gc, p)
 
 def test_bob_win():
-    assert 0
+
+    # Get a game containing Bob
+    gc, ef, p = helpers.get_game_with_character("Bob")
+
+    # Check that Bob hasn't won initially, or with 4 equips
+    assert not p.character.win_cond(gc, p)
+    p.equipment = ['dummy_equipment'] * 4
+    assert not p.character.win_cond(gc, p)
+
+    # Check that Bob wins if we give him 5 equipment cards, or more
+    p.equipment = ['dummy_equipment'] * 5
+    assert p.character.win_cond(gc, p)
+    p.equipment = ['dummy_equipment'] * 10
+    assert p.character.win_cond(gc, p)
 
 def test_catherine_win():
-    assert 0
+
+    # Get a game containing Catherine
+    gc, ef, p = helpers.get_game_with_character("Catherine")
+
+    # Check that Catherine hasn't won initially
+    assert not p.character.win_cond(gc, p)
+
+    # Check that Catherine wins if she dies first
+    p.setDamage(14, p)
+    assert p.character.win_cond(gc, p)
+
+    # Check that Catherine does not win if she dies second
+    gc, ef, p = helpers.get_game_with_character("Catherine")
+    h = helpers.get_a_hunter(gc)
+    h.setDamage(14, h)
+    p.setDamage(14, p)
+    assert not p.character.win_cond(gc, p)
+
+    # Check that Catherine wins if she's in the last two standing
+    gc, ef, p = helpers.get_game_with_character("Catherine", n_players=6)
+    for pl in gc.players:
+        if pl.character.alleg != 1:
+            pl.setDamage(14, pl)
+    assert p.character.win_cond(gc, p)

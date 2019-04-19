@@ -1,4 +1,4 @@
-from tests import helpers
+import helpers
 import pytest
 import area, zone
 
@@ -29,6 +29,6 @@ def test_fields():
 
     # test fields
     assert z.areas == areas
-    
+
     # test dump
     assert z.dump() == [a1.dump(), a2.dump()]
