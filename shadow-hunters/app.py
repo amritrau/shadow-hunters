@@ -290,10 +290,16 @@ def on_reveal():
 @socketio.on('special')
 def on_special():
 
-    # Get info about user in game
-    room_id = connections[request.sid]['room_id']
-    gc = rooms[room_id]['gc']
-    player = [p for p in gc.players if p.socket_id == request.sid][0]
+    # Get room
+    connection_lock.acquire()
+    room_id = get_room_id(rooms, request.sid)
+
+    # Make sure room and game still exist
+    if room_id and rooms[room_id]['gc']:
+        player = [p for p in rooms[room_id]['gc'].players if p.socket_id == request.sid][0]
+    else:
+        connection_lock.release()
+        return
 
     # Use special
     player.character.special(gc, player, turn_pos = 'now')
