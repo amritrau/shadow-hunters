@@ -170,13 +170,13 @@ class Player:
         drawn = deck.drawCard()
         public_title = drawn.title if drawn.color != 2 else 'a Hermit Card'
         self.gc.tell_h("{} drew {}!".format(self.user_id, public_title))
+        display_data = drawn.dump()
+        display_data['type'] = 'draw'
         if drawn.color != 2:
             self.gc.tell_h("{}: {}".format(drawn.title, drawn.desc))
-            display_data = {'type': 'draw', 'title': drawn.title, 'desc': drawn.desc}
             self.gc.show_h(display_data)
         else:
             self.gc.tell_h("{}: {}".format(drawn.title, drawn.desc), client=self.socket_id)
-            display_data = {'type': 'draw', 'title': drawn.title, 'desc': drawn.desc}
             self.gc.show_h(display_data, client=self.socket_id)
 
         # Use card if it's single-use, or add to arsenal if it's equipment

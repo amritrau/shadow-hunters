@@ -31,7 +31,7 @@ $('document').ready(function() {
             // TODO: the value for n_players should come from a drop down or
             // some other selection mechanism. It should be in the range [4,8].
             // make sure it's cast to an integer!
-            socket.emit('start', { 'n_players': 5 });
+            socket.emit('start', { 'n_players': $('#nPlayers').val() });
             // TODO: Hide selection mechanism after socket emission
         });
 
@@ -129,7 +129,7 @@ $('document').ready(function() {
 
         // Configure game
         var config = {
-            type: Phaser.CANVAS,
+            type: Phaser.AUTO,
             width: 1066,
             height: 600,
             pixelArt: false,

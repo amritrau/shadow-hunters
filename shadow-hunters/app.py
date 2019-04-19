@@ -208,7 +208,7 @@ def on_start(json):
     names = [x['name'] for x in connections.values() if x['room_id'] == room_id]
     names = names[:8] # Maximum of 8 players
     socketio.sleep(SOCKET_SLEEP)
-    start_game(room_id, names, json['n_players'])
+    start_game(room_id, names, int(json['n_players']))
 
 @socketio.on('reveal')
 def on_reveal():
