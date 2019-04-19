@@ -162,7 +162,7 @@ var GameBoard = new Phaser.Class ({
         this.load.image('Franklin', '/static/assets/Franklin.png');
         this.load.image('Ellen', '/static/assets/Ellen.png');
         this.load.image('Ultra Soul', '/static/assets/Ultrasoul.png');
-        this.load.image('Werewolf', '/static/assets/anon.png');
+        this.load.image('Werewolf', '/static/assets/Werewolf.png');
         //this.load.svg('Allie', '/static/assets/Allie.svg', {width: 123, height: 123});
 
         //display popups
