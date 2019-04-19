@@ -8,9 +8,11 @@ $('document').ready(function() {
     $('#yesno').hide();
     $('#select').hide();
     $('#reveal').hide();
+    $('#special').hide();
     if(usrctx.spectate) {
         $('#start').remove();
         $('#reveal').remove();
+        $('#special').remove();
     }
 
     // Initial connection
@@ -32,12 +34,19 @@ $('document').ready(function() {
         var start_form = $('#start').on('submit', function(e) {
             e.preventDefault();
             socket.emit('start', { 'n_players': $('#nPlayers').val() });
+            console.log("start game!");
         });
 
         // Reveal button
         var reveal_form = $('#reveal').on('submit', function(e) {
             e.preventDefault();
             socket.emit('reveal');
+        });
+
+        // Special ability button
+        var reveal_form = $('#special').on('submit', function(e) {
+            e.preventDefault();
+            socket.emit('special');
         });
 
         // Form type 1
