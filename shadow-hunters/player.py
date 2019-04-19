@@ -15,7 +15,6 @@ class Player:
         self.location = None
         self.modifiers = defaultdict(lambda: False)
         self.modifiers['attack_dice_type'] = "attack"
-        self.ask_h = ask_h
         self.ai = ai
 
     def setCharacter(self, character):
