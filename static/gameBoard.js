@@ -21,10 +21,11 @@ var GameBoard = new Phaser.Class ({
         this.gameData;
         this.charInfo;
         this.infoBox;
+        this.popupInfo;
         this.openPopups = [];
         this.gameEnd = {image: [], winners: [], players_info: []};
         this.cards = {cardsDrawn: [], cardText: [], nDrawn: 0};
-        this.infoKnown;
+        this.gameSummary;
 
         // list of x, y coordinates for 8 players' starting spots
         this.startSpots = [[562, 245],
@@ -88,6 +89,8 @@ var GameBoard = new Phaser.Class ({
         // load background and health bar
         this.load.svg('background', gfx + 'background.svg', {width: 1066, height: 600});
         this.load.image("customTip", "/static/assets/customTip.png");
+        this.load.image("info", "/static/assets/info.png");
+        this.load.image("playerinfo", "/static/assets/scroll.png");
         this.load.image("popup_right", "/static/assets/popup_right.png");
         this.load.image("popup_left", "/static/assets/popup_left.png");
         this.load.image('text', '/static/assets/text.png');
@@ -186,6 +189,26 @@ var GameBoard = new Phaser.Class ({
         this.healthBar = this.makeHealthBar();
         this.healthBar.on('clicked', this.clickHandler, this.box);
 
+        // adds info button on upper right corner so people know they can click on things. Starts with popup open
+        this.popupInfo = this.add.image(840, 20, 'info');
+        this.popupInfo.infoBox = this.add.image(750, 55, "popup_left");
+        this.popupInfo.infoBox.depth = 30;
+        this.popupInfo.displayInfo = this.add.text(this.popupInfo.infoBox.x - 80,
+                                                  this.popupInfo.infoBox.y - 40,
+                                                  "Click on things to see more information! Click on the i button to close this popup",
+                                                  { font: '12px Arial', fill: '#FFFFFF',
+                                                  wordWrap: { width: 130, useAdvancedWrap: true }});
+        this.popupInfo.displayInfo.depth = 30;
+        this.popupInfo.setInteractive();
+        this.popupInfo.on('clicked', this.clickHandler, this.popupInfo);
+        this.popupInfo.infoBox.setVisible(true);
+        this.popupInfo.displayInfo.setVisible(true);
+        this.openPopups.push(this.popupInfo);
+
+        // adds icon to let players see everything about everyone
+        this.gameSummary = this.makeSummary();
+        this.gameSummary.on('clicked', this.clickHandler, this.gameSummary);
+
         // Place locations based on given order
         for (var i = 0; i < 3; i++) {
             for (var j = 0; j < 2; j++) {
@@ -193,6 +216,7 @@ var GameBoard = new Phaser.Class ({
                 this.zoneCards[i][j].on('clicked', this.clickHandler, this.zoneCards[i][j]);
             }
         }
+
 
         //this loop creates all players: self and enemies.
         sorted_keys = Object.keys(this.allPlayersInfo).sort(); // Hack to force keys into a deterministic order
@@ -386,6 +410,22 @@ var GameBoard = new Phaser.Class ({
         zone.displayInfo.depth = 30;
         zone.setInteractive();
         return zone;
+    },
+
+    // makes summary icon in upper right part of screen interactive
+    makeSummary: function() {
+      var summaryIcon = this.add.image(840, 65, 'playerinfo');
+      summaryIcon.infoBox = this.add.image(500, 300, "gameOver");
+      summaryIcon.infoBox.depth = 40;
+
+      //this will be changed later; just making this interactive for testing purposes
+      summaryIcon.displayInfo = this.add.text(500, 300, " ", { font: '12px Arial', fill: '#000000', wordWrap: { width: 250, useAdvancedWrap: true }});
+      summaryIcon.displayInfo.depth = 40;
+
+      summaryIcon.infoBox.setVisible(false);
+      summaryIcon.displayInfo.setVisible(false);
+      summaryIcon.setInteractive();
+      return summaryIcon;
     },
 
     //the makePlayer function is what creates our sprite and adds him to the board.
