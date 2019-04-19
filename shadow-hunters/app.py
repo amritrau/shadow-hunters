@@ -13,7 +13,10 @@ from helpers import color_format, get_room_id
 # app config
 template_dir = os.path.abspath('./templates')
 static_dir = os.path.abspath('./static')
-app = Flask(__name__, template_folder=template_dir, static_folder=static_dir, static_url_path='/static')
+app = Flask(
+    __name__, template_folder=template_dir,
+    static_folder=static_dir, static_url_path='/static'
+)
 app.config['SECRET_KEY'] = 'segfault hunters!'
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 socketio = SocketIO(app, async_handlers=True)
@@ -26,20 +29,21 @@ def after_request(response):
     response.headers["Pragma"] = "no-cache"
     return response
 
+
 # sleep times after socket emissions (to pace frontend)
 SOCKET_SLEEP = 0.25
 AI_SLEEP = 2.0
 
 # rooms are indexed by room_id, with a status, gc, and connections field
-# status is LOBBY or GAME. gc is None if status is LOBBY, otherwise a GameContext object
-# connections is a dict indexed by socket_id whose value is the username of that connection
+# status is LOBBY or GAME. gc is None if status is LOBBY, otherwise a
+# GameContext object connections is a dict indexed by socket_id whose value is
+# the username of that connection
 rooms = {}
 
 # Lock for manipulating the rooms data structure
 connection_lock = Lock()
 
 # APP ROUTES
-
 @app.route('/')
 def join():
     return render_template('join.html')
@@ -49,7 +53,7 @@ def rules():
     return render_template('rules.html')
 
 @app.route('/room', methods=['GET', 'POST'])
-def room(methods=['GET','POST']):
+def room(methods=['GET', 'POST']):
     if request.method == 'POST':
 
         # collect fields
@@ -63,24 +67,41 @@ def room(methods=['GET','POST']):
         if len(username) >= 16 or len(room_id) >= 16:
             flash("Name and room ID must be shorter than 16 characters")
             return redirect('/')
-        if (not re.match("^[\w\d ]*$", username)) or (not re.match("^[\w\d ]*$", room_id)):
+
+        username_valid = re.match(r"^[\w\d ]*$", username)
+        room_id_valid = re.match(r"^[\w\d ]*$", room_id)
+
+        if (not username_valid) or (not room_id_valid):
             flash("Name and room ID must not contain special characters")
             return redirect('/')
-        if username == "undefined" or room_id == "undefined" or room_id.isdigit():
+
+        username_reserved = (username == "undefined") or username.isdigit()
+        room_id_reserved = (room_id == "undefined") or room_id.isdigit()
+
+        if not username_reserved or not room_id_reserved:
             flash("The username or room ID you chose is reserved.")
             return redirect('/')
 
         # Check for reserved usernames
         ef = elements.ElementFactory()
-        all_cards = ef.WHITE_DECK.cards + ef.BLACK_DECK.cards + ef.GREEN_DECK.cards
-        element_names = [c.title for c in all_cards] + [ch.name for ch in ef.CHARACTERS] + [a.name for a in ef.AREAS]
-        if username.isdigit() or username.startswith('CPU') or username in element_names or username == 'Decline':
+        all_cards = ef.WHITE_DECK.cards
+        all_cards += ef.BLACK_DECK.cards
+        all_cards += ef.GREEN_DECK.cards
+
+        element_names = [c.title for c in all_cards]
+        element_names += [ch.name for ch in ef.CHARACTERS]
+        element_names += [a.name for a in ef.AREAS]
+
+        user_valid = username.startswith('CPU') or (username in element_names)
+        if user_valid or username == 'Decline':
             flash("The username you chose is reserved")
             return redirect('/')
 
         # check for username taken
         connection_lock.acquire()
-        if room_id in rooms and username in rooms[room_id]['connections'].values():
+        room_id_exists = (room_id in rooms)
+        username_in_room = username in rooms[room_id]['connections'].values()
+        if room_id_exists and username_in_room:
             flash("Someone in the room has taken your name")
             connection_lock.release()
             return redirect('/')
@@ -89,27 +110,30 @@ def room(methods=['GET','POST']):
         if room_id in rooms and rooms[room_id]['status'] == 'GAME':
             public_state, private_state = rooms[room_id]['gc'].dump()
             connection_lock.release()
-            return render_template('room.html', context = {
+            return render_template('room.html', context={
                 'name': username,
                 'room_id': room_id,
                 'spectate': True,
-                'gc_data': { 'public': public_state }
+                'gc_data': {'public': public_state}
             })
         connection_lock.release()
 
         # send player to room
-        return render_template('room.html', context={ 'name': username, 'room_id': room_id, 'spectate': False })
+        ctx = dict(name=username, room_id=room_id, spectate=False)
+        return render_template('room.html', context=ctx)
     else:
         return redirect('/')
 
 # SOCKET EMITTERS
+
 
 def socket_ask(form, data, user_id, room_id):
 
     # Get player
     connection_lock.acquire()
     if room_id in rooms:
-        player = [p for p in rooms[room_id]['gc'].players if p.user_id == user_id][0]
+        pl = [p for p in rooms[room_id]['gc'].players if p.user_id == user_id]
+        player = pl[0]
     else:
         connection_lock.release()
         if 'Decline' in data['options'] and len(data['options']) > 1:
@@ -134,7 +158,8 @@ def socket_ask(form, data, user_id, room_id):
     # Loop until an answer is received
     while not bin['answered']:
         while not bin['answered']:
-            # If a player swaps out for an AI during an ask, the AI answers for them
+            # If a player swaps out for an AI during an ask, the AI answers
+            # for them
             if player.ai or player.socket_id != sid:
                 if 'Decline' in data['options'] and len(data['options']) > 1:
                     data['options'].remove('Decline')
@@ -149,11 +174,13 @@ def socket_ask(form, data, user_id, room_id):
     bin['answered'] = False
     return bin['data']
 
+
 def socket_tell(str, args, gc, room_id, client=None):
     if not client:
         client = (room_id)
     data = color_format(str, args, gc)
-    socketio.emit('message', {'strings': data[0], 'colors': data[1]}, room=client[0])
+    packet = {'strings': data[0], 'colors': data[1]}
+    socketio.emit('message', packet, room=client[0])
     if room_id in rooms:
         socketio.sleep(SOCKET_SLEEP)
 
@@ -189,7 +216,8 @@ def on_start(json):
     n_players = max(min(int(json['n_players']), 8), 4)
     if len(names_and_sids) > n_players:
         connection_lock.release()
-        socketio.emit('false_start', {'field':n_players, 'actual':len(names_and_sids)}, room=request.sid)
+        packet = {'field': n_players, 'actual': len(names_and_sids)}
+        socketio.emit('false_start', packet, room=request.sid)
         return
 
     # Initialize human and AI players
@@ -264,13 +292,19 @@ def on_reveal():
 @socketio.on('special')
 def on_special():
 
-    # Get info about user in game
-    room_id = connections[request.sid]['room_id']
-    gc = rooms[room_id]['gc']
-    player = [p for p in gc.players if p.socket_id == request.sid][0]
+    # Get room
+    connection_lock.acquire()
+    room_id = get_room_id(rooms, request.sid)
+
+    # Make sure room and game still exist
+    if room_id and rooms[room_id]['gc']:
+        player = [p for p in rooms[room_id]['gc'].players if p.socket_id == request.sid][0]
+    else:
+        connection_lock.release()
+        return
 
     # Use special
-    player.character.special(gc, player, turn_pos = 'now')
+    player.character.special(rooms[room_id]['gc'], player, turn_pos = 'now')
 
 @socketio.on('answer')
 def on_answer(json):
