@@ -172,6 +172,9 @@ var GameBoard = new Phaser.Class ({
         this.load.svg('blackcard', '/static/assets/blackcard.svg', {width: 154.604, height: 199.212});
         this.load.svg('greencard', '/static/assets/greencard.svg', {width: 154.604, height: 199.212});
 
+        // load bitmap text
+        this.load.bitmapFont('adventur', gfx + 'Adventur.png', gfx + 'Adventur.fnt');
+
     },
 
     //the create function is where everything is added to the canvas
@@ -247,15 +250,15 @@ var GameBoard = new Phaser.Class ({
             this.infoBox.data.set("special", "none"); //not yet implemented
 
             //create the text variables
-            var text = this.add.text(10, 470, '', {
-                font: '12px Arial',
+            var text = this.add.text(10, 475, '', {
+                font: '12px Palatino',
                 fill: '#FFFFFF',
                 wordWrap: { width: 180, useAdvancedWrap: true }
             });
-            var name = this.add.text(5, 460, this.infoBox.data.get('name'), {
-                font:'16px Arial' ,
-                fill: '#FFFFFF'
-            });
+            var name = this.add.bitmapText(68, 477, 'adventur',
+                this.infoBox.data.get('name'),
+                size = 18
+                );
 
             // Adding placeholder text to go in equipment slots
             this.equip_text = [];
@@ -263,7 +266,7 @@ var GameBoard = new Phaser.Class ({
             for(var i = 0; i < this.num_equip_slots; i++)
             {
                 this.equip_text[i] = this.add.text(235 + i*100, 537.5, '', {
-                    font: '12px Arial',
+                    font: '12px Palatino',
                     fill: '#FFFFFF',
                     wordWrap: { width: 80, useAdvancedWrap: true }
                 });
@@ -282,7 +285,6 @@ var GameBoard = new Phaser.Class ({
             this.add.image(137.489, 412.722, String(this.charInfo.max_damage) + "hp");
 
             //align the text inside of our information box
-            Phaser.Display.Align.In.TopCenter(name, this.infoBox);
             Phaser.Display.Align.In.TopLeft(text, this.add.zone(110, 560, 200, 130));
         }
 
@@ -328,14 +330,19 @@ var GameBoard = new Phaser.Class ({
             return 'If you leave this page, you will be removed from the game. ' +
                    'Are you sure you want to leave?';
         };
+
+        // Center character name in info box
+        name.x = 97.5 - (name.width * 0.5);
     },
+
+
 
     makeHealthBar: function() {
         var sprite  = this.add.image(960.160, 302.279, 'health');
         sprite.infoBox = this.add.image(750, 150, 'text');
         sprite.infoBox.setVisible(false);
         sprite.infoBox.depth = 30;
-        sprite.displayInfo = this.add.text(700, 30, " ", { font: '12px Arial', fill: '#FFFFFF', wordWrap: { width: 250, useAdvancedWrap: true }});
+        sprite.displayInfo = this.add.text(700, 30, " ", { font: '12px Palatino', fill: '#FFFFFF', wordWrap: { width: 250, useAdvancedWrap: true }});
 
         sprite.displayInfo.setText(["Player: " + this.gameData.public.characters[0].name, "Dies At HP: " + this.gameData.public.characters[0].max_damage, "\n",
             "Player: " + this.gameData.public.characters[1].name, "Dies At HP: " + this.gameData.public.characters[1].max_damage, "\n",
@@ -355,21 +362,21 @@ var GameBoard = new Phaser.Class ({
         if (zone_num == 0) {
             zone.setScale(1).angle = -60;
             zone.infoBox = this.add.image(zone.x-90, zone.y, "popup_left");
-            zone.displayInfo = this.add.text(zone.infoBox.x - 80, zone.infoBox.y - 40, " ", { font: '12px Arial', fill: '#FFFFFF', wordWrap: { width: 130, useAdvancedWrap: true }});
+            zone.displayInfo = this.add.text(zone.infoBox.x - 80, zone.infoBox.y - 40, " ", { font: '12px Palatino', fill: '#FFFFFF', wordWrap: { width: 130, useAdvancedWrap: true }});
         }
         else if (zone_num == 1) {
             zone.setScale(1).angle = 60;
             zone.infoBox = this.add.image(zone.x+90, zone.y, "popup_right");
-            zone.displayInfo = this.add.text(zone.infoBox.x - 60, zone.infoBox.y - 40, " ", { font: '12px Arial', fill: '#FFFFFF', wordWrap: { width: 130, useAdvancedWrap: true }});
+            zone.displayInfo = this.add.text(zone.infoBox.x - 60, zone.infoBox.y - 40, " ", { font: '12px Palatino', fill: '#FFFFFF', wordWrap: { width: 130, useAdvancedWrap: true }});
         }
         else {
             if(card_num == 0) {
                 zone.infoBox = this.add.image(zone.x-90, zone.y, "popup_left");
-                zone.displayInfo = this.add.text(zone.infoBox.x - 80, zone.infoBox.y - 40, " ", { font: '12px Arial', fill: '#FFFFFF', wordWrap: { width: 130, useAdvancedWrap: true }});
+                zone.displayInfo = this.add.text(zone.infoBox.x - 80, zone.infoBox.y - 40, " ", { font: '12px Palatino', fill: '#FFFFFF', wordWrap: { width: 130, useAdvancedWrap: true }});
             }
             else {
                 zone.infoBox = this.add.image(zone.x+90, zone.y, "popup_right");
-                zone.displayInfo = this.add.text(zone.infoBox.x - 60, zone.infoBox.y - 40, " ", { font: '12px Arial', fill: '#FFFFFF', wordWrap: { width: 130, useAdvancedWrap: true }});
+                zone.displayInfo = this.add.text(zone.infoBox.x - 60, zone.infoBox.y - 40, " ", { font: '12px Palatino', fill: '#FFFFFF', wordWrap: { width: 130, useAdvancedWrap: true }});
             }
         }
 
@@ -410,7 +417,7 @@ var GameBoard = new Phaser.Class ({
         //this creates the infobox, i.e. the box that will appear when we click on him.
         sprite.infoBox = this.add.image(sprite.x, sprite.y -60, "customTip");
         sprite.infoBox.setVisible(false);
-        sprite.displayInfo = this.add.text(sprite.infoBox.x - 120, sprite.infoBox.y - 40, " ", { font: '12px Arial', fill: '#FFFFFF', wordWrap: { width: 250, useAdvancedWrap: true }});
+        sprite.displayInfo = this.add.text(sprite.infoBox.x - 120, sprite.infoBox.y - 40, " ", { font: '12px Palatino', fill: '#FFFFFF', wordWrap: { width: 250, useAdvancedWrap: true }});
         sprite.displayInfo.setText([
             "Player: " + sprite.name,
             "Equipment: None"
@@ -568,11 +575,11 @@ var GameBoard = new Phaser.Class ({
         for(var i = 0; i < nWinners; i++) {
             if(i%2 == 0) {
                 this.gameEnd.winners[i] = this.add.image(283, 140 + 130*(i/2), winners[i].character.name);
-                this.gameEnd.players_info[i] = this.add.text(352, 78.183 + 130*(i/2), " ", { font: '12px Arial', fill: '#000000', wordWrap: { width: 160, useAdvancedWrap: true }});
+                this.gameEnd.players_info[i] = this.add.text(352, 78.183 + 130*(i/2), " ", { font: '12px Palatino', fill: '#000000', wordWrap: { width: 160, useAdvancedWrap: true }});
             }
             else {
                 this.gameEnd.winners[i] = this.add.image(583, 140 + 130*((i-1)/2), winners[i].character.name);
-                this.gameEnd.players_info[i] = this.add.text(652, 78.183 + 130*((i-1)/2), " ", { font: '12px Arial', fill: '#000000', wordWrap: { width: 160, useAdvancedWrap: true }});
+                this.gameEnd.players_info[i] = this.add.text(652, 78.183 + 130*((i-1)/2), " ", { font: '12px Palatino', fill: '#000000', wordWrap: { width: 160, useAdvancedWrap: true }});
             }
             if(winners[i].character.alleg == 1){
                 winners[i].character.alleg = "Neutral";
@@ -603,16 +610,16 @@ var GameBoard = new Phaser.Class ({
 
         if(cardInfo.color == 0) {
             this.cards.cardsDrawn[cardsOut] = this.add.image(281.321, 368.964, "whitecard");
-            this.cards.cardsDrawn[cardsOut].cardText = this.add.text(211.654, 365.668, " ", { font: '10px Arial', fill: '#000000', wordWrap: { width: 139, useAdvancedWrap: true }});
+            this.cards.cardsDrawn[cardsOut].cardText = this.add.text(211.654, 365.668, " ", { font: '10px Palatino', fill: '#000000', wordWrap: { width: 139, useAdvancedWrap: true }});
         }
 
         else if (cardInfo.color == 1) {
             this.cards.cardsDrawn[cardsOut] = this.add.image(281.321, 368.964, "blackcard");
-            this.cards.cardsDrawn[cardsOut].cardText = this.add.text(211.654, 365.668, " ", { font: '10px Arial', fill: '#FFFFFF', wordWrap: { width: 139, useAdvancedWrap: true }});
+            this.cards.cardsDrawn[cardsOut].cardText = this.add.text(211.654, 365.668, " ", { font: '10px Palatino', fill: '#FFFFFF', wordWrap: { width: 139, useAdvancedWrap: true }});
         }
         else {
             this.cards.cardsDrawn[cardsOut] = this.add.image(281.321, 368.964, "greencard");
-            this.cards.cardsDrawn[cardsOut].cardText = this.add.text(211.654, 365.668, " ", { font: '10px Arial', fill: '#FFFFFF', wordWrap: { width: 139, useAdvancedWrap: true }});
+            this.cards.cardsDrawn[cardsOut].cardText = this.add.text(211.654, 365.668, " ", { font: '10px Palatino', fill: '#FFFFFF', wordWrap: { width: 139, useAdvancedWrap: true }});
         }
 
         this.cards.cardsDrawn[cardsOut].cardText.setText([
