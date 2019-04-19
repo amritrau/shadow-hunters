@@ -20,10 +20,7 @@ var WaitingRoom = new Phaser.Class ({
     create: function () {
         // Send right to board if spectating
         var self = this;
-        if(usrctx.spectate)
-        {
-            // Start board
-            $('#reveal').remove();
+        if(usrctx.spectate) {
             self.scene.start('board', usrctx.gc_data);
             return;
         }

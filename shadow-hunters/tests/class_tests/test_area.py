@@ -1,4 +1,4 @@
-from tests import helpers
+import helpers
 import pytest
 import area
 
@@ -6,7 +6,7 @@ import area
 # Tests for the Area object
 
 def test_fields():
-    
+
     # test initialization
     a = area.Area(
         name = "area_name",
@@ -15,7 +15,7 @@ def test_fields():
         action = lambda: 5,
         resource_id = "r_id"
     )
-    
+
     # test fields
     assert a.name == "area_name"
     assert a.desc == "area_desc"

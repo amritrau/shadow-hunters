@@ -9,11 +9,11 @@ import elements
 # Implements a GameContext.
 
 class GameContext:
-    def __init__(self, players, characters, black_cards, white_cards, green_cards, areas, tell_h, show_h, update_h, modifiers = dict()):
+    def __init__(self, players, characters, black_cards, white_cards, green_cards, areas, ask_h, tell_h, show_h, update_h, modifiers = dict()):
 
         # Instantiate gameplay objects
         self.players = players
-        self.turn_order = list(players)
+        self.turn_order = copy.copy(players)
         self.characters = characters
         self.playable = copy.deepcopy(characters)
         self.black_cards = black_cards
@@ -24,9 +24,17 @@ class GameContext:
         self.game_over = False
 
         # Instantiate message handlers
+        self.ask_h = ask_h
         self.tell_h = tell_h
         self.show_h = show_h
         self.update_h = update_h
+
+        # Instantiate answer bin
+        self.answer_bin = {
+            'answered': False,
+            'sid': '',
+            'data': {}
+        }
 
         # Assign modifiers
         self.modifiers = modifiers
@@ -43,8 +51,11 @@ class GameContext:
                 a.zone = z
 
         # Randomly assign characters and point game context
-
         character_q = copy.deepcopy(characters)
+
+        # Remove characters unsuitable for current # of players
+        valid_for_n_players = lambda c: c.modifiers['min_players'] <= len(self.players) <= c.modifiers['max_players']
+        character_q = list(filter(valid_for_n_players, character_q))
         random.shuffle(character_q)
 
         # Figure out how many of each allegiance there has to be
@@ -52,7 +63,7 @@ class GameContext:
             4: (2, 0, 2),
             5: (2, 1, 2),
             6: (2, 2, 2),
-            7: (3, 1, 3),
+            7: (2, 3, 2),
             8: (3, 2, 3)
         }
 
@@ -88,12 +99,12 @@ class GameContext:
                 display_data = {'type': 'win', 'winners': [p.dump() for p in winners]}
                 self.show_h(display_data)
                 for w in winners:
-                    self.tell_h("{} ({}: {}) won! {}".format(
+                    self.tell_h("{} ({}: {}) won! {}", [
                         w.user_id,
                         elements.ALLEGIANCE_MAP[w.character.alleg],
                         w.character.name,
                         w.character.win_cond_desc
-                    ))
+                    ])
             return winners
 
     def play(self):
@@ -111,6 +122,8 @@ class GameContext:
                 self.turn_order = list(self.players)
 
     def dump(self):
+        # Note that public_players and private_state are no longer keyed by
+        # socket_ids
         public_zones = [z.dump() for z in self.zones]
         private_players = {p.socket_id: p.dump() for p in self.players}
         public_players = copy.deepcopy(private_players)
@@ -123,10 +136,10 @@ class GameContext:
         # Collect the public states
         public_state = {
             'zones': public_zones,
-            'players': public_players,
+            'players': list(public_players.values()),
             'characters': [c.dump() for c in self.characters]
         }
-        private_state = private_players
+        private_state = list(private_players.values())
 
 
         return public_state, private_state

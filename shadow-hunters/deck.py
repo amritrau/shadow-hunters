@@ -6,10 +6,6 @@ from card import Card
 # Implements the Deck object.
 
 class Deck:
-    """
-    A Deck of Card objects. Implements shuffling and re-shuffling of a discard
-    pile.
-    """
     def __init__(self, cards):
         # Make sure a list is passed to cards
         if not isinstance(cards, list):
@@ -26,15 +22,9 @@ class Deck:
         self.shuffle()
 
     def shuffle(self):
-        """
-        Randomly shuffle the active cards.
-        """
         random.shuffle(self.cards)
 
     def drawCard(self):
-        """
-        Draw a card from the top of the deck.
-        """
         if len(self.cards) > 0:
             drawn = self.cards.pop()
 
@@ -49,7 +39,4 @@ class Deck:
             return self.drawCard()
 
     def addToDiscard(self, card):
-        """
-        Add a card to the discard pile.
-        """
         self.discard.append(card)
