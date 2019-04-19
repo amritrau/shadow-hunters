@@ -25,12 +25,23 @@ def test_fields():
     assert not p.character
     assert not p.location
     assert not p.equipment
-    assert not p.modifiers
+    assert p.modifiers['attack_dice_type'] == 'attack'
     assert p.damage == 0
     assert p.ai == False
 
     # test dump
     dump = p.dump()
+    assert dump['user_id'] == 'Max'
+    assert dump['socket_id'] == 'socket_id'
+    assert dump['state'] == 2
+    assert dump['equipment'] == []
+    assert dump['damage'] == 0
+    assert location == {}
+    assert character == {}
+    assert ai == False
+
+    """
+    # Can't do this because modifiers is a defaultdict
     assert (dump == {
         'user_id': 'Max',
         'socket_id': 'socket_id',
@@ -43,6 +54,7 @@ def test_fields():
         'modifiers': {},
         'ai': False
     })
+    """
 
 def test_setCharacter():
     p = player.Player('Max', 'socket_id', lambda x, y, z: 5, False)

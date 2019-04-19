@@ -52,6 +52,10 @@ class GameContext:
 
         # Randomly assign characters and point game context
         character_q = copy.deepcopy(characters)
+
+        # Remove characters unsuitable for current # of players
+        valid_for_n_players = lambda c: c.modifiers['min_players'] <= len(self.players) <= c.modifiers['max_players']
+        character_q = filter(valid_for_n_players, character_q)
         random.shuffle(character_q)
 
         # Figure out how many of each allegiance there has to be
@@ -118,6 +122,8 @@ class GameContext:
                 self.turn_order = list(self.players)
 
     def dump(self):
+        # Note that public_players and private_state are no longer keyed by
+        # socket_ids
         public_zones = [z.dump() for z in self.zones]
         private_players = {p.socket_id: p.dump() for p in self.players}
         public_players = copy.deepcopy(private_players)
@@ -130,10 +136,10 @@ class GameContext:
         # Collect the public states
         public_state = {
             'zones': public_zones,
-            'players': public_players,
+            'players': list(public_players.values()),
             'characters': [c.dump() for c in self.characters]
         }
-        private_state = private_players
+        private_state = list(private_players.values())
 
 
         return public_state, private_state

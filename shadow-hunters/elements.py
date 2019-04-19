@@ -1174,19 +1174,188 @@ class ElementFactory:
             return first_to_die or last_two
 
         ## Specials
-        def allie_special(gc, player):
-            if not player.modifiers['special']:
-                # Full heal
-                player.setDamage(0, player)
 
+        ########## Neutrals
+
+        def allie_special(gc, player, turn_pos):
+            # ANY TIME
+            if turn_pos == 'now':
+                if not player.modifiers['special_used']:
+                    # Full heal
+                    player.setDamage(0, player)
+
+                    # Update modifiers
+                    player.modifiers['special_used'] = True
+
+                    # Tell
+                    gc.tell_h("Allie used her special ability: {}".format(player.character.special_desc))
+                else:
+                    # Already used special
+                    gc.tell_h("This special ability can be used only once.", player.socket_id)
+
+        def bob_special(gc, player, turn_pos):
+            if 4 <= len(gc.players) <= 6:
+                player.modifiers['steal_for_damage'] = True
+            else:
                 # Update modifiers
-                player.modifiers['special'] = True
+                player.modifiers['steal_all_on_kill'] = True
+
+
+        def catherine_special(gc, player, turn_pos):
+            # START OF TURN
+            if turn_pos == 'start':
+                # Catherine is *required* to heal at the beginning of the turn
+                player.moveDamage(1, player)
 
                 # Tell
-                gc.tell_h("Allie used her special ability: {}", [player.character.special_desc])
-            else:
-                # Already used special
-                gc.tell_h("This special ability can be used only once.", [], player.socket_id)
+                gc.tell_h("Catherine used her special ability: {}".format(player.character.special_desc))
+
+        ########## Hunters
+
+        def george_special(gc, player, turn_pos):
+            # START OF TURN
+            if turn_pos == 'start':
+                if not player.modifiers['special_used']:
+                    # Tell the player that they'll get the special at the start of
+                    # the turn
+                    gc.tell_h("Special ability activated. You will be able to use this ability at the start of your turn.", player.socket_id)
+
+                    if not player.modifiers['special_active']:
+                        player.modifiers['special_active'] = True
+                    else:
+                        player.modifiers['special_used'] = True
+
+                        # Tell
+                        gc.tell_h("George used his special ability: {}".format(player.character.special_desc))
+
+                        # Enter attack sequence with 4-sided die
+                        player.attackSequence(dice_type = "4")
+
+
+                else:
+                    # Already used special
+                    gc.tell_h("This special ability can be used only once.", player.socket_id)
+
+        def fuka_special(gc, player, turn_pos):
+            # START OF TURN
+            if turn_pos == 'start':
+                if not player.modifiers['special_used']:
+                    # Tell the player that they'll get the special at the start of
+                    # the turn
+                    gc.tell_h("Special ability activiated. You will be able to use this ability at the start of your turn.", player.socket_id)
+
+                    if not player.modifiers['special_active']:
+                        player.modifiers['special_active'] = True
+                    else:
+                        player.modifiers['special_used'] = True
+
+                        # Tell
+                        gc.tell_h("Fu-ka used her special ability: {}".format(player.character.special_desc))
+
+                        # Enter set damage to 7 sequence
+                        # Select a player to use special on (includes user)
+                        player.ask_h('confirm', {'options': ["Use special ability"]}, player.user_id)
+                        data = {'options': [t.user_id for t in gc.getLivePlayers()]}
+                        target = player.ask_h('select', data, player.user_id)['value']
+
+                        # Set selected player to 7 damage
+                        [p for p in gc.getLivePlayers() if p.user_id == target][0].setDamage(7, player)
+
+
+                else:
+                    # Already used special
+                    gc.tell_h("This special ability can be used only once.", player.socket_id)
+
+        def franklin_special(gc, player, turn_pos):
+            # START OF TURN
+            if turn_pos == 'start':
+                if not player.modifiers['special_used']:
+                    # Tell the player that they'll get the special at the start of
+                    # the turn
+                    gc.tell_h("Special ability activiated. You will be able to use this ability at the start of your turn.", player.socket_id)
+
+                    if not player.modifiers['special_active']:
+                        player.modifiers['special_active'] = True
+                    else:
+                        player.modifiers['special_used'] = True
+
+                        # Tell
+                        gc.tell_h("Franklin used his special ability: {}".format(player.character.special_desc))
+
+                        # Enter attack sequence with 4-sided die
+                        player.attackSequence(dice_type = "6")
+
+
+                else:
+                    # Already used special
+                    gc.tell_h("This special ability can be used only once.", player.socket_id)
+
+        def ellen_special(gc, player, turn_pos):
+            # START OF TURN
+            if turn_pos == 'start':
+                if not player.modifiers['special_used']:
+                    # Tell the player that they'll get the special at the start of
+                    # the turn
+                    gc.tell_h("Special ability activiated. You will be able to use this ability at the start of your turn.", player.socket_id)
+
+                    if not player.modifiers['special_active']:
+                        player.modifiers['special_active'] = True
+                    else:
+                        player.modifiers['special_used'] = True
+
+                        # Tell
+                        gc.tell_h("Ellen used her special ability: {}".format(player.character.special_desc))
+
+                        # Choose a player to cancel their special
+                        # Select a player to use special on (excludes user)
+                        player.ask_h('confirm', {'options': ["Use special ability"]}, player.user_id)
+                        data = {'options': [t.user_id for t in gc.getLivePlayers() if t.user_id != player.user_id]}
+                        target = player.ask_h('select', data, player.user_id)['value']
+                        target.special = lambda gc, player, turn_pos: gc.tell_h("Your special has been cancelled.", player.socket_id)
+
+                        gc.tell_h("Ellen cancelled {}'s special ability for the rest of the game.'".format(target.user_id))
+
+
+                else:
+                    # Already used special
+                    gc.tell_h("This special ability can be used only once.", player.socket_id)
+
+        ########## Shadows
+
+        def valkyrie_special(gc, player, turn_pos):
+            if not player.modifiers['special_active']:
+                # Tell
+                gc.tell_h("Valkyrie used her special ability: {}".format(player.character.special_desc))
+                player.modifiers['attack_dice_type'] = "4"
+                player.modifiers['special_active'] = True
+
+        def vampire_special(gc, player, turn_pos):
+            if not player.modifiers['special_active']:
+                # Tell
+                gc.tell_h("Vampire used his special ability: {}".format(player.character.special_desc))
+                player.modifiers['damage_dealt_fn'] = lambda player: player.moveDamage(-2, player)
+                player.modifiers['special_active'] = True
+
+        def werewolf_special(gc, player, turn_pos):
+            if not player.modifiers['special_active']:
+                # Tell
+                gc.tell_h("Werewolf used their special ability: {}".format(player.character.special_desc))
+                player.modifiers['counterattack'] = True
+                player.modifiers['special_active'] = True
+
+        def ultra_soul_special(gc, player, turn_pos):
+            # START OF TURN
+            if turn_pos == 'start':
+                # Present player with list of attack options
+                targets = [p for p in gc.getLivePlayers() if p.location.name == "Underworld Gate"]
+                gc.tell_h("{} (Ultra Soul) is choosing a target for their Murder Ray...".format(player.user_id))
+                data = {'options': [p.user_id for p in targets if p != player]}
+                target = player.ask_h('select', data, player.user_id)['value']
+                target_Player = [p for p in gc.getLivePlayers() if p.user_id == target][0]
+                gc.tell_h("{} chose {}!".format(player.user_id, target))
+                dealt = player.attack(target_Player, 3)
+                gc.tell_h("{} (Ultra Soul)'s Murder Ray gave {} {} damage!".format(player.user_id, target, dealt))
+
 
         ## Initialize characters
 
@@ -1197,7 +1366,7 @@ class ElementFactory:
                 max_damage = 13,
                 win_cond = shadow_win_cond,
                 win_cond_desc = "All the Hunter characters are dead or 3 Neutral characters are dead",
-                special = lambda: 0,  # TODO
+                special = valkyrie_special,
                 special_desc = "todo",
                 resource_id = "valkyrie"
             ),
@@ -1207,7 +1376,7 @@ class ElementFactory:
                 max_damage = 13,
                 win_cond = shadow_win_cond,
                 win_cond_desc = "All the Hunter characters are dead or 3 Neutral characters are dead",
-                special = lambda: 0,  # TODO
+                special = vampire_special,
                 special_desc = "todo",
                 resource_id = "vampire"
             ),
@@ -1217,7 +1386,7 @@ class ElementFactory:
                 max_damage = 14,
                 win_cond = shadow_win_cond,
                 win_cond_desc = "All the Hunter characters are dead or 3 Neutral characters are dead",
-                special = lambda: 0,  # TODO
+                special = werewolf_special,
                 special_desc = "todo",
                 resource_id = "werewolf"
             ),
@@ -1227,9 +1396,9 @@ class ElementFactory:
                 max_damage = 11,
                 win_cond = shadow_win_cond,
                 win_cond_desc = "All the Hunter characters are dead or 3 Neutral characters are dead",
-                special = lambda: 0,  # TODO
+                special = ultra_soul_special,
                 special_desc = "todo",
-                resource_id = "vampire"
+                resource_id = "ultra-soul"
             ),
             character.Character(
                 name = "Allie",
@@ -1237,19 +1406,31 @@ class ElementFactory:
                 max_damage = 8,
                 win_cond = allie_win_cond,
                 win_cond_desc = "You're not dead when the game is over",
-                special = lambda args: args[''],  # TODO
+                special = allie_special,
                 special_desc = "Fully heal your damage",
                 resource_id = "allie"
             ),
             character.Character(
-                name = "Bob",
+                name = "Bob46",
                 alleg = 1,  # Neutral
                 max_damage = 10,
                 win_cond = bob_win_cond,
                 win_cond_desc = "You have 5 or more equipment cards",
-                special = lambda: 0,  # TODO
-                special_desc = "todo",
-                resource_id = "bob"
+                special = bob_special,
+                special_desc = "If your attack inflicts 2 or more damage to a character, you may take an Equipment card of your choice from that character instead of giving them damage.",
+                resource_id = "bob",
+                modifiers = {'min_players': 4, 'max_players': 6}
+            ),
+            character.Character(
+                name = "Bob78",
+                alleg = 1,  # Neutral
+                max_damage = 10,
+                win_cond = bob_win_cond,
+                win_cond_desc = "You have 5 or more equipment cards",
+                special = bob_special,
+                special_desc = "If your attack kills a character, you take all the Equipment cards that character had.",
+                resource_id = "bob",
+                modifiers = {'min_players': 7, 'max_players': 8}
             ),
             character.Character(
                 name = "Catherine",
@@ -1257,7 +1438,7 @@ class ElementFactory:
                 max_damage = 11,
                 win_cond = catherine_win_cond,
                 win_cond_desc = "You are the first to die or you are one of the last two characters remaining",
-                special = lambda: 0,  # TODO
+                special = catherine_special,
                 special_desc = "todo",
                 resource_id = "catherine"
             ),
@@ -1267,7 +1448,7 @@ class ElementFactory:
                 max_damage = 14,
                 win_cond = hunter_win_cond,
                 win_cond_desc = "All the Shadow characters are dead",
-                special = lambda: 0,  # TODO
+                special = george_special,
                 special_desc = "todo",
                 resource_id = "george"
             ),
@@ -1277,7 +1458,7 @@ class ElementFactory:
                 max_damage = 12,
                 win_cond = hunter_win_cond,
                 win_cond_desc = "All the Shadow characters are dead",
-                special = lambda: 0,  # TODO
+                special = fuka_special,
                 special_desc = "todo",
                 resource_id = "fu-ka"
             ),
@@ -1287,7 +1468,7 @@ class ElementFactory:
                 max_damage = 12,
                 win_cond = hunter_win_cond,
                 win_cond_desc = "All the Shadow characters are dead",
-                special = lambda: 0,  # TODO
+                special = franklin_special,
                 special_desc = "todo",
                 resource_id = "franklin"
             ),
@@ -1297,7 +1478,7 @@ class ElementFactory:
                 max_damage = 10,
                 win_cond = hunter_win_cond,
                 win_cond_desc = "All the Shadow characters are dead",
-                special = lambda: 0,  # TODO
+                special = ellen_special,
                 special_desc = "todo",
                 resource_id = "ellen"
             )
