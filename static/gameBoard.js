@@ -21,6 +21,7 @@ var GameBoard = new Phaser.Class ({
         this.gameData;
         this.charInfo;
         this.infoBox;
+        this.openPopups = [];
         this.gameEnd = {image: [], winners: [], players_info: []};
         this.cards = {cardsDrawn: [], cardText: [], nDrawn: 0};
         this.infoKnown;
@@ -545,13 +546,21 @@ var GameBoard = new Phaser.Class ({
     {
         if(player.infoBox.visible == false)
         {
+          while(player.scene.openPopups.length > 0) {
+            var open = player.scene.openPopups.pop();
+            open.infoBox.setVisible(false);
+            open.displayInfo.setVisible(false);
+          }
+
             player.infoBox.setVisible(true);
             player.displayInfo.setVisible(true);
+            player.scene.openPopups.push(player);
         }
         else
         {
             player.infoBox.setVisible(false);
             player.displayInfo.setVisible(false);
+            player.scene.openPopups.pop();
         }
     },
     //click handler for popups that will delete them
