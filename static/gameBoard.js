@@ -373,10 +373,9 @@ var GameBoard = new Phaser.Class ({
             "Player: " + this.gameData.public.characters[7].name, "Dies At HP: " + this.gameData.public.characters[7].max_damage, 
             "Player: " + this.gameData.public.characters[8].name, "Dies At HP: " + this.gameData.public.characters[8].max_damage, 
             "Player: " + this.gameData.public.characters[9].name, "Dies At HP: " + this.gameData.public.characters[9].max_damage, 
-            "Player: " + this.gameData.public.characters[10].name, "Dies At HP: " + this.gameData.public.characters[10].max_damage, 
-            "Player: " + this.gameData.public.characters[11].name, "Dies At HP: " + this.gameData.public.characters[11].max_damage, 
-            "Player: " + this.gameData.public.characters[12].name, "Dies At HP: " + this.gameData.public.characters[12].max_damage
+            "Player: " + this.gameData.public.characters[10].name, "Dies At HP: " + this.gameData.public.characters[10].max_damage
         ]);
+
         sprite.displayInfo.setVisible(false);
         sprite.displayInfo.depth = 30;
         sprite.setInteractive();
