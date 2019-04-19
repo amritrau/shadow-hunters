@@ -63,6 +63,7 @@ var GameBoard = new Phaser.Class ({
     //function to initialize the data sent into gameboard from waiting room
     init: function (data)
     {
+      console.log("in gameboard, loading data");
         // Remove start button
         $('#start').remove();
         $('#selectPlayers').remove();
@@ -100,7 +101,7 @@ var GameBoard = new Phaser.Class ({
 
         // load arsenal
         this.load.image('arsenal', gfx + 'arsenal.svg', {width: 640, height: 125.683});
-        
+
         // load the location cards
         this.load.svg('Hermit\'s Cabin', gfx + 'hermits_cabin.svg', {width: 101, height: 150});
         this.load.svg('Underworld Gate', gfx + 'underworld_gate.svg', {width: 101, height: 150});
@@ -225,21 +226,19 @@ var GameBoard = new Phaser.Class ({
 
 
         //this loop creates all players: self and enemies.
-        sorted_keys = Object.keys(this.allPlayersInfo).sort(); // Hack to force keys into a deterministic order
-        this.nPlayers = Object.keys(this.allPlayersInfo).length;
+        //sorted_keys = Object.keys(this.allPlayersInfo).sort(); // Hack to force keys into a deterministic order
         var count = 0;
+        this.nPlayers = this.allPlayersInfo.length;
         for(var i = 0; i < this.nPlayers; i++) {
-            var key = sorted_keys[i];
-            if(("private" in this.gameData) && this.allPlayersInfo[key].user_id === this.gameData.private.user_id) {
-                this.player = this.makePlayer(this.allPlayersInfo[key].user_id,
-                                              this.allPlayersInfo[key], i+1);
-                this.player.key = key;
+            if(("private" in this.gameData) && this.allPlayersInfo[i].user_id === this.gameData.private.user_id) {
+                this.player = this.makePlayer(this.allPlayersInfo[i].user_id,
+                                              this.allPlayersInfo[i], i+1);
                 this.player.on('clicked', this.clickHandler, this.player);
             }
             else {
-                this.otherPlayers[key] = this.makePlayer(this.allPlayersInfo[key].user_id,
-                                                         this.allPlayersInfo[key], i+1);
-                this.otherPlayers[key].on('clicked', this.clickHandler, this.otherPlayers[key]);
+                this.otherPlayers[count] = this.makePlayer(this.allPlayersInfo[i].user_id,
+                                                         this.allPlayersInfo[i], i+1);
+                this.otherPlayers[count].on('clicked', this.clickHandler, this.otherPlayers[i]);
                 count++;
             }
         }
@@ -408,7 +407,7 @@ var GameBoard = new Phaser.Class ({
         sprite.displayInfo = this.add.text(760, 10, " ", { font: '10px Palatino', fill: '#FFFFFF', wordWrap: { width: 250, useAdvancedWrap: true }});
 
         sprite.displayInfo.lineSpacing = -2.5;
-    
+
         sprite.displayInfo.setText(["Player: " + this.gameData.public.characters[0].name, "Dies At HP: " + this.gameData.public.characters[0].max_damage + "\n",
             "Player: " + this.gameData.public.characters[1].name, "Dies At HP: " + this.gameData.public.characters[1].max_damage + "\n",
             "Player: " + this.gameData.public.characters[2].name, "Dies At HP: " + this.gameData.public.characters[2].max_damage + "\n",
@@ -624,15 +623,16 @@ var GameBoard = new Phaser.Class ({
         //loop through each player and see if there are things to update
         //console.log(data);
         this.allPlayersInfo = data.players;
+        var count = 0;
         for(var i = 0; i < this.nPlayers; i++){
-            var key = Object.keys(this.allPlayersInfo)[i];
-            if(this.player && key === this.player.key) {
+            if(this.player && this.allPlayersInfo[i].user_id === this.player.name) {
                 //update self
-                this.updatePlayer(this.player, this.allPlayersInfo[key]);
+                this.updatePlayer(this.player, this.allPlayersInfo[i]);
             }
             else {
                 //update other players
-                this.updatePlayer(this.otherPlayers[key], this.allPlayersInfo[key]);
+                this.updatePlayer(this.otherPlayers[count], this.allPlayersInfo[i]);
+                count++;
             }
         }
     },

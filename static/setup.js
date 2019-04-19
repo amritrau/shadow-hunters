@@ -32,6 +32,7 @@ $('document').ready(function() {
         var start_form = $('#start').on('submit', function(e) {
             e.preventDefault();
             socket.emit('start', { 'n_players': $('#nPlayers').val() });
+            console.log("start game!");
         });
 
         // Reveal button

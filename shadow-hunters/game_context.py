@@ -125,21 +125,21 @@ class GameContext:
         # Note that public_players and private_state are no longer keyed by
         # socket_ids
         public_zones = [z.dump() for z in self.zones]
-        private_players = {p.socket_id: p.dump() for p in self.players}
+        private_players = [p.dump() for p in self.players]
         public_players = copy.deepcopy(private_players)
 
         # Hide character information if player hasn't revealed themselves
-        for k,v in public_players.items():
-            if public_players[k]['state'] == 2:
-                public_players[k]['character'] = {}
+        for p in public_players:
+            if p['state'] == 2:
+                p['character'] = {}
 
         # Collect the public states
         public_state = {
             'zones': public_zones,
-            'players': list(public_players.values()),
+            'players': public_players,
             'characters': [c.dump() for c in self.characters]
         }
-        private_state = list(private_players.values())
+        private_state = private_players
 
 
         return public_state, private_state
