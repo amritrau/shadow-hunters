@@ -323,11 +323,11 @@ class Player:
         return dealt
 
     def moveDamage(self, damage_change, attacker):
-        if self.modifiers['steal_for_damage']:
+        if attacker.modifiers['steal_for_damage']:
             if damage_change >= 2:
                 # Ask attacker whether to steal equipment or deal damage
                 data = {'options': ["Steal equipment", "Deal {} damage".format(damage_change)]}
-                choose_steal = (player.ask_h('select', data, player.user_id)['value'] == "Steal equipment")
+                choose_steal = (attacker.ask_h('select', data, attacker.user_id)['value'] == "Steal equipment")
 
                 if choose_steal:
                     desired_eq = attacker.chooseEquipment(self)
