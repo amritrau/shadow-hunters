@@ -92,8 +92,8 @@ def room(methods=['GET', 'POST']):
         element_names += [ch.name for ch in ef.CHARACTERS]
         element_names += [a.name for a in ef.AREAS]
 
-        user_valid = username.startswith('CPU') or (username in element_names)
-        if (not user_valid) or (username == 'Decline'):
+        name_reserved = username.startswith('CPU') or (username in element_names)
+        if name_reserved or (username == 'Decline'):
             flash("The username you chose is reserved")
             return redirect('/')
 
@@ -109,18 +109,31 @@ def room(methods=['GET', 'POST']):
         # check for game already in progress
         if room_id in rooms and rooms[room_id]['status'] == 'GAME':
             public_state, private_state = rooms[room_id]['gc'].dump()
-            connection_lock.release()
-            return render_template('room.html', context={
+            usrctx = {
                 'name': username,
                 'room_id': room_id,
                 'spectate': True,
-                'gc_data': {'public': public_state}
-            })
+                'reconnect': False,
+                'gc_data': { 'public': public_state }
+            }
+
+            # Reconnect to game
+            if rooms[room_id]['reconnections'][username] == 'cookie':  # TODO: make actual browser cookie
+                context['spectate'] = False
+                context['reconnect'] = True
+                context['gc_data']['private'] = private_state
+                ai_player = [p for p in rooms[room_id]['gc'].players if p.user_id == username][0]
+            connection_lock.release()
+            return render_template('room.html', context=usrctx)
         connection_lock.release()
 
         # send player to room
-        ctx = dict(name=username, room_id=room_id, spectate=False)
-        return render_template('room.html', context=ctx)
+        return render_template('room.html', context={
+            'name': username,
+            'room_id': room_id,
+            'spectate': False,
+            'reconnect': False
+        })
     else:
         return redirect('/')
 
@@ -348,22 +361,35 @@ def on_message(json):
 @socketio.on('join')
 def on_join(json):
 
-    # Emit join message to other players
+    # Get fields
     room_id = json['room_id']
     name = json['name']
-    msg = name+' has joined the room!'
-    if json['spectate']:
-        msg = name+' has joined the room as a spectator!'
-    socket_tell(msg, [], None, room_id)
+    reconnect = json['reconnect']
+    spectate = json['spectate']
+
+    # Tell everyone about the join
+    msg = '{} has joined the room!'
+    if spectate:
+        msg = '{} has joined the room as a spectator!'
+    elif reconnect:
+        msg = '{} has rejoined the room!'
+    socket_tell(msg, [name], None, room_id)
 
     # Create room if it doesn't exist and add player to room
     connection_lock.acquire()
     if room_id not in rooms:
-        if json['spectate']:
+        if spectate or reconnect:
             connection_lock.release()
             socketio.disconnect(request.sid)
             return
-        rooms[room_id] = {'status': 'LOBBY', 'gc': None, 'connections': {}}
+        rooms[room_id] = {'status': 'LOBBY', 'gc': None, 'connections': {}, 'reconnections': {}}
+
+    # If this is a reconnection event, change player's socket id and AI status in game context
+    if reconnect:
+        del rooms[room_id]['reconnections'][name]
+        player = [p for p in rooms[room_id]['gc'].players if p.user_id == name][0]
+        player.socket_id = request.sid
+        player.ai = False
 
     # Add new player to room
     rooms[room_id]['connections'][request.sid] = name
@@ -374,14 +400,16 @@ def on_join(json):
     msg = 'Welcome to Shadow Hunters Room: '+room_id
     if json['spectate']:
         msg = 'You are now spectating Shadow Hunters Room: '+room_id
-    socket_tell(msg, [], None, room_id, client=(request.sid,))
+    if not reconnect:
+        socket_tell(msg, [], None, room_id, client=(request.sid,))
 
     # Tell player about other room members
     members = [x for x in rooms[room_id]['connections'].values() if x != name]
     msg = 'There\'s no one else here!'
     if members:
         msg = 'Other players in the room: '+', '.join(members)
-    socket_tell(msg, [], None, room_id, client=(request.sid,))
+    if not reconnect:
+        socket_tell(msg, [], None, room_id, client=(request.sid,))
 
 @socketio.on('disconnect')
 def on_disconnect():
@@ -417,6 +445,7 @@ def on_disconnect():
 
         # Swap player for AI
         player_in_game[0].ai = True
+        rooms[room_id]['reconnections'][player_in_game[0].user_id] = 'cookie' # TODO: make actual browser cookie
         connection_lock.release()
         socket_tell('A computer player has taken their place!', [], gc, room_id)
 

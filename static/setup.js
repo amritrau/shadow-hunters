@@ -20,7 +20,7 @@ $('document').ready(function() {
     socket.on('connect', function() {
 
         // User joins the room
-        socket.emit('join', { name: usrctx.name, room_id: usrctx.room_id, spectate: usrctx.spectate } );
+        socket.emit('join', usrctx );
 
         // Set up message posting with button presses
         var chat_form = $('#chat').on('submit', function(e) {
