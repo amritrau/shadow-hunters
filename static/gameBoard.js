@@ -382,23 +382,19 @@ var GameBoard = new Phaser.Class ({
         sprite.infoBox.depth = 30;
         sprite.displayInfo = this.add.text(700, 30, " ", { font: '12px Arial', fill: '#FFFFFF', wordWrap: { width: 250, useAdvancedWrap: true }});
 
-    
+
 
         sprite.displayInfo.setText(["Player: " + this.gameData.public.characters[0].name, "Dies At HP: " + this.gameData.public.characters[0].max_damage,
-            "Player: " + this.gameData.public.characters[1].name, "Dies At HP: " + this.gameData.public.characters[1].max_damage, 
-            "Player: " + this.gameData.public.characters[2].name, "Dies At HP: " + this.gameData.public.characters[2].max_damage, 
-            "Player: " + this.gameData.public.characters[3].name, "Dies At HP: " + this.gameData.public.characters[3].max_damage, 
-            "Player: " + this.gameData.public.characters[4].name, "Dies At HP: " + this.gameData.public.characters[4].max_damage, 
-            "Player: " + this.gameData.public.characters[5].name, "Dies At HP: " + this.gameData.public.characters[5].max_damage, 
-            "Player: " + this.gameData.public.characters[6].name, "Dies At HP: " + this.gameData.public.characters[6].max_damage, 
-            "Player: " + this.gameData.public.characters[7].name, "Dies At HP: " + this.gameData.public.characters[7].max_damage, 
-            "Player: " + this.gameData.public.characters[8].name, "Dies At HP: " + this.gameData.public.characters[8].max_damage, 
-            "Player: " + this.gameData.public.characters[9].name, "Dies At HP: " + this.gameData.public.characters[9].max_damage, 
-            "Player: " + this.gameData.public.characters[10].name, "Dies At HP: " + this.gameData.public.characters[10].max_damage, 
-            "Player: " + this.gameData.public.characters[11].name, "Dies At HP: " + this.gameData.public.characters[11].max_damage, 
-            "Player: " + this.gameData.public.characters[12].name, "Dies At HP: " + this.gameData.public.characters[12].max_damage
-            
-
+            "Player: " + this.gameData.public.characters[1].name, "Dies At HP: " + this.gameData.public.characters[1].max_damage,
+            "Player: " + this.gameData.public.characters[2].name, "Dies At HP: " + this.gameData.public.characters[2].max_damage,
+            "Player: " + this.gameData.public.characters[3].name, "Dies At HP: " + this.gameData.public.characters[3].max_damage,
+            "Player: " + this.gameData.public.characters[4].name, "Dies At HP: " + this.gameData.public.characters[4].max_damage,
+            "Player: " + this.gameData.public.characters[5].name, "Dies At HP: " + this.gameData.public.characters[5].max_damage,
+            "Player: " + this.gameData.public.characters[6].name, "Dies At HP: " + this.gameData.public.characters[6].max_damage,
+            "Player: " + this.gameData.public.characters[7].name, "Dies At HP: " + this.gameData.public.characters[7].max_damage,
+            "Player: " + this.gameData.public.characters[8].name, "Dies At HP: " + this.gameData.public.characters[8].max_damage,
+            "Player: " + this.gameData.public.characters[9].name, "Dies At HP: " + this.gameData.public.characters[9].max_damage,
+            "Player: " + this.gameData.public.characters[10].name, "Dies At HP: " + this.gameData.public.characters[10].max_damage
 
         ]);
         sprite.displayInfo.setVisible(false);
