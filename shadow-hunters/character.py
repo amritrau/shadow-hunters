@@ -2,7 +2,7 @@
 # Implements a Character.
 
 class Character:
-    def __init__(self, name, alleg, max_damage, win_cond, win_cond_desc, resource_id, special, special_desc):
+    def __init__(self, name, alleg, max_damage, win_cond, win_cond_desc, resource_id, special, special_desc, modifiers = {'min_players': 4, 'max_players': 8}):
         self.name = name
         self.alleg = alleg
         self.max_damage = max_damage
@@ -11,6 +11,7 @@ class Character:
         self.special = special
         self.special_desc = special_desc
         self.resource_id = resource_id
+        self.modifiers = modifiers
 
     def dump(self):
         return {

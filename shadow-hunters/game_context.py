@@ -43,8 +43,11 @@ class GameContext:
                 a.zone = z
 
         # Randomly assign characters and point game context
-
         character_q = copy.deepcopy(characters)
+
+        # Remove characters unsuitable for current # of players
+        valid_for_n_players = lambda c: c.modifiers['min_players'] <= len(self.players) <= c.modifiers['max_players']
+        character_q = filter(valid_for_n_players, character_q)
         random.shuffle(character_q)
 
         # Figure out how many of each allegiance there has to be

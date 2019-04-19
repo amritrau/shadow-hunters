@@ -1174,9 +1174,10 @@ class ElementFactory:
 
         def bob_special(gc, player, turn_pos):
             if 4 <= len(gc.players) <= 6:
-                return # TODO
+                player.modifiers['steal_for_damage'] = True
             else:
-                return # TODO
+                # Update modifiers
+                player.modifiers['steal_all_on_kill'] = True
 
 
         def catherine_special(gc, player, turn_pos):
@@ -1389,14 +1390,26 @@ class ElementFactory:
                 resource_id = "allie"
             ),
             character.Character(
-                name = "Bob",
+                name = "Bob46",
                 alleg = 1,  # Neutral
                 max_damage = 10,
                 win_cond = bob_win_cond,
                 win_cond_desc = "You have 5 or more equipment cards",
                 special = bob_special,
-                special_desc = "todo",
-                resource_id = "bob"
+                special_desc = "If your attack inflicts 2 or more damage to a character, you may take an Equipment card of your choice from that character instead of giving them damage.",
+                resource_id = "bob",
+                modifiers = {'min_players': 4, 'max_players': 6}
+            ),
+            character.Character(
+                name = "Bob78",
+                alleg = 1,  # Neutral
+                max_damage = 10,
+                win_cond = bob_win_cond,
+                win_cond_desc = "You have 5 or more equipment cards",
+                special = bob_special,
+                special_desc = "If your attack kills a character, you take all the Equipment cards that character had.",
+                resource_id = "bob",
+                modifiers = {'min_players': 7, 'max_players': 8}
             ),
             character.Character(
                 name = "Catherine",

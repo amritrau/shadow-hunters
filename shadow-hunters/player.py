@@ -256,7 +256,7 @@ class Player:
         self.gc.tell_h("{} gave {} their {}!".format(self.user_id, receiver.user_id, eq.title))
         self.gc.update_h()
 
-    def attack(self, other, amount):
+    def attack(self, other, amount, dryrun=False):
 
         # Compose equipment functions
         is_attack = True
@@ -268,11 +268,12 @@ class Player:
         # Check for spear of longinus
         has_spear = "Spear of Longinus" in [e.title for e in self.equipment]
         if successful and self.character.alleg == 2 and self.state == 1 and has_spear:
-            self.gc.tell_h("{} strikes with their Spear of Longinus!".format(self.user_id))
+            if not dryrun:
+                self.gc.tell_h("{} strikes with their Spear of Longinus!".format(self.user_id))
             amount += 2
 
         # Return damage dealt
-        dealt = other.defend(self, amount)
+        dealt = other.defend(self, amount, dryrun)
 
         # If we dealt damage, some specials might have external effects
         if dealt > 0:
@@ -281,11 +282,12 @@ class Player:
 
         return dealt
 
-    def defend(self, other, amount):
+    def defend(self, other, amount, dryrun=False):
 
         # Check for guardian angel
         if "guardian_angel" in self.modifiers:
-            self.gc.tell_h("{}\'s Guardian Angel shielded them from damage!".format(self.user_id))
+            if not dryrun:
+                self.gc.tell_h("{}\'s Guardian Angel shielded them from damage!".format(self.user_id))
             return 0
 
         # Compose equipment functions
@@ -297,7 +299,8 @@ class Player:
 
         # Return damage dealt
         dealt = amount
-        self.moveDamage(-dealt, attacker = other)
+        if not dryrun:
+            self.moveDamage(-dealt, attacker = other)
 
         # Check for counterattack
         if self.modifiers['counterattack']:
@@ -320,6 +323,19 @@ class Player:
         return dealt
 
     def moveDamage(self, damage_change, attacker):
+        if self.modifiers['steal_for_damage']:
+            if damage_change >= 2:
+                # Ask attacker whether to steal equipment or deal damage
+                data = {'options': ["Steal equipment", "Deal {} damage".format(damage_change)]}
+                choose_steal = (player.ask_h('select', data, player.user_id)['value'] == "Steal equipment")
+
+                if choose_steal:
+                    desired_eq = attacker.chooseEquipment(self)
+                    self.giveEquipment(attacker, desired_eq)
+                    gc.tell_h("{} stole {}'s {} instead of dealing {} damage!'".format(attacker.user_id, self.user_id, desired_eq.name, damage_change))
+
+                    return self.damage
+
         self.damage = min(self.damage - damage_change, self.character.max_damage)
         self.damage = max(0, self.damage)
         self.checkDeath(attacker)
@@ -352,10 +368,19 @@ class Player:
         data = {'options': [eq.title for eq in self.equipment]}
         if len(data['options']):
 
-            if "Silver Rosary" in [e.title for e in attacker.equipment]:
+            has_silver_rosary = ("Silver Rosary" in [e.title for e in attacker.equipment])
+            has_steal_all_mod = attacker.modifiers['steal_all_on_kill']
+
+            if has_silver_rosary or has_steal_all_mod:
 
                 # Steal all of the player's equipment
-                self.gc.tell_h("{}'s Silver Rosary let them steal all of {}'s equipment!".format(attacker.user_id, self.user_id))
+                msg = ""
+                if has_silver_rosary:
+                    msg = "{}'s Silver Rosary let them steal all of {}'s equipment!".format(attacker.user_id, self.user_id)
+                else:
+                    msg = "{} stole all of {}'s equipment!".format(attacker.user_id, self.user_id)
+
+                self.gc.tell_h()
                 attacker.equipment += self.equipment
                 for eq in attacker.equipment:
                     eq.holder = attacker
