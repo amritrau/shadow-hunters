@@ -536,7 +536,7 @@ var GameBoard = new Phaser.Class ({
     //for each update, change parts of the board that need to be redrawn.
     updateBoard: function(data) {
         //loop through each player and see if there are things to update
-        console.log(data);
+        //console.log(data);
         this.allPlayersInfo = data.players;
         for(var i = 0; i < this.nPlayers; i++){
             var key = Object.keys(this.allPlayersInfo)[i];
