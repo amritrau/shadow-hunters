@@ -40,22 +40,6 @@ def test_fields():
     assert dump['character'] == {}
     assert dump['ai'] == False
 
-    """
-    # Can't do this because modifiers is a defaultdict
-    assert (dump == {
-        'user_id': 'Max',
-        'socket_id': 'socket_id',
-        'color': 'c',
-        'state': 2,
-        'equipment': [],
-        'damage': 0,
-        'location': {},
-        'character': {},
-        'modifiers': {},
-        'ai': False
-    })
-    """
-
 def test_setCharacter():
     p = player.Player('Max', 'socket_id', lambda x, y, z: 5, False)
 
