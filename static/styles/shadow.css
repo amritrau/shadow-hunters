@@ -34,6 +34,7 @@ body {
     position: absolute;
     left:475px;
     top:550px;
+    font-family: Palatino, "Times New Roman", Times;
 }
 
 .start {
@@ -46,6 +47,7 @@ body {
     text-decoration: none;
     display: inline-block;
     font-size: 16px;
+    font-family: Palatino, "Times New Roman", Times;
 }
 .start:focus {
     background-color: #6d4e69;
@@ -57,12 +59,14 @@ select {
    -moz-appearance: none;
    appearance: none;       /* remove default arrow */
    /* background-image: url();   /* add custom arrow */
+   font-family: Palatino, "Times New Roman", Times;
 }
 
 #selectPlayers {
     position: absolute;
     left: 480px;
     top: 400px;
+    font-family: Palatino, "Times New Roman", Times;
 }
 
 #nPlayers {
@@ -73,12 +77,14 @@ select {
     position: absolute;
     left:750px;
     top:400px;
+    font-family: Palatino, "Times New Roman", Times;
 }
 
 #reveal {
     position: absolute;
     left:70px;
     top:457px;
+    font-family: Palatino, "Times New Roman", Times;
 }
 
 .reveal {
@@ -91,6 +97,7 @@ select {
     text-decoration: none;
     display: inline-block;
     font-size: 14px;
+    font-family: Palatino, "Times New Roman", Times;
 }
 
 .button1 {
@@ -105,6 +112,7 @@ select {
   text-decoration: none;
   display: inline-block;
   font-size: 10px;
+  font-family: Palatino, "Times New Roman", Times;
 }
 .button2 {
   background-color: #b786b0;
@@ -118,6 +126,7 @@ select {
   text-decoration: none;
   display: inline-block;
   font-size: 10px;
+  font-family: Palatino, "Times New Roman", Times;
 }
 
 #popup {
@@ -130,6 +139,7 @@ select {
     top: 270px;
     width:800px;
     height:60px;
+    font-family: Palatino, "Times New Roman", Times;
 }
 
 .selectButton {
@@ -146,6 +156,7 @@ select {
     text-decoration: none;
     display: inline-block;
     font-size: 13px;
+    font-family: Palatino, "Times New Roman", Times;
 }
 
 #chatbox {
@@ -188,6 +199,7 @@ select {
 
 #message {
     width: 130px;
+    font-family: Palatino, "Times New Roman", Times;
     /* background-color: rgba(255, 255, 255, .5); */
 }
 
@@ -200,6 +212,7 @@ select {
     text-align: center;
     text-decoration: none;
     display: inline-block;
+    font-family: Palatino, "Times New Roman", Times;
 }
 
 input[type=text]{
