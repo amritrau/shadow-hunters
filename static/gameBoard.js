@@ -12,6 +12,7 @@ var GameBoard = new Phaser.Class ({
         this.allowClick = true;
 
         //this is where all of the objects specific to our scene will appear
+        this.arsenal;
         this.healthBar;
         this.player;
         this.allPlayersInfo;
@@ -69,14 +70,14 @@ var GameBoard = new Phaser.Class ({
         this.allPlayersInfo = this.gameData.public.players;
 
         // DEBUGGING
-        // console.log(this.charInfo);
-        // console.log(typeof this.charInfo);
-        // console.log(this.gameData.public);
-        // console.log(this.gameData.public.players);
-        // var key = Object.keys(this.otherPlayersInfo)[0];
-        // console.log(this.otherPlayersInfo[key].user_id);
-        // console.log(Object.keys(this.otherPlayersInfo).length);
-        // console.log(this.gameData.private);
+        console.log(this.charInfo);
+        console.log(typeof this.charInfo);
+        console.log(this.gameData.public);
+        console.log(this.gameData.public.players);
+        //var key = Object.keys(this.otherPlayersInfo)[0];
+        //console.log(this.otherPlayersInfo[key].user_id);
+        //console.log(Object.keys(this.otherPlayersInfo).length);
+        console.log(this.gameData.private);
     },
 
     //the preload function is where all images that will be used in the game are loaded into
@@ -164,6 +165,7 @@ var GameBoard = new Phaser.Class ({
         this.load.image('Werewolf', '/static/assets/anon.png');
         //this.load.svg('Allie', '/static/assets/Allie.svg', {width: 123, height: 123});
 
+
         //display popups
         this.load.svg('gameOver', '/static/assets/gameOver.svg', {width: 642, height: 590});
         this.load.svg('whitecard', '/static/assets/whitecard.svg', {width: 154.604, height: 199.212});
@@ -173,6 +175,9 @@ var GameBoard = new Phaser.Class ({
         // load bitmap text
         this.load.bitmapFont('adventur', gfx + 'Adventur.png', gfx + 'Adventur.fnt');
 
+        // Load arsenal images
+        this.load.image('Arsenal Box', '/static/assets/arsenalbox.png');
+        this.load.image('sword', '/static/assets/sword.png');
     },
 
     //the create function is where everything is added to the canvas
@@ -328,9 +333,23 @@ var GameBoard = new Phaser.Class ({
             return 'If you leave this page, you will be removed from the game. ' +
                    'Are you sure you want to leave?';
         };
+    },
 
-        // Center character name in info box
-        name.x = 97.5 - (name.width * 0.5);
+    makeArsenal: function(datasize, data){
+
+        for(var i = 0; i < datasize; i++) {
+            var sword = this.add.image(255 + i*100, 550, "sword");
+            sword.infoBox = this.add.image(255 + i*100, 450, "customTip");
+            sword.infoBox.setVisible(false);
+            sword.infoBox.depth = 30;
+
+            sword.displayInfo = this.add.text(200 + i*100, 375, " ", { font: '12px Arial', fill: '#FFFFFF', wordWrap: { width: 250, useAdvancedWrap: true }});
+            sword.displayInfo.setText(["Equipment:"+ data.equipment[i].title + "\n" + "Description:" + data.equipment[i].desc]);
+            sword.displayInfo.setVisible(false);
+            sword.displayInfo.depth = 30;
+            sword.setInteractive();
+            return sword;
+        }
     },
 
 
@@ -343,16 +362,20 @@ var GameBoard = new Phaser.Class ({
         sprite.displayInfo = this.add.text(760, 10, " ", { font: '10px Palatino', fill: '#FFFFFF', wordWrap: { width: 250, useAdvancedWrap: true }});
 
         sprite.displayInfo.lineSpacing = -2.5;
-
-        sprite.displayInfo.setText(["Player: " + this.gameData.public.characters[0].name, "Dies At HP: " + this.gameData.public.characters[0].max_damage, "\n",
-            "Player: " + this.gameData.public.characters[1].name, "Dies At HP: " + this.gameData.public.characters[1].max_damage, "\n",
-            "Player: " + this.gameData.public.characters[2].name, "Dies At HP: " + this.gameData.public.characters[2].max_damage, "\n",
-            "Player: " + this.gameData.public.characters[3].name, "Dies At HP: " + this.gameData.public.characters[3].max_damage, "\n",
-            "Player: " + this.gameData.public.characters[4].name, "Dies At HP: " + this.gameData.public.characters[4].max_damage, "\n",
-            "Player: " + this.gameData.public.characters[5].name, "Dies At HP: " + this.gameData.public.characters[5].max_damage, "\n",
-            "Player: " + this.gameData.public.characters[6].name, "Dies At HP: " + this.gameData.public.characters[6].max_damage, "\n",
-            "Player: " + this.gameData.public.characters[7].name, "Dies At HP: " + this.gameData.public.characters[7].max_damage, "\n",
-            "Player: " + this.gameData.public.characters[8].name, "Dies At HP: " + this.gameData.public.characters[8].max_damage
+    
+        sprite.displayInfo.setText(["Player: " + this.gameData.public.characters[0].name, "Dies At HP: " + this.gameData.public.characters[0].max_damage,
+            "Player: " + this.gameData.public.characters[1].name, "Dies At HP: " + this.gameData.public.characters[1].max_damage, 
+            "Player: " + this.gameData.public.characters[2].name, "Dies At HP: " + this.gameData.public.characters[2].max_damage, 
+            "Player: " + this.gameData.public.characters[3].name, "Dies At HP: " + this.gameData.public.characters[3].max_damage, 
+            "Player: " + this.gameData.public.characters[4].name, "Dies At HP: " + this.gameData.public.characters[4].max_damage, 
+            "Player: " + this.gameData.public.characters[5].name, "Dies At HP: " + this.gameData.public.characters[5].max_damage, 
+            "Player: " + this.gameData.public.characters[6].name, "Dies At HP: " + this.gameData.public.characters[6].max_damage, 
+            "Player: " + this.gameData.public.characters[7].name, "Dies At HP: " + this.gameData.public.characters[7].max_damage, 
+            "Player: " + this.gameData.public.characters[8].name, "Dies At HP: " + this.gameData.public.characters[8].max_damage, 
+            "Player: " + this.gameData.public.characters[9].name, "Dies At HP: " + this.gameData.public.characters[9].max_damage, 
+            "Player: " + this.gameData.public.characters[10].name, "Dies At HP: " + this.gameData.public.characters[10].max_damage, 
+            "Player: " + this.gameData.public.characters[11].name, "Dies At HP: " + this.gameData.public.characters[11].max_damage, 
+            "Player: " + this.gameData.public.characters[12].name, "Dies At HP: " + this.gameData.public.characters[12].max_damage
         ]);
         sprite.displayInfo.setVisible(false);
         sprite.displayInfo.depth = 30;
@@ -492,11 +515,13 @@ var GameBoard = new Phaser.Class ({
             // Set equip text in box to name of equipment
             for(var i = 0; i < datasize; i++) {
                 this.equip_text[i].setText([data.equipment[i].title]);
+                this.arsenal = this.makeArsenal(datasize, data);
+                this.arsenal.on('clicked', this.clickHandler, this.box);
             }
 
             // Empty equip text in rest of boxes
             for(var i = datasize; i < this.num_equip_slots; i++) {
-                this.equip_text[i].setText([""]);
+                this.add.image(255 + i*100, 550, "Arsenal Box");
             }
 
             // remove reveal button on person's screen if they are revealed
