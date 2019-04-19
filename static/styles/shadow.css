@@ -87,7 +87,27 @@ select {
     font-family: Palatino, "Times New Roman", Times;
 }
 
+#special {
+    position: absolute;
+    left:70px;
+    top:457px;
+    font-family: Palatino, "Times New Roman", Times;
+}
+
 .reveal {
+    border-radius: 15px;
+    background-color: #3a3f5f;
+    border: none;
+    color: white;
+    padding: 5px 25px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    font-family: Palatino, "Times New Roman", Times;
+}
+
+.special {
     border-radius: 15px;
     background-color: #3a3f5f;
     border: none;
