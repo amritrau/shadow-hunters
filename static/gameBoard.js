@@ -86,11 +86,11 @@ var GameBoard = new Phaser.Class ({
 
         // load background and health bar
         this.load.svg('background', gfx + 'background.svg', {width: 1066, height: 600});
-        this.load.svg("popup", gfx + 'player-popup.svg', {width: 260.736, height: 91.000});
-        this.load.svg("popup_left", gfx + 'player-popleft.svg', {width: 175.424, height: 84.961});
-        this.load.svg("popup_right", gfx + 'player-popright.svg', {width: 175.424, height: 84.961});
-        this.load.image('text', '/static/assets/text.png');
+        this.load.svg('popup', gfx + 'player-popup.svg', {width: 260.736, height: 91.000});
+        this.load.svg('popup_left', gfx + 'player-popleft.svg', {width: 175.424, height: 84.961});
+        this.load.svg('popup_right', gfx + 'player-popright.svg', {width: 175.424, height: 84.961});
         this.load.svg('health', gfx + 'health.svg', {width: 206.681, height: 589.442});
+        this.load.svg('health_popup', gfx + 'health-popup.svg', {width: 100, height: 335});
 
         // load arsenal
         this.load.image('arsenal', gfx + 'arsenal.svg', {width: 640, height: 125.683});
@@ -337,16 +337,22 @@ var GameBoard = new Phaser.Class ({
 
     makeHealthBar: function() {
         var sprite  = this.add.image(960.160, 302.279, 'health');
-        sprite.infoBox = this.add.image(750, 150, 'text');
+        sprite.infoBox = this.add.image(800, 175, 'health_popup');
         sprite.infoBox.setVisible(false);
         sprite.infoBox.depth = 30;
-        sprite.displayInfo = this.add.text(700, 30, " ", { font: '12px Palatino', fill: '#FFFFFF', wordWrap: { width: 250, useAdvancedWrap: true }});
+        sprite.displayInfo = this.add.text(760, 10, " ", { font: '10px Palatino', fill: '#FFFFFF', wordWrap: { width: 250, useAdvancedWrap: true }});
+
+        sprite.displayInfo.lineSpacing = -2.5;
 
         sprite.displayInfo.setText(["Player: " + this.gameData.public.characters[0].name, "Dies At HP: " + this.gameData.public.characters[0].max_damage, "\n",
             "Player: " + this.gameData.public.characters[1].name, "Dies At HP: " + this.gameData.public.characters[1].max_damage, "\n",
             "Player: " + this.gameData.public.characters[2].name, "Dies At HP: " + this.gameData.public.characters[2].max_damage, "\n",
             "Player: " + this.gameData.public.characters[3].name, "Dies At HP: " + this.gameData.public.characters[3].max_damage, "\n",
-            "Player: " + this.gameData.public.characters[4].name, "Dies At HP: " + this.gameData.public.characters[4].max_damage
+            "Player: " + this.gameData.public.characters[4].name, "Dies At HP: " + this.gameData.public.characters[4].max_damage, "\n",
+            "Player: " + this.gameData.public.characters[5].name, "Dies At HP: " + this.gameData.public.characters[5].max_damage, "\n",
+            "Player: " + this.gameData.public.characters[6].name, "Dies At HP: " + this.gameData.public.characters[6].max_damage, "\n",
+            "Player: " + this.gameData.public.characters[7].name, "Dies At HP: " + this.gameData.public.characters[7].max_damage, "\n",
+            "Player: " + this.gameData.public.characters[8].name, "Dies At HP: " + this.gameData.public.characters[8].max_damage
         ]);
         sprite.displayInfo.setVisible(false);
         sprite.displayInfo.depth = 30;
@@ -530,7 +536,7 @@ var GameBoard = new Phaser.Class ({
     //for each update, change parts of the board that need to be redrawn.
     updateBoard: function(data) {
         //loop through each player and see if there are things to update
-        // console.log(data);
+        console.log(data);
         this.allPlayersInfo = data.players;
         for(var i = 0; i < this.nPlayers; i++){
             var key = Object.keys(this.allPlayersInfo)[i];
