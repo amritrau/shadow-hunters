@@ -55,7 +55,7 @@ class Player:
         if "Mystic Compass" in [e.title for e in self.equipment]:
 
             # If player has mystic compass, roll again
-            self.gc.tell_h("{}'s Mystic Compass lets them roll again!", [self.user_id])
+            self.gc.tell_h("{}'s {} lets them roll again!", [self.user_id, "Mystic Compass"])
             second_roll = self.rollDice('area')
 
             # Pick the preferred roll
@@ -256,7 +256,7 @@ class Player:
         eq.holder = receiver
 
         # Tell frontend about transfer
-        self.gc.tell_h("{} forfeited their {} to {}!", [self.user_id, receiver.user_id, eq.title])
+        self.gc.tell_h("{} forfeited their {} to {}!", [self.user_id, eq.title, receiver.user_id])
         self.gc.update_h()
 
     def attack(self, other, amount):
@@ -314,10 +314,10 @@ class Player:
 
     def die(self, attacker):
 
-        ### GRAB REVEAL LOCK
         # Set state to 0 (DEAD)
+        elements.reveal_lock.acquire()
         self.state = 0
-        ### RELEASE REVEAL LOCK
+        elements.reveal_lock.release()
 
         # Report to console
         display_data = {'type': 'die', 'player': self.dump()}

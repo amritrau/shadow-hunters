@@ -1,4 +1,5 @@
 import card, deck, character, area
+from threading import Lock
 
 # elements.py
 # Encodes all characters, win conditions, special abilities,
@@ -37,7 +38,7 @@ TEXT_COLORS = {
 }
 
 # Lock for manipulating reveals
-### LOCK HERE
+reveal_lock = Lock()
 
 class ElementFactory:
     def __init__(self):
@@ -376,7 +377,7 @@ class ElementFactory:
             else:
 
                 # Take 1 damage
-                args['self'].gc.tell_h("{} took 1 damage.", [args['self'].user_id])
+                args['self'].gc.tell_h("{} took {} damage.", [args['self'].user_id, "1"])
                 args['self'].moveDamage(-1, args['self'])
 
         def use_dynamite(args):
@@ -601,7 +602,7 @@ class ElementFactory:
 
                     # Target takes 1 damage
                     new_damage = target.moveDamage(-1, args['self'])
-                    target.gc.tell_h("{} took 1 damage!", [target.user_id])
+                    target.gc.tell_h("{} took {} damage!", [target.user_id, "1"])
 
             else:
 
@@ -645,7 +646,7 @@ class ElementFactory:
 
                     # Target takes 1 damage
                     new_damage = target.moveDamage(-1, args['self'])
-                    target.gc.tell_h("{} took 1 damage!", [target.user_id])
+                    target.gc.tell_h("{} took {} damage!", [target.user_id, "1"])
 
             else:
 
@@ -689,7 +690,7 @@ class ElementFactory:
 
                     # Target takes 1 damage
                     new_damage = target.moveDamage(-1, args['self'])
-                    target.gc.tell_h("{} took 1 damage!", [target.user_id])
+                    target.gc.tell_h("{} took {} damage!", [target.user_id, "1"])
 
             else:
 
@@ -718,7 +719,7 @@ class ElementFactory:
 
                 # Give 1 damage to target
                 new_damage = target.moveDamage(-1, args['self'])
-                target.gc.tell_h("{} took 1 damage!", [target.user_id])
+                target.gc.tell_h("{} took {} damage!", [target.user_id, "1"])
 
             else:
 
@@ -747,7 +748,7 @@ class ElementFactory:
 
                 # Give 1 damage to target
                 new_damage = target.moveDamage(-1, args['self'])
-                target.gc.tell_h("{} took 1 damage!", [target.user_id])
+                target.gc.tell_h("{} took {} damage!", [target.user_id, "1"])
 
             else:
 
@@ -775,7 +776,7 @@ class ElementFactory:
 
                 # Give 2 damage to target
                 new_damage = target.moveDamage(-2, args['self'])
-                target.gc.tell_h("{} took 2 damage!", [target.user_id])
+                target.gc.tell_h("{} took {} damage!", [target.user_id, "2"])
 
             else:
 
@@ -806,7 +807,7 @@ class ElementFactory:
 
                     # Give target 1 damage
                     new_damage = target.moveDamage(-1, args['self'])
-                    target.gc.tell_h("{} took 1 damage!", [target.user_id])
+                    target.gc.tell_h("{} took {} damage!", [target.user_id, "2"])
 
                 else:
 
@@ -816,7 +817,7 @@ class ElementFactory:
 
                     # Heal target 1 damage
                     new_damage = target.moveDamage(1, args['self'])
-                    target.gc.tell_h("{} healed 1 damage!", [target.user_id])
+                    target.gc.tell_h("{} healed {} damage!", [target.user_id, "1"])
 
             else:
 
@@ -847,7 +848,7 @@ class ElementFactory:
 
                     # Give target 1 damage
                     new_damage = target.moveDamage(-1, args['self'])
-                    target.gc.tell_h("{} took 1 damage!", [target.user_id])
+                    target.gc.tell_h("{} took {} damage!", [target.user_id, "1"])
 
                 else:
 
@@ -857,7 +858,7 @@ class ElementFactory:
 
                     # Heal target 1 damage
                     new_damage = target.moveDamage(1, args['self'])
-                    target.gc.tell_h("{} healed 1 damage!", [target.user_id])
+                    target.gc.tell_h("{} healed {} damage!", [target.user_id, "1"])
 
             else:
 
@@ -888,7 +889,7 @@ class ElementFactory:
 
                     # Give target 1 damage
                     new_damage = target.moveDamage(-1, args['self'])
-                    target.gc.tell_h("{} took 1 damage!", [target.user_id])
+                    target.gc.tell_h("{} took {} damage!", [target.user_id, "1"])
 
                 else:
 
@@ -898,7 +899,7 @@ class ElementFactory:
 
                     # Heal target 1 damage
                     new_damage = target.moveDamage(1, args['self'])
-                    target.gc.tell_h("{} healed 1 damage!", [target.user_id])
+                    target.gc.tell_h("{} healed {} damage!", [target.user_id, "1"])
 
             else:
 
@@ -921,18 +922,18 @@ class ElementFactory:
             if target.character.max_damage >= 12:
 
                 # Prompt target to receive 2 damage
-                target.gc.tell_h("Your maximum hp ({}) is 12 or more.", [target.character.max_damage], target.socket_id)
+                target.gc.tell_h("Your maximum hp ({}) is {} or more.", [target.character.max_damage, "12"], target.socket_id)
                 data = {'options': ["Receive 2 damage"]}
                 target.gc.ask_h('confirm', data, target.user_id)
 
                 # Give 2 damage to target
                 new_damage = target.moveDamage(-2, args['self'])
-                target.gc.tell_h("{} took 2 damage!", [target.user_id])
+                target.gc.tell_h("{} took {} damage!", [target.user_id, "1"])
 
             else:
 
                 # Target's hp is < 12, nothing happens
-                target.gc.tell_h("Your maximum hp is less than 12. Do nothing.", [target.character.max_damage], target.socket_id)
+                target.gc.tell_h("Your maximum hp ({}) is less than {}. Do nothing.", [target.character.max_damage, "12"], target.socket_id)
                 data = {'options': ['Do nothing']}
                 target.gc.ask_h('confirm', data, target.user_id)
                 target.gc.tell_h("{} did nothing.", [target.user_id])
@@ -950,18 +951,18 @@ class ElementFactory:
             if target.character.max_damage <= 11:
 
                 # Prompt target to receive 1 damage
-                target.gc.tell_h("Your maximum hp ({}) is 11 or less.", [target.character.max_damage], target.socket_id)
+                target.gc.tell_h("Your maximum hp ({}) is {} or less.", [target.character.max_damage, "11"], target.socket_id)
                 data = {'options': ["Receive 1 damage"]}
                 target.gc.ask_h('confirm', data, target.user_id)
 
                 # Give 1 damage to target
                 new_damage = target.moveDamage(-1, args['self'])
-                target.gc.tell_h("{} took 1 damage!", [target.user_id])
+                target.gc.tell_h("{} took {} damage!", [target.user_id, "1"])
 
             else:
 
                 # Target's hp is > 11, nothing happens
-                target.gc.tell_h("Your maximum hp is greater than 11. Do nothing.", [target.character.max_damage], target.socket_id)
+                target.gc.tell_h("Your maximum hp ({}) is greater than {}. Do nothing.", [target.character.max_damage, "11"], target.socket_id)
                 data = {'options': ['Do nothing']}
                 target.gc.ask_h('confirm', data, target.user_id)
                 target.gc.tell_h("{} did nothing.", [target.user_id])
