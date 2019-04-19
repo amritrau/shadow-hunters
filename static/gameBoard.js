@@ -86,9 +86,9 @@ var GameBoard = new Phaser.Class ({
 
         // load background and health bar
         this.load.svg('background', gfx + 'background.svg', {width: 1066, height: 600});
-        this.load.image("customTip", "/static/assets/customTip.png");
-        this.load.image("popup_right", "/static/assets/popup_right.png");
-        this.load.image("popup_left", "/static/assets/popup_left.png");
+        this.load.svg("popup", gfx + 'player-popup.svg', {width: 260.736, height: 91.000});
+        this.load.svg("popup_left", gfx + 'player-popleft.svg', {width: 175.424, height: 84.961});
+        this.load.svg("popup_right", gfx + 'player-popright.svg', {width: 175.424, height: 84.961});
         this.load.image('text', '/static/assets/text.png');
         this.load.svg('health', gfx + 'health.svg', {width: 206.681, height: 589.442});
 
@@ -132,9 +132,7 @@ var GameBoard = new Phaser.Class ({
         this.load.svg('hpp8', gfx + 'orangeDot.svg', {width: 15, height: 15});
 
         this.load.image('playerinfo', gfx + 'playerinfo.svg', {width: 209, height: 125});
-        this.load.image('box', '/static/assets/box.png');
 
-        this.load.svg('charImage', gfx + 'charImage.svg', {width: 123.633, height: 123.633});
         this.load.svg('8hp', gfx + '8hp.svg', {width: 30.14, height: 30.14});
         this.load.svg('10hp', gfx + '10hp.svg', {width: 30.14, height: 30.14});
         this.load.svg('11hp', gfx + '11hp.svg', {width: 30.14, height: 30.14});
@@ -415,7 +413,7 @@ var GameBoard = new Phaser.Class ({
         }
 
         //this creates the infobox, i.e. the box that will appear when we click on him.
-        sprite.infoBox = this.add.image(sprite.x, sprite.y -60, "customTip");
+        sprite.infoBox = this.add.image(sprite.x, sprite.y - 65, "popup");
         sprite.infoBox.setVisible(false);
         sprite.displayInfo = this.add.text(sprite.infoBox.x - 120, sprite.infoBox.y - 40, " ", { font: '12px Palatino', fill: '#FFFFFF', wordWrap: { width: 250, useAdvancedWrap: true }});
         sprite.displayInfo.setText([
