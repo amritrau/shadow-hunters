@@ -12,6 +12,7 @@ var GameBoard = new Phaser.Class ({
         this.allowClick = true;
 
         //this is where all of the objects specific to our scene will appear
+        this.arsenal;
         this.healthBar;
         this.player;
         this.allPlayersInfo;
@@ -71,14 +72,14 @@ var GameBoard = new Phaser.Class ({
         this.allPlayersInfo = this.gameData.public.players;
 
         // DEBUGGING
-        // console.log(this.charInfo);
-        // console.log(typeof this.charInfo);
-        // console.log(this.gameData.public);
-        // console.log(this.gameData.public.players);
-        // var key = Object.keys(this.otherPlayersInfo)[0];
-        // console.log(this.otherPlayersInfo[key].user_id);
-        // console.log(Object.keys(this.otherPlayersInfo).length);
-        // console.log(this.gameData.private);
+        console.log(this.charInfo);
+        console.log(typeof this.charInfo);
+        console.log(this.gameData.public);
+        console.log(this.gameData.public.players);
+        //var key = Object.keys(this.otherPlayersInfo)[0];
+        //console.log(this.otherPlayersInfo[key].user_id);
+        //console.log(Object.keys(this.otherPlayersInfo).length);
+        console.log(this.gameData.private);
     },
 
     //the preload function is where all images that will be used in the game are loaded into
@@ -95,9 +96,6 @@ var GameBoard = new Phaser.Class ({
         this.load.image("popup_left", "/static/assets/popup_left.png");
         this.load.image('text', '/static/assets/text.png');
         this.load.image('health', '/static/assets/health.png');
-
-        // load arsenal
-        this.load.image('arsenal', '/static/assets/arsenal.png');
 
         // load the location cards
         this.load.svg('Hermit\'s Cabin', gfx + 'hermits_cabin.svg', {width: 101, height: 150});
@@ -154,7 +152,6 @@ var GameBoard = new Phaser.Class ({
         this.load.svg('F', gfx + 'f.svg', {width: 36.657, height: 36.657});
         this.load.svg('G', gfx + 'g.svg', {width: 36.657, height: 36.657});
 
-        // will replace with actual art as I make them
         // possible later implementation: loop through dumped list of playable characters to load images?
         this.load.image('Allie', '/static/assets/Allie.png');
         this.load.image('George', '/static/assets/George.png');
@@ -169,12 +166,14 @@ var GameBoard = new Phaser.Class ({
         this.load.image('Werewolf', '/static/assets/Werewolf.png');
         //this.load.svg('Allie', '/static/assets/Allie.svg', {width: 123, height: 123});
 
+
+        this.load.image('Arsenal Box', '/static/assets/arsenalbox.png');
+        this.load.image('sword', '/static/assets/sword.png');
         //display popups
         this.load.svg('gameOver', '/static/assets/gameOver.svg', {width: 642, height: 590});
         this.load.svg('whitecard', '/static/assets/whitecard.svg', {width: 154.604, height: 199.212});
         this.load.svg('blackcard', '/static/assets/blackcard.svg', {width: 154.604, height: 199.212});
         this.load.svg('greencard', '/static/assets/greencard.svg', {width: 154.604, height: 199.212});
-
     },
 
     //the create function is where everything is added to the canvas
@@ -286,7 +285,7 @@ var GameBoard = new Phaser.Class ({
             this.num_equip_slots = 6;
             for(var i = 0; i < this.num_equip_slots; i++)
             {
-                this.equip_text[i] = this.add.text(235 + i*100, 537.5, '', {
+                this.equip_text[i] = this.add.text(235 + i*90, 537.5, '', {
                     font: '12px Arial',
                     fill: '#FFFFFF',
                     wordWrap: { width: 80, useAdvancedWrap: true }
@@ -354,6 +353,26 @@ var GameBoard = new Phaser.Class ({
             return 'If you leave this page, you will be removed from the game. ' +
                    'Are you sure you want to leave?';
         };
+
+    },
+
+    makeArsenal: function(datasize, data){
+
+        for(var i = 0; i < datasize; i++) {
+            var sword = this.add.image(255 + i*100, 550, "sword");
+            sword.infoBox = this.add.image(255 + i*100, 450, "customTip");
+            sword.infoBox.setVisible(false);
+            sword.infoBox.depth = 30;
+
+            sword.displayInfo = this.add.text(200 + i*100, 375, " ", { font: '12px Arial', fill: '#FFFFFF', wordWrap: { width: 250, useAdvancedWrap: true }});
+            sword.displayInfo.setText(["Equipment:"+ data.equipment[i].title + "\n" + "Description:" + data.equipment[i].desc]);
+            sword.displayInfo.setVisible(false);
+            sword.displayInfo.depth = 30;
+            sword.setInteractive();
+            return sword;
+        }
+
+
     },
 
     makeHealthBar: function() {
@@ -363,11 +382,24 @@ var GameBoard = new Phaser.Class ({
         sprite.infoBox.depth = 30;
         sprite.displayInfo = this.add.text(700, 30, " ", { font: '12px Arial', fill: '#FFFFFF', wordWrap: { width: 250, useAdvancedWrap: true }});
 
-        sprite.displayInfo.setText(["Player: " + this.gameData.public.characters[0].name, "Dies At HP: " + this.gameData.public.characters[0].max_damage, "\n",
-            "Player: " + this.gameData.public.characters[1].name, "Dies At HP: " + this.gameData.public.characters[1].max_damage, "\n",
-            "Player: " + this.gameData.public.characters[2].name, "Dies At HP: " + this.gameData.public.characters[2].max_damage, "\n",
-            "Player: " + this.gameData.public.characters[3].name, "Dies At HP: " + this.gameData.public.characters[3].max_damage, "\n",
-            "Player: " + this.gameData.public.characters[4].name, "Dies At HP: " + this.gameData.public.characters[4].max_damage
+    
+
+        sprite.displayInfo.setText(["Player: " + this.gameData.public.characters[0].name, "Dies At HP: " + this.gameData.public.characters[0].max_damage,
+            "Player: " + this.gameData.public.characters[1].name, "Dies At HP: " + this.gameData.public.characters[1].max_damage, 
+            "Player: " + this.gameData.public.characters[2].name, "Dies At HP: " + this.gameData.public.characters[2].max_damage, 
+            "Player: " + this.gameData.public.characters[3].name, "Dies At HP: " + this.gameData.public.characters[3].max_damage, 
+            "Player: " + this.gameData.public.characters[4].name, "Dies At HP: " + this.gameData.public.characters[4].max_damage, 
+            "Player: " + this.gameData.public.characters[5].name, "Dies At HP: " + this.gameData.public.characters[5].max_damage, 
+            "Player: " + this.gameData.public.characters[6].name, "Dies At HP: " + this.gameData.public.characters[6].max_damage, 
+            "Player: " + this.gameData.public.characters[7].name, "Dies At HP: " + this.gameData.public.characters[7].max_damage, 
+            "Player: " + this.gameData.public.characters[8].name, "Dies At HP: " + this.gameData.public.characters[8].max_damage, 
+            "Player: " + this.gameData.public.characters[9].name, "Dies At HP: " + this.gameData.public.characters[9].max_damage, 
+            "Player: " + this.gameData.public.characters[10].name, "Dies At HP: " + this.gameData.public.characters[10].max_damage, 
+            "Player: " + this.gameData.public.characters[11].name, "Dies At HP: " + this.gameData.public.characters[11].max_damage, 
+            "Player: " + this.gameData.public.characters[12].name, "Dies At HP: " + this.gameData.public.characters[12].max_damage
+            
+
+
         ]);
         sprite.displayInfo.setVisible(false);
         sprite.displayInfo.depth = 30;
@@ -523,11 +555,13 @@ var GameBoard = new Phaser.Class ({
             // Set equip text in box to name of equipment
             for(var i = 0; i < datasize; i++) {
                 this.equip_text[i].setText([data.equipment[i].title]);
+                this.arsenal = this.makeArsenal(datasize, data);
+                this.arsenal.on('clicked', this.clickHandler, this.box);
             }
 
             // Empty equip text in rest of boxes
             for(var i = datasize; i < this.num_equip_slots; i++) {
-                this.equip_text[i].setText([""]);
+                this.add.image(255 + i*100, 550, "Arsenal Box");
             }
 
             // remove reveal button on person's screen if they are revealed
