@@ -99,15 +99,13 @@ def room(methods=['GET', 'POST']):
 
         # check for username taken
         connection_lock.acquire()
-        room_id_exists = (room_id in rooms)
-        username_in_room = username in rooms[room_id]['connections'].values()
-        if room_id_exists and username_in_room:
+        if (room_id in rooms) and username in rooms[room_id]['connections'].values():
             flash("Someone in the room has taken your name")
             connection_lock.release()
             return redirect('/')
 
         # check for game already in progress
-        if room_id in rooms and rooms[room_id]['status'] == 'GAME':
+        if (room_id in rooms) and rooms[room_id]['status'] == 'GAME':
             public_state, private_state = rooms[room_id]['gc'].dump()
             usrctx = {
                 'name': username,
