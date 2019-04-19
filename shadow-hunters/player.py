@@ -151,7 +151,7 @@ class Player:
         data = {'options': [t.user_id for t in targets]}
         if ("Cursed Sword Masamune" not in [e.title for e in self.equipment]) or len(data['options']) == 0:
             data['options'].append("Decline")
-        answer = self.gc.ask_h('yesno', data, self.user_id)['value']
+        answer = self.gc.ask_h('select', data, self.user_id)['value']
 
         if answer != 'Decline':
             # Get target

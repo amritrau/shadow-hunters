@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Shadow Hunters</title>
+  <meta name="Shadow Hunters" content="width=device-width, initial-scale=1">
+  <style>
+    body, html {
+      height: 100%;
+      margin: 0;
+      font-family: Palatino, "Times New Roman", Times;
+    }
+
+    .bg {
+      /* The image used */
+      background-image: url("https://s3.amazonaws.com/shadowhunters.gfxresources/room.svg");
+
+      /* Full height */
+      height: auto;
+
+      /* Center and scale the image nicely */
+      background-position: center;
+      background-repeat: repeat-y;
+      background-size: 100% auto;
+    }
+    
+    .centered {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .nav {
+      list-style:none;
+      margin: 0;
+      padding: 0;
+      padding-top: 20px;
+      text-align: center;
+    }
+
+    .nav li {
+      display: inline;
+    }
+
+    .nav a {
+      display:inline-block;
+      padding:5px;
+    }
+
+    .rules {
+      position: relative; 
+      left: 25%; 
+      width: 50%;
+      color: #D1D1D1;
+      padding-bottom: 20px;
+    }
+
+
+  </style>
+
+</head>
+
+<body>
+  <div class="bg">
+
+    <ul class="nav">
+      <a href="/" class="pull-left"><img src="https://s3.amazonaws.com/shadowhunters.gfxresources/home.png" width="100"></a> 
+      <a href="/" class="pull-left"><img src="https://s3.amazonaws.com/shadowhunters.gfxresources/logo.png"></a> 
+      <a href="/rules" class="pull-left"><img src="https://s3.amazonaws.com/shadowhunters.gfxresources/rules.png" width="100"></a> 
+    </ul>
+    
+    <div class="rules">
+      <h3 style="text-align: center">Number of Players: 4 to 8</h3>
+      <h3 style="text-align: center">Play Time: 30-45 min</h3>
+      <h3 style="text-align: center">Rules written by Max Levatich</h3>
+
+      <h2>Overview</h2>
+      <p>
+        Shadow Hunters is an online multiplayer game where players assume the identities of characters belonging to three opposing factions. The Shadows, inhabitants of the underworld, aim to destroy all Hunters, while the Hunters, protectors of the mortal realm, seek to banish the Shadows. Neutrals, caught in the crossfire, pursue their own hidden objectives.  
+
+        As night settles on the ruins of abandoned town at the edge of a mysterious forest, the identities of ally and enemy alike are obscured by a shifting fog, and players must discover who is friend and who is foe before striking from the darkness!
+      </p>
+
+      <h2>How to Start a Game</h2>
+      <p>
+        To play a game of Shadow Hunters, enter a username and room on the main page &ndash; clicking join will take you to a new page where you can talk to other players who have joined the same room. Once the desired number of players have joined the same room, any player can click the &lsquo;Start Game&rsquo; button to begin a game with those players.
+
+        In the waiting room, the desired number of players for the game can also be specified above the &lsquo;Start Game&rsquo; button. If the number is greater than the number of players currently in the room, the remaining slots will be filled by computer players. (The number of players is submitted by the person who clicks &lsquo;Start Game&rsquo;; all other numbers will be disregarded).
+
+        In the process of playing the game, players with inconsistent Wi&ndash;Fi connections may be disconnected from the game server. Those players will be redirected back to the main page, and in the game they will be replaced by a CPU player.  Disconnected players can easily reconnect and tag in for their CPUs by clicking the &ldquo;Reconnect &rdquo; button on the main page.  If all players leave a game, it will be terminated.
+
+        If a player attempts to join a room with a game already in progress, they will begin spectating that game &ndash; they can talk with other players in the chat and see what&rsquo;s happening, but cannot otherwise influence the game.
+      </p>
+
+      <h2>The Game Board</h2>
+      /* ADD IMAGE */
+      <p>
+        Once the game has started, the Shadow Hunters game board will appear in front of all players. It is pictured above. Highlighted numbers identify its various pieces:
+      </p>
+      <ol>
+        <li>Your character portrait.  On the top left of the portrait is a colored bubble which identifies your faction &ndash; red for Shadows, blue for Hunters, and yellow for Neutrals.  The bubble in the bottom right gives your maximum HP. A thin colored circle around your portrait identifies which colored sprite you are on the game board.
+        </li>
+        <li>Below your character portrait is all of the details about your character &ndash; their name, faction, win condition, and special ability.  Satisfy your win condition to win the game!
+        </li>
+        <li>
+          Your arsenal contains all of the equipment cards you own.  Each slot in the arsenal holds a picture of one piece of equipment, and clicking on it will give the name and effect of that equipment.  Equipment cards will be used automatically in the situations they apply &ndash; they do not need to be activated.
+        </li>
+        <li>
+          The health bar shows the current damage of every player in the game, identified by colored tokens corresponding to each player&rsquo;s assigned color.  Tokens move up and down the health bar as players take and heal damage.  When a player&rsquo;s damage reaches their character&rsquo;s maximum HP, they die and are out of the game!  Clicking on the health bar displays the HP values at which the playable characters die. Keep track of where the other players are to determine which characters they may or may not be!  Clicking on the health bar again will dismiss this pop&ndash;up.
+        </li>
+        <li>
+          The three zones, each containing two areas, take up the center of the game board, and denote the different locations players can occupy.  Each area has a name and one or more numbers identifying the dice rolls that will take a player to that particular area.  Clicking on an area card will display the action that can be performed at that area.
+        </li>
+        <li>
+          The sprites of each player are shown on the game board.  Each sprite has a color which identifies them as a particular player, and matches their token on the health bar.  The location of a sprite on the game board reflects the area that player is at.  When players reveal their identities, their anonymous colored sprite will be replaced by a sprite specific to their character.  Clicking on a sprite will display the player&rsquo;s name and the equipment they own, as well as their character&rsquo;s identity if they have revealed it. Clicking the sprite again will dismiss the pop&ndash;up.
+        </li>
+        <li>
+          Whenever players are required to take action, either because it is their turn or because they have been given a Hermit card or have used their special ability, button prompts will appear in the bottom right corner of the game board giving the player their options.  When a player must choose from many options, such as when picking another player to attack or an area to move to, a larger prompt, spanning the middle of the game board, will appear.  Click on a button to take the corresponding action!
+        </li>
+        <li>
+          At any point in the game you may reveal your identity to everyone else by clicking the 
+          &ldquo;Reveal &rdquo; button below your character portrait.  Once you are revealed, you can activate your special ability!
+        </li>
+        <li>
+          After you are revealed, the &ldquo;Reveal &rdquo; button will be replaced by a &ldquo;Special Ability &rdquo; button.  Clicking on it will activate your special ability!  Some characters have restrictions on when they can use their special ability &ndash; clicking the button will still activate it, but it will only come into effect at the next point in the game when it is valid!
+        </li>
+        <li>
+          The dice, one 4&ndash;sided and one 6&ndash;sided, are shown above the three zones, and the numbers they display always reflect the most recent roll.  Players will roll to move, attack, and to use some cards, so check the dice to see the results!
+        </li>
+        <li>
+          When players draw cards (the area action taken at the Underworld Gate, Cemetery, Church, and Hermit&rsquo;s Cabin), the card will appear in the bottom left of the board (Hermit cards will only appear to the giver and receiver of the card).  Black, White, and Hermit cards are identified by their colors, and the name and description of the card are displayed along with a picture.  Clicking on the card will dismiss it &ndash; it will not disappear unless clicked on, so players can read at their own pace.
+        </li>
+        <li>
+          In the top right of the game board is a small button that opens a summary window, summarizing the current status of all players in the game, including their location, their character info if they have revealed themselves, and all of their equipment.  Clicking the button again will close the summary window.
+        </li>
+        <li>
+          The same chatbox from the waiting room will remain once the game has started. In addition to letting you talk to the other players, the chatbox will be populated with information about what&rsquo;s happening in the game, and the actions that other players are taking.  Player names in the chatbox are highlighted with the corresponding player&rsquo;s color, and other game elements, such as areas or cards, are also highlighted.
+        </li>
+        <li>
+          A navigation bar outside of the game board displays your username and color, and provides buttons to leave the game, or to open this rulebook in a new tab for a refresher on the rules.  If you leave the game, you will be taken back to the main page, but you can always reconnect to tag in for the CPU that replaced you by clicking &ldquo;Reconnect &rdquo; on the main page!
+        </li>
+      </ol>
+
+      <h2>Gameplay</h2>
+      <p>
+        Shadow Hunters is played in a series of turns.  On each player&rsquo;s turn, they will roll for movement, perform their area action, and may attack other players.  The turn order is randomly determined when the game starts, and play will continue in that turn order until one or more players have satisfied their win condition, at which point the winners will be declared and the game will end!
+
+        At the beginning of the game, players are only aware of their own character identity &ndash; they do not know who might be a potential ally and who is a threat.  During their turns, players can attack, heal, build up their arsenal, and discover the allegiances of others, depending on the roll of the dice and the luck of the draw.  Once players have identified their friends and foes, they can play more strategically in pursuit of their win condition!
+
+        Every game is a little different &ndash; the area cards are shuffled, as are the three decks.  Characters are distributed randomly to each player, but each game contains a set number of characters from each faction, depending on the total number of players.  These numbers are as follows:
+      </p>
+      <ul>
+        <li>4&ndash;player game: 2 Hunters, 2 Shadows</li>
+        <li>5&ndash;player game: 2 Hunters, 2 Shadows, 1 Neutral</li>
+        <li>6&ndash;player game: 2 Hunters, 2 Shadows, 2 Neutrals</li>
+        <li>7&ndash;player game: 2 Hunters, 2 Shadows, 3 Neutrals</li>
+        <li>8&ndash;player game: 3 Hunters, 3 Shadows, 2 Neutrals</li>
+      </ul>
+      <p>A list of the playable characters is provided at the bottom of this page.</p>
+
+      <h2>Turn Actions</h2>
+      <h3>Movement</h3>
+      <p>
+        At the beginning of every turn, the acting player must move to an area on the board by rolling both dice.  A prompt to roll the dice will appear on the board, and the dice will be rolled when it is clicked.
+
+        The numbers on the dice are summed, and the player moves to the area card with the corresponding number on it.  If the dice sum to 7, then the player can pick an area to move to &ndash; there is no area card with a 7 on it.
+      </p>
+      <h3>Area Actions</h3>
+      <p>
+        Once a player has moved to an area, they may choose to perform the unique action associated with that area.  The actions for each area are:
+      </p>
+      <ul>
+        <li>Hermit&rsquo;s Cabin: Draw a Hermit Card and give it to another player.</li>
+        <li>Church: Draw a White Card and follow the instructions.</li>
+        <li>Cemetery: Draw a Black Card and follow the instructions.</li>
+        <li>Underworld Gate: Draw a card from any of the three decks.</li>
+        <li>Weird Woods: Give 2 damage to any player or heal 1 damage of any player.</li>
+        <li>Erstwhile Altar: Steal an equipment card from any player.</li>
+      </ul>
+      <p>
+        Prompts will appear on the board for the corresponding area action after a player moves to an area.
+      </p>
+      <h3>Attacking Other Players</h3>
+      <p>
+        After a player has completed their area action, they may attack a player in the same zone as them.  Each pair of cards on the game board represents a single zone.  
+
+        If the player chooses to attack someone, they roll both dice and deal damage equal to the difference between the rolls.  If the difference is greater than zero, the attack is considered successful &ndash; this is relevant for some equipment cards and special abilities.
+
+        Once a player has attacked, or chosen not to attack, their turn is over and the next player begins.
+      </p>
+
+      <h2>The Cards</h2>
+      <p>
+        Shadow Hunters features three decks of cards, which are not pictured on the game board itself: the Hermit Deck, the Black Deck, and the White Deck.  Players can draw these cards if they move to the Hermit&rsquo;s Cabin, Cemetery, Church, or Underworld Gate.
+      </p>
+      <h3>Hermit Cards</h3>
+      <p>
+        Hermit Cards are how players discover information about each other. When a player draws a Hermit Card, they read the instructions on the card, but do not follow them.  They then choose a player to give the Hermit Card to &ndash; the chosen player receives the card and follows the instructions on it.
+
+        Instructions generally take the form of, &ldquo;I bet you&rsquo;re a Shadow.  If so, receive 2 damage! &rdquo;  In this way, when the chosen player follows the instructions, the player who used the Hermit Card learns something about them!
+
+        If the instructions do not apply to the chosen player, then nothing happens.
+      </p>
+      <h3>
+        Black and White Cards
+      </h3>
+      <p>
+        Black Cards and White Cards come in two different types: Equipment and Single&ndash;Use.  The type is displayed on the card when it is drawn.
+
+        Single&ndash;Use cards must be used and discarded immediately.  When a Single&ndash;Use card is drawn, players will be prompted to use the card and take any associated actions, like selecting a player to use the card on or rolling the dice.
+
+        Equipment cards are added to a player&rsquo;s arsenal when they are drawn.  A player benefits from the effects of an equipment card for as long as that card is in their arsenal (equipment can be stolen by other players).  The effects of equipment cards are applied automatically when relevant, and players do not need to manually activate them.  They can also be combined &ndash; multiple damage bonuses add up!
+
+        White Cards are generally defensive, and some White Cards are only useful to Hunters.  Black Cards, on the other hand, are generally offensive, and some of them are only beneficial to Shadows.
+
+        If any deck runs out of cards, the discard pile is shuffled and becomes the new draw pile for that deck.  There are 16 cards in each deck.
+      </p>
+
+      <h2>Special Abilities</h2>
+      <p>
+        At any point during the game, any player may click the button below their character portrait to reveal their identity to everyone else in the game.  From this point forward, their anonymous colored sprite on the game board will be replaced by their character sprite, and other players will be able to see information about their character by clicking on that sprite.
+
+        While it is generally useful to keep one&rsquo;s identity hidden, once a player has revealed they may use their character&rsquo;s special ability, and the &ldquo;Reveal &rdquo; button will be replaced by a &ldquo;Special Ability &rdquo; button.  Each character in Shadow Hunters has a unique special ability.
+
+        Some characters have restrictions on when they can use their special ability &ndash; clicking the button will still activate it, but it will only come into effect at the next point in the game when it is valid.  A list of all characters and their special abilities is provided at the bottom of this page.
+      </p>
+
+      <h2>Death</h2>
+      <p>
+        If a player&rsquo;s damage reaches or exceeds their character&rsquo;s maximum HP (displayed in a red circle next to the character portrait), they will die.  If the player had any Equipment Cards, the killer chooses one to steal, and the rest are discarded.
+
+        Dead players will have their turn skipped, but they can still win if their win condition is satisfied (for example, if a Hunter dies, but the remaining Hunters kill all of the Shadows, all of the Hunters win).
+
+        Dead players who leave the game will not be replaced by a computer player.  They can, however, still reconnect to the game.
+      </p>
+
+      <h2>Game End</h2>
+      <p>
+        As soon as any player has satisfied their character&rsquo;s win condition, the game ends immediately and that player is declared the winner.  It is possible for many players to win simultaneously, even if they are in different factions, if they all satisfy their win conditions at once.
+
+        A popup will show the identities of the winning players.  The chat can still be used after the game is over, but a new game can only be started by returning to the main page and joining a new room.
+      </p>
+
+      <h2>Characters</h2>
+      <p>
+        A list of all playable characters, with their names, factions, maximum HPs, win conditions, and special abilities, is provided below:
+
+        Name: Ellen
+        Faction: Hunter
+        Maximum HP: 10
+        Win Condition: All the Shadow characters are dead.
+        Special Ability:
+
+        Name: Franklin
+        Faction: Hunter
+        Maximum HP: 12
+        Win Condition: All the Shadow characters are dead.
+        Special Ability:
+
+        Name: Fu&ndash;ka
+        Faction: Hunter
+        Maximum HP: 12
+        Win Condition: All the Shadow characters are dead.
+        Special Ability:
+
+        Name: George
+        Faction: Hunter
+        Maximum HP: 14
+        Win Condition: All the Shadow characters are dead.
+        Special Ability:
+
+        Name: Ultra Soul
+        Faction: Shadow
+        Maximum HP: 11
+        Win Condition: All the Hunter characters are dead or 3 Neutral characters are dead.
+        Special Ability:
+
+        Name: Valkyrie
+        Faction: Shadow
+        Maximum HP: 13
+        Win Condition: All the Hunter characters are dead or 3 Neutral characters are dead.
+        Special Ability:
+
+        Name: Vampire
+        Faction: Shadow
+        Maximum HP: 13
+        Win Condition: All the Hunter characters are dead or 3 Neutral characters are dead.
+        Special Ability:
+
+        Name: Werewolf
+        Faction: Shadow
+        Maximum HP: 14
+        Win Condition: All the Hunter characters are dead or 3 Neutral characters are dead.
+        Special Ability:
+
+        Name: Allie
+        Faction: Neutral
+        Maximum HP: 8
+        Win Condition: You&#39re not dead when the game is over.
+        Special Ability:
+
+        Name: Bob
+        Faction: Neutral
+        Maximum HP: 10
+        Win Condition: You have 5 or more equipment cards.
+        Special Ability:
+
+        Name: Catherine
+        Faction: Neutral
+        Maximum HP: 11
+        Win Condition: You are the first to die or you are one of the last two characters remaining.
+        Special Ability:
+      </p>
+
+    </div>
+  </div>
+</body>
+</html>
