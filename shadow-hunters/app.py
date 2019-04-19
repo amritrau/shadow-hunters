@@ -44,6 +44,10 @@ connection_lock = Lock()
 def join():
     return render_template('join.html')
 
+@app.route('/rules')
+def rules():
+    return render_template('rules.html')
+
 @app.route('/room', methods=['GET', 'POST'])
 def room(methods=['GET','POST']):
     if request.method == 'POST':
