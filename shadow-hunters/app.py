@@ -302,7 +302,7 @@ def on_special():
         return
 
     # Use special
-    player.character.special(gc, player, turn_pos = 'now')
+    player.character.special(rooms[room_id]['gc'], player, turn_pos = 'now')
 
 @socketio.on('answer')
 def on_answer(json):
