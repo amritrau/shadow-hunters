@@ -24,8 +24,7 @@ socketio = SocketIO(app, async_handlers=True)
 # disable caching
 @app.after_request
 def after_request(response):
-    response.headers["Cache-Control"] = ("no-cache, no-store, ") +
-    ("must-revalidate, public, max-age=0")
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate, public, max-age=0"
     response.headers["Expires"] = 0
     response.headers["Pragma"] = "no-cache"
     return response
