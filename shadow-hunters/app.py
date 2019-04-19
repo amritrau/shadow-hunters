@@ -92,8 +92,8 @@ def room(methods=['GET', 'POST']):
         element_names += [ch.name for ch in ef.CHARACTERS]
         element_names += [a.name for a in ef.AREAS]
 
-        user_valid = username.startswith('CPU') or (username in element_names)
-        if (not user_valid) or (username == 'Decline'):
+        name_reserved = username.startswith('CPU') or (username in element_names)
+        if name_reserved or (username == 'Decline'):
             flash("The username you chose is reserved")
             return redirect('/')
 
