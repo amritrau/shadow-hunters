@@ -22,14 +22,17 @@ var GameBoard = new Phaser.Class ({
         this.gameData;
         this.charInfo;
         this.infoBox;
+        this.popupInfo;
+        this.openPopups = [];
         this.gameEnd = {image: [], winners: [], players_info: []};
         this.cards = {cardsDrawn: [], cardText: [], nDrawn: 0};
-        
+        this.gameSummary;
+
         // list of x, y coordinates for 8 players' starting spots
         this.startSpots = [[562, 245],
-                           [504, 245], 
-                           [533, 215], 
-                           [533, 275], 
+                           [504, 245],
+                           [533, 215],
+                           [533, 275],
                            [591, 275],
                            [510, 185],
                            [556, 185],
@@ -92,10 +95,11 @@ var GameBoard = new Phaser.Class ({
         this.load.svg('popup_right', gfx + 'player-popright.svg', {width: 175.424, height: 84.961});
         this.load.svg('health', gfx + 'health.svg', {width: 206.681, height: 589.442});
         this.load.svg('health_popup', gfx + 'health-popup.svg', {width: 100, height: 335});
+        this.load.image("playerinfo", "/static/assets/scroll.png");
 
         // load arsenal
         this.load.image('arsenal', gfx + 'arsenal.svg', {width: 640, height: 125.683});
-
+        
         // load the location cards
         this.load.svg('Hermit\'s Cabin', gfx + 'hermits_cabin.svg', {width: 101, height: 150});
         this.load.svg('Underworld Gate', gfx + 'underworld_gate.svg', {width: 101, height: 150});
@@ -149,8 +153,7 @@ var GameBoard = new Phaser.Class ({
         this.load.svg('E', '/static/assets/e.svg', {width: 36.657, height: 36.657});
         this.load.svg('F', gfx + 'f.svg', {width: 36.657, height: 36.657});
         this.load.svg('G', gfx + 'g.svg', {width: 36.657, height: 36.657});
-        
-        // will replace with actual art as I make them
+
         // possible later implementation: loop through dumped list of playable characters to load images?
         this.load.image('Allie', '/static/assets/Allie.png');
         this.load.image('George', '/static/assets/George.png');
@@ -158,13 +161,16 @@ var GameBoard = new Phaser.Class ({
         this.load.image('Valkyrie', '/static/assets/Valkyrie.png');
         this.load.image('Vampire', '/static/assets/Vampire.png');
         this.load.image('Bob', '/static/assets/Bob.png');
-        this.load.image('Catherine', '/static/assets/anon.png');
+        this.load.image('Catherine', '/static/assets/Catherine.png');
         this.load.image('Franklin', '/static/assets/Franklin.png');
-        this.load.image('Ellen', '/static/assets/anon.png');
-        this.load.image('Ultra Soul', '/static/assets/anon.png');
-        this.load.image('Werewolf', '/static/assets/anon.png');
+        this.load.image('Ellen', '/static/assets/Ellen.png');
+        this.load.image('Ultra Soul', '/static/assets/Ultrasoul.png');
+        this.load.image('Werewolf', '/static/assets/Werewolf.png');
         //this.load.svg('Allie', '/static/assets/Allie.svg', {width: 123, height: 123});
 
+        // Load arsenal images
+        this.load.image('Arsenal Box', '/static/assets/arsenalbox.png');
+        this.load.image('sword', '/static/assets/sword.png');
 
         //display popups
         this.load.svg('gameOver', '/static/assets/gameOver.svg', {width: 642, height: 590});
@@ -174,10 +180,6 @@ var GameBoard = new Phaser.Class ({
 
         // load bitmap text
         this.load.bitmapFont('adventur', gfx + 'Adventur.png', gfx + 'Adventur.fnt');
-
-        // Load arsenal images
-        this.load.image('Arsenal Box', '/static/assets/arsenalbox.png');
-        this.load.image('sword', '/static/assets/sword.png');
     },
 
     //the create function is where everything is added to the canvas
@@ -192,6 +194,26 @@ var GameBoard = new Phaser.Class ({
         this.healthBar = this.makeHealthBar();
         this.healthBar.on('clicked', this.clickHandler, this.box);
 
+        // adds info button on upper right corner so people know they can click on things. Starts with popup open
+        this.popupInfo = this.add.image(840, 20, 'info');
+        this.popupInfo.infoBox = this.add.image(750, 55, "popup_left");
+        this.popupInfo.infoBox.depth = 30;
+        this.popupInfo.displayInfo = this.add.text(this.popupInfo.infoBox.x - 80,
+                                                  this.popupInfo.infoBox.y - 40,
+                                                  "Click on things to see more information! Click on the i button to close this popup",
+                                                  { font: '12px Arial', fill: '#FFFFFF',
+                                                  wordWrap: { width: 130, useAdvancedWrap: true }});
+        this.popupInfo.displayInfo.depth = 30;
+        this.popupInfo.setInteractive();
+        this.popupInfo.on('clicked', this.clickHandler, this.popupInfo);
+        this.popupInfo.infoBox.setVisible(true);
+        this.popupInfo.displayInfo.setVisible(true);
+        this.openPopups.push(this.popupInfo);
+
+        // adds icon to let players see everything about everyone
+        this.gameSummary = this.makeSummary();
+        this.gameSummary.on('clicked', this.clickHandler, this.gameSummary);
+
         // Place locations based on given order
         for (var i = 0; i < 3; i++) {
             for (var j = 0; j < 2; j++) {
@@ -199,6 +221,7 @@ var GameBoard = new Phaser.Class ({
                 this.zoneCards[i][j].on('clicked', this.clickHandler, this.zoneCards[i][j]);
             }
         }
+
 
         //this loop creates all players: self and enemies.
         sorted_keys = Object.keys(this.allPlayersInfo).sort(); // Hack to force keys into a deterministic order
@@ -313,6 +336,8 @@ var GameBoard = new Phaser.Class ({
                     break;
                 case "reveal":
                     console.log("in case reveal, data.type is: " + data.type);
+                    console.log(data);
+                    self.onReveal(data);
                     //TO DO: make character card pop up
                     break;
                 case "roll":
@@ -333,6 +358,26 @@ var GameBoard = new Phaser.Class ({
             return 'If you leave this page, you will be removed from the game. ' +
                    'Are you sure you want to leave?';
         };
+
+    },
+
+    makeArsenal: function(datasize, data){
+
+        for(var i = 0; i < datasize; i++) {
+            var sword = this.add.image(255 + i*100, 550, "sword");
+            sword.infoBox = this.add.image(255 + i*100, 450, "customTip");
+            sword.infoBox.setVisible(false);
+            sword.infoBox.depth = 30;
+
+            sword.displayInfo = this.add.text(200 + i*100, 375, " ", { font: '12px Arial', fill: '#FFFFFF', wordWrap: { width: 250, useAdvancedWrap: true }});
+            sword.displayInfo.setText(["Equipment:"+ data.equipment[i].title + "\n" + "Description:" + data.equipment[i].desc]);
+            sword.displayInfo.setVisible(false);
+            sword.displayInfo.depth = 30;
+            sword.setInteractive();
+            return sword;
+        }
+
+
     },
 
     makeArsenal: function(datasize, data){
@@ -359,6 +404,7 @@ var GameBoard = new Phaser.Class ({
         sprite.infoBox = this.add.image(800, 175, 'health_popup');
         sprite.infoBox.setVisible(false);
         sprite.infoBox.depth = 30;
+<<<<<<< HEAD
         sprite.displayInfo = this.add.text(760, 10, " ", { font: '10px Palatino', fill: '#FFFFFF', wordWrap: { width: 250, useAdvancedWrap: true }});
 
         sprite.displayInfo.lineSpacing = -2.5;
@@ -417,6 +463,22 @@ var GameBoard = new Phaser.Class ({
         zone.displayInfo.depth = 30;
         zone.setInteractive();
         return zone;
+    },
+
+    // makes summary icon in upper right part of screen interactive
+    makeSummary: function() {
+      var summaryIcon = this.add.image(840, 65, 'playerinfo');
+      summaryIcon.infoBox = this.add.image(500, 300, "gameOver");
+      summaryIcon.infoBox.depth = 40;
+
+      //this will be changed later; just making this interactive for testing purposes
+      summaryIcon.displayInfo = this.add.text(500, 300, " ", { font: '12px Arial', fill: '#000000', wordWrap: { width: 250, useAdvancedWrap: true }});
+      summaryIcon.displayInfo.depth = 40;
+
+      summaryIcon.infoBox.setVisible(false);
+      summaryIcon.displayInfo.setVisible(false);
+      summaryIcon.setInteractive();
+      return summaryIcon;
     },
 
     //the makePlayer function is what creates our sprite and adds him to the board.
@@ -579,19 +641,32 @@ var GameBoard = new Phaser.Class ({
     {
         if(player.infoBox.visible == false)
         {
+          while(player.scene.openPopups.length > 0) {
+            var open = player.scene.openPopups.pop();
+            open.infoBox.setVisible(false);
+            open.displayInfo.setVisible(false);
+          }
+
             player.infoBox.setVisible(true);
             player.displayInfo.setVisible(true);
+            player.scene.openPopups.push(player);
         }
         else
         {
             player.infoBox.setVisible(false);
             player.displayInfo.setVisible(false);
+            player.scene.openPopups.pop();
         }
     },
     //click handler for popups that will delete them
     cardHandler: function(card)
     {
         card.cardText.visible = false;
+
+        if(card.char) {
+          card.charImage.visible = false;
+        }
+
         card.visible = false;
     },
 
@@ -650,9 +725,41 @@ var GameBoard = new Phaser.Class ({
             this.cards.cardsDrawn[cardsOut].cardText = this.add.text(211.654, 365.668, " ", { font: '10px Palatino', fill: '#FFFFFF', wordWrap: { width: 139, useAdvancedWrap: true }});
         }
 
+        this.cards.cardsDrawn[cardsOut].char = false;
         this.cards.cardsDrawn[cardsOut].cardText.setText([
             cardInfo.title,
             cardInfo.desc
+        ]);
+
+        this.cards.cardsDrawn[cardsOut].setInteractive();
+        this.cards.cardsDrawn[cardsOut].on('clicked', this.cardHandler, this.cards.cardsDrawn[cardsOut]);
+        this.cards.nDrawn = cardsOut + 1;
+    },
+
+    //character card displays
+    onReveal: function(charInfo) {
+        var cardsOut = this.cards.nDrawn;
+
+        if(charInfo.player.character.alleg == 1){
+            charInfo.player.character.alleg = "Neutral";
+        }
+        else if (charInfo.player.character.alleg == 0) {
+            charInfo.player.character.alleg = "Shadow";
+        }
+        else {
+            charInfo.player.character.alleg = "Hunter";
+        }
+
+        this.cards.cardsDrawn[cardsOut] = this.add.image(281.321, 368.964, "blackcard");
+        this.cards.cardsDrawn[cardsOut].char = true;
+        this.cards.cardsDrawn[cardsOut].charImage = this.add.image(281.321, 300, charInfo.player.character.name);
+        this.cards.cardsDrawn[cardsOut].cardText = this.add.text(211.654, 365.668, " ", { font: '10px Arial', fill: '#FFFFFF', wordWrap: { width: 139, useAdvancedWrap: true }});
+
+        this.cards.cardsDrawn[cardsOut].cardText.setText([
+            charInfo.player.character.name,
+            "Team: " + charInfo.player.character.alleg,
+            "Win Condition: " + charInfo.player.character.win_cond_desc,
+            "Special Ability: " + charInfo.player.character.special_desc
         ]);
 
         this.cards.cardsDrawn[cardsOut].setInteractive();
