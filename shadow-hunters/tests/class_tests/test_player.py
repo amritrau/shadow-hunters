@@ -36,9 +36,9 @@ def test_fields():
     assert dump['state'] == 2
     assert dump['equipment'] == []
     assert dump['damage'] == 0
-    assert location == {}
-    assert character == {}
-    assert ai == False
+    assert dump['location'] == {}
+    assert dump['character'] == {}
+    assert dump['ai'] == False
 
     """
     # Can't do this because modifiers is a defaultdict
