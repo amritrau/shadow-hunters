@@ -7,11 +7,12 @@
     body, html {
       height: 100%;
       margin: 0;
+      font-family: Palatino, "Times New Roman", Times;
     }
 
     .bg {
       /* The image used */
-      background-image: url("https://s3.amazonaws.com/shadowhunters.gfxresources/waitRoom.svg");
+      background-image: url("https://s3.amazonaws.com/shadowhunters.gfxresources/room.svg");
 
       /* Full height */
       height: 100%;
@@ -21,26 +22,62 @@
       background-repeat: repeat-y;
       background-size: cover;
     }
+    
     .centered {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
     }
+
+    .nav {
+      list-style:none;
+      margin: 0;
+      padding: 0;
+      padding-top: 20px;
+      text-align:center;
+    }
+
+    .nav li {
+      display:inline;
+    }
+
+    .nav a {
+      display:inline-block;
+      padding:5px;
+    }
+
   </style>
   <script src="https://cdn.jsdelivr.net/npm/phaser@3.15.1/dist/phaser.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
   <script> var usrctx = {{ context|tojson }}; </script>
   <script> var socket; var WaitingRoom; var GameBoard; </script>
-<script src={{ url_for("static", filename="waitRoom.js") }}></script>
-<script src={{ url_for("static", filename="gameBoard.js") }}></script>
-<script src={{ url_for("static", filename="setup.js") }}></script>
-<link rel= "stylesheet" type= "text/css" href= {{ url_for('static',filename='styles/shadow.css') }}>
+  <script src={{ url_for("static", filename="waitRoom.js") }}></script>
+  <script src={{ url_for("static", filename="gameBoard.js") }}></script>
+  <script src={{ url_for("static", filename="setup.js") }}></script>
+  <link rel= "stylesheet" type= "text/css" href= {{ url_for('static',filename='styles/shadow.css') }}>
+
+  <style>
+    select { width: 12em; text-indent: 5px}
+
+    #ingame {
+      top: 375px;
+    }
+
+  </style>
+
 </head>
 
 <body>
   <div class="bg">
+
+    <ul class="nav">
+      <a href="/" class="pull-left"><img src="https://s3.amazonaws.com/shadowhunters.gfxresources/home.png" width="100"></a> 
+      <a href="/" class="pull-left"><img src="https://s3.amazonaws.com/shadowhunters.gfxresources/logo.png"></a> 
+      <a href="/rules" class="pull-left"><img src="https://s3.amazonaws.com/shadowhunters.gfxresources/rules.png" width="100"></a> 
+    </ul>
+    
     <div class="container">
       <div id="startButton">
         <form id="start">
@@ -48,19 +85,19 @@
         </form>
       </div>
       <form id="selectPlayers">
-          <select id="nPlayers">
-              <option value="5"> Select number of players: </option>
-              <option value="4"> 4 </option>
-              <option value="5"> 5 </option>
-              <option value="6"> 6 </option>
-              <option value="7"> 7 </option>
-              <option value="8"> 8 </option>
-          </select>
+        <select id="nPlayers">
+          <option value="5"> Select number of players: </option>
+          <option value="4"> 4 </option>
+          <option value="5"> 5 </option>
+          <option value="6"> 6 </option>
+          <option value="7"> 7 </option>
+          <option value="8"> 8 </option>
+        </select>
       </form>
       <form id="select">
       </form>
       <form id="reveal">
-          <input type="submit" class="reveal" value="Reveal"/>
+        <input type="submit" class="reveal" value="Reveal"/>
       </form>
       <div id="ingame">
         <form id="confirm">
