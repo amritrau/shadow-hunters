@@ -21,6 +21,10 @@ class Player:
     def setCharacter(self, character):
         self.character = character
 
+    def resetModifiers(self):
+        self.modifiers = defaultdict(lambda: False)
+        self.modifiers['attack_dice_type'] = "attack"
+
     def reveal(self):
 
         # Set state
@@ -41,15 +45,20 @@ class Player:
 
     def takeTurn(self):
         # Before turn check for special ability
-        if self.modifiers['special_active']:
+        print("START: Checking for {} ({}) special ability".format(self.user_id, self.character.name))
+        if self.special_active:
+            print("START: calling self.character.special()")
             self.character.special(self.gc, self, turn_pos = 'start')
 
         # takeTurn
         self._takeTurn()
 
         # After turn check for special ability
-        if self.modifiers['special_active']:
+        print("END: Checking for {} ({}) special ability".format(self.user_id, self.character.name))
+        if self.special_active:
+            print("END: calling self.character.special()")
             self.character.special(self.gc, self, turn_pos = 'end')
+
 
     def _takeTurn(self):
 
@@ -300,7 +309,7 @@ class Player:
 
         # If we dealt damage, some specials might have external effects
         if dealt > 0:
-            if 'damage_dealt_fn' in self.modifiers:
+            if self.modifiers['damage_dealt_fn'] != False:
                 self.modifiers['damage_dealt_fn'](self)
 
         return dealt

@@ -88,6 +88,12 @@ class GameContext:
     def getDeadPlayers(self):
         return [p for p in self.players if p.state == 0]
 
+    def getPlayersAt(self, location_name):
+        live = self.getLivePlayers()
+        live_loc = [p for p in live if p.location]
+        return [p for p in live_loc if p.location.name == location_name]
+
+
     def _checkWinConditions(self):
         return [p for p in self.players if p.character.win_cond(self, p)]
 
