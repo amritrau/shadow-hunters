@@ -100,7 +100,7 @@ var GameBoard = new Phaser.Class ({
         this.load.image('info', '/static/assets/info.png')
 
         // load arsenal
-        this.load.image('arsenal', gfx + 'arsenal.svg', {width: 640, height: 125.683});
+        this.load.svg('arsenal', gfx + 'arsenal.svg', {width: 640, height: 125.683});
 
         // load the location cards
         this.load.svg('Hermit\'s Cabin', gfx + 'hermits_cabin.svg', {width: 101, height: 150});
@@ -138,7 +138,7 @@ var GameBoard = new Phaser.Class ({
         this.load.svg('hpp7', gfx + 'yellowDot.svg', {width: 15, height: 15});
         this.load.svg('hpp8', gfx + 'orangeDot.svg', {width: 15, height: 15});
 
-        this.load.image('playerinfo', gfx + 'playerinfo.svg', {width: 209, height: 125});
+        this.load.svg('playerinfo', gfx + 'playerinfo.svg', {width: 209, height: 125});
 
         this.load.svg('8hp', gfx + '8hp.svg', {width: 30.14, height: 30.14});
         this.load.svg('10hp', gfx + '10hp.svg', {width: 30.14, height: 30.14});
