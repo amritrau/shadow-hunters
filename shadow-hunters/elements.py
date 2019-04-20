@@ -1376,7 +1376,7 @@ class ElementFactory:
                 alleg = 0,  # Shadow
                 max_damage = 13,
                 win_cond = shadow_win_cond,
-                win_cond_desc = "All the Hunter characters are dead or 3 Neutral characters are dead",
+                win_cond_desc = "All of the Hunters (or 3 Neutral characters) are dead.",
                 special = valkyrie_special,
                 special_desc = "When you attack, you only roll the 4-sided die and inflict the amount of damage rolled.",
                 resource_id = "valkyrie"
@@ -1386,7 +1386,7 @@ class ElementFactory:
                 alleg = 0,  # Shadow
                 max_damage = 13,
                 win_cond = shadow_win_cond,
-                win_cond_desc = "All the Hunter characters are dead or 3 Neutral characters are dead",
+                win_cond_desc = "All of the Hunters (or 3 Neutral characters) are dead.",
                 special = vampire_special,
                 special_desc = "If you attack a player and inflict damage, you heal 2 points of your own damage.",
                 resource_id = "vampire"
@@ -1396,9 +1396,9 @@ class ElementFactory:
                 alleg = 0,  # Shadow
                 max_damage = 14,
                 win_cond = shadow_win_cond,
-                win_cond_desc = "All the Hunter characters are dead or 3 Neutral characters are dead",
+                win_cond_desc = "All of the Hunters (or 3 Neutral characters) are dead.",
                 special = werewolf_special,
-                special_desc = "After you are attacked, you can attack that character immediately.",
+                special_desc = "After you are attacked, you can counterattack immediately.",
                 resource_id = "werewolf"
             ),
             character.Character(
@@ -1406,9 +1406,9 @@ class ElementFactory:
                 alleg = 0,  # Shadow
                 max_damage = 11,
                 win_cond = shadow_win_cond,
-                win_cond_desc = "All the Hunter characters are dead or 3 Neutral characters are dead",
+                win_cond_desc = "All of the Hunters (or 3 Neutral characters) are dead.",
                 special = ultra_soul_special,
-                special_desc = "At the start of your turn, you can give 3 points of damage to one character who is at the Underworld Gate.",
+                special_desc = "When your turn starts, you can give 3 damage to one player who is at the Underworld Gate.",
                 resource_id = "ultra-soul"
             ),
             character.Character(
@@ -1416,7 +1416,7 @@ class ElementFactory:
                 alleg = 1,  # Neutral
                 max_damage = 8,
                 win_cond = allie_win_cond,
-                win_cond_desc = "You're not dead when the game is over",
+                win_cond_desc = "You're not dead when the game is over.",
                 special = allie_special,
                 special_desc = "Fully heal your damage.",
                 resource_id = "allie"
@@ -1426,9 +1426,9 @@ class ElementFactory:
                 alleg = 1,  # Neutral
                 max_damage = 10,
                 win_cond = bob_win_cond,
-                win_cond_desc = "You have 5 or more equipment cards",
+                win_cond_desc = "You have 5 or more equipment cards.",
                 special = bob_special,
-                special_desc = "If your attack inflicts 2 or more damage to a character, you may take an Equipment card of your choice from that character instead of giving them damage.",
+                special_desc = "If your attack inflicts 2 or more damage, you may steal an Equipment card from your target instead of giving damage.",
                 resource_id = "bob",
                 modifiers = {'min_players': 4, 'max_players': 6}
             ),
@@ -1437,9 +1437,9 @@ class ElementFactory:
                 alleg = 1,  # Neutral
                 max_damage = 10,
                 win_cond = bob_win_cond,
-                win_cond_desc = "You have 5 or more equipment cards",
+                win_cond_desc = "You have 5 or more equipment cards.",
                 special = bob_special,
-                special_desc = "If your attack kills a character, you take all the Equipment cards that character had.",
+                special_desc = "If you kill another player, you may take all of their Equipment cards.",
                 resource_id = "bob",
                 modifiers = {'min_players': 7, 'max_players': 8}
             ),
@@ -1448,7 +1448,7 @@ class ElementFactory:
                 alleg = 1,  # Neutral
                 max_damage = 11,
                 win_cond = catherine_win_cond,
-                win_cond_desc = "You are the first to die or you are one of the last two characters remaining",
+                win_cond_desc = "You are the first to die or you are one of the last two characters remaining.",
                 special = catherine_special,
                 special_desc = "Heal 1 point of your own damage at the start of your turn.",
                 resource_id = "catherine"
@@ -1458,9 +1458,9 @@ class ElementFactory:
                 alleg = 2,  # Hunter
                 max_damage = 14,
                 win_cond = hunter_win_cond,
-                win_cond_desc = "All the Shadow characters are dead",
+                win_cond_desc = "All of the Shadows are dead.",
                 special = george_special,
-                special_desc = "At the start of your turn, you can pick any player and give them damage equal to the roll of a 4-sided die. (Only once per game)",
+                special_desc = "Once per game, when your turn starts, you can pick a player and damage them for the roll of a 4-sided die.",
                 resource_id = "george"
             ),
             character.Character(
@@ -1468,9 +1468,9 @@ class ElementFactory:
                 alleg = 2,  # Hunter
                 max_damage = 12,
                 win_cond = hunter_win_cond,
-                win_cond_desc = "All the Shadow characters are dead",
+                win_cond_desc = "All of the Shadows are dead.",
                 special = fuka_special,
-                special_desc = "At the start of your turn, you set the damage of any character to 7. (Only once per game)",
+                special_desc = "Once per game, when your turn starts, you can set the damage of any player to 7.",
                 resource_id = "fu-ka"
             ),
             character.Character(
@@ -1478,9 +1478,9 @@ class ElementFactory:
                 alleg = 2,  # Hunter
                 max_damage = 12,
                 win_cond = hunter_win_cond,
-                win_cond_desc = "All the Shadow characters are dead",
+                win_cond_desc = "All of the Shadows are dead.",
                 special = franklin_special,
-                special_desc = "At the start of your turn, you can pick any player and give them damage equal to the roll of a 6-sided die. (Only once per game)",
+                special_desc = "Once per game, when your turn starts, you can pick a player and damage them for the roll of a 6-sided die.",
                 resource_id = "franklin"
             ),
             character.Character(
@@ -1488,9 +1488,9 @@ class ElementFactory:
                 alleg = 2,  # Hunter
                 max_damage = 10,
                 win_cond = hunter_win_cond,
-                win_cond_desc = "All the Shadow characters are dead",
+                win_cond_desc = "All of the Shadows are dead.",
                 special = ellen_special,
-                special_desc = "At the start of your turn, choose a character and void their special ability until the end of the game. (Only once per game)",
+                special_desc = "Once per game, when your turn starts, you can choose a player and permanently void their special ability.",
                 resource_id = "ellen"
             )
         ]

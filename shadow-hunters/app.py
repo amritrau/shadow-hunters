@@ -32,7 +32,7 @@ def after_request(response):
 
 # sleep times after socket emissions (to pace frontend)
 SOCKET_SLEEP = 0.25
-AI_SLEEP = 0.05 # 2.0
+AI_SLEEP = 2.0
 
 # rooms are indexed by room_id, with a status, gc, and connections field
 # status is LOBBY or GAME. gc is None if status is LOBBY, otherwise a
@@ -166,7 +166,7 @@ def socket_ask(form, data, user_id, room_id):
     bin['answered'] = False
     socketio.emit('ask', data, room=sid)
 
-    # Loop until an answer is received 
+    # Loop until an answer is received
     while not bin['answered']:
         while not bin['answered']:
             # If a player swaps out for an AI during an ask, the AI answers
