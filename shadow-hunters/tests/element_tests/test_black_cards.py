@@ -132,7 +132,7 @@ def test_dynamite():
     c.use({ 'self': p1, 'card': c })
     damages = [p.damage for p in gc.players]
     assert len([d for d in damages if d == 3]) <= 1
-    assert len([d for d in damages if d == 0]) == len(gc.players) - 1
+    assert len([d for d in damages if d == 0]) >= len(gc.players) - 1
 
 
 def test_spiritual_doll():
