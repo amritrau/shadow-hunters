@@ -116,7 +116,7 @@ def room(methods=['GET', 'POST']):
             }
 
             # Reconnect to game
-            if rooms[room_id]['reconnections'][username]:  # TODO: make actual browser cookie
+            if username in rooms[room_id]['reconnections']:  # TODO: make actual browser cookie
                 context['spectate'] = False
                 context['reconnect'] = True
                 context['gc_data']['private'] = private_state
