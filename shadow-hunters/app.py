@@ -185,14 +185,11 @@ def socket_ask(form, data, user_id, room_id):
     bin['answered'] = False
     return bin['data']
 
-
 def socket_tell(str, args, gc, room_id, client=None):
     if not client:
-        client = (room_id)
+        client = (room_id,)
     data = color_format(str, args, gc)
     packet = {'strings': data[0], 'colors': data[1]}
-    print(packet)
-    print(client[0])
     socketio.emit('message', packet, room=client[0])
     if room_id in rooms:
         socketio.sleep(SOCKET_SLEEP)
@@ -254,6 +251,7 @@ def on_start(json):
             show_h = None,
             update_h = None
     )
+    print("ROOM_ID: {}".format(room_id))
     gc.tell_h = lambda x, y, *z: socket_tell(x, y, gc, room_id, z)
     gc.show_h = lambda x, *y: socket_show(x, gc, room_id, y)
     gc.update_h = lambda: socket_update(gc.dump()[0], room_id)
