@@ -272,7 +272,7 @@ var GameBoard = new Phaser.Class ({
             this.infoBox.data.set("name", this.charInfo.name);
             this.infoBox.data.set("team", this.charInfo.alleg);
             this.infoBox.data.set("win", this.charInfo.win_cond_desc);
-            this.infoBox.data.set("special", "none"); //not yet implemented
+            this.infoBox.data.set("special", this.charInfo.special_desc);
 
             //create the text variables
             var text = this.add.text(10, 475, '', {
