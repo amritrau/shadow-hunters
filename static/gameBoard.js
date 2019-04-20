@@ -301,7 +301,7 @@ var GameBoard = new Phaser.Class ({
             //set the text for inside of the box
             text.setText([
                 'Team: ' + this.infoBox.data.get('team'),
-                'Win Condition: ' + this.infoBox.data.get('win'), "\n",
+                'Win Condition: ' + this.infoBox.data.get('win'),
                 'Special Ability: ' + this.infoBox.data.get('special')
             ]);
 
