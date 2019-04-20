@@ -177,6 +177,7 @@ var GameBoard = new Phaser.Class ({
         this.load.svg('whitecard', '/static/assets/whitecard.svg', {width: 154.604, height: 199.212});
         this.load.svg('blackcard', '/static/assets/blackcard.svg', {width: 154.604, height: 199.212});
         this.load.svg('greencard', '/static/assets/greencard.svg', {width: 154.604, height: 199.212});
+        this.load.svg('alert', '/static/assets/alert.svg', {width: 318.804, height: 101.562});
 
         // load bitmap text
         this.load.bitmapFont('adventur', gfx + 'Adventur.png', gfx + 'Adventur.fnt');
@@ -334,17 +335,13 @@ var GameBoard = new Phaser.Class ({
                     self.onDraw(data);
                     break;
                 case "reveal":
-                    console.log("in case reveal, data.type is: " + data.type);
-                    console.log(data);
                     self.onReveal(data);
-                    //TO DO: make character card pop up
                     break;
                 case "roll":
                     //TO DO: @Joanna write the code to display the dice here!
                     break;
                 case "die":
-                    console.log("in case die, data.type is: " + data.type);
-                    //TO DO: make a popup annoucing death / revealing character
+                    self.onReveal(data);
                     break;
                 default:
                     console.log("what are you doing? data.type is: " + data.type);
@@ -875,5 +872,21 @@ var GameBoard = new Phaser.Class ({
           }
         }
         console.log(this.gameSummary);
+
+        // popups
+        this.cards.cardsDrawn[cardsOut] = this.add.image(541.58, 218.199, "alert");
+        this.cards.cardsDrawn[cardsOut].cardText = this.add.text(407.718, 182.5, " ", { font: '24px Palatino', fill: '#FFFFFF', boundsAlignH: "center", boundsAlignV: "middle"});
+
+        if(charInfo.type === "die") {
+          this.cards.cardsDrawn[cardsOut].cardText.setText([ charInfo.player.user_id + " died!"]);
+        }
+        else {
+          this.cards.cardsDrawn[cardsOut].cardText.setText([ charInfo.player.user_id + " revealed themselves!"]);
+        }
+        this.cards.cardsDrawn[cardsOut].depth = 40;
+        this.cards.cardsDrawn[cardsOut].cardText.depth = 40;
+        this.cards.cardsDrawn[cardsOut].setInteractive();
+        this.cards.cardsDrawn[cardsOut].on('clicked', this.cardHandler, this.cards.cardsDrawn[cardsOut]);
+        this.cards.nDrawn = cardsOut + 1;
     }
 });
