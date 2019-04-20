@@ -313,6 +313,7 @@ def on_special():
     else:
         connection_lock.release()
         return
+    connection_lock.release()
 
     # Use special
     player.character.special(rooms[room_id]['gc'], player, turn_pos = 'now')
