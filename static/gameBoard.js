@@ -493,6 +493,7 @@ var GameBoard = new Phaser.Class ({
         summaryIcon.names[i] = this.gameData.public.players[i].user_id;
         summaryIcon.characters[i] = "?";
         summaryIcon.damage[i] = this.gameData.public.players[i].damage;
+        summaryIcon.team[i] = "?";
         summaryIcon.win[i] = "?";
         summaryIcon.equipment[i] = "None";
 
@@ -627,9 +628,6 @@ var GameBoard = new Phaser.Class ({
             if((data.state == 1 || data.state == 0) && $('#reveal').length) {
                 $('#reveal').remove();
                 $('#special').show();
-                this.gameSummary.characters[player.number - 1] = "";
-                this.gameSummary.team[player.number - 1] = "";
-                this.gameSummary.win[player.number - 1] = "";
             }
         }
 
@@ -654,7 +652,7 @@ var GameBoard = new Phaser.Class ({
                 }
             }
 
-            this.gameSummary.equipment[player.number - 1] = player.info.equipment.list = "";
+            this.gameSummary.equipment[player.number - 1] = player.info.equipment.list;
         }
 
         player.displayInfo.setText([
@@ -733,6 +731,9 @@ var GameBoard = new Phaser.Class ({
           for(var i = 0; i < summary.scene.nPlayers; i++) {
             summary.displayInfo[i].setVisible(true);
             summary.displayCharacter[i].setVisible(true);
+            if(summary.characters[i] !== "?") {
+              summary.displayCharacter[i].charImage.setVisible(true);
+            }
           }
         }
         else
@@ -741,6 +742,9 @@ var GameBoard = new Phaser.Class ({
             for(var i = 0; i < summary.scene.nPlayers; i++) {
               summary.displayInfo[i].setVisible(false);
               summary.displayCharacter[i].setVisible(false);
+              if(summary.characters[i] !== "?") {
+                summary.displayCharacter[i].charImage.setVisible(false);
+              }
             }
         }
     },
@@ -840,5 +844,36 @@ var GameBoard = new Phaser.Class ({
         this.cards.cardsDrawn[cardsOut].setInteractive();
         this.cards.cardsDrawn[cardsOut].on('clicked', this.cardHandler, this.cards.cardsDrawn[cardsOut]);
         this.cards.nDrawn = cardsOut + 1;
+
+        console.log(this.allPlayersInfo);
+        console.log(charInfo.player.user_id);
+        for(var i = 0; i < this.nPlayers; i++) {
+          console.log(this.allPlayersInfo[i].user_id);
+          if(charInfo.player.user_id === this.allPlayersInfo[i].user_id) {
+            console.log("updating revealed character");
+            this.gameSummary.characters[i] = charInfo.player.character.name;
+            this.gameSummary.team[i] = charInfo.player.character.alleg;
+            this.gameSummary.win[i] = charInfo.player.character.win_cond_desc;
+
+            this.gameSummary.displayInfo[i].setText([
+              "Player Name: " + this.gameSummary.names[i],
+              "Character: " + this.gameSummary.characters[i],
+              "Damage: " + this.gameSummary.damage[i] + ", Team: " + this.gameSummary.team[i],
+              "Win Condition: " + this.gameSummary.win[i],
+              "Equipment: " + this.gameSummary.equipment[i]
+            ]);
+
+            if (i % 2 == 0) {
+              this.gameSummary.displayCharacter[i].charImage = this.add.image(280.46, 119 + 130*(i/2), charInfo.player.character.name);
+            }
+            else {
+              this.gameSummary.displayCharacter[i].charImage = this.add.image(582.46, 119 + 130*((i-1)/2), charInfo.player.character.name);
+            }
+            this.gameSummary.displayCharacter[i].charImage.depth = 40;
+            this.gameSummary.displayCharacter[i].charImage.setVisible(false);
+            break;
+          }
+        }
+        console.log(this.gameSummary);
     }
 });
