@@ -107,7 +107,7 @@ def room(methods=['GET', 'POST']):
         # check for game already in progress
         if (room_id in rooms) and rooms[room_id]['status'] == 'GAME':
             public_state, private_state = rooms[room_id]['gc'].dump()
-            usrctx = {
+            context = {
                 'name': username,
                 'room_id': room_id,
                 'spectate': True,
@@ -122,7 +122,7 @@ def room(methods=['GET', 'POST']):
                 context['gc_data']['private'] = private_state
                 ai_player = [p for p in rooms[room_id]['gc'].players if p.user_id == username][0]
             connection_lock.release()
-            return render_template('room.html', context=usrctx)
+            return render_template('room.html', context=context)
         connection_lock.release()
 
         # send player to room
