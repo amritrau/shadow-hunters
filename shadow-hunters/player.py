@@ -15,6 +15,7 @@ class Player:
         self.location = None
         self.modifiers = defaultdict(lambda: False)
         self.modifiers['attack_dice_type'] = "attack"
+        self.special_active = False
         self.ai = ai
 
     def setCharacter(self, character):
@@ -37,8 +38,6 @@ class Player:
             elements.ALLEGIANCE_MAP[self.character.alleg],
             self.character.max_damage
         ])
-        self.gc.tell_h("Their win condition: {}.", [self.character.win_cond_desc])
-        self.gc.tell_h("Their special ability: {}.", ["None"])
 
     def takeTurn(self):
         # Before turn check for special ability
@@ -136,48 +135,55 @@ class Player:
         self.gc.tell_h("{}'s turn is over.", [self.user_id])
 
     def attackSequence(self, dice_type = "attack"):
-        self.gc.ask_h('confirm', {'options': ["Attack other players!"]}, self.user_id)
-        self.gc.tell_h("{} is picking whom to attack...", [self.user_id])
 
-        # Get attackable players
-        live_players = [p for p in self.gc.getLivePlayers() if p.location]
-        targets = [p for p in live_players if (p.location.zone == self.location.zone and p != self)]
-        if "Handgun" in [e.title for e in self.equipment]:
-            self.gc.tell_h("{}'s Handgun reverses their attack range.", [self.user_id])
-            targets = [p for p in live_players if (p.location.zone != self.location.zone and p != self)]
+        # Give player option to attack or decline
+        self.gc.tell_h("{} is deciding to attack...", [self.user_id])
+        options = ["Attack other players!"]
+        if "Cursed Sword Masamune" not in [e.title for e in self.equipment]:
+            options.append("Decline")
+        answer = self.gc.ask_h('yesno', {'options': options}, self.user_id)["value"]
 
-        # If player has Masamune, can't decline unless there are no options
-        # TODO is this a bug?
-        data = {'options': [t.user_id for t in targets]}
-        if ("Cursed Sword Masamune" not in [e.title for e in self.equipment]) or len(data['options']) == 0:
-            data['options'].append("Decline")
-        answer = self.gc.ask_h('select', data, self.user_id)['value']
+        if answer != "Decline":
 
-        if answer != 'Decline':
-            # Get target
-            target_name = answer
-            target_Player = [p for p in self.gc.getLivePlayers() if p.user_id == target_name][0]
-            self.gc.tell_h("{} is attacking {}!", [self.user_id, target_name])
+            # Get attackable players
+            live_players = [p for p in self.gc.getLivePlayers() if p.location]
+            targets = [p for p in live_players if (p.location.zone == self.location.zone and p != self)]
+            if "Handgun" in [e.title for e in self.equipment]:
+                self.gc.tell_h("{}'s {} reverses their attack range.", [self.user_id, "Handgun"])
+                targets = [p for p in live_players if (p.location.zone != self.location.zone and p != self)]
 
-            # Roll with the 4-sided die if the player has masamune
-            roll_result = 0
-            if "Cursed Sword Masamune" in [e.title for e in self.equipment]:
-                self.gc.tell_h("{} rolls with the 4-sided die using the Masamune!", [self.user_id, roll_result])
-                roll_result = self.rollDice('4')
-            else:
-                roll_result = self.rollDice(dice_type)
+            # If player has Masamune, can't decline unless there are no options
+            data = {'options': [t.user_id for t in targets]}
+            if ("Cursed Sword Masamune" not in [e.title for e in self.equipment]) or len(data['options']) == 0:
+                data['options'].append("Decline")
+            answer = self.gc.ask_h('select', data, self.user_id)['value']
 
-            # If player has Machine Gun, launch attack on everyone in the zone. Otherwise, attack the target
-            if "Machine Gun" in [e.title for e in self.equipment]:
-                self.gc.tell_h("{}'s Machine Gun hits everyone in their attack range!", [self.user_id])
-                for t in targets:
-                    damage_dealt = self.attack(t, roll_result)
-                    self.gc.tell_h("{} hit {} for {} damage!", [self.user_id, t.user_id, damage_dealt])
+            if answer != 'Decline':
+
+                # Get target
+                target_name = answer
+                target_Player = [p for p in self.gc.getLivePlayers() if p.user_id == target_name][0]
+                self.gc.tell_h("{} is attacking {}!", [self.user_id, target_name])
+
+                # Roll with the 4-sided die if the player has masamune
+                roll_result = 0
+                if "Cursed Sword Masamune" in [e.title for e in self.equipment]:
+                    self.gc.tell_h("{} rolls with the 4-sided die using the {}!", [self.user_id, "Cursed Sword Masamune"])
+                    roll_result = self.rollDice('4')
+                else:
+                    roll_result = self.rollDice(dice_type)
+
+                # If player has Machine Gun, launch attack on everyone in the zone. Otherwise, attack the target
+                if "Machine Gun" in [e.title for e in self.equipment]:
+                    self.gc.tell_h("{}'s {} hits everyone in their attack range!", [self.user_id, "Machine Gun"])
+                    for t in targets:
+                        damage_dealt = self.attack(t, roll_result)
+                else:
+                    damage_dealt = self.attack(target_Player, roll_result)
             else:
                 self.gc.tell_h("{} declined to attack.", [self.user_id])
         else:
             self.gc.tell_h("{} declined to attack.", [self.user_id])
-
 
     def drawCard(self, deck):
 
@@ -320,23 +326,26 @@ class Player:
         if not dryrun:
             self.moveDamage(-dealt, attacker = other)
 
+        self.gc.tell_h("{} hit {} for {} damage!", [other.user_id, self.user_id, dealt])
+
         # Check for counterattack
         if self.modifiers['counterattack']:
             # Ask if player wants to counterattack
+            self.gc.tell_h("{}, the {}, is deciding whether to counterattack!", [self.user_id, "Werewolf"])
             answer = self.gc.ask_h('confirm', {'options': ["Counterattack", "Decline"]}, self.user_id)['value']
 
             if answer != "Decline":
-                self.gc.tell_h("{} is counterattacking!".format(self.user_id))
+                self.gc.tell_h("{} is counterattacking!", [self.user_id])
                 # Roll with the 4-sided die if the player has masamune
                 roll_result = 0
                 if "Cursed Sword Masamune" in [e.title for e in self.equipment]:
-                    self.gc.tell_h("{} rolls with the 4-sided die using the Masamune!".format(self.user_id, roll_result))
+                    self.gc.tell_h("{} rolls with the 4-sided die using the {}!", [self.user_id, "Cursed Sword Masamune"])
                     roll_result = self.rollDice('4')
                 else:
                     roll_result = self.rollDice(self.modifiers['attack_dice_type'])
                 self.attack(other, roll_result)
             else:
-                self.gc.tell_h("{} declined to counterattack.".format(self.user_id))
+                self.gc.tell_h("{} declined to counterattack.", [self.user_id])
 
         return dealt
 
@@ -350,8 +359,7 @@ class Player:
                 if choose_steal:
                     desired_eq = attacker.chooseEquipment(self)
                     self.giveEquipment(attacker, desired_eq)
-                    gc.tell_h("{} stole {}'s {} instead of dealing {} damage!'".format(attacker.user_id, self.user_id, desired_eq.name, damage_change))
-
+                    gc.tell_h("{} stole {}'s {} instead of dealing {} damage!", [attacker.user_id, self.user_id, desired_eq.name, damage_change])
                     return self.damage
 
         self.damage = min(self.damage - damage_change, self.character.max_damage)
@@ -440,7 +448,7 @@ class Player:
             'equipment': [eq.dump() for eq in self.equipment],
             'damage': self.damage,
             'character': self.character.dump() if self.character else {},
-            'modifiers': self.modifiers,
             'location': self.location.dump() if self.location else {},
-            'ai': self.ai,
+            'special_active': self.special_active,
+            'ai': self.ai
         }

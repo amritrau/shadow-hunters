@@ -269,7 +269,7 @@ var GameBoard = new Phaser.Class ({
             this.infoBox.data.set("name", this.charInfo.name);
             this.infoBox.data.set("team", this.charInfo.alleg);
             this.infoBox.data.set("win", this.charInfo.win_cond_desc);
-            this.infoBox.data.set("special", "none"); //not yet implemented
+            this.infoBox.data.set("special", this.charInfo.special_desc);
 
             //create the text variables
             var text = this.add.text(10, 475, '', {
@@ -583,7 +583,15 @@ var GameBoard = new Phaser.Class ({
             // remove reveal button on person's screen if they are revealed
             if((data.state == 1 || data.state == 0) && $('#reveal').length) {
                 $('#reveal').remove();
+            }
+
+            // Show special button if person is revealed but hasn't used special
+            if((data.state == 1 || data.state == 0) && !data.special_active) {
                 $('#special').show();
+            }
+            else if(data.special_active && $('#special').length)
+            {
+                $('#special').remove();
             }
         }
 
