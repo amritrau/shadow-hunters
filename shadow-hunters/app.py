@@ -116,7 +116,7 @@ def room(methods=['GET', 'POST']):
             }
 
             # Reconnect to game
-            if rooms[room_id]['reconnections'][username] == 'cookie':  # TODO: make actual browser cookie
+            if rooms[room_id]['reconnections'][username]:  # TODO: make actual browser cookie
                 context['spectate'] = False
                 context['reconnect'] = True
                 context['gc_data']['private'] = private_state
@@ -316,7 +316,12 @@ def on_special():
     connection_lock.release()
 
     # Use special
-    player.character.special(rooms[room_id]['gc'], player, turn_pos = 'now')
+    elements.reveal_lock.acquire()
+    if not player.special_active:
+        player.special_active = True
+        player.character.special(rooms[room_id]['gc'], player, turn_pos = 'now')
+        rooms[room_id]['gc'].update_h()
+    elements.reveal_lock.release()
 
 @socketio.on('answer')
 def on_answer(json):

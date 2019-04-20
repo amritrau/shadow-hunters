@@ -63,7 +63,6 @@ var GameBoard = new Phaser.Class ({
     //function to initialize the data sent into gameboard from waiting room
     init: function (data)
     {
-      console.log("in gameboard, loading data");
         // Remove start button
         $('#start').remove();
         $('#selectPlayers').remove();
@@ -587,7 +586,15 @@ var GameBoard = new Phaser.Class ({
             // remove reveal button on person's screen if they are revealed
             if((data.state == 1 || data.state == 0) && $('#reveal').length) {
                 $('#reveal').remove();
+            }
+
+            // Show special button if person is revealed but hasn't used special
+            if((data.state == 1 || data.state == 0) && !data.special_active) {
                 $('#special').show();
+            }
+            else if(data.special_active && $('#special').length)
+            {
+                $('#special').remove();
             }
         }
 

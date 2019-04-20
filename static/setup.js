@@ -40,12 +40,14 @@ $('document').ready(function() {
         // Reveal button
         var reveal_form = $('#reveal').on('submit', function(e) {
             e.preventDefault();
+            $('#reveal').hide();
             socket.emit('reveal');
         });
 
         // Special ability button
-        var reveal_form = $('#special').on('submit', function(e) {
+        var special_form = $('#special').on('submit', function(e) {
             e.preventDefault();
+            $('#special').hide();
             socket.emit('special');
         });
 
