@@ -63,7 +63,6 @@ var GameBoard = new Phaser.Class ({
     //function to initialize the data sent into gameboard from waiting room
     init: function (data)
     {
-      console.log("in gameboard, loading data");
         // Remove start button
         $('#start').remove();
         $('#selectPlayers').remove();
@@ -73,15 +72,12 @@ var GameBoard = new Phaser.Class ({
         if("private" in this.gameData) this.charInfo = this.gameData.private.character;
         this.allPlayersInfo = this.gameData.public.players;
 
-        // DEBUGGING
-        console.log(this.charInfo);
-        console.log(typeof this.charInfo);
-        console.log(this.gameData.public);
-        console.log(this.gameData.public.players);
-        //var key = Object.keys(this.otherPlayersInfo)[0];
-        //console.log(this.otherPlayersInfo[key].user_id);
-        //console.log(Object.keys(this.otherPlayersInfo).length);
-        console.log(this.gameData.private);
+        // // DEBUGGING
+        // console.log(this.charInfo);
+        // console.log(typeof this.charInfo);
+        // console.log(this.gameData.public);
+        // console.log(this.gameData.public.players);
+        // console.log(this.gameData.private);
     },
 
     //the preload function is where all images that will be used in the game are loaded into
@@ -335,8 +331,8 @@ var GameBoard = new Phaser.Class ({
                     self.onDraw(data);
                     break;
                 case "reveal":
-                    console.log("in case reveal, data.type is: " + data.type);
-                    console.log(data);
+                    //console.log("in case reveal, data.type is: " + data.type);
+                    //console.log(data);
                     self.onReveal(data);
                     //TO DO: make character card pop up
                     break;
@@ -344,11 +340,11 @@ var GameBoard = new Phaser.Class ({
                     //TO DO: @Joanna write the code to display the dice here!
                     break;
                 case "die":
-                    console.log("in case die, data.type is: " + data.type);
+                    //console.log("in case die, data.type is: " + data.type);
                     //TO DO: make a popup annoucing death / revealing character
                     break;
                 default:
-                    console.log("what are you doing? data.type is: " + data.type);
+                    //console.log("what are you doing? data.type is: " + data.type);
                     break;
             }
         });
