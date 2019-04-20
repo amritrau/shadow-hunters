@@ -63,21 +63,29 @@ var GameBoard = new Phaser.Class ({
     //function to initialize the data sent into gameboard from waiting room
     init: function (data)
     {
-      console.log("in gameboard, loading data");
         // Remove start button
         $('#start').remove();
         $('#selectPlayers').remove();
 
         // Store data
         this.gameData = data;
+        console.log(this.gameData)
         if("private" in this.gameData) this.charInfo = this.gameData.private.character;
         this.allPlayersInfo = this.gameData.public.players;
 
         // DEBUGGING
         // console.log(this.charInfo);
         // console.log(typeof this.charInfo);
+<<<<<<< HEAD
         console.log(this.gameData.public);
         console.log(this.gameData.public.players);
+=======
+        // console.log(this.gameData.public);
+        // console.log(this.gameData.public.players);
+        //var key = Object.keys(this.otherPlayersInfo)[0];
+        //console.log(this.otherPlayersInfo[key].user_id);
+        //console.log(Object.keys(this.otherPlayersInfo).length);
+>>>>>>> 8186aa6b8a48f708333157065f967afb83d35213
         // console.log(this.gameData.private);
     },
 
@@ -97,7 +105,7 @@ var GameBoard = new Phaser.Class ({
         this.load.image('info', '/static/assets/info.png')
 
         // load arsenal
-        this.load.image('arsenal', gfx + 'arsenal.svg', {width: 640, height: 125.683});
+        this.load.svg('arsenal', gfx + 'arsenal.svg', {width: 640, height: 125.683});
 
         // load the location cards
         this.load.svg('Hermit\'s Cabin', gfx + 'hermits_cabin.svg', {width: 101, height: 150});
@@ -135,7 +143,7 @@ var GameBoard = new Phaser.Class ({
         this.load.svg('hpp7', gfx + 'yellowDot.svg', {width: 15, height: 15});
         this.load.svg('hpp8', gfx + 'orangeDot.svg', {width: 15, height: 15});
 
-        this.load.image('playerinfo', gfx + 'playerinfo.svg', {width: 209, height: 125});
+        this.load.svg('playerinfo', gfx + 'playerinfo.svg', {width: 209, height: 125});
 
         this.load.svg('8hp', gfx + '8hp.svg', {width: 30.14, height: 30.14});
         this.load.svg('10hp', gfx + '10hp.svg', {width: 30.14, height: 30.14});
@@ -273,7 +281,7 @@ var GameBoard = new Phaser.Class ({
             this.infoBox.data.set("name", this.charInfo.name);
             this.infoBox.data.set("team", this.charInfo.alleg);
             this.infoBox.data.set("win", this.charInfo.win_cond_desc);
-            this.infoBox.data.set("special", "none"); //not yet implemented
+            this.infoBox.data.set("special", this.charInfo.special_desc);
 
             //create the text variables
             var text = this.add.text(10, 475, '', {
@@ -301,7 +309,7 @@ var GameBoard = new Phaser.Class ({
             //set the text for inside of the box
             text.setText([
                 'Team: ' + this.infoBox.data.get('team'),
-                'Win Condition: ' + this.infoBox.data.get('win'), "\n",
+                'Win Condition: ' + this.infoBox.data.get('win'),
                 'Special Ability: ' + this.infoBox.data.get('special')
             ]);
 
@@ -335,16 +343,26 @@ var GameBoard = new Phaser.Class ({
                     self.onDraw(data);
                     break;
                 case "reveal":
+<<<<<<< HEAD
+=======
+                    //console.log("in case reveal, data.type is: " + data.type);
+                    //console.log(data);
+>>>>>>> 8186aa6b8a48f708333157065f967afb83d35213
                     self.onReveal(data);
                     break;
                 case "roll":
                     //TO DO: @Joanna write the code to display the dice here!
                     break;
                 case "die":
+<<<<<<< HEAD
                     self.onReveal(data);
+=======
+                    //console.log("in case die, data.type is: " + data.type);
+                    //TO DO: make a popup annoucing death / revealing character
+>>>>>>> 8186aa6b8a48f708333157065f967afb83d35213
                     break;
                 default:
-                    console.log("what are you doing? data.type is: " + data.type);
+                    //console.log("what are you doing? data.type is: " + data.type);
                     break;
             }
         });
@@ -624,7 +642,15 @@ var GameBoard = new Phaser.Class ({
             // remove reveal button on person's screen if they are revealed
             if((data.state == 1 || data.state == 0) && $('#reveal').length) {
                 $('#reveal').remove();
+            }
+
+            // Show special button if person is revealed but hasn't used special
+            if((data.state == 1 || data.state == 0) && !data.special_active) {
                 $('#special').show();
+            }
+            else if(data.special_active && $('#special').length)
+            {
+                $('#special').remove();
             }
         }
 

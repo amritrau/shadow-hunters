@@ -56,6 +56,7 @@ class GameContext:
         # Remove characters unsuitable for current # of players
         valid_for_n_players = lambda c: c.modifiers['min_players'] <= len(self.players) <= c.modifiers['max_players']
         character_q = list(filter(valid_for_n_players, character_q))
+        self.playable = copy.deepcopy(character_q)
         random.shuffle(character_q)
 
         # Figure out how many of each allegiance there has to be
@@ -86,6 +87,12 @@ class GameContext:
 
     def getDeadPlayers(self):
         return [p for p in self.players if p.state == 0]
+
+    def getPlayersAt(self, location_name):
+        live = self.getLivePlayers()
+        live_loc = [p for p in live if p.location]
+        return [p for p in live_loc if p.location.name == location_name]
+
 
     def _checkWinConditions(self):
         return [p for p in self.players if p.character.win_cond(self, p)]
