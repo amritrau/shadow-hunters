@@ -73,14 +73,21 @@ var GameBoard = new Phaser.Class ({
         if("private" in this.gameData) this.charInfo = this.gameData.private.character;
         this.allPlayersInfo = this.gameData.public.players;
 
+<<<<<<< HEAD
         // DEBUGGING
+=======
+        // // DEBUGGING
+>>>>>>> 072c9aa9a43a1ac5954c38cdf47875b8321d0c9a
         // console.log(this.charInfo);
         // console.log(typeof this.charInfo);
         // console.log(this.gameData.public);
         // console.log(this.gameData.public.players);
+<<<<<<< HEAD
         //var key = Object.keys(this.otherPlayersInfo)[0];
         //console.log(this.otherPlayersInfo[key].user_id);
         //console.log(Object.keys(this.otherPlayersInfo).length);
+=======
+>>>>>>> 072c9aa9a43a1ac5954c38cdf47875b8321d0c9a
         // console.log(this.gameData.private);
     },
 
@@ -335,8 +342,8 @@ var GameBoard = new Phaser.Class ({
                     self.onDraw(data);
                     break;
                 case "reveal":
-                    console.log("in case reveal, data.type is: " + data.type);
-                    console.log(data);
+                    //console.log("in case reveal, data.type is: " + data.type);
+                    //console.log(data);
                     self.onReveal(data);
                     //TO DO: make character card pop up
                     break;
@@ -344,11 +351,11 @@ var GameBoard = new Phaser.Class ({
                     //TO DO: @Joanna write the code to display the dice here!
                     break;
                 case "die":
-                    console.log("in case die, data.type is: " + data.type);
+                    //console.log("in case die, data.type is: " + data.type);
                     //TO DO: make a popup annoucing death / revealing character
                     break;
                 default:
-                    console.log("what are you doing? data.type is: " + data.type);
+                    //console.log("what are you doing? data.type is: " + data.type);
                     break;
             }
         });
