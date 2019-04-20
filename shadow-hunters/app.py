@@ -119,7 +119,7 @@ def room(methods=['GET', 'POST']):
             if username in rooms[room_id]['reconnections']:  # TODO: make actual browser cookie
                 context['spectate'] = False
                 context['reconnect'] = True
-                context['gc_data']['private'] = [p for p in private_state if p.user_id == username][0]
+                context['gc_data']['private'] = [p for p in private_state if p['user_id'] == username][0]
                 ai_player = [p for p in rooms[room_id]['gc'].players if p.user_id == username][0]
             connection_lock.release()
             return render_template('room.html', context=context)
