@@ -69,23 +69,15 @@ var GameBoard = new Phaser.Class ({
 
         // Store data
         this.gameData = data;
-        console.log(this.gameData)
+        // console.log(this.gameData);
         if("private" in this.gameData) this.charInfo = this.gameData.private.character;
         this.allPlayersInfo = this.gameData.public.players;
 
         // DEBUGGING
         // console.log(this.charInfo);
         // console.log(typeof this.charInfo);
-<<<<<<< HEAD
-        console.log(this.gameData.public);
-        console.log(this.gameData.public.players);
-=======
         // console.log(this.gameData.public);
         // console.log(this.gameData.public.players);
-        //var key = Object.keys(this.otherPlayersInfo)[0];
-        //console.log(this.otherPlayersInfo[key].user_id);
-        //console.log(Object.keys(this.otherPlayersInfo).length);
->>>>>>> 8186aa6b8a48f708333157065f967afb83d35213
         // console.log(this.gameData.private);
     },
 
@@ -232,7 +224,7 @@ var GameBoard = new Phaser.Class ({
         //sorted_keys = Object.keys(this.allPlayersInfo).sort(); // Hack to force keys into a deterministic order
         var count = 0;
         this.nPlayers = this.allPlayersInfo.length;
-        console.log(this.nPlayers);
+        // console.log(this.nPlayers);
         for(var i = 0; i < this.nPlayers; i++) {
             if(("private" in this.gameData) && this.allPlayersInfo[i].user_id === this.gameData.private.user_id) {
                 this.player = this.makePlayer(this.allPlayersInfo[i].user_id,
@@ -343,23 +335,13 @@ var GameBoard = new Phaser.Class ({
                     self.onDraw(data);
                     break;
                 case "reveal":
-<<<<<<< HEAD
-=======
-                    //console.log("in case reveal, data.type is: " + data.type);
-                    //console.log(data);
->>>>>>> 8186aa6b8a48f708333157065f967afb83d35213
                     self.onReveal(data);
                     break;
                 case "roll":
                     //TO DO: @Joanna write the code to display the dice here!
                     break;
                 case "die":
-<<<<<<< HEAD
                     self.onReveal(data);
-=======
-                    //console.log("in case die, data.type is: " + data.type);
-                    //TO DO: make a popup annoucing death / revealing character
->>>>>>> 8186aa6b8a48f708333157065f967afb83d35213
                     break;
                 default:
                     //console.log("what are you doing? data.type is: " + data.type);
@@ -654,6 +636,33 @@ var GameBoard = new Phaser.Class ({
             }
         }
 
+        if((data.state == 1 || data.state == 0) && (player.info.state == 1 || player.info.state == 0)) {
+          if(this.gameSummary.characters[player.number - 1] === "?") {
+            console.log("what is wrong with the reveal socket? Character is: ", data.character.name);
+            if(data.character.alleg == 1){
+                data.character.alleg = "Neutral";
+            }
+            else if (data.character.alleg == 0) {
+                data.character.alleg = "Shadow";
+            }
+            else {
+                data.character.alleg = "Hunter";
+            }
+
+            this.gameSummary.characters[player.number - 1] = data.character.name;
+            this.gameSummary.team[player.number - 1] = data.character.alleg;
+            this.gameSummary.win[player.number - 1] = data.character.win_cond_desc;
+            if ((player.number - 1) % 2 == 0) {
+              this.gameSummary.displayCharacter[player.number - 1].charImage = this.add.image(280.46, 119 + 130*((player.number - 1)/2), data.character.name);
+            }
+            else {
+              this.gameSummary.displayCharacter[player.number - 1].charImage = this.add.image(582.46, 119 + 130*(player.number/2), data.character.name);
+            }
+            this.gameSummary.displayCharacter[player.number - 1].charImage.depth = 40;
+            this.gameSummary.displayCharacter[player.number - 1].charImage.setVisible(false);
+          }
+        }
+
         // Update player info to contain new data
         player.info = data;
 
@@ -665,6 +674,7 @@ var GameBoard = new Phaser.Class ({
         var nEquip = player.info.equipment.length;
         if(nEquip == 0) {
             player.info.equipment.list = "None";
+            this.gameSummary.equipment[player.number - 1] = "None";
         }
         else {
             player.info.equipment.list = "";
@@ -897,7 +907,7 @@ var GameBoard = new Phaser.Class ({
             break;
           }
         }
-        console.log(this.gameSummary);
+        // console.log(this.gameSummary);
 
         // popups
         this.cards.cardsDrawn[cardsOut] = this.add.image(541.58, 218.199, "alert");
