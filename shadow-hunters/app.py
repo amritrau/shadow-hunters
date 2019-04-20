@@ -191,6 +191,8 @@ def socket_tell(str, args, gc, room_id, client=None):
         client = (room_id)
     data = color_format(str, args, gc)
     packet = {'strings': data[0], 'colors': data[1]}
+    print(packet)
+    print(client[0])
     socketio.emit('message', packet, room=client[0])
     if room_id in rooms:
         socketio.sleep(SOCKET_SLEEP)

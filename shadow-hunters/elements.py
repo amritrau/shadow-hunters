@@ -989,8 +989,6 @@ class ElementFactory:
                 ALLEGIANCE_MAP[target.character.alleg],
                 target.character.max_damage
             ], args['self'].socket_id)
-            target.gc.tell_h("Their win condition: {}.", [target.character.win_cond_desc], args['self'].socket_id)
-            target.gc.tell_h("Their special ability: {}.", ["None"], args['self'].socket_id)
             target.gc.tell_h("{} revealed their identity secretly to {}!", [target.user_id, args['self'].user_id])
 
         ## Initialize hermit cards
@@ -1265,7 +1263,7 @@ class ElementFactory:
 
                 else:
                     # Already used special
-                    gc.tell_h("This special ability can be used only once.", player.socket_id)
+                    gc.tell_h("This special ability can be used only once.", [], player.socket_id)
 
         def franklin_special(gc, player, turn_pos):
             print("franklin_special:", player.user_id, turn_pos)
@@ -1316,14 +1314,14 @@ class ElementFactory:
 
                     target_Player.resetModifiers()
                     target_Player.modifiers['special_used'] = True
-                    target_Player.special = lambda gc, player, turn_pos: gc.tell_h("Your special ability has been cancelled.", [], player.socket_id)
+                    target_Player.special = lambda gc, player, turn_pos: gc.tell_h("Your special ability was voided by {}.", ["Ellen"], player.socket_id)
 
                     gc.tell_h("{} cancelled {}'s special ability for the rest of the game!", ["Ellen", target])
 
 
                 else:
                     # Already used special
-                    gc.tell_h("This special ability can be used only once.", player.socket_id)
+                    gc.tell_h("This special ability can be used only once.", [], player.socket_id)
 
         ########## Shadows
 
@@ -1376,7 +1374,7 @@ class ElementFactory:
                 alleg = 0,  # Shadow
                 max_damage = 13,
                 win_cond = shadow_win_cond,
-                win_cond_desc = "All of the Hunters (or 3 Neutral characters) are dead.",
+                win_cond_desc = "All of the Hunters (or 3 Neutrals) are dead.",
                 special = valkyrie_special,
                 special_desc = "When you attack, you only roll the 4-sided die and inflict the amount of damage rolled.",
                 resource_id = "valkyrie"
@@ -1386,7 +1384,7 @@ class ElementFactory:
                 alleg = 0,  # Shadow
                 max_damage = 13,
                 win_cond = shadow_win_cond,
-                win_cond_desc = "All of the Hunters (or 3 Neutral characters) are dead.",
+                win_cond_desc = "All of the Hunters (or 3 Neutrals) are dead.",
                 special = vampire_special,
                 special_desc = "If you attack a player and inflict damage, you heal 2 points of your own damage.",
                 resource_id = "vampire"
@@ -1396,7 +1394,7 @@ class ElementFactory:
                 alleg = 0,  # Shadow
                 max_damage = 14,
                 win_cond = shadow_win_cond,
-                win_cond_desc = "All of the Hunters (or 3 Neutral characters) are dead.",
+                win_cond_desc = "All of the Hunters (or 3 Neutrals) are dead.",
                 special = werewolf_special,
                 special_desc = "After you are attacked, you can counterattack immediately.",
                 resource_id = "werewolf"
@@ -1406,7 +1404,7 @@ class ElementFactory:
                 alleg = 0,  # Shadow
                 max_damage = 11,
                 win_cond = shadow_win_cond,
-                win_cond_desc = "All of the Hunters (or 3 Neutral characters) are dead.",
+                win_cond_desc = "All of the Hunters (or 3 Neutrals) are dead.",
                 special = ultra_soul_special,
                 special_desc = "When your turn starts, you can give 3 damage to one player who is at the Underworld Gate.",
                 resource_id = "ultra-soul"
@@ -1448,9 +1446,9 @@ class ElementFactory:
                 alleg = 1,  # Neutral
                 max_damage = 11,
                 win_cond = catherine_win_cond,
-                win_cond_desc = "You are the first to die or you are one of the last two characters remaining.",
+                win_cond_desc = "You are either the first to die or one of the last two players alive.",
                 special = catherine_special,
-                special_desc = "Heal 1 point of your own damage at the start of your turn.",
+                special_desc = "When your turn starts, heal 1 point of your damage.",
                 resource_id = "catherine"
             ),
             character.Character(

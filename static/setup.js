@@ -76,6 +76,7 @@ $('document').ready(function() {
 
         // Receive a message
         socket.on('message', function(msg) {
+            console.log("message received: " + JSON.stringify(msg))
 
             // Build message
             var html = '';
