@@ -297,7 +297,7 @@ def on_reveal():
     connection_lock.release()
     elements.reveal_lock.acquire()
     if player.state == 2:
-        player.state = 1: # Guard
+        player.state = 1 # Guard
         elements.reveal_lock.release()
         player.reveal()
 

@@ -73,21 +73,14 @@ var GameBoard = new Phaser.Class ({
         if("private" in this.gameData) this.charInfo = this.gameData.private.character;
         this.allPlayersInfo = this.gameData.public.players;
 
-<<<<<<< HEAD
         // DEBUGGING
-=======
-        // // DEBUGGING
->>>>>>> 072c9aa9a43a1ac5954c38cdf47875b8321d0c9a
         // console.log(this.charInfo);
         // console.log(typeof this.charInfo);
         // console.log(this.gameData.public);
         // console.log(this.gameData.public.players);
-<<<<<<< HEAD
         //var key = Object.keys(this.otherPlayersInfo)[0];
         //console.log(this.otherPlayersInfo[key].user_id);
         //console.log(Object.keys(this.otherPlayersInfo).length);
-=======
->>>>>>> 072c9aa9a43a1ac5954c38cdf47875b8321d0c9a
         // console.log(this.gameData.private);
     },
 
