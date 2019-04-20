@@ -119,7 +119,7 @@ def room(methods=['GET', 'POST']):
             if username in rooms[room_id]['reconnections']:  # TODO: make actual browser cookie
                 context['spectate'] = False
                 context['reconnect'] = True
-                context['gc_data']['private'] = private_state
+                context['gc_data']['private'] = [p for p in private_state if p.user_id == username][0]
                 ai_player = [p for p in rooms[room_id]['gc'].players if p.user_id == username][0]
             connection_lock.release()
             return render_template('room.html', context=context)
@@ -297,8 +297,10 @@ def on_reveal():
     connection_lock.release()
     elements.reveal_lock.acquire()
     if player.state == 2:
+        player.state = 1: # Guard
+        elements.reveal_lock.release()
         player.reveal()
-    elements.reveal_lock.release()
+
 
 @socketio.on('special')
 def on_special():
@@ -319,9 +321,9 @@ def on_special():
     elements.reveal_lock.acquire()
     if not player.special_active:
         player.special_active = True
+        elements.reveal_lock.release()
         player.character.special(rooms[room_id]['gc'], player, turn_pos = 'now')
         rooms[room_id]['gc'].update_h()
-    elements.reveal_lock.release()
 
 @socketio.on('answer')
 def on_answer(json):
