@@ -1417,7 +1417,7 @@ class ElementFactory:
                 win_cond = allie_win_cond,
                 win_cond_desc = "You're not dead when the game is over.",
                 special = allie_special,
-                special_desc = "Fully heal your damage.",
+                special_desc = "Once per game, you may fully heal your damage.",
                 resource_id = "allie"
             ),
             character.Character(
@@ -1449,7 +1449,7 @@ class ElementFactory:
                 win_cond = catherine_win_cond,
                 win_cond_desc = "You are either the first to die or one of the last two players alive.",
                 special = catherine_special,
-                special_desc = "When your turn starts, heal 1 point of your damage.",
+                special_desc = "When your turn starts, you may heal 1 damage.",
                 resource_id = "catherine"
             ),
             character.Character(

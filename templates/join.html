@@ -16,7 +16,7 @@
 			background-image: url("https://s3.amazonaws.com/shadowhunters.gfxresources/waitRoom.svg");
 
 			/* Full height */
-			height: 100%; 
+			height: 100%;
 
 			/* Center and scale the image */
 			background-position: center;
@@ -39,9 +39,16 @@
 	<div class="bg">
 		<div class="centered">
 			<p style="position: absolute; top: 175px; left: -50px">
-					<a href="/rules" class="pull-left"><img src="https://s3.amazonaws.com/shadowhunters.gfxresources/rules.png" width="100"></a> 
+					<a href="/rules" class="pull-left"><img src="https://s3.amazonaws.com/shadowhunters.gfxresources/rules.png" width="100"></a>
 				</p>
 			<body>
+				<center>
+					<div style="color: #FFFFFF; background-color: #000000; opacity: .3; position: absolute; top: 325px; left: -195px; font-size: 12px">
+						<p class=flashes style="width: 390px; height: 0px">
+							<p>Disconnected? Re-enter your name and room ID to rejoin your game!</p>
+						</p>
+					</div>
+				</center>
 				<center>
 					<div style="width: 350px; border: 5px solid; padding: 10px; box-shadow: 5px 10px #000000; background-color: #DFDFDF;height: 75px; position: fixed; left: -191px">
 						<form action="/room" method="POST">
@@ -58,7 +65,7 @@
 				</center>
 				<div><br /></div>
 				<center>
-					<div style="color: #FFFFFF; background-color: #000000; opacity: .5; position: absolute; top: 125px; left: -75px; font-size: 12px">
+					<div style="color: #FFFFFF; background-color: #000000; opacity: .3; position: absolute; top: 125px; left: -75px; font-size: 12px">
 						{% with messages = get_flashed_messages() %}
 						{% if messages %}
 						<p class=flashes style="width: 150px; height: 0px">
