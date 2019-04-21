@@ -602,6 +602,9 @@ var GameBoard = new Phaser.Class ({
 
         // Kill player if dead
         if(data.state == 0) {
+            if (player.infoBox.angle != 0) {
+                player.infoBox.angle = 0;
+            }
             player.alpha = 0.4;
             player.hpTracker.alpha = 0.4;
             player.infoBox.alpha = 0.4;
