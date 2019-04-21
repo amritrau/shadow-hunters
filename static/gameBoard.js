@@ -350,7 +350,6 @@ var GameBoard = new Phaser.Class ({
 
     },
 
-<<<<<<< HEAD
     makeEquipment: function(card, i) {
 
             // Add equipment card image
@@ -378,27 +377,6 @@ var GameBoard = new Phaser.Class ({
             return equip;
     },
 
-=======
-    makeArsenal: function(datasize, data){
-
-        for(var i = 0; i < datasize; i++) {
-            var sword = this.add.image(255 + i*100, 550, "sword");
-            sword.infoBox = this.add.image(255 + i*100, 450, "popup");
-            sword.infoBox.setVisible(false);
-            sword.infoBox.depth = 30;
-
-            sword.displayInfo = this.add.text(130 + i*100, 410, " ", { font: '12px Palatino', fill: '#FFFFFF', wordWrap: { width: 250, useAdvancedWrap: true }});
-            sword.displayInfo.setText(["Equipment: "+ data.equipment[i].title + "\n" + "Description: " + data.equipment[i].desc]);
-            sword.displayInfo.setVisible(false);
-            sword.displayInfo.depth = 30;
-            sword.setInteractive();
-            return sword;
-        }
-
-
-    },
-
->>>>>>> 1fdd5d2894d43bf9f546b193708730c6950ad6e1
     makeHealthBar: function() {
         var sprite  = this.add.image(960.160, 302.279, 'health');
         sprite.infoBox = this.add.image(800, 175, 'health_popup');
