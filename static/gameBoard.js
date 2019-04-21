@@ -197,8 +197,8 @@ var GameBoard = new Phaser.Class ({
         this.healthBar.on('clicked', this.clickHandler, this.box);
 
         // adds info button on upper right corner so people know they can click on things. Starts with popup open
-        this.popupInfo = this.add.image(840, 20, 'info');
-        this.popupInfo.infoBox = this.add.image(750, 55, "popup_left");
+        this.popupInfo = this.add.image(830, 20, 'info');
+        this.popupInfo.infoBox = this.add.image(740, 55, "popup_left");
         this.popupInfo.infoBox.depth = 30;
         this.popupInfo.displayInfo = this.add.text(this.popupInfo.infoBox.x - 80,
                                                   this.popupInfo.infoBox.y - 40,
@@ -460,7 +460,7 @@ var GameBoard = new Phaser.Class ({
 
     // makes summary icon in upper right part of screen interactive
     makeSummary: function() {
-      var summaryIcon = this.add.image(840, 65, 'summary');
+      var summaryIcon = this.add.image(830, 65, 'summary');
       summaryIcon.infoBox = this.add.image(516.092, 300, "gameSummary");
       summaryIcon.infoBox.depth = 40;
 
