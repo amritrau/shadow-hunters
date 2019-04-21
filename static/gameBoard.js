@@ -191,6 +191,7 @@ var GameBoard = new Phaser.Class ({
         this.load.svg('Butcher Knife', gfx + 'butcher-knife.svg', {width: 90, height: 90});
         this.load.svg('Chainsaw', gfx + 'chainsaw.svg', {width: 90, height: 90});
         this.load.svg('Chocolate', gfx + 'chocolate.svg', {width: 90, height: 90});
+        this.load.svg('Concealed Knowledge', gfx + 'hidden-knowledge.svg', {width: 90, height: 90});
         this.load.svg('Cursed Sword Masamune', gfx + 'cursed-sword-masamune.svg', {width: 90, height: 90});
         this.load.svg('Diabolic Ritual', gfx + 'diabolic-ritual.svg', {width: 90, height: 90});
         this.load.svg('Disenchant Mirror', gfx + 'disenchant-mirror.svg', {width: 90, height: 90});
@@ -200,8 +201,8 @@ var GameBoard = new Phaser.Class ({
         this.load.svg('Fortune Brooch', gfx + 'fortune-brooch.svg', {width: 90, height: 90});
         this.load.svg('Guardian Angel', gfx + 'guardian-angel.svg', {width: 90, height: 90});
         this.load.svg('Handgun', gfx + 'handgun.svg', {width: 90, height: 90});
+        this.load.svg('Holy Robe', gfx + 'holy-robe.svg', {width: 90, height: 90});
         this.load.svg('Hermit', gfx + 'hermit.svg', {width: 90, height: 90});
-        this.load.svg('Hidden Knowledge', gfx + 'hidden-knowledge.svg', {width: 90, height: 90});
         this.load.svg('Holy Water of Healing', gfx + 'holy-water-of-healing.svg', {width: 90, height: 90});
         this.load.svg('Machine Gun', gfx + 'machine-gun.svg', {width: 90, height: 90});
         this.load.svg('Moody Goblin', gfx + 'moody-goblin.svg', {width: 90, height: 90});
