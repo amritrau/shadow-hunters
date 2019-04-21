@@ -252,12 +252,12 @@ class Player:
         if type == "area":
             ask_data = {'options': ['Roll the dice!']}
             display_data = {'type': 'roll', '4-sided': roll_4, '6-sided': roll_6}
-            message = ("{} rolled {} + {} = {}!", [self.user_id, roll_4, roll_6, sum])
+            message = ("{} rolled {}!", [self.user_id, sum])
             result = sum
         elif type == "attack":
             ask_data = {'options': ['Roll for damage!']}
             display_data = {'type': 'roll', '4-sided': roll_4, '6-sided': roll_6}
-            message = ("{} rolled a {} - {} = {}!", [self.user_id, max(roll_6, roll_4), min(roll_6, roll_4), diff])
+            message = ("{} rolled {}!", [self.user_id, diff])
             result = diff
         elif type == "6":
             ask_data = {'options': ['Roll the 6-sided die!']}
@@ -382,7 +382,7 @@ class Player:
 
     def moveDamage(self, damage_change, attacker):
         if attacker.modifiers['steal_for_damage']:
-            print("steal_for_damage is on! damage: {}".format(damage_change))
+            # print("steal_for_damage is on! damage: {}".format(damage_change))
             if (damage_change <= -2) and len(self.equipment):
                 # Ask attacker whether to steal equipment or deal damage
                 data = {'options': ["Steal equipment", "Deal {} damage".format(abs(damage_change))]}

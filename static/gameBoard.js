@@ -630,10 +630,10 @@ var GameBoard = new Phaser.Class ({
             }
 
             // Show special button if person is revealed but hasn't used special
-            if((data.state == 1 || data.state == 0) && !data.special_active) {
+            if((data.state == 1) && !data.special_active) {
                 $('#special').show();
             }
-            else if(data.special_active && $('#special').length)
+            else if((data.state == 0 || data.special_active) && $('#special').length)
             {
                 $('#special').remove();
             }
@@ -677,7 +677,7 @@ var GameBoard = new Phaser.Class ({
             player.info.equipment.list = "";
             for(var i = 0; i < nEquip; i++) {
                 player.info.equipment.list += player.info.equipment[i].title;
-                if(i < nEquip-1){
+                if(i < nEquip-1) {
                     player.info.equipment.list += ", ";
                 }
             }
