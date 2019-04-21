@@ -389,7 +389,7 @@ var GameBoard = new Phaser.Class ({
 
         var display_text = []
         for (var i = 0; i < this.gameData.public.characters.length; i++) {
-          display_text.push("Player: " + this.gameData.public.characters[i].name, "Dies At HP: " + this.gameData.public.characters[i].max_damage + "\n"
+          display_text.push("Player: " + this.gameData.public.characters[i].name, "Dies At HP: " + this.gameData.public.characters[i].max_damage + "\n");
         }
         sprite.displayInfo.setText(display_text);
 
