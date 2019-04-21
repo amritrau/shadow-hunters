@@ -382,7 +382,7 @@ class Player:
 
     def moveDamage(self, damage_change, attacker):
         if damage_change < 0:
-            self.gc.show_h({'player': self.dump()})
+            self.gc.show_h({'type': 'damage', 'player': self.dump()})
 
         if attacker.modifiers['steal_for_damage']:
             if (damage_change <= -2) and len(self.equipment):
@@ -403,7 +403,7 @@ class Player:
 
     def setDamage(self, damage, attacker):
         if damage < self.damage:
-            self.gc.show_h({'player': self.dump()})
+            self.gc.show_h({'type': 'damage', 'player': self.dump()})
         self.damage = damage
         self.checkDeath(attacker)
 
