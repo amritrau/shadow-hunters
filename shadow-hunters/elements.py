@@ -1255,7 +1255,7 @@ class ElementFactory:
         def franklin_special(gc, player, turn_pos):
 
             if turn_pos == 'start':
-                if player.modifiers['special_used'] == False
+                if player.modifiers['special_used'] == False:
                     player.modifiers['special_used'] = True
 
                     # Tell
