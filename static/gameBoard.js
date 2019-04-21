@@ -997,5 +997,16 @@ var GameBoard = new Phaser.Class ({
         this.dice[1].setVisible(true);
         this.dice[1].number.setText(dice["6-sided"]);
       }
+
+      var tween = this.tweens.add({
+        targets: [this.dice[0], this.dice[0].number, this.dice[1], this.dice[1].number],
+        yoyo: false,
+        y: '-=10',
+        yoyo: true,
+        duration: 100,
+        ease: 'Power2',
+        repeat: 1
+      });
+
     }
 });
