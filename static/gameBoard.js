@@ -817,12 +817,12 @@ var GameBoard = new Phaser.Class ({
     onDraw: function(cardInfo) {
         var cardsOut = this.cards.nDrawn;
 
-        if(cardInfo.color == 0) {
+        if(cardInfo.color === "White") {
             this.cards.cardsDrawn[cardsOut] = this.add.image(281.321, 368.964, "whitecard");
             this.cards.cardsDrawn[cardsOut].cardText = this.add.text(211.654, 365.668, " ", { font: '10px Palatino', fill: '#000000', wordWrap: { width: 139, useAdvancedWrap: true }});
         }
 
-        else if (cardInfo.color == 1) {
+        else if (cardInfo.color === "Black") {
             this.cards.cardsDrawn[cardsOut] = this.add.image(281.321, 368.964, "blackcard");
             this.cards.cardsDrawn[cardsOut].cardText = this.add.text(211.654, 365.668, " ", { font: '10px Palatino', fill: '#FFFFFF', wordWrap: { width: 139, useAdvancedWrap: true }});
         }
