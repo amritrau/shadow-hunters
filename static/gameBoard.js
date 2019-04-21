@@ -12,7 +12,7 @@ var GameBoard = new Phaser.Class ({
         this.allowClick = true;
 
         //this is where all of the objects specific to our scene will appear
-        this.arsenal;
+        this.arsenal = [];
         this.healthBar;
         this.player;
         this.allPlayersInfo;
@@ -27,6 +27,7 @@ var GameBoard = new Phaser.Class ({
         this.gameEnd = {image: [], winners: [], players_info: []};
         this.cards = {cardsDrawn: [], cardText: [], nDrawn: 0};
         this.gameSummary;
+        this.dice = [];
 
         // list of x, y coordinates for 8 players' starting spots
         this.startSpots = [[562, 245],
@@ -94,7 +95,7 @@ var GameBoard = new Phaser.Class ({
         this.load.svg('health', gfx + 'health.svg', {width: 206.681, height: 589.442});
         this.load.svg('health_popup', gfx + 'health-popup.svg', {width: 100, height: 335});
         this.load.image('summary', '/static/assets/scroll.png');
-        this.load.image('info', '/static/assets/info.png')
+        this.load.image('info', '/static/assets/info.png');
 
         // load arsenal
         this.load.svg('arsenal', gfx + 'arsenal.svg', {width: 640, height: 125.683});
@@ -180,6 +181,8 @@ var GameBoard = new Phaser.Class ({
         this.load.svg('greencard', '/static/assets/greencard.svg', {width: 154.604, height: 199.212});
         this.load.svg('redcard', '/static/assets/redcard.svg', {width: 187.977, height: 221.565});
         this.load.svg('alert', '/static/assets/alert.svg', {width: 318.804, height: 101.562});
+        this.load.svg('4die', '/static/assets/4sided.svg', {width: 60, height: 50});
+        this.load.svg('6die', '/static/assets/6sided.svg', {width: 50, height: 50});
 
         // load bitmap text
         this.load.bitmapFont('adventur', gfx + 'Adventur.png', gfx + 'Adventur.fnt');
@@ -203,7 +206,7 @@ var GameBoard = new Phaser.Class ({
         this.popupInfo.infoBox.depth = 30;
         this.popupInfo.displayInfo = this.add.text(this.popupInfo.infoBox.x - 80,
                                                   this.popupInfo.infoBox.y - 40,
-                                                  "Click on things to see more information! Click on the i button to close this popup",
+                                                  "Click on things to see more information! Click on the i button to close this popup.",
                                                   { font: '12px Palatino', fill: '#FFFFFF',
                                                   wordWrap: { width: 130, useAdvancedWrap: true }});
         this.popupInfo.displayInfo.depth = 30;
@@ -221,6 +224,11 @@ var GameBoard = new Phaser.Class ({
             }
         }
 
+        // Add dice
+        this.dice[0] = this.add.image(495.966, 36.729, "4die");
+        this.dice[0].number = this.add.text(491.728, 33.115, "1", { font: '20px Palatino', fill: '#FFFFFF'});
+        this.dice[1] = this.add.image(564.837, 37.558, "6die");
+        this.dice[1].number = this.add.text(559.421, 28.481, "1", { font: '20px Palatino', fill: '#FFFFFF'});
 
         //this loop creates all players: self and enemies.
         var count = 0;
@@ -253,21 +261,16 @@ var GameBoard = new Phaser.Class ({
         if("private" in this.gameData)
         {
             // Add arsenal to screen
+            this.num_equip_slots = 6;
             this.add.image(533, 537.5, 'arsenal').setScale(1);
+            for(var i = 0; i < this.num_equip_slots; i++)
+            {
+                this.add.image(265 + i*107.450, 550, 'Arsenal Box');
+            }
 
             //create the information box for the bottom left corner
             this.infoBox = this.add.image(104.500, 537.500, 'playerinfo').setScale(1);
 
-            //amrit sets character allegance to a number. we convert it to a team
-            if(this.charInfo.alleg == 1){
-                this.charInfo.alleg = "Neutral";
-            }
-            else if (this.charInfo.alleg == 0) {
-                this.charInfo.alleg = "Shadow";
-            }
-            else {
-                this.charInfo.alleg = "Hunter";
-            }
             //enable data to be stored in this box. I'm not sure if this is necessary; if it isn't we can delete these set lines below
             this.infoBox.setDataEnabled();
             this.infoBox.data.set("name", this.charInfo.name);
@@ -286,18 +289,6 @@ var GameBoard = new Phaser.Class ({
                 size = 16
                 );
             name.x = 100 - name.width/2; // center character's name in info box
-
-            // Adding placeholder text to go in equipment slots
-            this.equip_text = [];
-            this.num_equip_slots = 6;
-            for(var i = 0; i < this.num_equip_slots; i++)
-            {
-                this.equip_text[i] = this.add.text(235 + i*100, 537.5, '', {
-                    font: '12px Palatino',
-                    fill: '#FFFFFF',
-                    wordWrap: { width: 80, useAdvancedWrap: true }
-                });
-            }
 
             //set the text for inside of the box
             text.setText([
@@ -339,7 +330,7 @@ var GameBoard = new Phaser.Class ({
                     self.onReveal(data);
                     break;
                 case "roll":
-                    //TO DO: @Joanna write the code to display the dice here!
+                    self.onRoll(data);
                     break;
                 case "die":
                     self.onReveal(data);
@@ -357,23 +348,31 @@ var GameBoard = new Phaser.Class ({
 
     },
 
-    makeArsenal: function(datasize, data){
+    makeEquipment: function(card, i) {
 
-        for(var i = 0; i < datasize; i++) {
-            var sword = this.add.image(255 + i*100, 550, "sword");
-            sword.infoBox = this.add.image(255 + i*100, 450, "popup");
-            sword.infoBox.setVisible(false);
-            sword.infoBox.depth = 30;
+            // Add equipment card image
+            var equip_x = 265+i*107.450;
+            var equip_y = 550;
+            var equip = this.add.image(equip_x, equip_y, "sword"); // TODO: Change "sword" to card.title
 
-            sword.displayInfo = this.add.text(130 + i*100, 410, " ", { font: '12px Palatino', fill: '#FFFFFF', wordWrap: { width: 250, useAdvancedWrap: true }});
-            sword.displayInfo.setText(["Equipment: "+ data.equipment[i].title + "\n" + "Description: " + data.equipment[i].desc]);
-            sword.displayInfo.setVisible(false);
-            sword.displayInfo.depth = 30;
-            sword.setInteractive();
-            return sword;
-        }
+            // Add popup box
+            equip.infoBox = this.add.image(equip_x, equip_y - 100, "popup");
+            equip.infoBox.setVisible(false);
+            equip.infoBox.depth = 30;
 
+            // Add display text
+            equip.displayInfo = this.add.text(equip.infoBox.x - 120, equip.infoBox.y - 40, " ", { font: '12px Palatino', fill: '#FFFFFF', wordWrap: { width: 250, useAdvancedWrap: true }});
+            equip.displayInfo.setText([
+                "Equipment: " + card.title,
+                "Effect: " + card.desc
+            ]);
+            equip.displayInfo.setVisible(false);
+            equip.displayInfo.depth = 30;
 
+            // Make clickable
+            equip.setInteractive();
+            equip.on('clicked', this.clickHandler, equip);
+            return equip;
     },
 
     makeHealthBar: function() {
@@ -385,7 +384,14 @@ var GameBoard = new Phaser.Class ({
 
         sprite.displayInfo.lineSpacing = -2.2;
 
-        sprite.displayInfo.setText(["Player: " + this.gameData.public.characters[0].name, "Dies At HP: " + this.gameData.public.characters[0].max_damage + "\n",
+
+        var display_text = []
+        for (var i = 0; i < this.gameData.public.characters.length; i++) {
+          display_text.push("Player: " + this.gameData.public.characters[i].name, "Dies At HP: " + this.gameData.public.characters[i].max_damage + "\n");
+        }
+        sprite.displayInfo.setText(display_text);
+
+        /*sprite.displayInfo.setText(["Player: " + this.gameData.public.characters[0].name, "Dies At HP: " + this.gameData.public.characters[0].max_damage + "\n",
             "Player: " + this.gameData.public.characters[1].name, "Dies At HP: " + this.gameData.public.characters[1].max_damage + "\n",
             "Player: " + this.gameData.public.characters[2].name, "Dies At HP: " + this.gameData.public.characters[2].max_damage + "\n",
             "Player: " + this.gameData.public.characters[3].name, "Dies At HP: " + this.gameData.public.characters[3].max_damage + "\n",
@@ -396,7 +402,7 @@ var GameBoard = new Phaser.Class ({
             "Player: " + this.gameData.public.characters[8].name, "Dies At HP: " + this.gameData.public.characters[8].max_damage + "\n",
             "Player: " + this.gameData.public.characters[9].name, "Dies At HP: " + this.gameData.public.characters[9].max_damage + "\n",
             "Player: " + this.gameData.public.characters[10].name, "Dies At HP: " + this.gameData.public.characters[10].max_damage
-        ]);
+        ]);*/
 
         sprite.displayInfo.setVisible(false);
         sprite.displayInfo.depth = 30;
@@ -473,6 +479,7 @@ var GameBoard = new Phaser.Class ({
         summaryIcon.damage[i] = this.gameData.public.players[i].damage;
         summaryIcon.equipment[i] = "None";
         if(this.player && (this.gameData.public.players[i].user_id === this.player.name)) {
+
           summaryIcon.characters[i] = this.charInfo.name;
           summaryIcon.team[i] = this.charInfo.alleg;
           summaryIcon.win[i] = this.charInfo.win_cond_desc;
@@ -604,16 +611,17 @@ var GameBoard = new Phaser.Class ({
         var datasize = data.equipment.length;
         if(this.player && player == this.player) {
 
-            // Set equip text in box to name of equipment
-            for(var i = 0; i < datasize; i++) {
-                this.equip_text[i].setText([data.equipment[i].title]);
-                this.arsenal = this.makeArsenal(datasize, data);
-                this.arsenal.on('clicked', this.clickHandler, this.box);
+            // clear arsenal
+            for(var i = 0; i < this.arsenal.length; i++) {
+                this.arsenal[i].infoBox.destroy();
+                this.arsenal[i].displayInfo.destroy();
+                this.arsenal[i].destroy();
             }
 
-            // Empty equip text in rest of boxes
-            for(var i = datasize; i < this.num_equip_slots; i++) {
-                this.add.image(265 + i*107.450, 550, 'Arsenal Box');
+            // rebuild arsenal
+            this.arsenal = []
+            for(var i = 0; i < datasize; i++) {
+                this.arsenal[i] = this.makeEquipment(data.equipment[i], i);
             }
 
             // remove reveal button on person's screen if they are revealed
@@ -634,16 +642,6 @@ var GameBoard = new Phaser.Class ({
         if((data.state == 1 || data.state == 0) && (player.info.state == 1 || player.info.state == 0) && (!this.player || (this.player.name !== player.name))) {
           if(this.gameSummary.characters[player.number - 1] === "?") {
             this.gameSummary.displayCharacter[player.number - 1].charImage.destroy();
-            if(data.character.alleg == 1){
-                data.character.alleg = "Neutral";
-            }
-            else if (data.character.alleg == 0) {
-                data.character.alleg = "Shadow";
-            }
-            else {
-                data.character.alleg = "Hunter";
-            }
-
             this.gameSummary.characters[player.number - 1] = data.character.name;
             this.gameSummary.team[player.number - 1] = data.character.alleg;
             this.gameSummary.win[player.number - 1] = data.character.win_cond_desc;
@@ -656,6 +654,10 @@ var GameBoard = new Phaser.Class ({
             this.gameSummary.displayCharacter[player.number - 1].charImage.depth = 40;
             this.gameSummary.displayCharacter[player.number - 1].charImage.setVisible(false);
           }
+        }
+
+        if(data.state == 0 && player.info.state != 0) {
+          this.gameSummary.characters[player.number - 1] = data.character.name+ " (Dead)";
         }
 
         // Update player info to contain new data
@@ -786,19 +788,11 @@ var GameBoard = new Phaser.Class ({
                 this.gameEnd.winners[i] = this.add.image(583, 140 + 130*((i-1)/2), winners[i].character.name);
                 this.gameEnd.players_info[i] = this.add.text(652, 78.183 + 130*((i-1)/2), " ", { font: '12px Palatino', fill: '#000000', wordWrap: { width: 160, useAdvancedWrap: true }});
             }
-            if(winners[i].character.alleg == 1){
-                winners[i].character.alleg = "Neutral";
-            }
-            else if (winners[i].character.alleg == 0) {
-                winners[i].character.alleg = "Shadow";
-            }
-            else {
-                winners[i].character.alleg = "Hunter";
-            }
             this.gameEnd.winners[i].depth = 40;
             this.gameEnd.players_info[i].depth = 40;
             this.gameEnd.players_info[i].setText([
                 'Player: ' + winners[i].user_id,
+                'Character: ' + winners[i].character.name,
                 'Team: ' + winners[i].character.alleg,
                 'Win Condition: ' + winners[i].character.win_cond_desc
             ]);
@@ -806,6 +800,10 @@ var GameBoard = new Phaser.Class ({
 
         if($('#reveal').length) {
             $('#reveal').remove();
+        }
+
+        if($('#special').length) {
+            $('#special').remove();
         }
     },
 
@@ -841,16 +839,6 @@ var GameBoard = new Phaser.Class ({
     //character card displays
     onReveal: function(charInfo) {
         var cardsOut = this.cards.nDrawn;
-
-        if(charInfo.player.character.alleg == 1){
-            charInfo.player.character.alleg = "Neutral";
-        }
-        else if (charInfo.player.character.alleg == 0) {
-            charInfo.player.character.alleg = "Shadow";
-        }
-        else {
-            charInfo.player.character.alleg = "Hunter";
-        }
 
         this.cards.cardsDrawn[cardsOut] = this.add.image(296.838, 379.696, "redcard");
         this.cards.cardsDrawn[cardsOut].char = true;
@@ -900,7 +888,7 @@ var GameBoard = new Phaser.Class ({
 
         // popups
         this.cards.cardsDrawn[cardsOut] = this.add.image(541.58, 218.199, "alert");
-        this.cards.cardsDrawn[cardsOut].cardText = this.add.text(407.718, 182.5, " ", { font: '24px Palatino', fill: '#FFFFFF', boundsAlignH: "center", boundsAlignV: "middle"});
+        this.cards.cardsDrawn[cardsOut].cardText = this.add.text(390.718, 182.5, " ", { font: '24px Palatino', fill: '#FFFFFF', boundsAlignH: "center", boundsAlignV: "middle", wordWrap: { width: 310, useAdvancedWrap: true }});
 
         if(charInfo.type === "die") {
           this.cards.cardsDrawn[cardsOut].cardText.setText([ charInfo.player.user_id + " died!"]);
@@ -913,5 +901,52 @@ var GameBoard = new Phaser.Class ({
         this.cards.cardsDrawn[cardsOut].setInteractive();
         this.cards.cardsDrawn[cardsOut].on('clicked', this.cardHandler, this.cards.cardsDrawn[cardsOut]);
         this.cards.nDrawn = cardsOut + 1;
+    },
+
+    onRoll: function(dice) {
+      if(dice["4-sided"]) {
+        if(dice["6-sided"]) {
+          //both dice are present, adjust x and y values for this
+          this.dice[0].x = 495.966;
+          this.dice[0].number.x = 491.728;
+
+          this.dice[1].x = 564.837;
+          this.dice[1].number.x = 559.421;
+
+          //add 6-sided dice to the board
+          this.dice[1].number.setVisible(true);
+          this.dice[1].setVisible(true);
+          this.dice[1].number.setText(dice["6-sided"]);
+        }
+        else {
+          //6 sided is not here
+          this.dice[0].x = 529.966;
+          this.dice[0].number.x = 524.728;
+
+          //remove 6 sided dice
+          this.dice[1].number.setVisible(false);
+          this.dice[1].setVisible(false);
+        }
+
+        //set 4 sided die
+        this.dice[0].number.setVisible(true);
+        this.dice[0].setVisible(true);
+        this.dice[0].number.setText(dice["4-sided"]);
+      }
+
+      else if(dice["6-sided"]){
+        //if we get here, then 4-sided is not on the board; remove it
+        this.dice[0].number.setVisible(false);
+        this.dice[0].setVisible(false);
+
+        //move 6 sided die
+        this.dice[1].x = 531.966;
+        this.dice[1].number.x = 526.421;
+
+        //set 6 sided die
+        this.dice[1].number.setVisible(true);
+        this.dice[1].setVisible(true);
+        this.dice[1].number.setText(dice["6-sided"]);
+      }
     }
 });

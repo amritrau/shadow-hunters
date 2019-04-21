@@ -1,3 +1,5 @@
+import elements
+
 # character.py
 # Implements a Character.
 
@@ -16,7 +18,7 @@ class Character:
     def dump(self):
         return {
             'name': self.name,
-            'alleg': self.alleg,
+            'alleg': elements.ALLEGIANCE_MAP[self.alleg],
             'max_damage': self.max_damage,
             'win_cond_desc': self.win_cond_desc,
             'special_desc': self.special_desc,

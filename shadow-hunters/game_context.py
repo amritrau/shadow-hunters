@@ -14,8 +14,15 @@ class GameContext:
         # Instantiate gameplay objects
         self.players = players
         self.turn_order = copy.copy(players)
-        self.characters = characters
+        self.round_count = 0
+
+        # Instantiate characters
+        valid_for_n_players = lambda c: c.modifiers['min_players'] <= len(self.players) <= c.modifiers['max_players']
+        self.characters = list(filter(valid_for_n_players, characters))
+        self.characters.sort(key = lambda x: -x.max_damage)
         self.playable = copy.deepcopy(characters)
+
+        # Instantiate cards
         self.black_cards = black_cards
         self.white_cards = white_cards
         self.green_cards = green_cards
@@ -52,11 +59,6 @@ class GameContext:
 
         # Randomly assign characters and point game context
         character_q = copy.deepcopy(characters)
-
-        # Remove characters unsuitable for current # of players
-        valid_for_n_players = lambda c: c.modifiers['min_players'] <= len(self.players) <= c.modifiers['max_players']
-        character_q = list(filter(valid_for_n_players, character_q))
-        self.playable = copy.deepcopy(character_q)
         random.shuffle(character_q)
 
         # Figure out how many of each allegiance there has to be
@@ -126,6 +128,7 @@ class GameContext:
             turn += 1
             if turn >= len(self.turn_order):
                 turn = 0
+                self.round_count += 1
                 self.turn_order = list(self.players)
 
     def dump(self):

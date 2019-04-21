@@ -320,13 +320,8 @@ def on_special():
     # Use special
     elements.reveal_lock.acquire()
     if not player.special_active:
-        player.special_active = True
+        player.special_active = True # Guard
         elements.reveal_lock.release()
-        rooms[room_id]['gc'].tell_h("{} ({}) has activated their special ability: {}", [
-            player.user_id,
-            player.character.name,
-            player.character.special_desc
-        ])
         player.character.special(rooms[room_id]['gc'], player, turn_pos = 'now')
         rooms[room_id]['gc'].update_h()
 
