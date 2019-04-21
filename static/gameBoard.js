@@ -645,9 +645,9 @@ var GameBoard = new Phaser.Class ({
             }
         }
 
-        if((data.state == 1 || data.state == 0) && (player.info.state == 1 || player.info.state == 0) && (this.player.name !== player.name)) {
+        if((data.state == 1 || data.state == 0) && (player.info.state == 1 || player.info.state == 0) && (!this.player || (this.player.name !== player.name))) {
           if(this.gameSummary.characters[player.number - 1] === "?") {
-            this.gameSummary.displayCharacter[i].charImage.destroy();
+            this.gameSummary.displayCharacter[player.number - 1].charImage.destroy();
             if(data.character.alleg == 1){
                 data.character.alleg = "Neutral";
             }
@@ -665,7 +665,7 @@ var GameBoard = new Phaser.Class ({
               this.gameSummary.displayCharacter[player.number - 1].charImage = this.add.image(280.46, 119 + 130*((player.number - 1)/2), data.character.name);
             }
             else {
-              this.gameSummary.displayCharacter[player.number - 1].charImage = this.add.image(582.46, 119 + 130*(player.number/2), data.character.name);
+              this.gameSummary.displayCharacter[player.number - 1].charImage = this.add.image(582.46, 119 + 130*((player.number-2)/2), data.character.name);
             }
             this.gameSummary.displayCharacter[player.number - 1].charImage.depth = 40;
             this.gameSummary.displayCharacter[player.number - 1].charImage.setVisible(false);
