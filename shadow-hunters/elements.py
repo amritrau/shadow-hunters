@@ -1356,6 +1356,7 @@ class ElementFactory:
             if turn_pos == 'start' and (player.modifiers['special_used'] == False):
                 # No need to bother every turn if there's nobody at UG
                 targets = gc.getPlayersAt("Underworld Gate")
+                targets = [t for t in targets if t != player]
                 if len(targets) > 0:
                     # Present player with list of attack options
                     gc.tell_h("{} ({}) is choosing a target for their Murder Ray...", ["Ultra Soul", player.user_id])

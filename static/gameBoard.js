@@ -600,12 +600,23 @@ var GameBoard = new Phaser.Class ({
                 player.infoBox.setVisible(false);
                 player.displayInfo.setVisible(false);
             }
-            player.x = player.spots[data.location.name].x;
-            player.y = player.spots[data.location.name].y;
+
+            var tween = this.tweens.add({
+              targets: player,
+              yoyo: false,
+              x: player.spots[data.location.name].x,
+              y: player.spots[data.location.name].y,
+              duration: 1000,
+              ease: 'Power2',
+              repeat: 0
+            });
+
+            // player.x = player.spots[data.location.name].x;
+            // player.y = player.spots[data.location.name].y;
             if(player.y-60-45 < 0) {
                 player.infoBox.angle = 180;
-                player.infoBox.x = player.x;
-                player.infoBox.y = player.y + 60;
+                player.infoBox.x = player.spots[data.location.name].x;
+                player.infoBox.y = player.spots[data.location.name].y + 60;
                 player.displayInfo.x = player.infoBox.x - 120;
                 player.displayInfo.y = player.infoBox.y - 20;
             }
@@ -613,8 +624,8 @@ var GameBoard = new Phaser.Class ({
                 if (player.infoBox.angle != 0) {
                     player.infoBox.angle = 0;
                 }
-                player.infoBox.x = player.x;
-                player.infoBox.y = player.y -60;
+                player.infoBox.x = player.spots[data.location.name].x;
+                player.infoBox.y = player.spots[data.location.name].y -60;
                 player.displayInfo.x = player.infoBox.x - 120;
                 player.displayInfo.y = player.infoBox.y - 40;
             }
@@ -982,5 +993,16 @@ var GameBoard = new Phaser.Class ({
         this.dice[1].setVisible(true);
         this.dice[1].number.setText(dice["6-sided"]);
       }
+
+      var tween = this.tweens.add({
+        targets: [this.dice[0], this.dice[0].number, this.dice[1], this.dice[1].number],
+        yoyo: false,
+        y: '-=10',
+        yoyo: true,
+        duration: 100,
+        ease: 'Power2',
+        repeat: 1
+      });
+
     }
 });

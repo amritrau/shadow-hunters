@@ -61,11 +61,13 @@ class Player:
             reveal_chance = self.gc.round_count / 20
             if random.random() <= reveal_chance:
                 self.state = 1 # Guard
-                player.special_active = True # Guard
+                self.special_active = True # Guard
                 elements.reveal_lock.release()
                 self.reveal()
                 self.character.special(self.gc, self, turn_pos = 'now')
                 self.gc.update_h()
+            else:
+                elements.reveal_lock.release()
         else:
             elements.reveal_lock.release()
 
@@ -73,8 +75,24 @@ class Player:
         if self.special_active:
             self.character.special(self.gc, self, turn_pos = 'start')
 
+        # Someone could have died here, so check win conditions
+        if self.gc.checkWinConditions(tell = False):
+            return  # let the win conditions check in GameContext.play() handle
+
+        # The current player could have died -- if so end their turn
+        if self.state == 0:
+            return
+
         # takeTurn
         self._takeTurn()
+
+        # Someone could have died here, so check win conditions
+        if self.gc.checkWinConditions(tell = False):
+            return  # let the win conditions check in GameContext.play() handle
+
+        # The current player could have died -- if so end their turn
+        if self.state == 0:
+            return
 
         # After turn check for special ability
         if self.special_active:
@@ -146,10 +164,6 @@ class Player:
 
         # Attack
         self.attackSequence(dice_type = self.modifiers['attack_dice_type'])
-
-        # The current player could have died -- if so end their turn
-        if self.state == 0:
-            return
 
     def attackSequence(self, dice_type = "attack"):
 
@@ -377,7 +391,7 @@ class Player:
                 if choose_steal:
                     desired_eq = attacker.chooseEquipment(self)
                     self.giveEquipment(attacker, desired_eq)
-                    self.gc.tell_h("{} stole {}'s {} instead of dealing {} damage!", [attacker.user_id, self.user_id, desired_eq.name, abs(damage_change)])
+                    self.gc.tell_h("{} stole {}'s {} instead of dealing {} damage!", [attacker.user_id, self.user_id, desired_eq.title, abs(damage_change)])
                     return self.damage
 
         self.damage = min(self.damage - damage_change, self.character.max_damage)
