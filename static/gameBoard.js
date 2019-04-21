@@ -398,9 +398,9 @@ var GameBoard = new Phaser.Class ({
         sprite.infoBox = this.add.image(800, 175, 'health_popup');
         sprite.infoBox.setVisible(false);
         sprite.infoBox.depth = 30;
-        sprite.displayInfo = this.add.text(760, 10, " ", { font: '10px Palatino', fill: '#FFFFFF', wordWrap: { width: 250, useAdvancedWrap: true }});
+        sprite.displayInfo = this.add.text(760, 15, " ", { font: '10px Palatino', fill: '#FFFFFF', wordWrap: { width: 250, useAdvancedWrap: true }});
 
-        sprite.displayInfo.lineSpacing = -2.5;
+        sprite.displayInfo.lineSpacing = -2.2;
 
         sprite.displayInfo.setText(["Player: " + this.gameData.public.characters[0].name, "Dies At HP: " + this.gameData.public.characters[0].max_damage + "\n",
             "Player: " + this.gameData.public.characters[1].name, "Dies At HP: " + this.gameData.public.characters[1].max_damage + "\n",
