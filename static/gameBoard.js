@@ -981,19 +981,26 @@ var GameBoard = new Phaser.Class ({
 
     onAttack: function(victim) {
       var player;
-
-      for(var i = 0; i < nPlayers; i++) {
-        if(this.allPlayersInfo[i].user_id == victim.user_id) {
-          player = this.allPlayersInfo[i];
+      var count = 0;
+      for(var i = 0; i < this.nPlayers; i++) {
+        if(this.otherPlayers[count].name == victim.user_id) {
+          player = this.otherPlayers[count];
           break;
+        }
+        if(this.player.name === victim.user_id) {
+          player = this.player;
+          break;
+        }
+        else {
+          count++;
         }
       }
 
       var tween = this.tweens.add({
         targets: player,
-        angle: 30,
+        angle: 70,
         yoyo: true,
-        duration: 100,
+        duration: 300,
         ease: 'Power2',
         repeat: 0
       });
