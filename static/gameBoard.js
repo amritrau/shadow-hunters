@@ -474,6 +474,17 @@ var GameBoard = new Phaser.Class ({
         summaryIcon.damage[i] = this.gameData.public.players[i].damage;
         summaryIcon.equipment[i] = "None";
         if(this.player && (this.gameData.public.players[i].user_id === this.player.name)) {
+
+          if(this.charInfo.alleg == 1){
+              this.charInfo.alleg = "Neutral";
+          }
+          else if (this.charInfo.alleg == 0) {
+              this.charInfo.alleg = "Shadow";
+          }
+          else {
+              this.charInfo.alleg = "Hunter";
+          }
+
           summaryIcon.characters[i] = this.charInfo.name;
           summaryIcon.team[i] = this.charInfo.alleg;
           summaryIcon.win[i] = this.charInfo.win_cond_desc;
@@ -660,6 +671,10 @@ var GameBoard = new Phaser.Class ({
           }
         }
 
+        if(data.state == 0 && player.info.state != 0) {
+          this.gameSummary.characters[player.number - 1] = data.character.name+ " (Dead)";
+        }
+
         // Update player info to contain new data
         player.info = data;
 
@@ -801,6 +816,7 @@ var GameBoard = new Phaser.Class ({
             this.gameEnd.players_info[i].depth = 40;
             this.gameEnd.players_info[i].setText([
                 'Player: ' + winners[i].user_id,
+                'Character: ' + winners[i].character.name,
                 'Team: ' + winners[i].character.alleg,
                 'Win Condition: ' + winners[i].character.win_cond_desc
             ]);
