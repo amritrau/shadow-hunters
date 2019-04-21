@@ -16,7 +16,7 @@ class GameContext:
         self.turn_order = copy.copy(players)
         valid_for_n_players = lambda c: c.modifiers['min_players'] <= len(self.players) <= c.modifiers['max_players']
         self.characters = list(filter(valid_for_n_players, characters))
-        self.playable = copy.deepcopy(characters)
+        self.playable = copy.deepcopy(characters).sort(key = lambda x: -x.max_damage)
         self.black_cards = black_cards
         self.white_cards = white_cards
         self.green_cards = green_cards
