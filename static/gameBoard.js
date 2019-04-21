@@ -175,10 +175,10 @@ var GameBoard = new Phaser.Class ({
         //display popups
         this.load.svg('gameOver', '/static/assets/gameOver.svg', {width: 642, height: 590});
         this.load.svg('gameSummary', '/static/assets/gameSummary.svg', {width: 608.184, height: 590});
-        this.load.svg('whitecard', '/static/assets/whitecard.svg', {width: 154.604, height: 199.212});
-        this.load.svg('blackcard', '/static/assets/blackcard.svg', {width: 154.604, height: 199.212});
-        this.load.svg('greencard', '/static/assets/greencard.svg', {width: 154.604, height: 199.212});
-        this.load.svg('redcard', '/static/assets/redcard.svg', {width: 187.977, height: 221.565});
+        this.load.svg('whitecard', gfx + 'whitecard.svg', {width: 150, height: 200});
+        this.load.svg('blackcard', gfx + 'blackcard.svg', {width: 150, height: 200});
+        this.load.svg('greencard', gfx + 'greencard.svg', {width: 150, height: 200});
+        this.load.svg('redcard', gfx + 'redcard.svg', {width: 150, height: 200});
         this.load.svg('alert', '/static/assets/alert.svg', {width: 318.804, height: 101.562});
         this.load.svg('4die', '/static/assets/4sided.svg', {width: 60, height: 50});
         this.load.svg('6die', '/static/assets/6sided.svg', {width: 50, height: 50});
@@ -382,11 +382,7 @@ var GameBoard = new Phaser.Class ({
             // Add equipment card image
             var equip_x = 265+i*107.450;
             var equip_y = 550;
-            if (card.title.startsWith('Hermit')) {
-                var equip = this.add.image(equip_x, equip_y, 'Hermit');
-            } else {
-                var equip = this.add.image(equip_x, equip_y, card.title);
-            }
+            var equip = this.add.image(equip_x, equip_y, card.title);
             
 
             // Add popup box
@@ -788,9 +784,7 @@ var GameBoard = new Phaser.Class ({
     {
         card.cardText.visible = false;
 
-        if(card.char) {
-          card.charImage.visible = false;
-        }
+        card.charImage.visible = false;
 
         card.visible = false;
     },
@@ -857,17 +851,20 @@ var GameBoard = new Phaser.Class ({
         var cardsOut = this.cards.nDrawn;
 
         if(cardInfo.color == 0) {
-            this.cards.cardsDrawn[cardsOut] = this.add.image(281.321, 368.964, "whitecard");
-            this.cards.cardsDrawn[cardsOut].cardText = this.add.text(211.654, 365.668, " ", { font: '10px Palatino', fill: '#000000', wordWrap: { width: 139, useAdvancedWrap: true }});
+            this.cards.cardsDrawn[cardsOut] = this.add.image(300, 375, "whitecard");
+            this.cards.cardsDrawn[cardsOut].cardText = this.add.text(235, 375, " ", { font: '10px Palatino', fill: '#000000', wordWrap: { width: 139, useAdvancedWrap: true }});
+            this.cards.cardsDrawn[cardsOut].charImage = this.add.image(300, 325, cardInfo.title);
         }
 
         else if (cardInfo.color == 1) {
-            this.cards.cardsDrawn[cardsOut] = this.add.image(281.321, 368.964, "blackcard");
-            this.cards.cardsDrawn[cardsOut].cardText = this.add.text(211.654, 365.668, " ", { font: '10px Palatino', fill: '#FFFFFF', wordWrap: { width: 139, useAdvancedWrap: true }});
+            this.cards.cardsDrawn[cardsOut] = this.add.image(300, 375, "blackcard");
+            this.cards.cardsDrawn[cardsOut].cardText = this.add.text(235, 375, " ", { font: '10px Palatino', fill: '#FFFFFF', wordWrap: { width: 139, useAdvancedWrap: true }});
+            this.cards.cardsDrawn[cardsOut].charImage = this.add.image(300, 325, cardInfo.title);
         }
         else {
-            this.cards.cardsDrawn[cardsOut] = this.add.image(281.321, 368.964, "greencard");
-            this.cards.cardsDrawn[cardsOut].cardText = this.add.text(211.654, 365.668, " ", { font: '10px Palatino', fill: '#FFFFFF', wordWrap: { width: 139, useAdvancedWrap: true }});
+            this.cards.cardsDrawn[cardsOut] = this.add.image(300, 375, "greencard");
+            this.cards.cardsDrawn[cardsOut].cardText = this.add.text(235, 375, " ", { font: '10px Palatino', fill: '#FFFFFF', wordWrap: { width: 139, useAdvancedWrap: true }});
+            this.cards.cardsDrawn[cardsOut].charImage = this.add.image(300, 325, 'Hermit');
         }
 
         this.cards.cardsDrawn[cardsOut].char = false;
@@ -885,10 +882,10 @@ var GameBoard = new Phaser.Class ({
     onReveal: function(charInfo) {
         var cardsOut = this.cards.nDrawn;
 
-        this.cards.cardsDrawn[cardsOut] = this.add.image(296.838, 379.696, "redcard");
+        this.cards.cardsDrawn[cardsOut] = this.add.image(300, 375, "redcard");
         this.cards.cardsDrawn[cardsOut].char = true;
-        this.cards.cardsDrawn[cardsOut].charImage = this.add.image(295.36, 286.696, charInfo.player.character.name);
-        this.cards.cardsDrawn[cardsOut].cardText = this.add.text(211.65, 350.513, " ", { font: '10px Palatino', fill: '#FFFFFF', wordWrap: { width: 169, useAdvancedWrap: true }});
+        this.cards.cardsDrawn[cardsOut].charImage = this.add.image(300, 325, charInfo.player.character.name).setScale(.75);
+        this.cards.cardsDrawn[cardsOut].cardText = this.add.text(235, 375, " ", { font: '10px Palatino', fill: '#FFFFFF', wordWrap: { width: 139, useAdvancedWrap: true }});
 
         this.cards.cardsDrawn[cardsOut].cardText.setText([
             charInfo.player.character.name,
