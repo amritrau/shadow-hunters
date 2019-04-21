@@ -1340,6 +1340,7 @@ class ElementFactory:
                 player.modifiers['damage_dealt_fn'] = lambda player: player.moveDamage(2, player)
                 player.modifiers['special_active'] = True
             else:
+                pass
                 # print("vampire player.modifiers special_active = ", player.modifiers['special_active'])
 
         def werewolf_special(gc, player, turn_pos):
