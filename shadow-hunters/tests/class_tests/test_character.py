@@ -32,7 +32,7 @@ def test_fields():
     # test dump
     dump = c.dump()
     assert dump['name'] == "char_name"
-    assert dump['alleg'] == 1
+    assert dump['alleg'] == "Neutral"
     assert dump['max_damage'] == 10
     assert dump['win_cond_desc'] == "win_desc"
     assert dump['resource_id'] == "r_id"

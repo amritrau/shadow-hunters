@@ -20,7 +20,6 @@ def test_fields():
 
         # test fields
         assert len(gc.players) == n_players
-        assert gc.characters == ef.CHARACTERS
         assert gc.black_cards == ef.BLACK_DECK
         assert gc.white_cards == ef.WHITE_DECK
         assert gc.green_cards == ef.GREEN_DECK
