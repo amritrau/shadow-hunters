@@ -918,7 +918,7 @@ var GameBoard = new Phaser.Class ({
 
         // popups
         this.cards.cardsDrawn[cardsOut] = this.add.image(541.58, 218.199, "alert");
-        this.cards.cardsDrawn[cardsOut].cardText = this.add.text(407.718, 182.5, " ", { font: '24px Palatino', fill: '#FFFFFF', boundsAlignH: "center", boundsAlignV: "middle"});
+        this.cards.cardsDrawn[cardsOut].cardText = this.add.text(390.718, 182.5, " ", { font: '24px Palatino', fill: '#FFFFFF', boundsAlignH: "center", boundsAlignV: "middle", wordWrap: { width: 310, useAdvancedWrap: true }});
 
         if(charInfo.type === "die") {
           this.cards.cardsDrawn[cardsOut].cardText.setText([ charInfo.player.user_id + " died!"]);
