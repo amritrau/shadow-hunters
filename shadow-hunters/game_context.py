@@ -14,6 +14,8 @@ class GameContext:
         # Instantiate gameplay objects
         self.players = players
         self.turn_order = copy.copy(players)
+        self.round_count = 0
+
         self.characters = characters
         self.playable = copy.deepcopy(characters)
         self.black_cards = black_cards
@@ -126,6 +128,7 @@ class GameContext:
             turn += 1
             if turn >= len(self.turn_order):
                 turn = 0
+                self.round_count += 1
                 self.turn_order = list(self.players)
 
     def dump(self):

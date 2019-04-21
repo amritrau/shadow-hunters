@@ -1,5 +1,6 @@
 import elements
 import helpers
+import random
 from collections import defaultdict
 
 class Player:
@@ -44,23 +45,6 @@ class Player:
         ])
 
     def takeTurn(self):
-        # Before turn check for special ability
-        # print("START: Checking for {} ({}) special ability".format(self.user_id, self.character.name))
-        if self.special_active:
-            # print("START: calling self.character.special()")
-            self.character.special(self.gc, self, turn_pos = 'start')
-
-        # takeTurn
-        self._takeTurn()
-
-        # After turn check for special ability
-        # print("END: Checking for {} ({}) special ability".format(self.user_id, self.character.name))
-        if self.special_active:
-            # print("END: calling self.character.special()")
-            self.character.special(self.gc, self, turn_pos = 'end')
-
-
-    def _takeTurn(self):
 
         # Announce player
         self.gc.tell_h("It's {}'s turn!", [self.user_id])
@@ -70,6 +54,33 @@ class Player:
         if self.modifiers['guardian_angel']:
             self.gc.tell_h("The effect of {}\'s {} wore off!", [self.user_id, "Guardian Angel"])
             del self.modifiers["guardian_angel"]
+
+        # If AI player, chance to reveal and use special at turn start
+        elements.reveal_lock.acquire()
+        if self.ai and self.state == 2:
+            reveal_chance = self.gc.round_count / 20
+            if random.random() <= reveal_chance:
+                self.state = 1 # Guard
+                player.special_active = True # Guard
+                elements.reveal_lock.release()
+                self.reveal()
+                self.character.special(self.gc, self, turn_pos = 'now')
+                self.gc.update_h()
+        else:
+            elements.reveal_lock.release()
+
+        # Before turn check for special ability
+        if self.special_active:
+            self.character.special(self.gc, self, turn_pos = 'start')
+
+        # takeTurn
+        self._takeTurn()
+
+        # After turn check for special ability
+        if self.special_active:
+            self.character.special(self.gc, self, turn_pos = 'end')
+
+    def _takeTurn(self):
 
         # Roll dice
         self.gc.tell_h("{} is rolling for movement...", [self.user_id])
@@ -139,9 +150,6 @@ class Player:
         # The current player could have died -- if so end their turn
         if self.state == 0:
             return
-
-        # Turn is over
-        self.gc.tell_h("{}'s turn is over.", [self.user_id])
 
     def attackSequence(self, dice_type = "attack"):
 
