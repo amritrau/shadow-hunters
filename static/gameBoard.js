@@ -832,6 +832,10 @@ var GameBoard = new Phaser.Class ({
         if($('#reveal').length) {
             $('#reveal').remove();
         }
+
+        if($('#special').length) {
+            $('#special').remove();
+        }
     },
 
     //drawn card displays
