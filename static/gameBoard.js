@@ -12,7 +12,7 @@ var GameBoard = new Phaser.Class ({
         this.allowClick = true;
 
         //this is where all of the objects specific to our scene will appear
-        this.arsenal;
+        this.arsenal = [];
         this.healthBar;
         this.player;
         this.allPlayersInfo;
@@ -93,7 +93,7 @@ var GameBoard = new Phaser.Class ({
         this.load.svg('health', gfx + 'health.svg', {width: 206.681, height: 589.442});
         this.load.svg('health_popup', gfx + 'health-popup.svg', {width: 100, height: 335});
         this.load.image('summary', '/static/assets/scroll.png');
-        this.load.image('info', '/static/assets/info.png')
+        this.load.image('info', '/static/assets/info.png');
 
         // load arsenal
         this.load.svg('arsenal', gfx + 'arsenal.svg', {width: 640, height: 125.683});
@@ -252,7 +252,12 @@ var GameBoard = new Phaser.Class ({
         if("private" in this.gameData)
         {
             // Add arsenal to screen
+            this.num_equip_slots = 6;
             this.add.image(533, 537.5, 'arsenal').setScale(1);
+            for(var i = 0; i < this.num_equip_slots; i++)
+            {
+                this.add.image(265 + i*107.450, 550, 'Arsenal Box');
+            }
 
             //create the information box for the bottom left corner
             this.infoBox = this.add.image(104.500, 537.500, 'playerinfo').setScale(1);
@@ -284,18 +289,6 @@ var GameBoard = new Phaser.Class ({
                 this.infoBox.data.get('name'),
                 size = 18
                 );
-
-            // Adding placeholder text to go in equipment slots
-            this.equip_text = [];
-            this.num_equip_slots = 6;
-            for(var i = 0; i < this.num_equip_slots; i++)
-            {
-                this.equip_text[i] = this.add.text(235 + i*100, 537.5, '', {
-                    font: '12px Palatino',
-                    fill: '#FFFFFF',
-                    wordWrap: { width: 80, useAdvancedWrap: true }
-                });
-            }
 
             //set the text for inside of the box
             text.setText([
@@ -355,43 +348,32 @@ var GameBoard = new Phaser.Class ({
 
     },
 
-    makeArsenal: function(datasize, data){
+    makeEquipment: function(card, i) {
 
-        for(var i = 0; i < datasize; i++) {
-            var sword = this.add.image(255 + i*100, 550, "sword");
-            sword.infoBox = this.add.image(255 + i*100, 450, "customTip");
-            sword.infoBox.setVisible(false);
-            sword.infoBox.depth = 30;
+            // Add equipment card image
+            var equip_x = 265+i*107.450;
+            var equip_y = 550;
+            var equip = this.add.image(equip_x, equip_y, "sword"); // TODO: Change "sword" to card.title
 
-            sword.displayInfo = this.add.text(200 + i*100, 375, " ", { font: '12px Arial', fill: '#FFFFFF', wordWrap: { width: 250, useAdvancedWrap: true }});
-            sword.displayInfo.setText(["Equipment:"+ data.equipment[i].title + "\n" + "Description:" + data.equipment[i].desc]);
-            sword.displayInfo.setVisible(false);
-            sword.displayInfo.depth = 30;
-            sword.setInteractive();
-            return sword;
-        }
+            // Add popup box
+            equip.infoBox = this.add.image(equip_x, equip_y - 100, "popup");
+            equip.infoBox.setVisible(false);
+            equip.infoBox.depth = 30;
 
+            // Add display text
+            equip.displayInfo = this.add.text(equip.infoBox.x - 120, equip.infoBox.y - 40, " ", { font: '12px Palatino', fill: '#FFFFFF', wordWrap: { width: 250, useAdvancedWrap: true }});
+            equip.displayInfo.setText([
+                "Equipment: " + card.title,
+                "Effect: " + card.desc
+            ]);
+            equip.displayInfo.setVisible(false);
+            equip.displayInfo.depth = 30;
 
+            // Make clickable
+            equip.setInteractive();
+            equip.on('clicked', this.clickHandler, equip);
+            return equip;
     },
-
-    makeArsenal: function(datasize, data){
-
-        for(var i = 0; i < datasize; i++) {
-            var sword = this.add.image(255 + i*100, 550, "sword");
-            sword.infoBox = this.add.image(255 + i*100, 450, "customTip");
-            sword.infoBox.setVisible(false);
-            sword.infoBox.depth = 30;
-
-            sword.displayInfo = this.add.text(200 + i*100, 375, " ", { font: '12px Arial', fill: '#FFFFFF', wordWrap: { width: 250, useAdvancedWrap: true }});
-            sword.displayInfo.setText(["Equipment:"+ data.equipment[i].title + "\n" + "Description:" + data.equipment[i].desc]);
-            sword.displayInfo.setVisible(false);
-            sword.displayInfo.depth = 30;
-            sword.setInteractive();
-            return sword;
-        }
-    },
-
-
 
     makeHealthBar: function() {
         var sprite  = this.add.image(960.160, 302.279, 'health');
@@ -621,16 +603,17 @@ var GameBoard = new Phaser.Class ({
         var datasize = data.equipment.length;
         if(this.player && player == this.player) {
 
-            // Set equip text in box to name of equipment
-            for(var i = 0; i < datasize; i++) {
-                this.equip_text[i].setText([data.equipment[i].title]);
-                this.arsenal = this.makeArsenal(datasize, data);
-                this.arsenal.on('clicked', this.clickHandler, this.box);
+            // clear arsenal
+            for(var i = 0; i < this.arsenal.length; i++) {
+                this.arsenal[i].infoBox.destroy();
+                this.arsenal[i].displayInfo.destroy();
+                this.arsenal[i].destroy();
             }
 
-            // Empty equip text in rest of boxes
-            for(var i = datasize; i < this.num_equip_slots; i++) {
-                this.add.image(265 + i*107.450, 550, 'Arsenal Box');
+            // rebuild arsenal
+            this.arsenal = []
+            for(var i = 0; i < datasize; i++) {
+                this.arsenal[i] = this.makeEquipment(data.equipment[i], i);
             }
 
             // remove reveal button on person's screen if they are revealed
