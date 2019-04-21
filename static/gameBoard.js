@@ -275,15 +275,16 @@ var GameBoard = new Phaser.Class ({
             this.infoBox.data.set("special", this.charInfo.special_desc);
 
             //create the text variables
-            var text = this.add.text(10, 475, '', {
+            var text = this.add.text(10, 450, '', {
                 font: '12px Palatino',
                 fill: '#FFFFFF',
                 wordWrap: { width: 180, useAdvancedWrap: true }
             });
             var name = this.add.bitmapText(68, 477, 'adventur',
                 this.infoBox.data.get('name'),
-                size = 18
+                size = 16
                 );
+            name.x = 100 - name.width/2; // center character's name in info box
 
             // Adding placeholder text to go in equipment slots
             this.equip_text = [];
@@ -359,12 +360,12 @@ var GameBoard = new Phaser.Class ({
 
         for(var i = 0; i < datasize; i++) {
             var sword = this.add.image(255 + i*100, 550, "sword");
-            sword.infoBox = this.add.image(255 + i*100, 450, "customTip");
+            sword.infoBox = this.add.image(255 + i*100, 450, "popup");
             sword.infoBox.setVisible(false);
             sword.infoBox.depth = 30;
 
-            sword.displayInfo = this.add.text(200 + i*100, 375, " ", { font: '12px Arial', fill: '#FFFFFF', wordWrap: { width: 250, useAdvancedWrap: true }});
-            sword.displayInfo.setText(["Equipment:"+ data.equipment[i].title + "\n" + "Description:" + data.equipment[i].desc]);
+            sword.displayInfo = this.add.text(130 + i*100, 410, " ", { font: '12px Palatino', fill: '#FFFFFF', wordWrap: { width: 250, useAdvancedWrap: true }});
+            sword.displayInfo.setText(["Equipment: "+ data.equipment[i].title + "\n" + "Description: " + data.equipment[i].desc]);
             sword.displayInfo.setVisible(false);
             sword.displayInfo.depth = 30;
             sword.setInteractive();
@@ -373,25 +374,6 @@ var GameBoard = new Phaser.Class ({
 
 
     },
-
-    makeArsenal: function(datasize, data){
-
-        for(var i = 0; i < datasize; i++) {
-            var sword = this.add.image(255 + i*100, 550, "sword");
-            sword.infoBox = this.add.image(255 + i*100, 450, "customTip");
-            sword.infoBox.setVisible(false);
-            sword.infoBox.depth = 30;
-
-            sword.displayInfo = this.add.text(200 + i*100, 375, " ", { font: '12px Arial', fill: '#FFFFFF', wordWrap: { width: 250, useAdvancedWrap: true }});
-            sword.displayInfo.setText(["Equipment:"+ data.equipment[i].title + "\n" + "Description:" + data.equipment[i].desc]);
-            sword.displayInfo.setVisible(false);
-            sword.displayInfo.depth = 30;
-            sword.setInteractive();
-            return sword;
-        }
-    },
-
-
 
     makeHealthBar: function() {
         var sprite  = this.add.image(960.160, 302.279, 'health');
