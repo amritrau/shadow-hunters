@@ -187,7 +187,7 @@ var GameBoard = new Phaser.Class ({
         this.load.svg('Advent', gfx + 'advent.svg', {width: 90, height: 90});
         this.load.svg('Banana Peel', gfx + 'banana-peel.svg', {width: 90, height: 90});
         this.load.svg('Blessing', gfx + 'blessing.svg', {width: 90, height: 90});
-        this.load.svg('Bloodthirsty Spider', gfx + 'blood-thirsty-spider.svg', {width: 90, height: 90});
+        this.load.svg('Bloodthirsty Spider', gfx + 'bloodthirsty-spider.svg', {width: 90, height: 90});
         this.load.svg('Butcher Knife', gfx + 'butcher-knife.svg', {width: 90, height: 90});
         this.load.svg('Chainsaw', gfx + 'chainsaw.svg', {width: 90, height: 90});
         this.load.svg('Chocolate', gfx + 'chocolate.svg', {width: 90, height: 90});
