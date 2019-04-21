@@ -202,7 +202,7 @@ var GameBoard = new Phaser.Class ({
         this.popupInfo.infoBox.depth = 30;
         this.popupInfo.displayInfo = this.add.text(this.popupInfo.infoBox.x - 80,
                                                   this.popupInfo.infoBox.y - 40,
-                                                  "Click on things to see more information! Click on the i button to close this popup",
+                                                  "Click on things to see more information! Click on the i button to close this popup.",
                                                   { font: '12px Palatino', fill: '#FFFFFF',
                                                   wordWrap: { width: 130, useAdvancedWrap: true }});
         this.popupInfo.displayInfo.depth = 30;
