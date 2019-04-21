@@ -359,7 +359,6 @@ var GameBoard = new Phaser.Class ({
                     self.onReveal(data);
                     break;
                 case "damage":
-                    console.log("type is damage");
                     self.onAttack(data.player);
                     break;
                 default:
@@ -381,7 +380,7 @@ var GameBoard = new Phaser.Class ({
             var equip_x = 265+i*107.450;
             var equip_y = 550;
             var equip = this.add.image(equip_x, equip_y, card.title);
-            
+
 
             // Add popup box
             equip.infoBox = this.add.image(equip_x, equip_y - 100, "popup");
