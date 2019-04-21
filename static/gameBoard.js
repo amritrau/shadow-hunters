@@ -390,20 +390,6 @@ var GameBoard = new Phaser.Class ({
           display_text.push("Player: " + this.gameData.public.characters[i].name, "Dies At HP: " + this.gameData.public.characters[i].max_damage + "\n");
         }
         sprite.displayInfo.setText(display_text);
-
-        /*sprite.displayInfo.setText(["Player: " + this.gameData.public.characters[0].name, "Dies At HP: " + this.gameData.public.characters[0].max_damage + "\n",
-            "Player: " + this.gameData.public.characters[1].name, "Dies At HP: " + this.gameData.public.characters[1].max_damage + "\n",
-            "Player: " + this.gameData.public.characters[2].name, "Dies At HP: " + this.gameData.public.characters[2].max_damage + "\n",
-            "Player: " + this.gameData.public.characters[3].name, "Dies At HP: " + this.gameData.public.characters[3].max_damage + "\n",
-            "Player: " + this.gameData.public.characters[4].name, "Dies At HP: " + this.gameData.public.characters[4].max_damage + "\n",
-            "Player: " + this.gameData.public.characters[5].name, "Dies At HP: " + this.gameData.public.characters[5].max_damage + "\n",
-            "Player: " + this.gameData.public.characters[6].name, "Dies At HP: " + this.gameData.public.characters[6].max_damage + "\n",
-            "Player: " + this.gameData.public.characters[7].name, "Dies At HP: " + this.gameData.public.characters[7].max_damage + "\n",
-            "Player: " + this.gameData.public.characters[8].name, "Dies At HP: " + this.gameData.public.characters[8].max_damage + "\n",
-            "Player: " + this.gameData.public.characters[9].name, "Dies At HP: " + this.gameData.public.characters[9].max_damage + "\n",
-            "Player: " + this.gameData.public.characters[10].name, "Dies At HP: " + this.gameData.public.characters[10].max_damage
-        ]);*/
-
         sprite.displayInfo.setVisible(false);
         sprite.displayInfo.depth = 30;
         sprite.setInteractive();
@@ -845,9 +831,18 @@ var GameBoard = new Phaser.Class ({
             this.cards.cardsDrawn[cardsOut].cardText = this.add.text(211.654, 365.668, " ", { font: '10px Palatino', fill: '#FFFFFF', wordWrap: { width: 139, useAdvancedWrap: true }});
         }
 
+        var type = "";
+
+        if(cardInfo.is_equip) {
+          type = "Equipment";
+        }
+        else {
+          type = "Single Use";
+        }
         this.cards.cardsDrawn[cardsOut].char = false;
         this.cards.cardsDrawn[cardsOut].cardText.setText([
             cardInfo.title,
+            type,
             cardInfo.desc
         ]);
 
