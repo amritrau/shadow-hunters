@@ -390,20 +390,6 @@ var GameBoard = new Phaser.Class ({
           display_text.push("Player: " + this.gameData.public.characters[i].name, "Dies At HP: " + this.gameData.public.characters[i].max_damage + "\n");
         }
         sprite.displayInfo.setText(display_text);
-
-        /*sprite.displayInfo.setText(["Player: " + this.gameData.public.characters[0].name, "Dies At HP: " + this.gameData.public.characters[0].max_damage + "\n",
-            "Player: " + this.gameData.public.characters[1].name, "Dies At HP: " + this.gameData.public.characters[1].max_damage + "\n",
-            "Player: " + this.gameData.public.characters[2].name, "Dies At HP: " + this.gameData.public.characters[2].max_damage + "\n",
-            "Player: " + this.gameData.public.characters[3].name, "Dies At HP: " + this.gameData.public.characters[3].max_damage + "\n",
-            "Player: " + this.gameData.public.characters[4].name, "Dies At HP: " + this.gameData.public.characters[4].max_damage + "\n",
-            "Player: " + this.gameData.public.characters[5].name, "Dies At HP: " + this.gameData.public.characters[5].max_damage + "\n",
-            "Player: " + this.gameData.public.characters[6].name, "Dies At HP: " + this.gameData.public.characters[6].max_damage + "\n",
-            "Player: " + this.gameData.public.characters[7].name, "Dies At HP: " + this.gameData.public.characters[7].max_damage + "\n",
-            "Player: " + this.gameData.public.characters[8].name, "Dies At HP: " + this.gameData.public.characters[8].max_damage + "\n",
-            "Player: " + this.gameData.public.characters[9].name, "Dies At HP: " + this.gameData.public.characters[9].max_damage + "\n",
-            "Player: " + this.gameData.public.characters[10].name, "Dies At HP: " + this.gameData.public.characters[10].max_damage
-        ]);*/
-
         sprite.displayInfo.setVisible(false);
         sprite.displayInfo.depth = 30;
         sprite.setInteractive();
@@ -566,12 +552,23 @@ var GameBoard = new Phaser.Class ({
                 player.infoBox.setVisible(false);
                 player.displayInfo.setVisible(false);
             }
-            player.x = player.spots[data.location.name].x;
-            player.y = player.spots[data.location.name].y;
+
+            var tween = this.tweens.add({
+              targets: player,
+              yoyo: false,
+              x: player.spots[data.location.name].x,
+              y: player.spots[data.location.name].y,
+              duration: 1000,
+              ease: 'Power2',
+              repeat: 0
+            });
+
+            // player.x = player.spots[data.location.name].x;
+            // player.y = player.spots[data.location.name].y;
             if(player.y-60-45 < 0) {
                 player.infoBox.angle = 180;
-                player.infoBox.x = player.x;
-                player.infoBox.y = player.y + 60;
+                player.infoBox.x = player.spots[data.location.name].x;
+                player.infoBox.y = player.spots[data.location.name].y + 60;
                 player.displayInfo.x = player.infoBox.x - 120;
                 player.displayInfo.y = player.infoBox.y - 20;
             }
@@ -579,15 +576,24 @@ var GameBoard = new Phaser.Class ({
                 if (player.infoBox.angle != 0) {
                     player.infoBox.angle = 0;
                 }
-                player.infoBox.x = player.x;
-                player.infoBox.y = player.y -60;
+                player.infoBox.x = player.spots[data.location.name].x;
+                player.infoBox.y = player.spots[data.location.name].y -60;
                 player.displayInfo.x = player.infoBox.x - 120;
                 player.displayInfo.y = player.infoBox.y - 40;
             }
         }
 
         // Update hp
-        player.hpTracker.y = this.hpStart - 38.25*data.damage;
+        var tween2 = this.tweens.add({
+          targets: player.hpTracker,
+          yoyo: false,
+          y: this.hpStart - 38.25*data.damage,
+          duration: 1000,
+          ease: 'Power2',
+          repeat: 0
+        });
+
+        //player.hpTracker.y = this.hpStart - 38.25*data.damage;
         this.gameSummary.damage[player.number - 1] = data.damage;
 
         // Kill player if dead
@@ -811,12 +817,12 @@ var GameBoard = new Phaser.Class ({
     onDraw: function(cardInfo) {
         var cardsOut = this.cards.nDrawn;
 
-        if(cardInfo.color == 0) {
+        if(cardInfo.color === "White") {
             this.cards.cardsDrawn[cardsOut] = this.add.image(281.321, 368.964, "whitecard");
             this.cards.cardsDrawn[cardsOut].cardText = this.add.text(211.654, 365.668, " ", { font: '10px Palatino', fill: '#000000', wordWrap: { width: 139, useAdvancedWrap: true }});
         }
 
-        else if (cardInfo.color == 1) {
+        else if (cardInfo.color === "Black") {
             this.cards.cardsDrawn[cardsOut] = this.add.image(281.321, 368.964, "blackcard");
             this.cards.cardsDrawn[cardsOut].cardText = this.add.text(211.654, 365.668, " ", { font: '10px Palatino', fill: '#FFFFFF', wordWrap: { width: 139, useAdvancedWrap: true }});
         }
@@ -825,9 +831,18 @@ var GameBoard = new Phaser.Class ({
             this.cards.cardsDrawn[cardsOut].cardText = this.add.text(211.654, 365.668, " ", { font: '10px Palatino', fill: '#FFFFFF', wordWrap: { width: 139, useAdvancedWrap: true }});
         }
 
+        var type = "";
+
+        if(cardInfo.is_equip) {
+          type = "Equipment";
+        }
+        else {
+          type = "Single Use";
+        }
         this.cards.cardsDrawn[cardsOut].char = false;
         this.cards.cardsDrawn[cardsOut].cardText.setText([
             cardInfo.title,
+            type,
             cardInfo.desc
         ]);
 
@@ -948,5 +963,16 @@ var GameBoard = new Phaser.Class ({
         this.dice[1].setVisible(true);
         this.dice[1].number.setText(dice["6-sided"]);
       }
+
+      var tween = this.tweens.add({
+        targets: [this.dice[0], this.dice[0].number, this.dice[1], this.dice[1].number],
+        yoyo: false,
+        y: '-=10',
+        yoyo: true,
+        duration: 100,
+        ease: 'Power2',
+        repeat: 1
+      });
+
     }
 });
