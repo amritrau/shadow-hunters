@@ -27,6 +27,7 @@ var GameBoard = new Phaser.Class ({
         this.gameEnd = {image: [], winners: [], players_info: []};
         this.cards = {cardsDrawn: [], cardText: [], nDrawn: 0};
         this.gameSummary;
+        this.dice = [];
 
         // list of x, y coordinates for 8 players' starting spots
         this.startSpots = [[562, 245],
@@ -180,6 +181,8 @@ var GameBoard = new Phaser.Class ({
         this.load.svg('greencard', '/static/assets/greencard.svg', {width: 154.604, height: 199.212});
         this.load.svg('redcard', '/static/assets/redcard.svg', {width: 187.977, height: 221.565});
         this.load.svg('alert', '/static/assets/alert.svg', {width: 318.804, height: 101.562});
+        this.load.svg('4die', '/static/assets/4sided.svg', {width: 60, height: 50});
+        this.load.svg('6die', '/static/assets/6sided.svg', {width: 50, height: 50});
 
         // load bitmap text
         this.load.bitmapFont('adventur', gfx + 'Adventur.png', gfx + 'Adventur.fnt');
@@ -221,6 +224,11 @@ var GameBoard = new Phaser.Class ({
             }
         }
 
+        // Add dice
+        this.dice[0] = this.add.image(495.966, 36.729, "4die");
+        this.dice[0].number = this.add.text(491.728, 33.115, "1", { font: '20px Palatino', fill: '#FFFFFF'});
+        this.dice[1] = this.add.image(564.837, 37.558, "6die");
+        this.dice[1].number = this.add.text(559.421, 28.481, "1", { font: '20px Palatino', fill: '#FFFFFF'});
 
         //this loop creates all players: self and enemies.
         var count = 0;
@@ -332,7 +340,7 @@ var GameBoard = new Phaser.Class ({
                     self.onReveal(data);
                     break;
                 case "roll":
-                    //TO DO: @Joanna write the code to display the dice here!
+                    self.onRoll(data);
                     break;
                 case "die":
                     self.onReveal(data);
@@ -942,5 +950,52 @@ var GameBoard = new Phaser.Class ({
         this.cards.cardsDrawn[cardsOut].setInteractive();
         this.cards.cardsDrawn[cardsOut].on('clicked', this.cardHandler, this.cards.cardsDrawn[cardsOut]);
         this.cards.nDrawn = cardsOut + 1;
+    },
+
+    onRoll: function(dice) {
+      if(dice["4-sided"]) {
+        if(dice["6-sided"]) {
+          //both dice are present, adjust x and y values for this
+          this.dice[0].x = 495.966;
+          this.dice[0].number.x = 491.728;
+
+          this.dice[1].x = 564.837;
+          this.dice[1].number.x = 559.421;
+
+          //add 6-sided dice to the board
+          this.dice[1].number.setVisible(true);
+          this.dice[1].setVisible(true);
+          this.dice[1].number.setText(dice["6-sided"]);
+        }
+        else {
+          //6 sided is not here
+          this.dice[0].x = 529.966;
+          this.dice[0].number.x = 524.728;
+
+          //remove 6 sided dice
+          this.dice[1].number.setVisible(false);
+          this.dice[1].setVisible(false);
+        }
+
+        //set 4 sided die
+        this.dice[0].number.setVisible(true);
+        this.dice[0].setVisible(true);
+        this.dice[0].number.setText(dice["4-sided"]);
+      }
+
+      else if(dice["6-sided"]){
+        //if we get here, then 4-sided is not on the board; remove it
+        this.dice[0].number.setVisible(false);
+        this.dice[0].setVisible(false);
+
+        //move 6 sided die
+        this.dice[1].x = 531.966;
+        this.dice[1].number.x = 526.421;
+
+        //set 6 sided die
+        this.dice[1].number.setVisible(true);
+        this.dice[1].setVisible(true);
+        this.dice[1].number.setText(dice["6-sided"]);
+      }
     }
 });
