@@ -171,7 +171,6 @@ var GameBoard = new Phaser.Class ({
 
         // Load arsenal images
         this.load.image('Arsenal Box', '/static/assets/arsenalbox.png');
-        this.load.image('sword', '/static/assets/sword.png');
 
         //display popups
         this.load.svg('gameOver', '/static/assets/gameOver.svg', {width: 642, height: 590});
@@ -186,6 +185,36 @@ var GameBoard = new Phaser.Class ({
 
         // load bitmap text
         this.load.bitmapFont('adventur', gfx + 'Adventur.png', gfx + 'Adventur.fnt');
+
+        // load the card images
+        this.load.svg('Advent', gfx + 'advent.svg', {width: 90, height: 90});
+        this.load.svg('Banana Peel', gfx + 'banana-peel.svg', {width: 90, height: 90});
+        this.load.svg('Blessing', gfx + 'blessing.svg', {width: 90, height: 90});
+        this.load.svg('Butcher Knife', gfx + 'butcher-knife.svg', {width: 90, height: 90});
+        this.load.svg('Chainsaw', gfx + 'chainsaw.svg', {width: 90, height: 90});
+        this.load.svg('Chocolate', gfx + 'chocolate.svg', {width: 90, height: 90});
+        this.load.svg('Cursed Sword Masamune', gfx + 'cursed-sword-masamune.svg', {width: 90, height: 90});
+        this.load.svg('Diabolic Ritual', gfx + 'diabolic-ritual.svg', {width: 90, height: 90});
+        this.load.svg('Disenchant Mirror', gfx + 'disenchant-mirror.svg', {width: 90, height: 90});
+        this.load.svg('Dynamite', gfx + 'dynamite.svg', {width: 90, height: 90});
+        this.load.svg('First Aid', gfx + 'first-aid.svg', {width: 90, height: 90});
+        this.load.svg('Flare of Judgement', gfx + 'flare-of-judgement.svg', {width: 90, height: 90});
+        this.load.svg('Fortune Brooch', gfx + 'fortune-brooch.svg', {width: 90, height: 90});
+        this.load.svg('Guardian Angel', gfx + 'guardian-angel.svg', {width: 90, height: 90});
+        this.load.svg('Handgun', gfx + 'handgun.svg', {width: 90, height: 90});
+        this.load.svg('Hermit', gfx + 'hermit.svg', {width: 90, height: 90});
+        this.load.svg('Hidden Knowledge', gfx + 'hidden-knowledge.svg', {width: 90, height: 90});
+        this.load.svg('Holy Water of Healing', gfx + 'holy-water-of-healing.svg', {width: 90, height: 90});
+        this.load.svg('Machine Gun', gfx + 'machine-gun.svg', {width: 90, height: 90});
+        this.load.svg('Moody Goblin', gfx + 'moody-goblin.svg', {width: 90, height: 90});
+        this.load.svg('Mystic Compass', gfx + 'mystic-compass.svg', {width: 90, height: 90});
+        this.load.svg('Rusted Broad Axe', gfx + 'rusted-broad-axe.svg', {width: 90, height: 90});
+        this.load.svg('Silver Rosary', gfx + 'silver-rosary.svg', {width: 90, height: 90});
+        this.load.svg('Spear of Longinus', gfx + 'spear-of-longinus.svg', {width: 90, height: 90});
+        this.load.svg('Spiritual Doll', gfx + 'spiritual-doll.svg', {width: 90, height: 90});
+        this.load.svg('Talisman', gfx + 'talisman.svg', {width: 90, height: 90});
+        this.load.svg('Vampire Bat', gfx + 'vampire-bat.svg', {width: 90, height: 90});
+
     },
 
     //the create function is where everything is added to the canvas
@@ -353,7 +382,12 @@ var GameBoard = new Phaser.Class ({
             // Add equipment card image
             var equip_x = 265+i*107.450;
             var equip_y = 550;
-            var equip = this.add.image(equip_x, equip_y, "sword"); // TODO: Change "sword" to card.title
+            if (card.title.startsWith('Hermit')) {
+                var equip = this.add.image(equip_x, equip_y, 'Hermit');
+            } else {
+                var equip = this.add.image(equip_x, equip_y, card.title);
+            }
+            
 
             // Add popup box
             equip.infoBox = this.add.image(equip_x, equip_y - 100, "popup");
