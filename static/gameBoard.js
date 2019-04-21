@@ -196,7 +196,7 @@ var GameBoard = new Phaser.Class ({
         this.healthBar.on('clicked', this.clickHandler, this.box);
 
         // adds info button on upper right corner so people know they can click on things. Starts with popup open
-        this.popupInfo = this.add.image(840, 20, 'info');
+        this.popupInfo = this.add.image(835, 20, 'info');
         this.popupInfo.infoBox = this.add.image(750, 55, "popup_left");
         this.popupInfo.infoBox.depth = 30;
         this.popupInfo.displayInfo = this.add.text(this.popupInfo.infoBox.x - 80,
@@ -400,9 +400,9 @@ var GameBoard = new Phaser.Class ({
         sprite.infoBox = this.add.image(800, 175, 'health_popup');
         sprite.infoBox.setVisible(false);
         sprite.infoBox.depth = 30;
-        sprite.displayInfo = this.add.text(760, 10, " ", { font: '10px Palatino', fill: '#FFFFFF', wordWrap: { width: 250, useAdvancedWrap: true }});
+        sprite.displayInfo = this.add.text(760, 15, " ", { font: '10px Palatino', fill: '#FFFFFF', wordWrap: { width: 250, useAdvancedWrap: true }});
 
-        sprite.displayInfo.lineSpacing = -2.5;
+        sprite.displayInfo.lineSpacing = -2.2;
 
         sprite.displayInfo.setText(["Player: " + this.gameData.public.characters[0].name, "Dies At HP: " + this.gameData.public.characters[0].max_damage + "\n",
             "Player: " + this.gameData.public.characters[1].name, "Dies At HP: " + this.gameData.public.characters[1].max_damage + "\n",
@@ -462,7 +462,7 @@ var GameBoard = new Phaser.Class ({
 
     // makes summary icon in upper right part of screen interactive
     makeSummary: function() {
-      var summaryIcon = this.add.image(840, 65, 'summary');
+      var summaryIcon = this.add.image(835, 65, 'summary');
       summaryIcon.infoBox = this.add.image(516.092, 300, "gameSummary");
       summaryIcon.infoBox.depth = 40;
 
