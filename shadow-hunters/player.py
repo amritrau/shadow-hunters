@@ -361,7 +361,7 @@ class Player:
     def moveDamage(self, damage_change, attacker):
         if attacker.modifiers['steal_for_damage']:
             print("steal_for_damage is on! damage: {}".format(damage_change))
-            if damage_change >= 2:
+            if damage_change <= -2:
                 # Ask attacker whether to steal equipment or deal damage
                 data = {'options': ["Steal equipment", "Deal {} damage".format(damage_change)]}
                 choose_steal = (attacker.gc.ask_h('select', data, attacker.user_id)['value'] == "Steal equipment")
