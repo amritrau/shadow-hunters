@@ -271,16 +271,6 @@ var GameBoard = new Phaser.Class ({
             //create the information box for the bottom left corner
             this.infoBox = this.add.image(104.500, 537.500, 'playerinfo').setScale(1);
 
-            //amrit sets character allegance to a number. we convert it to a team
-            if(this.charInfo.alleg == 1){
-                this.charInfo.alleg = "Neutral";
-            }
-            else if (this.charInfo.alleg == 0) {
-                this.charInfo.alleg = "Shadow";
-            }
-            else {
-                this.charInfo.alleg = "Hunter";
-            }
             //enable data to be stored in this box. I'm not sure if this is necessary; if it isn't we can delete these set lines below
             this.infoBox.setDataEnabled();
             this.infoBox.data.set("name", this.charInfo.name);
@@ -490,16 +480,6 @@ var GameBoard = new Phaser.Class ({
         summaryIcon.equipment[i] = "None";
         if(this.player && (this.gameData.public.players[i].user_id === this.player.name)) {
 
-          if(this.charInfo.alleg == 1){
-              this.charInfo.alleg = "Neutral";
-          }
-          else if (this.charInfo.alleg == 0) {
-              this.charInfo.alleg = "Shadow";
-          }
-          else {
-              this.charInfo.alleg = "Hunter";
-          }
-
           summaryIcon.characters[i] = this.charInfo.name;
           summaryIcon.team[i] = this.charInfo.alleg;
           summaryIcon.win[i] = this.charInfo.win_cond_desc;
@@ -673,16 +653,6 @@ var GameBoard = new Phaser.Class ({
         if((data.state == 1 || data.state == 0) && (player.info.state == 1 || player.info.state == 0) && (!this.player || (this.player.name !== player.name))) {
           if(this.gameSummary.characters[player.number - 1] === "?") {
             this.gameSummary.displayCharacter[player.number - 1].charImage.destroy();
-            if(data.character.alleg == 1){
-                data.character.alleg = "Neutral";
-            }
-            else if (data.character.alleg == 0) {
-                data.character.alleg = "Shadow";
-            }
-            else {
-                data.character.alleg = "Hunter";
-            }
-
             this.gameSummary.characters[player.number - 1] = data.character.name;
             this.gameSummary.team[player.number - 1] = data.character.alleg;
             this.gameSummary.win[player.number - 1] = data.character.win_cond_desc;
@@ -829,15 +799,6 @@ var GameBoard = new Phaser.Class ({
                 this.gameEnd.winners[i] = this.add.image(583, 140 + 130*((i-1)/2), winners[i].character.name);
                 this.gameEnd.players_info[i] = this.add.text(652, 78.183 + 130*((i-1)/2), " ", { font: '12px Palatino', fill: '#000000', wordWrap: { width: 160, useAdvancedWrap: true }});
             }
-            if(winners[i].character.alleg == 1){
-                winners[i].character.alleg = "Neutral";
-            }
-            else if (winners[i].character.alleg == 0) {
-                winners[i].character.alleg = "Shadow";
-            }
-            else {
-                winners[i].character.alleg = "Hunter";
-            }
             this.gameEnd.winners[i].depth = 40;
             this.gameEnd.players_info[i].depth = 40;
             this.gameEnd.players_info[i].setText([
@@ -889,16 +850,6 @@ var GameBoard = new Phaser.Class ({
     //character card displays
     onReveal: function(charInfo) {
         var cardsOut = this.cards.nDrawn;
-
-        if(charInfo.player.character.alleg == 1){
-            charInfo.player.character.alleg = "Neutral";
-        }
-        else if (charInfo.player.character.alleg == 0) {
-            charInfo.player.character.alleg = "Shadow";
-        }
-        else {
-            charInfo.player.character.alleg = "Hunter";
-        }
 
         this.cards.cardsDrawn[cardsOut] = this.add.image(296.838, 379.696, "redcard");
         this.cards.cardsDrawn[cardsOut].char = true;
