@@ -394,7 +394,14 @@ var GameBoard = new Phaser.Class ({
 
         sprite.displayInfo.lineSpacing = -2.2;
 
-        sprite.displayInfo.setText(["Player: " + this.gameData.public.characters[0].name, "Dies At HP: " + this.gameData.public.characters[0].max_damage + "\n",
+
+        var display_text = []
+        for (var i = 0; i < this.gameData.public.characters.length; i++) {
+          display_text.push("Player: " + this.gameData.public.characters[i].name, "Dies At HP: " + this.gameData.public.characters[i].max_damage + "\n");
+        }
+        sprite.displayInfo.setText(display_text);
+
+        /*sprite.displayInfo.setText(["Player: " + this.gameData.public.characters[0].name, "Dies At HP: " + this.gameData.public.characters[0].max_damage + "\n",
             "Player: " + this.gameData.public.characters[1].name, "Dies At HP: " + this.gameData.public.characters[1].max_damage + "\n",
             "Player: " + this.gameData.public.characters[2].name, "Dies At HP: " + this.gameData.public.characters[2].max_damage + "\n",
             "Player: " + this.gameData.public.characters[3].name, "Dies At HP: " + this.gameData.public.characters[3].max_damage + "\n",
@@ -405,7 +412,7 @@ var GameBoard = new Phaser.Class ({
             "Player: " + this.gameData.public.characters[8].name, "Dies At HP: " + this.gameData.public.characters[8].max_damage + "\n",
             "Player: " + this.gameData.public.characters[9].name, "Dies At HP: " + this.gameData.public.characters[9].max_damage + "\n",
             "Player: " + this.gameData.public.characters[10].name, "Dies At HP: " + this.gameData.public.characters[10].max_damage
-        ]);
+        ]);*/
 
         sprite.displayInfo.setVisible(false);
         sprite.displayInfo.depth = 30;
@@ -832,6 +839,10 @@ var GameBoard = new Phaser.Class ({
 
         if($('#reveal').length) {
             $('#reveal').remove();
+        }
+
+        if($('#special').length) {
+            $('#special').remove();
         }
     },
 
