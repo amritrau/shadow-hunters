@@ -48,7 +48,7 @@ var GameBoard = new Phaser.Class ({
                          [378.242,228.124,499.237,113.250,570.961,113.250,691.956,228.124,449.118,434.654,550.251,428.192],
                          [346.934,152.375,373.233, 97.393,696.965, 97.393,723.264,152.375,509.887,326.988,613.559,330.442],
                          [323.822,194.484,403.492, 64.687,666.706, 64.687,746.376,194.484,453.340,329.579,562.671,326.552]
-                     ];
+                         ];
 
         //y coordinates of all possible spots on health bar
         // Why are there two of these - not sure which to change, so changed both
@@ -57,7 +57,8 @@ var GameBoard = new Phaser.Class ({
         this.zoneCards = [[],[],[]];
         this.zoneSpots = [[382.000, 201.500, 433.000, 113.250],
                           [633.000, 113.250, 684.250, 201.750],
-                          [482.000, 382.712, 584.000, 382.712]];
+                          [482.000, 382.712, 584.000, 382.712]
+                          ];
     },
 
     //function to initialize the data sent into gameboard from waiting room
