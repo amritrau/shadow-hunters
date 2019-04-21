@@ -195,7 +195,7 @@ def socket_tell(str, args, gc, room_id, client=None):
         socketio.sleep(SOCKET_SLEEP)
 
 def socket_show(data, gc, room_id, client=None):
-    assert data['type'] in ["die", "win", "reveal", "roll", "draw"]
+    assert data['type'] in ["die", "win", "reveal", "roll", "draw", "damage"]
     if not client:
         client = (room_id,)
     socketio.emit('display', data, room=client[0])

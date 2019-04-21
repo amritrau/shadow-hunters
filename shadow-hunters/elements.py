@@ -1209,15 +1209,9 @@ class ElementFactory:
         ########## Hunters
 
         def george_special(gc, player, turn_pos):
-            # print("george_special:", player.user_id, turn_pos)
             # START OF TURN
             if turn_pos == 'start':
                 if not player.modifiers['special_used']:
-                    # print("\tgeorge_special BP 1")
-                    # Tell the player that they'll get the special at the start of
-                    # the turn
-                    # gc.tell_h("Special ability activated. You will be able to use this ability at the start of your turn.", player.socket_id)
-
                     player.modifiers['special_used'] = True
 
                     # Tell
@@ -1236,17 +1230,10 @@ class ElementFactory:
 
 
         def fuka_special(gc, player, turn_pos):
-            # print("fuka_special:", player.user_id, turn_pos)
             # START OF TURN
             if turn_pos == 'start':
                 if not player.modifiers['special_used']:
-                    # print("\tfuka_special BP 1")
-                    # Tell the player that they'll get the special at the start of
-                    # the turn
-                    # gc.tell_h("Special ability activiated. You will be able to use this ability at the start of your turn.", [], player.socket_id)
-
                     player.modifiers['special_used'] = True
-                    # print("\tfuka_special BP 2")
 
                     # Tell
                     gc.tell_h("{} used her special ability: {}", ["Fu-ka", player.character.special_desc])
@@ -1266,15 +1253,9 @@ class ElementFactory:
                     gc.tell_h("This special ability can be used only once.", [], player.socket_id)
 
         def franklin_special(gc, player, turn_pos):
-            # print("franklin_special:", player.user_id, turn_pos)
-            # START OF TURN
-            # gc.tell_h("Franklin special activated", player.socket_id)
 
             if turn_pos == 'start':
-                if player.modifiers['special_used'] == False:
-                    # Tell the player that they'll get the special at the start of
-                    # the turn
-                    # gc.tell_h("Special ability activiated. You will be able to use this ability at the start of your turn.", player.socket_id)
+                if player.modifiers['special_used'] == False
                     player.modifiers['special_used'] = True
 
                     # Tell
@@ -1293,14 +1274,9 @@ class ElementFactory:
 
 
         def ellen_special(gc, player, turn_pos):
-            # print("ellen_special:", player.user_id, turn_pos)
             # START OF TURN
             if turn_pos == 'start':
                 if not player.modifiers['special_used']:
-                    # Tell the player that they'll get the special at the start of
-                    # the turn
-                    # gc.tell_h("Special ability activiated. You will be able to use this ability at the start of your turn.", player.socket_id)
-
                     player.modifiers['special_used'] = True
 
                     # Tell
@@ -1333,25 +1309,18 @@ class ElementFactory:
                 player.modifiers['special_active'] = True
 
         def vampire_special(gc, player, turn_pos):
-            # print("vampire_special:", player.user_id, turn_pos)
             if player.modifiers['special_active'] == False and player.modifiers['special_used'] == False:
                 # Tell
                 gc.tell_h("{} used his special ability: {}", ["Vampire", player.character.special_desc])
                 player.modifiers['damage_dealt_fn'] = lambda player: player.moveDamage(2, player)
                 player.modifiers['special_active'] = True
-            else:
-                pass
-                # print("vampire player.modifiers special_active = ", player.modifiers['special_active'])
 
         def werewolf_special(gc, player, turn_pos):
             if player.modifiers['special_used'] == False:
-                # Tell
-                # gc.tell_h("{} activated their special ability: {}", ["Werewolf", player.character.special_desc])
                 player.modifiers['counterattack'] = True
                 player.modifiers['special_active'] = True
 
         def ultra_soul_special(gc, player, turn_pos):
-            # print("ultra_soul_special:", player.user_id, turn_pos)
             # START OF TURN
             if turn_pos == 'start' and (player.modifiers['special_used'] == False):
                 # No need to bother every turn if there's nobody at UG
@@ -1366,7 +1335,6 @@ class ElementFactory:
                     gc.tell_h("{} chose {}!", [player.user_id, target])
                     dealt = player.attack(target_Player, 3)
                     gc.tell_h("{} ({})'s Murder Ray gave {} {} damage!", ["Ultra Soul", player.user_id, target, dealt])
-
 
         ## Initialize characters
 
