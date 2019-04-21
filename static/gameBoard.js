@@ -598,7 +598,16 @@ var GameBoard = new Phaser.Class ({
         }
 
         // Update hp
-        player.hpTracker.y = this.hpStart - 38.25*data.damage;
+        var tween2 = this.tweens.add({
+          targets: player.hpTracker,
+          yoyo: false,
+          y: this.hpStart - 38.25*data.damage,
+          duration: 1000,
+          ease: 'Power2',
+          repeat: 0
+        });
+
+        //player.hpTracker.y = this.hpStart - 38.25*data.damage;
         this.gameSummary.damage[player.number - 1] = data.damage;
 
         // Kill player if dead
