@@ -381,8 +381,10 @@ class Player:
         return dealt
 
     def moveDamage(self, damage_change, attacker):
+        if damage_change < 0:
+            self.gc.show_h({'type': 'damage', 'player': self.dump()})
+
         if attacker.modifiers['steal_for_damage']:
-            # print("steal_for_damage is on! damage: {}".format(damage_change))
             if (damage_change <= -2) and len(self.equipment):
                 # Ask attacker whether to steal equipment or deal damage
                 data = {'options': ["Steal equipment", "Deal {} damage".format(abs(damage_change))]}
@@ -400,11 +402,14 @@ class Player:
         return self.damage
 
     def setDamage(self, damage, attacker):
+        if damage < self.damage:
+            self.gc.show_h({'type': 'damage', 'player': self.dump()})
         self.damage = damage
         self.checkDeath(attacker)
 
     def checkDeath(self, attacker):
         if self.damage >= self.character.max_damage:
+            self.gc.update_h()
             self.die(attacker)
         self.gc.update_h()
 
