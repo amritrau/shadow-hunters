@@ -195,7 +195,7 @@ def socket_tell(str, args, gc, room_id, client=None):
         socketio.sleep(SOCKET_SLEEP)
 
 def socket_show(data, gc, room_id, client=None):
-    assert data['type'] in ["die", "win", "reveal", "roll", "draw"]
+    assert data['type'] in ["die", "win", "reveal", "roll", "draw", "damage"]
     if not client:
         client = (room_id,)
     socketio.emit('display', data, room=client[0])
@@ -251,7 +251,6 @@ def on_start(json):
             show_h = None,
             update_h = None
     )
-    print("ROOM_ID: {}".format(room_id))
     gc.tell_h = lambda x, y, *z: socket_tell(x, y, gc, room_id, z)
     gc.show_h = lambda x, *y: socket_show(x, gc, room_id, y)
     gc.update_h = lambda: socket_update(gc.dump()[0], room_id)
@@ -322,6 +321,7 @@ def on_special():
     if not player.special_active:
         player.special_active = True # Guard
         elements.reveal_lock.release()
+        player.gc.tell_h("You've activated your special ability. It will take effect when it becomes valid.", [], request.sid)
         player.character.special(rooms[room_id]['gc'], player, turn_pos = 'now')
         rooms[room_id]['gc'].update_h()
 

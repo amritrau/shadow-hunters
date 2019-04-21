@@ -1,3 +1,5 @@
+import elements
+
 # card.py
 # Implements the Card object.
 
@@ -17,5 +19,6 @@ class Card:
         return {
             'title': self.title,
             'desc': self.desc,
-            'color': self.color
+            'color': elements.CARD_COLOR_MAP[self.color],
+            'is_equip': self.is_equipment
         }
