@@ -48,7 +48,7 @@ var GameBoard = new Phaser.Class ({
                          [378.242,228.124,499.237,113.250,570.961,113.250,691.956,228.124,449.118,434.654,550.251,428.192],
                          [346.934,152.375,373.233, 97.393,696.965, 97.393,723.264,152.375,509.887,326.988,613.559,330.442],
                          [323.822,194.484,403.492, 64.687,666.706, 64.687,746.376,194.484,453.340,329.579,562.671,326.552]
-                     ];
+                         ];
 
         //y coordinates of all possible spots on health bar
         // Why are there two of these - not sure which to change, so changed both
@@ -57,7 +57,8 @@ var GameBoard = new Phaser.Class ({
         this.zoneCards = [[],[],[]];
         this.zoneSpots = [[382.000, 201.500, 433.000, 113.250],
                           [633.000, 113.250, 684.250, 201.750],
-                          [482.000, 382.712, 584.000, 382.712]];
+                          [482.000, 382.712, 584.000, 382.712]
+                          ];
     },
 
     //function to initialize the data sent into gameboard from waiting room
@@ -280,15 +281,16 @@ var GameBoard = new Phaser.Class ({
             this.infoBox.data.set("special", this.charInfo.special_desc);
 
             //create the text variables
-            var text = this.add.text(10, 475, '', {
+            var text = this.add.text(10, 450, '', {
                 font: '12px Palatino',
                 fill: '#FFFFFF',
                 wordWrap: { width: 180, useAdvancedWrap: true }
             });
             var name = this.add.bitmapText(68, 477, 'adventur',
                 this.infoBox.data.get('name'),
-                size = 18
+                size = 16
                 );
+            name.x = 100 - name.width/2; // center character's name in info box
 
             //set the text for inside of the box
             text.setText([
@@ -348,6 +350,7 @@ var GameBoard = new Phaser.Class ({
 
     },
 
+<<<<<<< HEAD
     makeEquipment: function(card, i) {
 
             // Add equipment card image
@@ -375,6 +378,27 @@ var GameBoard = new Phaser.Class ({
             return equip;
     },
 
+=======
+    makeArsenal: function(datasize, data){
+
+        for(var i = 0; i < datasize; i++) {
+            var sword = this.add.image(255 + i*100, 550, "sword");
+            sword.infoBox = this.add.image(255 + i*100, 450, "popup");
+            sword.infoBox.setVisible(false);
+            sword.infoBox.depth = 30;
+
+            sword.displayInfo = this.add.text(130 + i*100, 410, " ", { font: '12px Palatino', fill: '#FFFFFF', wordWrap: { width: 250, useAdvancedWrap: true }});
+            sword.displayInfo.setText(["Equipment: "+ data.equipment[i].title + "\n" + "Description: " + data.equipment[i].desc]);
+            sword.displayInfo.setVisible(false);
+            sword.displayInfo.depth = 30;
+            sword.setInteractive();
+            return sword;
+        }
+
+
+    },
+
+>>>>>>> 1fdd5d2894d43bf9f546b193708730c6950ad6e1
     makeHealthBar: function() {
         var sprite  = this.add.image(960.160, 302.279, 'health');
         sprite.infoBox = this.add.image(800, 175, 'health_popup');
