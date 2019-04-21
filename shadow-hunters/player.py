@@ -45,18 +45,18 @@ class Player:
 
     def takeTurn(self):
         # Before turn check for special ability
-        print("START: Checking for {} ({}) special ability".format(self.user_id, self.character.name))
+        # print("START: Checking for {} ({}) special ability".format(self.user_id, self.character.name))
         if self.special_active:
-            print("START: calling self.character.special()")
+            # print("START: calling self.character.special()")
             self.character.special(self.gc, self, turn_pos = 'start')
 
         # takeTurn
         self._takeTurn()
 
         # After turn check for special ability
-        print("END: Checking for {} ({}) special ability".format(self.user_id, self.character.name))
+        # print("END: Checking for {} ({}) special ability".format(self.user_id, self.character.name))
         if self.special_active:
-            print("END: calling self.character.special()")
+            # print("END: calling self.character.special()")
             self.character.special(self.gc, self, turn_pos = 'end')
 
 

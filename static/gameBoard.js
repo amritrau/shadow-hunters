@@ -69,7 +69,6 @@ var GameBoard = new Phaser.Class ({
 
         // Store data
         this.gameData = data;
-        // console.log(this.gameData);
         if("private" in this.gameData) this.charInfo = this.gameData.private.character;
         this.allPlayersInfo = this.gameData.public.players;
 
@@ -165,6 +164,7 @@ var GameBoard = new Phaser.Class ({
         this.load.image('Ellen', '/static/assets/Ellen.png');
         this.load.image('Ultra Soul', '/static/assets/Ultrasoul.png');
         this.load.image('Werewolf', '/static/assets/Werewolf.png');
+        this.load.image('Anon', '/static/assets/anon.png');
         //this.load.svg('Allie', '/static/assets/Allie.svg', {width: 123, height: 123});
 
         // Load arsenal images
@@ -177,6 +177,7 @@ var GameBoard = new Phaser.Class ({
         this.load.svg('whitecard', '/static/assets/whitecard.svg', {width: 154.604, height: 199.212});
         this.load.svg('blackcard', '/static/assets/blackcard.svg', {width: 154.604, height: 199.212});
         this.load.svg('greencard', '/static/assets/greencard.svg', {width: 154.604, height: 199.212});
+        this.load.svg('redcard', '/static/assets/redcard.svg', {width: 187.977, height: 221.565});
         this.load.svg('alert', '/static/assets/alert.svg', {width: 318.804, height: 101.562});
 
         // load bitmap text
@@ -196,8 +197,8 @@ var GameBoard = new Phaser.Class ({
         this.healthBar.on('clicked', this.clickHandler, this.box);
 
         // adds info button on upper right corner so people know they can click on things. Starts with popup open
-        this.popupInfo = this.add.image(835, 20, 'info');
-        this.popupInfo.infoBox = this.add.image(750, 55, "popup_left");
+        this.popupInfo = this.add.image(830, 20, 'info');
+        this.popupInfo.infoBox = this.add.image(740, 55, "popup_left");
         this.popupInfo.infoBox.depth = 30;
         this.popupInfo.displayInfo = this.add.text(this.popupInfo.infoBox.x - 80,
                                                   this.popupInfo.infoBox.y - 40,
@@ -221,10 +222,8 @@ var GameBoard = new Phaser.Class ({
 
 
         //this loop creates all players: self and enemies.
-        //sorted_keys = Object.keys(this.allPlayersInfo).sort(); // Hack to force keys into a deterministic order
         var count = 0;
         this.nPlayers = this.allPlayersInfo.length;
-        // console.log(this.nPlayers);
         for(var i = 0; i < this.nPlayers; i++) {
             if(("private" in this.gameData) && this.allPlayersInfo[i].user_id === this.gameData.private.user_id) {
                 this.player = this.makePlayer(this.allPlayersInfo[i].user_id,
@@ -344,7 +343,6 @@ var GameBoard = new Phaser.Class ({
                     self.onReveal(data);
                     break;
                 default:
-                    //console.log("what are you doing? data.type is: " + data.type);
                     break;
             }
         });
@@ -462,7 +460,7 @@ var GameBoard = new Phaser.Class ({
 
     // makes summary icon in upper right part of screen interactive
     makeSummary: function() {
-      var summaryIcon = this.add.image(835, 65, 'summary');
+      var summaryIcon = this.add.image(830, 65, 'summary');
       summaryIcon.infoBox = this.add.image(516.092, 300, "gameSummary");
       summaryIcon.infoBox.depth = 40;
 
@@ -475,24 +473,36 @@ var GameBoard = new Phaser.Class ({
       summaryIcon.win = [];
       summaryIcon.equipment = [];
 
-      // console.log("in makeSummary, nPlayers is: ", this.nPlayers);
       //this will be changed later; just making this interactive for testing purposes
       for (var i = 0 ; i < this.nPlayers; i++) {
         if(i%2 == 0) {
             summaryIcon.displayInfo[i] = this.add.text(350.46, 67.18 + 130*(i/2), " ", { font: '10px Palatino', fill: '#000000', wordWrap: { width: 160, useAdvancedWrap: true }});
             summaryIcon.displayCharacter[i] = this.add.image(280.46, 119 + 130*(i/2), "circle" + String(i + 1));
+            summaryIcon.displayCharacter[i].charImage = this.add.image(280.46, 119 + 130*(i/2), "Anon");
         }
         else {
             summaryIcon.displayInfo[i] = this.add.text(652.46, 67.18 + 130*((i-1)/2), " ", { font: '10px Palatino', fill: '#000000', wordWrap: { width: 160, useAdvancedWrap: true }});
             summaryIcon.displayCharacter[i] = this.add.image(582.46, 119 + 130*((i-1)/2), "circle" + String(i + 1));
+            summaryIcon.displayCharacter[i].charImage = this.add.image(582.46, 119 + 130*((i-1)/2), "Anon");
         }
 
         summaryIcon.names[i] = this.gameData.public.players[i].user_id;
-        summaryIcon.characters[i] = "?";
         summaryIcon.damage[i] = this.gameData.public.players[i].damage;
-        summaryIcon.team[i] = "?";
-        summaryIcon.win[i] = "?";
         summaryIcon.equipment[i] = "None";
+        if(this.player && (this.gameData.public.players[i].user_id === this.player.name)) {
+          summaryIcon.characters[i] = this.charInfo.name;
+          summaryIcon.team[i] = this.charInfo.alleg;
+          summaryIcon.win[i] = this.charInfo.win_cond_desc;
+          var img_x = summaryIcon.displayCharacter[i].charImage.x;
+          var img_y = summaryIcon.displayCharacter[i].charImage.y;
+          summaryIcon.displayCharacter[i].charImage.destroy();
+          summaryIcon.displayCharacter[i].charImage = this.add.image(img_x, img_y, this.charInfo.name);
+        }
+        else {
+          summaryIcon.characters[i] = "?";
+          summaryIcon.team[i] = "?";
+          summaryIcon.win[i] = "?";
+        }
 
         summaryIcon.displayInfo[i].setText([
           "Player Name: " + summaryIcon.names[i],
@@ -504,15 +514,14 @@ var GameBoard = new Phaser.Class ({
 
         summaryIcon.displayInfo[i].depth = 40;
         summaryIcon.displayCharacter[i].depth = 40;
+        summaryIcon.displayCharacter[i].charImage.depth = 40;
+        summaryIcon.displayCharacter[i].charImage.setVisible(false);
         summaryIcon.displayInfo[i].setVisible(false);
         summaryIcon.displayCharacter[i].setVisible(false);
-        // console.log(summaryIcon.displayInfo);
-        // console.log(summaryIcon.displayCharacter);
       }
 
       summaryIcon.infoBox.setVisible(false);
       summaryIcon.setInteractive();
-      // console.log(summaryIcon);
       return summaryIcon;
     },
 
@@ -593,6 +602,9 @@ var GameBoard = new Phaser.Class ({
 
         // Kill player if dead
         if(data.state == 0) {
+            if (player.infoBox.angle != 0) {
+                player.infoBox.angle = 0;
+            }
             player.alpha = 0.4;
             player.hpTracker.alpha = 0.4;
             player.infoBox.alpha = 0.4;
@@ -636,9 +648,9 @@ var GameBoard = new Phaser.Class ({
             }
         }
 
-        if((data.state == 1 || data.state == 0) && (player.info.state == 1 || player.info.state == 0)) {
+        if((data.state == 1 || data.state == 0) && (player.info.state == 1 || player.info.state == 0) && (!this.player || (this.player.name !== player.name))) {
           if(this.gameSummary.characters[player.number - 1] === "?") {
-            console.log("what is wrong with the reveal socket? Character is: ", data.character.name);
+            this.gameSummary.displayCharacter[player.number - 1].charImage.destroy();
             if(data.character.alleg == 1){
                 data.character.alleg = "Neutral";
             }
@@ -656,7 +668,7 @@ var GameBoard = new Phaser.Class ({
               this.gameSummary.displayCharacter[player.number - 1].charImage = this.add.image(280.46, 119 + 130*((player.number - 1)/2), data.character.name);
             }
             else {
-              this.gameSummary.displayCharacter[player.number - 1].charImage = this.add.image(582.46, 119 + 130*(player.number/2), data.character.name);
+              this.gameSummary.displayCharacter[player.number - 1].charImage = this.add.image(582.46, 119 + 130*((player.number-2)/2), data.character.name);
             }
             this.gameSummary.displayCharacter[player.number - 1].charImage.depth = 40;
             this.gameSummary.displayCharacter[player.number - 1].charImage.setVisible(false);
@@ -705,7 +717,6 @@ var GameBoard = new Phaser.Class ({
     //for each update, change parts of the board that need to be redrawn.
     updateBoard: function(data) {
         //loop through each player and see if there are things to update
-        console.log(data);
         this.allPlayersInfo = data.players;
         var count = 0;
         for(var i = 0; i < this.nPlayers; i++){
@@ -764,9 +775,7 @@ var GameBoard = new Phaser.Class ({
           for(var i = 0; i < summary.scene.nPlayers; i++) {
             summary.displayInfo[i].setVisible(true);
             summary.displayCharacter[i].setVisible(true);
-            if(summary.characters[i] !== "?") {
-              summary.displayCharacter[i].charImage.setVisible(true);
-            }
+            summary.displayCharacter[i].charImage.setVisible(true);
           }
         }
         else
@@ -775,9 +784,7 @@ var GameBoard = new Phaser.Class ({
             for(var i = 0; i < summary.scene.nPlayers; i++) {
               summary.displayInfo[i].setVisible(false);
               summary.displayCharacter[i].setVisible(false);
-              if(summary.characters[i] !== "?") {
-                summary.displayCharacter[i].charImage.setVisible(false);
-              }
+              summary.displayCharacter[i].charImage.setVisible(false);
             }
         }
     },
@@ -862,10 +869,10 @@ var GameBoard = new Phaser.Class ({
             charInfo.player.character.alleg = "Hunter";
         }
 
-        this.cards.cardsDrawn[cardsOut] = this.add.image(281.321, 368.964, "blackcard");
+        this.cards.cardsDrawn[cardsOut] = this.add.image(296.838, 379.696, "redcard");
         this.cards.cardsDrawn[cardsOut].char = true;
-        this.cards.cardsDrawn[cardsOut].charImage = this.add.image(281.321, 300, charInfo.player.character.name);
-        this.cards.cardsDrawn[cardsOut].cardText = this.add.text(211.654, 365.668, " ", { font: '10px Arial', fill: '#FFFFFF', wordWrap: { width: 139, useAdvancedWrap: true }});
+        this.cards.cardsDrawn[cardsOut].charImage = this.add.image(295.36, 286.696, charInfo.player.character.name);
+        this.cards.cardsDrawn[cardsOut].cardText = this.add.text(211.65, 350.513, " ", { font: '10px Palatino', fill: '#FFFFFF', wordWrap: { width: 169, useAdvancedWrap: true }});
 
         this.cards.cardsDrawn[cardsOut].cardText.setText([
             charInfo.player.character.name,
@@ -878,36 +885,35 @@ var GameBoard = new Phaser.Class ({
         this.cards.cardsDrawn[cardsOut].on('clicked', this.cardHandler, this.cards.cardsDrawn[cardsOut]);
         this.cards.nDrawn = cardsOut + 1;
 
-        console.log(this.allPlayersInfo);
-        console.log(charInfo.player.user_id);
-        for(var i = 0; i < this.nPlayers; i++) {
-          console.log(this.allPlayersInfo[i].user_id);
-          if(charInfo.player.user_id === this.allPlayersInfo[i].user_id) {
-            console.log("updating revealed character");
-            this.gameSummary.characters[i] = charInfo.player.character.name;
-            this.gameSummary.team[i] = charInfo.player.character.alleg;
-            this.gameSummary.win[i] = charInfo.player.character.win_cond_desc;
+        if(!this.player || (this.player.name !== charInfo.player.user_id)) {
+          for(var i = 0; i < this.nPlayers; i++) {
+            if(charInfo.player.user_id === this.allPlayersInfo[i].user_id) {
+              this.gameSummary.characters[i] = charInfo.player.character.name;
+              this.gameSummary.team[i] = charInfo.player.character.alleg;
+              this.gameSummary.win[i] = charInfo.player.character.win_cond_desc;
 
-            this.gameSummary.displayInfo[i].setText([
-              "Player Name: " + this.gameSummary.names[i],
-              "Character: " + this.gameSummary.characters[i],
-              "Damage: " + this.gameSummary.damage[i] + ", Team: " + this.gameSummary.team[i],
-              "Win Condition: " + this.gameSummary.win[i],
-              "Equipment: " + this.gameSummary.equipment[i]
-            ]);
+              this.gameSummary.displayInfo[i].setText([
+                "Player Name: " + this.gameSummary.names[i],
+                "Character: " + this.gameSummary.characters[i],
+                "Damage: " + this.gameSummary.damage[i] + ", Team: " + this.gameSummary.team[i],
+                "Win Condition: " + this.gameSummary.win[i],
+                "Equipment: " + this.gameSummary.equipment[i]
+              ]);
 
-            if (i % 2 == 0) {
-              this.gameSummary.displayCharacter[i].charImage = this.add.image(280.46, 119 + 130*(i/2), charInfo.player.character.name);
+              this.gameSummary.displayCharacter[i].charImage.destroy();
+
+              if (i % 2 == 0) {
+                this.gameSummary.displayCharacter[i].charImage = this.add.image(280.46, 119 + 130*(i/2), charInfo.player.character.name);
+              }
+              else {
+                this.gameSummary.displayCharacter[i].charImage = this.add.image(582.46, 119 + 130*((i-1)/2), charInfo.player.character.name);
+              }
+              this.gameSummary.displayCharacter[i].charImage.depth = 40;
+              this.gameSummary.displayCharacter[i].charImage.setVisible(false);
+              break;
             }
-            else {
-              this.gameSummary.displayCharacter[i].charImage = this.add.image(582.46, 119 + 130*((i-1)/2), charInfo.player.character.name);
-            }
-            this.gameSummary.displayCharacter[i].charImage.depth = 40;
-            this.gameSummary.displayCharacter[i].charImage.setVisible(false);
-            break;
           }
         }
-        // console.log(this.gameSummary);
 
         // popups
         this.cards.cardsDrawn[cardsOut] = this.add.image(541.58, 218.199, "alert");
