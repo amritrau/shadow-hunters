@@ -335,6 +335,10 @@ var GameBoard = new Phaser.Class ({
                 case "die":
                     self.onReveal(data);
                     break;
+                case "damage":
+                    console.log("type is damage");
+                    self.onAttack(data.player);
+                    break;
                 default:
                     break;
             }
@@ -966,7 +970,6 @@ var GameBoard = new Phaser.Class ({
 
       var tween = this.tweens.add({
         targets: [this.dice[0], this.dice[0].number, this.dice[1], this.dice[1].number],
-        yoyo: false,
         y: '-=10',
         yoyo: true,
         duration: 100,
@@ -974,5 +977,25 @@ var GameBoard = new Phaser.Class ({
         repeat: 1
       });
 
+    },
+
+    onAttack: function(victim) {
+      var player;
+
+      for(var i = 0; i < nPlayers; i++) {
+        if(this.allPlayersInfo[i].user_id == victim.user_id) {
+          player = this.allPlayersInfo[i];
+          break;
+        }
+      }
+
+      var tween = this.tweens.add({
+        targets: player,
+        angle: 30,
+        yoyo: true,
+        duration: 100,
+        ease: 'Power2',
+        repeat: 0
+      });
     }
 });
