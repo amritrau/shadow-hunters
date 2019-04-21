@@ -169,23 +169,50 @@ var GameBoard = new Phaser.Class ({
         this.load.image('Anon', '/static/assets/anon.png');
         //this.load.svg('Allie', '/static/assets/Allie.svg', {width: 123, height: 123});
 
-        // Load arsenal images
-        this.load.image('Arsenal Box', '/static/assets/arsenalbox.png');
-        this.load.image('sword', '/static/assets/sword.png');
-
         //display popups
         this.load.svg('gameOver', '/static/assets/gameOver.svg', {width: 642, height: 590});
         this.load.svg('gameSummary', '/static/assets/gameSummary.svg', {width: 608.184, height: 590});
-        this.load.svg('whitecard', '/static/assets/whitecard.svg', {width: 154.604, height: 199.212});
-        this.load.svg('blackcard', '/static/assets/blackcard.svg', {width: 154.604, height: 199.212});
-        this.load.svg('greencard', '/static/assets/greencard.svg', {width: 154.604, height: 199.212});
-        this.load.svg('redcard', '/static/assets/redcard.svg', {width: 187.977, height: 221.565});
+        this.load.svg('whitecard', gfx + 'whitecard.svg', {width: 150, height: 200});
+        this.load.svg('blackcard', gfx + 'blackcard.svg', {width: 150, height: 200});
+        this.load.svg('greencard', gfx + 'greencard.svg', {width: 150, height: 200});
+        this.load.svg('redcard', gfx + 'redcard.svg', {width: 150, height: 200});
         this.load.svg('alert', '/static/assets/alert.svg', {width: 318.804, height: 101.562});
         this.load.svg('4die', '/static/assets/4sided.svg', {width: 60, height: 50});
         this.load.svg('6die', '/static/assets/6sided.svg', {width: 50, height: 50});
 
         // load bitmap text
         this.load.bitmapFont('adventur', gfx + 'Adventur.png', gfx + 'Adventur.fnt');
+
+        // load the card images
+        this.load.svg('Advent', gfx + 'advent.svg', {width: 90, height: 90});
+        this.load.svg('Banana Peel', gfx + 'banana-peel.svg', {width: 90, height: 90});
+        this.load.svg('Blessing', gfx + 'blessing.svg', {width: 90, height: 90});
+        this.load.svg('Bloodthirsty Spider', gfx + 'bloodthirsty-spider.svg', {width: 90, height: 90});
+        this.load.svg('Butcher Knife', gfx + 'butcher-knife.svg', {width: 90, height: 90});
+        this.load.svg('Chainsaw', gfx + 'chainsaw.svg', {width: 90, height: 90});
+        this.load.svg('Chocolate', gfx + 'chocolate.svg', {width: 90, height: 90});
+        this.load.svg('Cursed Sword Masamune', gfx + 'cursed-sword-masamune.svg', {width: 90, height: 90});
+        this.load.svg('Diabolic Ritual', gfx + 'diabolic-ritual.svg', {width: 90, height: 90});
+        this.load.svg('Disenchant Mirror', gfx + 'disenchant-mirror.svg', {width: 90, height: 90});
+        this.load.svg('Dynamite', gfx + 'dynamite.svg', {width: 90, height: 90});
+        this.load.svg('First Aid', gfx + 'first-aid.svg', {width: 90, height: 90});
+        this.load.svg('Flare of Judgement', gfx + 'flare-of-judgement.svg', {width: 90, height: 90});
+        this.load.svg('Fortune Brooch', gfx + 'fortune-brooch.svg', {width: 90, height: 90});
+        this.load.svg('Guardian Angel', gfx + 'guardian-angel.svg', {width: 90, height: 90});
+        this.load.svg('Handgun', gfx + 'handgun.svg', {width: 90, height: 90});
+        this.load.svg('Hermit', gfx + 'hermit.svg', {width: 90, height: 90});
+        this.load.svg('Hidden Knowledge', gfx + 'hidden-knowledge.svg', {width: 90, height: 90});
+        this.load.svg('Holy Water of Healing', gfx + 'holy-water-of-healing.svg', {width: 90, height: 90});
+        this.load.svg('Machine Gun', gfx + 'machine-gun.svg', {width: 90, height: 90});
+        this.load.svg('Moody Goblin', gfx + 'moody-goblin.svg', {width: 90, height: 90});
+        this.load.svg('Mystic Compass', gfx + 'mystic-compass.svg', {width: 90, height: 90});
+        this.load.svg('Rusted Broad Axe', gfx + 'rusted-broad-axe.svg', {width: 90, height: 90});
+        this.load.svg('Silver Rosary', gfx + 'silver-rosary.svg', {width: 90, height: 90});
+        this.load.svg('Spear of Longinus', gfx + 'spear-of-longinus.svg', {width: 90, height: 90});
+        this.load.svg('Spiritual Doll', gfx + 'spiritual-doll.svg', {width: 90, height: 90});
+        this.load.svg('Talisman', gfx + 'talisman.svg', {width: 90, height: 90});
+        this.load.svg('Vampire Bat', gfx + 'vampire-bat.svg', {width: 90, height: 90});
+
     },
 
     //the create function is where everything is added to the canvas
@@ -263,10 +290,6 @@ var GameBoard = new Phaser.Class ({
             // Add arsenal to screen
             this.num_equip_slots = 6;
             this.add.image(533, 537.5, 'arsenal').setScale(1);
-            for(var i = 0; i < this.num_equip_slots; i++)
-            {
-                this.add.image(265 + i*107.450, 550, 'Arsenal Box');
-            }
 
             //create the information box for the bottom left corner
             this.infoBox = this.add.image(104.500, 537.500, 'playerinfo').setScale(1);
@@ -357,7 +380,8 @@ var GameBoard = new Phaser.Class ({
             // Add equipment card image
             var equip_x = 265+i*107.450;
             var equip_y = 550;
-            var equip = this.add.image(equip_x, equip_y, "sword"); // TODO: Change "sword" to card.title
+            var equip = this.add.image(equip_x, equip_y, card.title);
+            
 
             // Add popup box
             equip.infoBox = this.add.image(equip_x, equip_y - 100, "popup");
@@ -754,7 +778,7 @@ var GameBoard = new Phaser.Class ({
         card.cardText.visible = false;
 
         if(card.char) {
-          card.charImage.visible = false;
+            card.charImage.visible = false;
         }
 
         card.visible = false;
@@ -821,18 +845,21 @@ var GameBoard = new Phaser.Class ({
     onDraw: function(cardInfo) {
         var cardsOut = this.cards.nDrawn;
 
-        if(cardInfo.color === "White") {
-            this.cards.cardsDrawn[cardsOut] = this.add.image(281.321, 368.964, "whitecard");
-            this.cards.cardsDrawn[cardsOut].cardText = this.add.text(211.654, 365.668, " ", { font: '10px Palatino', fill: '#000000', wordWrap: { width: 139, useAdvancedWrap: true }});
+        if(cardInfo.color == "White") {
+            this.cards.cardsDrawn[cardsOut] = this.add.image(300, 375, "whitecard");
+            this.cards.cardsDrawn[cardsOut].cardText = this.add.text(235, 375, " ", { font: '10px Palatino', fill: '#000000', wordWrap: { width: 139, useAdvancedWrap: true }});
+            this.cards.cardsDrawn[cardsOut].charImage = this.add.image(300, 325, cardInfo.title);
         }
 
-        else if (cardInfo.color === "Black") {
-            this.cards.cardsDrawn[cardsOut] = this.add.image(281.321, 368.964, "blackcard");
-            this.cards.cardsDrawn[cardsOut].cardText = this.add.text(211.654, 365.668, " ", { font: '10px Palatino', fill: '#FFFFFF', wordWrap: { width: 139, useAdvancedWrap: true }});
+        else if (cardInfo.color == "Black") {
+            this.cards.cardsDrawn[cardsOut] = this.add.image(300, 375, "blackcard");
+            this.cards.cardsDrawn[cardsOut].cardText = this.add.text(235, 375, " ", { font: '10px Palatino', fill: '#FFFFFF', wordWrap: { width: 139, useAdvancedWrap: true }});
+            this.cards.cardsDrawn[cardsOut].charImage = this.add.image(300, 325, cardInfo.title);
         }
         else {
-            this.cards.cardsDrawn[cardsOut] = this.add.image(281.321, 368.964, "greencard");
-            this.cards.cardsDrawn[cardsOut].cardText = this.add.text(211.654, 365.668, " ", { font: '10px Palatino', fill: '#FFFFFF', wordWrap: { width: 139, useAdvancedWrap: true }});
+            this.cards.cardsDrawn[cardsOut] = this.add.image(300, 375, "greencard");
+            this.cards.cardsDrawn[cardsOut].cardText = this.add.text(235, 375, " ", { font: '10px Palatino', fill: '#FFFFFF', wordWrap: { width: 139, useAdvancedWrap: true }});
+            this.cards.cardsDrawn[cardsOut].charImage = this.add.image(300, 325, 'Hermit');
         }
 
         var type = "";
@@ -843,7 +870,7 @@ var GameBoard = new Phaser.Class ({
         else {
           type = "Single Use";
         }
-        this.cards.cardsDrawn[cardsOut].char = false;
+        this.cards.cardsDrawn[cardsOut].char = true;
         this.cards.cardsDrawn[cardsOut].cardText.setText([
             cardInfo.title,
             type,
@@ -859,10 +886,10 @@ var GameBoard = new Phaser.Class ({
     onReveal: function(charInfo) {
         var cardsOut = this.cards.nDrawn;
 
-        this.cards.cardsDrawn[cardsOut] = this.add.image(296.838, 379.696, "redcard");
+        this.cards.cardsDrawn[cardsOut] = this.add.image(300, 375, "redcard");
         this.cards.cardsDrawn[cardsOut].char = true;
-        this.cards.cardsDrawn[cardsOut].charImage = this.add.image(295.36, 286.696, charInfo.player.character.name);
-        this.cards.cardsDrawn[cardsOut].cardText = this.add.text(211.65, 350.513, " ", { font: '10px Palatino', fill: '#FFFFFF', wordWrap: { width: 169, useAdvancedWrap: true }});
+        this.cards.cardsDrawn[cardsOut].charImage = this.add.image(300, 285, charInfo.player.character.name).setScale(.75);
+        this.cards.cardsDrawn[cardsOut].cardText = this.add.text(235, 345, " ", { font: '10px Palatino', fill: '#FFFFFF', wordWrap: { width: 139, useAdvancedWrap: true }});
 
         this.cards.cardsDrawn[cardsOut].cardText.setText([
             charInfo.player.character.name,
