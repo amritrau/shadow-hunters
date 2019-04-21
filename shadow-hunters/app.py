@@ -409,10 +409,11 @@ def on_join(json):
 
     # Emit welcome message to new player
     msg = 'Welcome to Shadow Hunters Room: '+room_id
-    if json['spectate']:
+    if spectate:
         msg = 'You are now spectating Shadow Hunters Room: '+room_id
-    if not reconnect:
-        socket_tell(msg, [], None, room_id, client=(request.sid,))
+    elif reconnect:
+        msg = 'You\'ve rejoined your game in Shadow Hunters Room: '+room_id
+    socket_tell(msg, [], None, room_id, client=(request.sid,))
 
     # Tell player about other room members
     members = [x for x in rooms[room_id]['connections'].values() if x != name]
