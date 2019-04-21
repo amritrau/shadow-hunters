@@ -489,7 +489,7 @@ var GameBoard = new Phaser.Class ({
         summaryIcon.names[i] = this.gameData.public.players[i].user_id;
         summaryIcon.damage[i] = this.gameData.public.players[i].damage;
         summaryIcon.equipment[i] = "None";
-        if(this.gameData.public.players[i].user_id === this.player.name) {
+        if(this.player && (this.gameData.public.players[i].user_id === this.player.name)) {
           summaryIcon.characters[i] = this.charInfo.name;
           summaryIcon.team[i] = this.charInfo.alleg;
           summaryIcon.win[i] = this.charInfo.win_cond_desc;
@@ -882,7 +882,7 @@ var GameBoard = new Phaser.Class ({
         this.cards.cardsDrawn[cardsOut].on('clicked', this.cardHandler, this.cards.cardsDrawn[cardsOut]);
         this.cards.nDrawn = cardsOut + 1;
 
-        if(this.player.name !== charInfo.player.user_id) {
+        if(!this.player || (this.player.name !== charInfo.player.user_id)) {
           for(var i = 0; i < this.nPlayers; i++) {
             if(charInfo.player.user_id === this.allPlayersInfo[i].user_id) {
               this.gameSummary.characters[i] = charInfo.player.character.name;
