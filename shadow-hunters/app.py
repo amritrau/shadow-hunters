@@ -64,8 +64,8 @@ def room(methods=['GET', 'POST']):
         if not username or not room_id:
             flash("Please enter a name and room ID")
             return redirect('/')
-        if len(username) >= 16 or len(room_id) >= 16:
-            flash("Name and room ID must be shorter than 16 characters")
+        if len(username) > 10 or len(room_id) > 10:
+            flash("Name and room ID must not exceed 10 characters")
             return redirect('/')
 
         username_valid = re.match(r"^[\w\d ]*$", username)
@@ -321,7 +321,7 @@ def on_special():
     if not player.special_active:
         player.special_active = True # Guard
         elements.reveal_lock.release()
-        player.gc.tell_h("You've activated your special ability. It will take effect when it becomes valid.", [], request.sid)
+        player.gc.tell_h("You've activated your special ability. It will take effect next time its requirements are met.", [], request.sid)
         player.character.special(rooms[room_id]['gc'], player, turn_pos = 'now')
         rooms[room_id]['gc'].update_h()
 
