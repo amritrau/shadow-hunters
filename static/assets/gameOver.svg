@@ -1,1 +1,22 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 643 591"><defs><style>.cls-1{fill:#c6afd4;stroke:#442566;stroke-miterlimit:10;}.cls-2{font-size:39px;letter-spacing:-0.08em;}.cls-2,.cls-3{fill:#231f20;font-family:Herculanum, Herculanum;}.cls-3{font-size:25px;letter-spacing:-0.07em;}</style></defs><title>gameOver</title><g id="Layer_2" data-name="Layer 2"><g id="gameOver"><rect class="cls-1" x="0.5" y="0.5" width="642" height="590"/><text class="cls-2" transform="translate(211.08 33.74)">Game Over!</text><text class="cls-3" transform="translate(259.96 57.37)">Winners:</text></g></g></svg>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 22.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 643 591" style="enable-background:new 0 0 643 591;" xml:space="preserve">
+<style type="text/css">
+	.st0{opacity:0.9;fill:#C6AFD4;stroke:#442566;stroke-miterlimit:10;}
+	.st1{fill:#231F20;}
+	.st2{font-family:'Herculanum';}
+	.st3{font-size:39px;}
+	.st4{letter-spacing:-3;}
+	.st5{font-size:25px;}
+	.st6{letter-spacing:-1;}
+</style>
+<title>gameOver</title>
+<g id="Layer_2_1_">
+	<g id="gameOver">
+		<rect x="0.5" y="0.5" class="st0" width="642" height="590"/>
+		<text transform="matrix(1 0 0 1 211.08 33.74)" class="st1 st2 st3 st4">Game Over!</text>
+		<text transform="matrix(1 0 0 1 259.96 57.37)" class="st1 st2 st5 st6">Winners:</text>
+	</g>
+</g>
+</svg>
