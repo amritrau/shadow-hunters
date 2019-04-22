@@ -265,7 +265,7 @@ def on_start(json):
     connection_lock.release()
 
     # Send public and private game states to frontend
-    gc.tell_h("Started a game with players {}".format(", ".join(['{}']*len(players))), [p.user_id for p in players])
+    gc.tell_h("Loading game...", [])
     public_state, private_state = gc.dump()
     for priv in private_state:
         data = {
@@ -273,6 +273,8 @@ def on_start(json):
             'private': priv
         }
         socketio.emit('game_start', data, room = priv['socket_id'])
+    socketio.sleep(1)
+    gc.tell_h("Started a game with players {}".format(", ".join(['{}']*len(players))), [p.user_id for p in players])
 
     # Initiate gameplay loop
     gc.play()

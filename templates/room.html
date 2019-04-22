@@ -87,12 +87,11 @@
       </div>
       <form id="selectPlayers">
         <select id="nPlayers">
-          <option value="5"> Select number of players: </option>
-          <option value="4"> 4 </option>
-          <option value="5"> 5 </option>
-          <option value="6"> 6 </option>
-          <option value="7"> 7 </option>
-          <option value="8"> 8 </option>
+          <option value="4"> 4 Players </option>
+          <option value="5" selected> 5 Players </option>
+          <option value="6"> 6 Players </option>
+          <option value="7"> 7 Players </option>
+          <option value="8"> 8 Players </option>
         </select>
       </form>
       <form id="select">
@@ -113,7 +112,7 @@
       <div id="chatbox">
         <div id="message_holder"></div><br>
         <form id="chat">
-          <input type="text" id="message" placeholder="message"/>
+          <input type="text" id="message" placeholder="message" autocomplete="off"/>
           <input type="submit" class="send" value="Send"/>
         </form>
       </div>

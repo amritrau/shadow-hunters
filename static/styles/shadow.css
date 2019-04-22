@@ -64,13 +64,35 @@ select {
 
 #selectPlayers {
     position: absolute;
-    left: 485px;
-    top: 400px;
-    font-family: Palatino, "Times New Roman", Times;
+    left: 506px;
+    top: 500px;
+    font-family: "Palatino";
+}
+
+#selectPlayers:active, #selectPlayers:focus, #selectPlayers:visited {
+  outline: none;
+  border: none;
+  -moz-outline-style: none;
+  -webkit-appearance:none;
 }
 
 #nPlayers {
+    appearance:none;
+    -moz-appearance:none;
+    -webkit-appearance: menulist-button;
+    height: 25px;
+    color: white;
+    background-color: #3a3f5f;
+    width:82px;
+    border-radius:25px;
+    border:1px solid #3a3f5f;
+    font-size: 13px;
+}
 
+#nPlayers:active, #nPlayers:focus, #nPlayers:visited {
+  outline: none;
+  border: none;
+  -moz-outline-style: none;
 }
 
 #ingame {
