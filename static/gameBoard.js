@@ -719,8 +719,14 @@ var GameBoard = new Phaser.Class ({
             this.gameSummary.equipment[player.number - 1] = player.info.equipment.list;
         }
 
+        var displayName = player.name;
+
+        if(player.info.state != 2) {
+          displayName += " (" + player.info.character.name + ")";
+        }
+
         player.displayInfo.setText([
-            "Player: " + player.name,
+            "Player: " + displayName,
             "Equipment: " + player.info.equipment.list
         ]);
 
