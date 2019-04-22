@@ -295,13 +295,6 @@ var GameBoard = new Phaser.Class ({
             //create the information box for the bottom left corner
             this.infoBox = this.add.image(104.500, 537.500, 'playerinfo').setScale(1);
 
-            //enable data to be stored in this box. I'm not sure if this is necessary; if it isn't we can delete these set lines below
-            this.infoBox.setDataEnabled();
-            this.infoBox.data.set("name", this.charInfo.name);
-            this.infoBox.data.set("team", this.charInfo.alleg);
-            this.infoBox.data.set("win", this.charInfo.win_cond_desc);
-            this.infoBox.data.set("special", this.charInfo.special_desc);
-
             //create the text variables
             var text = this.add.text(10, 450, '', {
                 font: '12px Palatino',
@@ -309,16 +302,16 @@ var GameBoard = new Phaser.Class ({
                 wordWrap: { width: 180, useAdvancedWrap: true }
             });
             var name = this.add.bitmapText(68, 477, 'adventur',
-                this.infoBox.data.get('name'),
+                this.charInfo.name,
                 size = 16
                 );
             name.x = 100 - name.width/2; // center character's name in info box
 
             //set the text for inside of the box
             text.setText([
-                'Team: ' + this.infoBox.data.get('team'),
-                'Win Condition: ' + this.infoBox.data.get('win'),
-                'Special Ability: ' + this.infoBox.data.get('special')
+                'Team: ' + this.charInfo.alleg,
+                'Win Condition: ' + this.charInfo.win_cond_desc,
+                'Special Ability: ' + this.charInfo.special_desc
             ]);
 
             this.add.image(100, 366.975, "circle" + String(this.player.number)).setScale(1.025);
