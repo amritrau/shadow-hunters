@@ -1397,7 +1397,7 @@ class ElementFactory:
                 win_cond_desc = "You have 5 or more equipment cards.",
                 special = bob_special,
                 special_desc = "If your attack inflicts 2 or more damage, you may steal an Equipment card from your target instead of giving damage.",
-                resource_id = "bob",
+                resource_id = "bob1",
                 modifiers = {'min_players': 4, 'max_players': 6}
             ),
             character.Character(
@@ -1408,7 +1408,7 @@ class ElementFactory:
                 win_cond_desc = "You have 5 or more equipment cards.",
                 special = bob_special,
                 special_desc = "If you kill another player, you may take all of their Equipment cards.",
-                resource_id = "bob",
+                resource_id = "bob2",
                 modifiers = {'min_players': 7, 'max_players': 8}
             ),
             character.Character(

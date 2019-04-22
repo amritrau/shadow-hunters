@@ -122,31 +122,32 @@ def test_disenchant_mirror():
 
 def test_chocolate():
 
-    # Setup rigged game context
-    gc, ef = helpers.fresh_gc_ef(7)
-    weak = [p for p in gc.players if p.character.name in ["Allie", "Ellen", "Ultra Soul"]][0]
-    strong = [p for p in gc.players if p.character.name not in ["Allie", "Ellen", "Ultra Soul"]][0]
-    c = helpers.get_card_by_title(ef, "Chocolate")
+    for _ in range(100):
+        # Setup rigged game context
+        gc, ef = helpers.fresh_gc_ef(n_players=7)
+        weak = [p for p in gc.players if p.character.name in ["Allie", "Ellen", "Ultra Soul"]][0]
+        strong = [p for p in gc.players if p.character.name not in ["Allie", "Ellen", "Ultra Soul"]][0]
+        c = helpers.get_card_by_title(ef, "Chocolate")
 
-    # Strong player do nothing
-    strong.damage = 3
-    c.use({ 'self': strong, 'card': c })
-    assert strong.state == 2 and strong.damage == 3
+        # Strong player do nothing
+        strong.damage = 3
+        c.use({ 'self': strong, 'card': c })
+        assert strong.state == 2 and strong.damage == 3
 
-    # Weak player do nothing
-    gc.ask_h = helpers.answer_sequence(['Do nothing', 'Reveal and heal fully', 'Heal fully'])
-    weak.damage = 3
-    c.use({ 'self': weak, 'card': c })
-    assert weak.state == 2 and weak.damage == 3
+        # Weak player do nothing
+        gc.ask_h = helpers.answer_sequence(['Do nothing', 'Reveal and heal fully', 'Heal fully'])
+        weak.damage = 3
+        c.use({ 'self': weak, 'card': c })
+        assert weak.state == 2 and weak.damage == 3
 
-    # Weak player reveal and full heal
-    c.use({ 'self': weak, 'card': c })
-    assert weak.state == 1 and weak.damage == 0
+        # Weak player reveal and full heal
+        c.use({ 'self': weak, 'card': c })
+        assert weak.state == 1 and weak.damage == 0
 
-    # Weak player full heal
-    weak.damage = 3
-    c.use({ 'self': weak, 'card': c })
-    assert weak.state == 1 and weak.damage == 0
+        # Weak player full heal
+        weak.damage = 3
+        c.use({ 'self': weak, 'card': c })
+        assert weak.state == 1 and weak.damage == 0
 
 def test_concealed_knowledge():
 
