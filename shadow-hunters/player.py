@@ -37,12 +37,6 @@ class Player:
         # Broadcast reveal
         display_data = {'type': 'reveal', 'player': self.dump()}
         self.gc.show_h(display_data)
-        self.gc.tell_h("{} revealed themselves as {}, a {} with {} hp!", [
-            self.user_id,
-            self.character.name,
-            elements.ALLEGIANCE_MAP[self.character.alleg],
-            self.character.max_damage
-        ])
 
     def takeTurn(self):
 
@@ -342,7 +336,6 @@ class Player:
         if self.modifiers['guardian_angel']:
             if not dryrun:
                 self.gc.tell_h("{}\'s {} shielded them from damage!", [self.user_id, "Guardian Angel"])
-
             return 0
 
         # Compose equipment functions
@@ -423,12 +416,6 @@ class Player:
         # Report to console
         display_data = {'type': 'die', 'player': self.dump()}
         self.gc.show_h(display_data)
-        self.gc.tell_h("{} ({}: {}) was killed by {}!", [
-            self.user_id,
-            elements.ALLEGIANCE_MAP[self.character.alleg],
-            self.character.name,
-            attacker.user_id
-        ])
 
         # Equipment stealing if dead player has equipment
         if self.equipment and self != attacker:
@@ -442,7 +429,7 @@ class Player:
                 if has_silver_rosary:
                     self.gc.tell_h("{}'s {} let them steal all of {}'s equipment!", [attacker.user_id, "Silver Rosary", self.user_id])
                 else:
-                    self.gc.tell_h("{} stole all of {}'s equipment using their special ability!", [attacker.user_id, self.user_id])
+                    self.gc.tell_h("{} ({}) stole all of {}'s equipment using their special ability!", [attacker.user_id, "Bob", self.user_id])
 
                 attacker.equipment += self.equipment
                 for eq in attacker.equipment:

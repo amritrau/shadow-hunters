@@ -592,7 +592,6 @@ class ElementFactory:
                 if decision == "Give an equipment card":
 
                     # Target chooses an equipment card to give away
-                    target.gc.tell_h("{} is choosing an equipment card to give to {}...", [target.user_id, args['self'].user_id])
                     eq = target.chooseEquipment(target)
 
                     # Transfer equipment from target to user
@@ -636,7 +635,6 @@ class ElementFactory:
                 if decision == "Give an equipment card":
 
                     # Target chooses an equipment card to give away
-                    target.gc.tell_h("{} is choosing an equipment card to give to {}...", [target.user_id, args['self'].user_id])
                     eq = target.chooseEquipment(target)
 
                     # Transfer equipment from target to user
@@ -680,7 +678,6 @@ class ElementFactory:
                 if decision == "Give an equipment card":
 
                     # Target chooses an equipment card to give away
-                    target.gc.tell_h("{} is choosing an equipment card to give to {}...", [target.user_id, args['self'].user_id])
                     eq = target.chooseEquipment(target)
 
                     # Transfer equipment from target to user
@@ -983,12 +980,6 @@ class ElementFactory:
             # Send target's information to user
             display_data = {'type': 'reveal', 'player': target.dump()}
             args['self'].gc.show_h(display_data, args['self'].socket_id)
-            target.gc.tell_h("{}\'s character is {}, a {} with {} hp.", [
-                target.user_id,
-                target.character.name,
-                ALLEGIANCE_MAP[target.character.alleg],
-                target.character.max_damage
-            ], args['self'].socket_id)
             target.gc.tell_h("{} revealed their identity secretly to {}!", [target.user_id, args['self'].user_id])
 
         ## Initialize hermit cards
@@ -1179,14 +1170,15 @@ class ElementFactory:
             # ANY TIME
             if turn_pos == 'now':
                 if not player.modifiers['special_used']:
+
+                    # Tell
+                    gc.tell_h("{} ({}) used their special ability: {}", [player.user_id, player.character.name, player.character.special_desc])
+
                     # Full heal
                     player.setDamage(0, player)
 
                     # Update modifiers
                     player.modifiers['special_used'] = True
-
-                    # Tell
-                    gc.tell_h("{} used her special ability: {}", ["Allie", player.character.special_desc])
 
         def bob_special(gc, player, turn_pos):
             if player.modifiers['special_used'] == False:
@@ -1200,11 +1192,12 @@ class ElementFactory:
         def catherine_special(gc, player, turn_pos):
             # START OF TURN
             if turn_pos == 'start' and player.modifiers['special_used'] == False:
-                # Catherine is *required* to heal at the beginning of the turn
-                player.moveDamage(1, player)
 
                 # Tell
-                gc.tell_h("{} used her special ability: {}", ["Catherine", player.character.special_desc])
+                gc.tell_h("{} ({}) used their special ability: {}", [player.user_id, player.character.name, player.character.special_desc])
+
+                # Catherine is *required* to heal at the beginning of the turn
+                player.moveDamage(1, player)
 
         ########## Hunters
 
@@ -1215,18 +1208,18 @@ class ElementFactory:
                     player.modifiers['special_used'] = True
 
                     # Tell
-                    gc.tell_h("{} used his special ability: {}", ["George", player.character.special_desc])
+                    gc.tell_h("{} ({}) used their special ability: {}", [player.user_id, player.character.name, player.character.special_desc])
 
                     # Present player with list of attack options
                     targets = [p for p in gc.getLivePlayers()]
-                    gc.tell_h("{} ({}) is choosing a target for his special ability", ["George", player.user_id])
-                    data = {'options': [p.user_id for p in targets if p != player]}
-                    target = player.gc.ask_h('select', data, player.user_id)['value']
-                    target_Player = [p for p in gc.getLivePlayers() if p.user_id == target][0]
-                    gc.tell_h("{} chose {}!", [player.user_id, target])
+                    gc.tell_h("{} is choosing a target...", [player.user_id])
+                    target_Player = player.choosePlayer()
+                    gc.tell_h("{} chose {}!", [player.user_id, target_Player.user_id])
+
+                    # Roll and give damage to target
                     roll_result = player.rollDice('4')
-                    dealt = player.attack(target_Player, roll_result)
-                    gc.tell_h("{} ({})'s special ability gave {} {} damage!", ["George", player.user_id, target, dealt])
+                    target_Player.moveDamage(-1 * roll_result, player)
+                    gc.tell_h("{}'s Hammer gave {} {} damage!", [player.user_id, target_Player.user_id, roll_result])
 
 
         def fuka_special(gc, player, turn_pos):
@@ -1236,7 +1229,7 @@ class ElementFactory:
                     player.modifiers['special_used'] = True
 
                     # Tell
-                    gc.tell_h("{} used her special ability: {}", ["Fu-ka", player.character.special_desc])
+                    gc.tell_h("{} ({}) used their special ability: {}", [player.user_id, player.character.name, player.character.special_desc])
 
                     # Enter set damage to 7 sequence
                     # Select a player to use special on (includes user)
@@ -1245,12 +1238,9 @@ class ElementFactory:
                     target = player.gc.ask_h('select', data, player.user_id)['value']
 
                     # Set selected player to 7 damage
-                    [p for p in gc.getLivePlayers() if p.user_id == target][0].setDamage(7, player)
-
-
-                else:
-                    # Already used special
-                    gc.tell_h("This special ability can be used only once.", [], player.socket_id)
+                    target_Player = [p for p in gc.getLivePlayers() if p.user_id == target][0]
+                    target_Player.setDamage(7, player)
+                    gc.tell_h("{} gave a killing cure to {}!", [player.user_id, target_Player.user_id])
 
         def franklin_special(gc, player, turn_pos):
 
@@ -1259,18 +1249,17 @@ class ElementFactory:
                     player.modifiers['special_used'] = True
 
                     # Tell
-                    gc.tell_h("{} used his special ability: {}", ["Franklin", player.character.special_desc])
+                    gc.tell_h("{} ({}) used their special ability: {}", [player.user_id, player.character.name, player.character.special_desc])
 
                     # Present player with list of attack options
-                    targets = [p for p in gc.getLivePlayers()]
-                    gc.tell_h("{} ({}) is choosing a target for his special ability", ["Franklin", player.user_id])
-                    data = {'options': [p.user_id for p in targets if p != player]}
-                    target = player.gc.ask_h('select', data, player.user_id)['value']
-                    target_Player = [p for p in gc.getLivePlayers() if p.user_id == target][0]
-                    gc.tell_h("{} chose {}!", [player.user_id, target])
+                    gc.tell_h("{} is choosing a target...", [player.user_id])
+                    target_Player = player.choosePlayer()
+                    gc.tell_h("{} chose {}!", [player.user_id, target_Player.user_id])
+
+                    # Roll and give damage to target
                     roll_result = player.rollDice('6')
-                    dealt = player.attack(target_Player, roll_result)
-                    gc.tell_h("{} ({})'s special ability gave {} {} damage!", ["Franklin", player.user_id, target, dealt])
+                    target_Player.moveDamage(-1 * roll_result, player)
+                    gc.tell_h("{}'s Lightning gave {} {} damage!", [player.user_id, target_Player.user_id, roll_result])
 
 
         def ellen_special(gc, player, turn_pos):
@@ -1280,38 +1269,30 @@ class ElementFactory:
                     player.modifiers['special_used'] = True
 
                     # Tell
-                    gc.tell_h("{} used her special ability: {}", ["Ellen", player.character.special_desc])
+                    gc.tell_h("{} ({}) used their special ability: {}", [player.user_id, player.character.name, player.character.special_desc])
 
                     # Choose a player to cancel their special
-                    # Select a player to use special on (excludes user)
-                    data = {'options': [t.user_id for t in gc.getLivePlayers() if t.user_id != player.user_id]}
-                    target = player.gc.ask_h('select', data, player.user_id)['value']
-                    target_Player = [p for p in gc.getLivePlayers() if p.user_id == target][0]
+                    target_Player = player.choosePlayer()
 
+                    # Cancel special
                     target_Player.resetModifiers()
                     target_Player.modifiers['special_used'] = True
-                    target_Player.special = lambda gc, player, turn_pos: gc.tell_h("Your special ability was voided by {}.", ["Ellen"], player.socket_id)
-
-                    gc.tell_h("{} cancelled {}'s special ability for the rest of the game!", ["Ellen", target])
-
-
-                else:
-                    # Already used special
-                    gc.tell_h("This special ability can be used only once.", [], player.socket_id)
+                    target_Player.special = lambda gc, player, turn_pos: gc.tell_h("Your special ability was voided by {}.", [player.user_id], player.socket_id)
+                    gc.tell_h("{} voided {}'s special ability for the rest of the game!", [player.user_id, target_Player.user_id])
 
         ########## Shadows
 
         def valkyrie_special(gc, player, turn_pos):
             if (player.modifiers['special_active'] == False) and player.modifiers['special_used'] == False:
                 # Tell
-                gc.tell_h("{} used her special ability: {}", ["Valkyrie", player.character.special_desc])
+                gc.tell_h("{} ({}) used their special ability: {}", [player.user_id, player.character.name, player.character.special_desc])
                 player.modifiers['attack_dice_type'] = "4"
                 player.modifiers['special_active'] = True
 
         def vampire_special(gc, player, turn_pos):
             if player.modifiers['special_active'] == False and player.modifiers['special_used'] == False:
                 # Tell
-                gc.tell_h("{} used his special ability: {}", ["Vampire", player.character.special_desc])
+                gc.tell_h("{} ({}) used their special ability: {}", [player.user_id, player.character.name, player.character.special_desc])
                 player.modifiers['damage_dealt_fn'] = lambda player: player.moveDamage(2, player)
                 player.modifiers['special_active'] = True
 
@@ -1328,13 +1309,13 @@ class ElementFactory:
                 targets = [t for t in targets if t != player]
                 if len(targets) > 0:
                     # Present player with list of attack options
-                    gc.tell_h("{} ({}) is choosing a target for their Murder Ray...", ["Ultra Soul", player.user_id])
+                    gc.tell_h("{} ({}) used their special ability: {}", [player.user_id, player.character.name, player.character.special_desc])
+                    gc.tell_h("{} is choosing a target...", [player.user_id])
                     data = {'options': [p.user_id for p in targets if p != player]}
                     target = player.gc.ask_h('select', data, player.user_id)['value']
                     target_Player = [p for p in gc.getLivePlayers() if p.user_id == target][0]
-                    gc.tell_h("{} chose {}!", [player.user_id, target])
-                    dealt = player.attack(target_Player, 3)
-                    gc.tell_h("{} ({})'s Murder Ray gave {} {} damage!", ["Ultra Soul", player.user_id, target, dealt])
+                    target_Player.moveDamage(-3, player)
+                    gc.tell_h("{}'s Murder Ray gave {} {} damage!", [player.user_id, target, 3])
 
         ## Initialize characters
 
