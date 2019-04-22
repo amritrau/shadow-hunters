@@ -18,6 +18,11 @@ class GameContext:
 
         # Instantiate characters
         self.characters = characters
+        if len(self.players) <= 6: # hack to send bobs
+            self.characters = [ch for ch in self.characters if ch.resource_id != "bob2"]
+        else:
+            self.characters = [ch for ch in self.characters if ch.resource_id != "bob1"]
+        self.characters.sort(key = lambda x: -x.max_damage)
         # valid_for_n_players = lambda c: c.modifiers['min_players'] <= len(self.players) <= c.modifiers['max_players']
         # self.characters = list(filter(valid_for_n_players, characters))
         # self.characters.sort(key = lambda x: -x.max_damage)
@@ -58,16 +63,6 @@ class GameContext:
             for a in z.areas:
                 a.zone = z
 
-        # Randomly assign characters and point game context
-        # character_q = copy.deepcopy(characters)
-        if len(self.players) <= 6: # hack to send bobs
-            character_q = [ch for ch in characters if ch.resource_id != "bob2"]
-        else:
-            character_q = [ch for ch in characters if ch.resource_id != "bob1"]
-        character_q.sort(key = lambda x: -x.max_damage)
-        self.playable = copy.deepcopy(character_q)
-        random.shuffle(character_q)
-
         # Figure out how many of each allegiance there has to be
         counts_dict = {
             4: (2, 0, 2),
@@ -77,6 +72,9 @@ class GameContext:
             8: (3, 2, 3)
         }
 
+        # Randomly assign characters and point game context
+        character_q = copy.deepcopy(self.characters)
+        random.shuffle(character_q)
         queue = []
         while character_q:
             ch = character_q.pop()

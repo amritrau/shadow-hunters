@@ -270,8 +270,7 @@ def on_start(json):
     for priv in private_state:
         data = {
             'public': public_state,
-            'private': priv,
-            'playable_chars': [ch.dump() for ch in gc.playable]
+            'private': priv
         }
         socketio.emit('game_start', data, room = priv['socket_id'])
 
