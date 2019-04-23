@@ -576,15 +576,17 @@ var GameBoard = new Phaser.Class ({
                 player.displayInfo.setVisible(false);
             }
 
-            var tween = this.tweens.add({
-              targets: player,
-              yoyo: false,
-              x: player.spots[data.location.name].x,
-              y: player.spots[data.location.name].y,
-              duration: 1000,
-              ease: 'Power2',
-              repeat: 0
-            });
+            if(data.state != 0) {
+                var tween = this.tweens.add({
+                  targets: player,
+                  yoyo: false,
+                  x: player.spots[data.location.name].x,
+                  y: player.spots[data.location.name].y,
+                  duration: 1000,
+                  ease: 'Power2',
+                  repeat: 0
+                });
+            }
 
             // player.x = player.spots[data.location.name].x;
             // player.y = player.spots[data.location.name].y;
@@ -934,14 +936,21 @@ var GameBoard = new Phaser.Class ({
         }
 
         // popups
-        this.cards.cardsDrawn[cardsOut] = this.add.image(541.58, 218.199, "alert");
-        this.cards.cardsDrawn[cardsOut].cardText = this.add.text(390.718, 182.5, " ", { font: '24px Palatino', fill: '#FFFFFF', boundsAlignH: "center", boundsAlignV: "middle", wordWrap: { width: 310, useAdvancedWrap: true }});
+        this.cards.cardsDrawn[cardsOut] = this.add.image(541.58, 215, "alert");
+        this.cards.cardsDrawn[cardsOut].cardText = this.add.text(490, 182.5, " ", {
+            font: '24px Palatino',
+            fill: '#FFFFFF',
+            align: "center",
+            boundsAlignH: "center",
+            boundsAlignV: "middle",
+            wordWrap: { useAdvancedWrap: true }
+        });
 
         if(charInfo.type === "die") {
-          this.cards.cardsDrawn[cardsOut].cardText.setText([ charInfo.player.user_id + " died!"]);
+          this.cards.cardsDrawn[cardsOut].cardText.setText([charInfo.player.user_id, "died!"]);
         }
         else {
-          this.cards.cardsDrawn[cardsOut].cardText.setText([ charInfo.player.user_id + " revealed themselves!"]);
+          this.cards.cardsDrawn[cardsOut].cardText.setText([ charInfo.player.user_id, "revealed!"]);
         }
         this.cards.cardsDrawn[cardsOut].depth = 40;
         this.cards.cardsDrawn[cardsOut].cardText.depth = 40;
