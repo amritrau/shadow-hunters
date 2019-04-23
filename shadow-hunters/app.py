@@ -24,7 +24,8 @@ socketio = SocketIO(app, async_handlers=True)
 # disable caching
 @app.after_request
 def after_request(response):
-    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate, public, max-age=0"
+    cache_control = "no-cache, no-store, must-revalidate, public, max-age=0"
+    response.headers["Cache-Control"] = cache_control
     response.headers["Expires"] = 0
     response.headers["Pragma"] = "no-cache"
     return response
@@ -48,9 +49,11 @@ connection_lock = Lock()
 def join():
     return render_template('join.html')
 
+
 @app.route('/rules')
 def rules():
     return render_template('rules.html')
+
 
 @app.route('/room', methods=['GET', 'POST'])
 def room(methods=['GET', 'POST']):
@@ -92,14 +95,15 @@ def room(methods=['GET', 'POST']):
         element_names += [ch.name for ch in ef.CHARACTERS]
         element_names += [a.name for a in ef.AREAS]
 
-        name_reserved = username.startswith('CPU') or (username in element_names)
-        if name_reserved or (username == 'Decline'):
+        name_rsvd = username.startswith('CPU') or (username in element_names)
+        if name_rsvd or (username == 'Decline'):
             flash("The username you chose is reserved")
             return redirect('/')
 
         # check for username taken
         connection_lock.acquire()
-        if (room_id in rooms) and username in rooms[room_id]['connections'].values():
+        username_taken = username in rooms[room_id]['connections'].values()
+        if (room_id in rooms) and username_taken:
             flash("Someone in the room has taken your name")
             connection_lock.release()
             return redirect('/')
@@ -112,15 +116,18 @@ def room(methods=['GET', 'POST']):
                 'room_id': room_id,
                 'spectate': True,
                 'reconnect': False,
-                'gc_data': { 'public': public_state }
+                'gc_data': {'public': public_state}
             }
 
             # Reconnect to game
-            if username in rooms[room_id]['reconnections']:  # TODO: make actual browser cookie
+            # TODO: make actual browser cookie
+            if username in rooms[room_id]['reconnections']:
                 context['spectate'] = False
                 context['reconnect'] = True
-                context['gc_data']['private'] = [p for p in private_state if p['user_id'] == username][0]
-                ai_player = [p for p in rooms[room_id]['gc'].players if p.user_id == username][0]
+                gc_dat = [p for p in private_state if p['user_id'] == username]
+                context['gc_data']['private'] = gc_dat[0]
+                ps = rooms[room_id]['gc'].players
+                ai_player = [p for p in ps if p.user_id == username][0]
             connection_lock.release()
             return render_template('room.html', context=context)
         connection_lock.release()
@@ -134,6 +141,11 @@ def room(methods=['GET', 'POST']):
         })
     else:
         return redirect('/')
+
+
+# ROOM HELPERS
+def not_in_game(rid):
+    return rooms[room_id]['status'] != 'GAME'
 
 # SOCKET EMITTERS
 
@@ -185,6 +197,7 @@ def socket_ask(form, data, user_id, room_id):
     bin['answered'] = False
     return bin['data']
 
+
 def socket_tell(str, args, gc, room_id, client=None):
     if not client:
         client = (room_id,)
@@ -194,6 +207,7 @@ def socket_tell(str, args, gc, room_id, client=None):
     if room_id in rooms:
         socketio.sleep(SOCKET_SLEEP)
 
+
 def socket_show(data, gc, room_id, client=None):
     assert data['type'] in ["die", "win", "reveal", "roll", "draw"]
     if not client:
@@ -202,12 +216,14 @@ def socket_show(data, gc, room_id, client=None):
     if room_id in rooms:
         socketio.sleep(SOCKET_SLEEP)
 
+
 def socket_update(data, room_id):
     socketio.emit('update', data, room=room_id)
     if room_id in rooms:
         socketio.sleep(SOCKET_SLEEP)
 
 # SOCKET RECEIVERS
+
 
 @socketio.on('start')
 def on_start(json):
@@ -220,36 +236,38 @@ def on_start(json):
         return
 
     people_in_room = rooms[room_id]['connections']
-    names_and_sids = [(people_in_room[x], x) for x in people_in_room.keys()]
+    names_sids = [(people_in_room[x], x) for x in people_in_room.keys()]
 
     # Check for false start
     n_players = max(min(int(json['n_players']), 8), 4)
-    if len(names_and_sids) > n_players:
+    if len(names_sids) > n_players:
         connection_lock.release()
-        packet = {'field': n_players, 'actual': len(names_and_sids)}
+        packet = {'field': n_players, 'actual': len(names_sids)}
         socketio.emit('false_start', packet, room=request.sid)
         return
 
     # Initialize human and AI players
-    rgb = ['rgb(245,245,245)', 'rgb(100,100,100)', 'rgb(79,182,78)', 'rgb(62,99,171)',
-           'rgb(197,97,163)', 'rgb(219,62,62)', 'rgb(249,234,48)', 'rgb(239,136,43)']
-    human_players = [Player(n[0], n[1], rgb.pop(0), False) for n in names_and_sids]
-    ai_players = [Player("CPU_{}".format(i), str(i), rgb.pop(0), True) for i in range(1, n_players - len(human_players) + 1)]
-    players = human_players + ai_players
+    rgb = ['rgb(245,245,245)', 'rgb(100,100,100)', 'rgb(79,182,78)',
+           'rgb(62,99,171)', 'rgb(197,97,163)', 'rgb(219,62,62)',
+           'rgb(249,234,48)', 'rgb(239,136,43)']
+    humans = [Player(n[0], n[1], rgb.pop(0), False) for n in names_sids]
+    rng = range(1, n_players - len(human_players) + 1)
+    ais = [Player("CPU_{}".format(i), str(i), rgb.pop(0), True) for i in rng]
+    players = humans + ais
 
     # Initialize game context with players and emission functions
     ef = elements.ElementFactory()
     gc = GameContext(
-            players = players,
-            characters = ef.CHARACTERS,
-            black_cards = ef.BLACK_DECK,
-            white_cards = ef.WHITE_DECK,
-            green_cards = ef.GREEN_DECK,
-            areas = ef.AREAS,
-            ask_h = lambda x, y, z: socket_ask(x, y, z, room_id),
-            tell_h = None,
-            show_h = None,
-            update_h = None
+            players=players,
+            characters=ef.CHARACTERS,
+            black_cards=ef.BLACK_DECK,
+            white_cards=ef.WHITE_DECK,
+            green_cards=ef.GREEN_DECK,
+            areas=ef.AREAS,
+            ask_h=lambda x, y, z: socket_ask(x, y, z, room_id),
+            tell_h=None,
+            show_h=None,
+            update_h=None
     )
     print("ROOM_ID: {}".format(room_id))
     gc.tell_h = lambda x, y, *z: socket_tell(x, y, gc, room_id, z)
@@ -266,7 +284,9 @@ def on_start(json):
     connection_lock.release()
 
     # Send public and private game states to frontend
-    gc.tell_h("Started a game with players {}".format(", ".join(['{}']*len(players))), [p.user_id for p in players])
+    stem = "Started a game with players {}"
+    message = stem.format(", ".join(['{}']*len(players)))
+    gc.tell_h(message, [p.user_id for p in players])
     public_state, private_state = gc.dump()
     for priv in private_state:
         data = {
@@ -274,10 +294,11 @@ def on_start(json):
             'private': priv,
             'playable_chars': [ch.dump() for ch in gc.playable]
         }
-        socketio.emit('game_start', data, room = priv['socket_id'])
+        socketio.emit('game_start', data, room=priv['socket_id'])
 
     # Initiate gameplay loop
     gc.play()
+
 
 @socketio.on('reveal')
 def on_reveal():
@@ -288,7 +309,8 @@ def on_reveal():
 
     # Make sure room and game still exist
     if room_id and rooms[room_id]['gc']:
-        player = [p for p in rooms[room_id]['gc'].players if p.socket_id == request.sid][0]
+        ps = rooms[room_id]['gc'].players
+        player = [p for p in ps if p.socket_id == request.sid][0]
     else:
         connection_lock.release()
         return
@@ -297,7 +319,7 @@ def on_reveal():
     connection_lock.release()
     elements.reveal_lock.acquire()
     if player.state == 2:
-        player.state = 1 # Guard
+        player.state = 1  # Guard
         elements.reveal_lock.release()
         player.reveal()
 
@@ -311,7 +333,8 @@ def on_special():
 
     # Make sure room and game still exist
     if room_id and rooms[room_id]['gc']:
-        player = [p for p in rooms[room_id]['gc'].players if p.socket_id == request.sid][0]
+        ps = rooms[room_id]['gc'].players
+        player = [p for p in ps if p.socket_id == request.sid][0]
     else:
         connection_lock.release()
         return
@@ -320,10 +343,11 @@ def on_special():
     # Use special
     elements.reveal_lock.acquire()
     if not player.special_active:
-        player.special_active = True # Guard
+        player.special_active = True  # Guard
         elements.reveal_lock.release()
-        player.character.special(rooms[room_id]['gc'], player, turn_pos = 'now')
+        player.character.special(rooms[room_id]['gc'], player, turn_pos='now')
         rooms[room_id]['gc'].update_h()
+
 
 @socketio.on('answer')
 def on_answer(json):
@@ -331,9 +355,14 @@ def on_answer(json):
     # Make sure an answer isn't already being processed
     connection_lock.acquire()
     room_id = get_room_id(rooms, request.sid)
-    if not room_id or rooms[room_id]['status'] != 'GAME' or rooms[room_id]['gc'].answer_bin['answered']:
+
+    def answered(rid):
+        return rooms[room_id]['gc'].answer_bin['answered']
+
+    if not room_id or not_in_game(room_id) or answered(room_id):
         connection_lock.release()
         return
+
     bin = rooms[room_id]['gc'].answer_bin
 
     # Fill answer bin
@@ -341,6 +370,7 @@ def on_answer(json):
     bin['sid'] = request.sid
     bin['answered'] = True
     connection_lock.release()
+
 
 @socketio.on('message')
 def on_message(json):
@@ -354,15 +384,17 @@ def on_message(json):
     json['name'] = rooms[room_id]['connections'][request.sid]
 
     # If player is not in game, or spectating, their color is grey
-    if (rooms[room_id]['status'] != 'GAME') or (request.sid not in [p.socket_id for p in rooms[room_id]['gc'].players]):
+    ps = rooms[room_id]['gc'].players
+    if not_in_game(room_id) or (request.sid not in [p.socket_id for p in ps]):
         json['color'] = elements.TEXT_COLORS['server']
     else:
-        json['color'] = [p.color for p in rooms[room_id]['gc'].players if p.socket_id == request.sid][0]
+        json['color'] = [p.color for p in ps if p.socket_id == request.sid][0]
     connection_lock.release()
 
     # Broadcast non-empty message
     if 'data' in json and json['data'].strip():
         socketio.emit('message', json, room=room_id)
+
 
 @socketio.on('join')
 def on_join(json):
@@ -388,12 +420,19 @@ def on_join(json):
             connection_lock.release()
             socketio.disconnect(request.sid)
             return
-        rooms[room_id] = {'status': 'LOBBY', 'gc': None, 'connections': {}, 'reconnections': {}}
+        rooms[room_id] = {
+            'status': 'LOBBY',
+            'gc': None,
+            'connections': {},
+            'reconnections': {}
+        }
 
-    # If this is a reconnection event, change player's socket id and AI status in game context
+    # If this is a reconnection event, change player's socket id and AI status
+    # in game context
     if reconnect:
         del rooms[room_id]['reconnections'][name]
-        player = [p for p in rooms[room_id]['gc'].players if p.user_id == name][0]
+        ps = rooms[room_id]['gc'].players
+        player = [p for p in ps if p.user_id == name][0]
         player.socket_id = request.sid
         player.ai = False
 
@@ -417,6 +456,7 @@ def on_join(json):
         msg = 'Other players in the room: '+', '.join(members)
     if not reconnect:
         socket_tell(msg, [], None, room_id, client=(request.sid,))
+
 
 @socketio.on('disconnect')
 def on_disconnect():
@@ -443,8 +483,8 @@ def on_disconnect():
 
     elif gc and not gc.game_over:
 
-        # If disconnected person was spectating, or dead, or if the game is over,
-        # don't swap them for an AI
+        # If disconnected person was spectating, or dead, or if the game is
+        # over, don't swap them for an AI
         player_in_game = [p for p in gc.players if p.socket_id == request.sid]
         if (not player_in_game) or (not player_in_game[0].state):
             connection_lock.release()
@@ -452,14 +492,17 @@ def on_disconnect():
 
         # Swap player for AI
         player_in_game[0].ai = True
-        rooms[room_id]['reconnections'][player_in_game[0].user_id] = 'cookie' # TODO: make actual browser cookie
+        # TODO: make actual browser cookie
+        rooms[room_id]['reconnections'][player_in_game[0].user_id] = 'cookie'
         connection_lock.release()
-        socket_tell('A computer player has taken their place!', [], gc, room_id)
+        message = 'A computer player has taken their place!'
+        socket_tell(message, [], gc, room_id)
 
     else:
 
         # Always release lock!
         connection_lock.release()
+
 
 if __name__ == '__main__':
     socketio.run(app, debug=True, host="0.0.0.0", port=5000)
