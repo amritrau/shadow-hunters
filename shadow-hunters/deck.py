@@ -2,8 +2,10 @@ import random
 import copy
 
 from card import Card
+
 # deck.py
 # Implements the Deck object.
+
 
 class Deck:
     def __init__(self, cards):

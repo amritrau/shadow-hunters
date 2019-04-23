@@ -1,6 +1,7 @@
 # card.py
 # Implements the Card object.
 
+
 class Card:
     """
     A Card of any type.
