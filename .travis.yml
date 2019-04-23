@@ -4,4 +4,4 @@ python:
 script:
   - pip3 install pycodestyle
   - pytest
-  - pycodestyle .
+  - pycodestyle -q --statistics .
