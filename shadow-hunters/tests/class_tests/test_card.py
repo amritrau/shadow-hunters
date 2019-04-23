@@ -5,16 +5,16 @@ import card
 # test_card.py
 # Tests for the Card object
 
-def test_fields():
 
+def test_fields():
     # test initialization
     c = card.Card(
-        title = "card_title",
-        desc = "card_desc",
-        color = 1,
-        holder = None,
-        is_equip = False,
-        use = lambda: 5,
+        title="card_title",
+        desc="card_desc",
+        color=1,
+        holder=None,
+        is_equip=False,
+        use=lambda: 5,
     )
 
     # test fields

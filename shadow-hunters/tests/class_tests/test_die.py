@@ -5,10 +5,11 @@ import die
 # test_die.py
 # Tests for the Die object
 
+
 def test_fields():
 
     # test initialization
-    d4 = die.Die(n_sides = 4)
+    d4 = die.Die(n_sides=4)
 
     # test fields
     assert d4.n_sides == 4
@@ -16,11 +17,12 @@ def test_fields():
     r = d4.roll()
     assert d4.state == r
 
+
 def test_roll():
 
     # Initialize
-    d4 = die.Die(n_sides = 4)
-    d6 = die.Die(n_sides = 6)
+    d4 = die.Die(n_sides=4)
+    d6 = die.Die(n_sides=6)
 
     d4_rolls = [0, 0, 0, 0]
     d6_rolls = [0, 0, 0, 0, 0, 0]
