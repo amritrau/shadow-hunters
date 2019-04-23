@@ -1,4 +1,4 @@
-from tests import helpers
+import helpers
 import pytest
 import die
 
@@ -6,10 +6,10 @@ import die
 # Tests for the Die object
 
 def test_fields():
-    
+
     # test initialization
     d4 = die.Die(n_sides = 4)
-    
+
     # test fields
     assert d4.n_sides == 4
     assert d4.state is None
@@ -17,6 +17,8 @@ def test_fields():
     assert d4.state == r
 
 def test_roll():
+
+    # Initialize
     d4 = die.Die(n_sides = 4)
     d6 = die.Die(n_sides = 6)
 
@@ -36,5 +38,3 @@ def test_roll():
 
     # Check that rolls are reasonably weighted
     assert(all(x > 250 for x in d4_rolls + d6_rolls))
-
- 

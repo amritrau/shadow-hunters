@@ -1,6 +1,6 @@
 body {
     height: 100%;
-    font-family: Century Gothic, Arial;
+    font-family: Palatino, "Times New Roman", Times;
     background-color: #CCCCCC;
     margin: 0px auto;
     text-align: center;
@@ -8,7 +8,7 @@ body {
 .container {
     margin: auto;
     width: 1100px;
-    height: 1000px;
+    height: 600px;
     position: relative;
 }
 .header {
@@ -34,11 +34,12 @@ body {
     position: absolute;
     left:475px;
     top:550px;
+    font-family: Palatino, "Times New Roman", Times;
 }
 
 .start {
     border-radius: 25px;
-    background-color: #b786b0;
+    background-color: #3a3f5f;
     border: none;
     color: white;
     padding: 15px 32px;
@@ -46,20 +47,118 @@ body {
     text-decoration: none;
     display: inline-block;
     font-size: 16px;
+    font-family: Palatino, "Times New Roman", Times;
 }
 .start:focus {
-    background-color: #6d4e69;
+    background-color: #2d3254;
     color: black;
+}
+
+select {
+   -webkit-appearance: none;
+   -moz-appearance: none;
+   appearance: none;       /* remove default arrow */
+   /* background-image: url();   /* add custom arrow */
+   font-family: Palatino, "Times New Roman", Times;
+}
+
+#selectPlayers {
+    position: absolute;
+    left: 506px;
+    top: 500px;
+    font-family: "Palatino";
+}
+
+#selectPlayers:active, #selectPlayers:focus, #selectPlayers:visited {
+  outline: none;
+  border: none;
+  -moz-outline-style: none;
+  -webkit-appearance:none;
+}
+
+#nPlayers {
+    appearance:none;
+    -moz-appearance:none;
+    -webkit-appearance: menulist-button;
+    height: 25px;
+    color: white;
+    background-color: #3a3f5f;
+    width:82px;
+    border-radius:25px;
+    border:1px solid #3a3f5f;
+    font-size: 13px;
+}
+
+#nPlayers:active, #nPlayers:focus, #nPlayers:visited {
+  outline: none;
+  border: none;
+  -moz-outline-style: none;
 }
 
 #ingame {
     position: absolute;
     left:750px;
     top:400px;
+    font-family: Palatino, "Times New Roman", Times;
+}
+
+#reveal {
+    position: absolute;
+    left:70px;
+    top:457px;
+    font-family: Palatino, "Times New Roman", Times;
+}
+
+#special {
+    position: absolute;
+    left:70px;
+    top:457px;
+    font-family: Palatino, "Times New Roman", Times;
+}
+
+.reveal {
+    border-radius: 15px;
+    background-color: #3a3f5f;
+    border: none;
+    color: white;
+    padding: 5px 25px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    font-family: Palatino, "Times New Roman", Times;
+}
+
+.special {
+    border-radius: 15px;
+    background-color: #3a3f5f;
+    border: none;
+    color: white;
+    padding: 5px 25px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    font-family: Palatino, "Times New Roman", Times;
 }
 
 .button1 {
-  background-color: #b786b0;
+  background-color: #3a3f5f;
+  border-radius: 15px;
+  height: 75px;
+  width: 100px;
+  white-space:normal;
+  border: none;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 10px;
+  font-family: Palatino, "Times New Roman", Times;
+  margin-bottom: 10px;
+}
+.button2 {
+  background-color: #3a3f5f;
   border-radius: 15px;
   height: 50px;
   width: 100px;
@@ -70,35 +169,24 @@ body {
   text-decoration: none;
   display: inline-block;
   font-size: 10px;
-}
-.button2 {
-  background-color: #b786b0;
-  border-radius: 15px;
-  height: 20px;
-  width: 100px;
-  white-space:normal;
-  border: none;
-  color: white;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 10px;
+  font-family: Palatino, "Times New Roman", Times;
 }
 
 #popup {
     position: absolute;
     border-radius: 25px;
-    background-color: #7d6f82;
-    padding: 5px 5px 5px 5px;
+    background-color: rgba(125, 111, 130, 0.5);
+    padding: 0px 5px 15px 5px;
     text-align: center;
-    left: 200px;
-    top: 100px;
-    width:800px;
-    height:80px;
+    left: 100px;
+    top: 270px;
+    width:950px;
+    height:60px;
+    font-family: Palatino, "Times New Roman", Times;
 }
 
 .selectButton {
-    background-color: #b786b0;
+    background-color: #3a3f5f;
     margin-right: 10px;
     border-radius: 15px;
     vertical-align: top;
@@ -111,31 +199,68 @@ body {
     text-decoration: none;
     display: inline-block;
     font-size: 13px;
+    font-family: Palatino, "Times New Roman", Times;
 }
 
 #chatbox {
-    width:1066px;
-    height: 200px;
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width:200px;
+    height: 295px;
     margin: auto;
-    background-color: #FFFFFF;
+    background-color: rgba(0, 0, 0, .1);
     text-align: left;
-    font-size: 14px;
-    color: #000000;
+    font-size: 12px;
+    color: #FFFFFF;
 }
 
 #message_holder {
-    overflow:scroll;
-    width: 1066px;
-    height: 140px;
+    overflow: hidden;
+    width: 180px;
+    height: 225px;
     padding: 10px;
+    margin-bottom: 0px;
+}
+
+#message_holder:hover {
+    overflow-y:scroll;
+    width: 180px;
+    height: 225px;
+    padding: 10px;
+    margin-bottom: 0px;
+}
+
+#message_holder::-webkit-scrollbar {
+    background-color: rgba(0, 0, 0, .1);
 }
 
 #chat {
     height: 50px;
+    padding: 5px;
+}
+
+#message {
+    width: 130px;
+    font-family: Palatino, "Times New Roman", Times;
+    /* background-color: rgba(255, 255, 255, .5); */
+}
+
+.send {
+    background-color: #3a3f5f;
+    border-radius: 2px;
+    white-space:normal;
+    border: none;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-family: Palatino, "Times New Roman", Times;
 }
 
 input[type=text]{
-    width: 90%;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 1);
 }
 
 canvas {

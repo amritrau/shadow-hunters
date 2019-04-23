@@ -9,11 +9,26 @@ import elements
 # Implements a GameContext.
 
 class GameContext:
-    def __init__(self, players, characters, black_cards, white_cards, green_cards, areas, tell_h, direct_h, ask_h, update_h, modifiers = dict()):
+    def __init__(self, players, characters, black_cards, white_cards, green_cards, areas, ask_h, tell_h, show_h, update_h, modifiers = dict()):
 
         # Instantiate gameplay objects
         self.players = players
+        self.turn_order = copy.copy(players)
+        self.round_count = 0
+
+        # Instantiate characters
         self.characters = characters
+        if len(self.players) <= 6: # hack to send bobs
+            self.characters = [ch for ch in self.characters if ch.resource_id != "bob2"]
+        else:
+            self.characters = [ch for ch in self.characters if ch.resource_id != "bob1"]
+        self.characters.sort(key = lambda x: -x.max_damage)
+        # valid_for_n_players = lambda c: c.modifiers['min_players'] <= len(self.players) <= c.modifiers['max_players']
+        # self.characters = list(filter(valid_for_n_players, characters))
+        # self.characters.sort(key = lambda x: -x.max_damage)
+        # self.playable = copy.deepcopy(characters)
+
+        # Instantiate cards
         self.black_cards = black_cards
         self.white_cards = white_cards
         self.green_cards = green_cards
@@ -22,10 +37,17 @@ class GameContext:
         self.game_over = False
 
         # Instantiate message handlers
-        self.tell_h = tell_h
-        self.direct_h = direct_h
         self.ask_h = ask_h
+        self.tell_h = tell_h
+        self.show_h = show_h
         self.update_h = update_h
+
+        # Instantiate answer bin
+        self.answer_bin = {
+            'answered': False,
+            'sid': '',
+            'data': {}
+        }
 
         # Assign modifiers
         self.modifiers = modifiers
@@ -41,11 +63,29 @@ class GameContext:
             for a in z.areas:
                 a.zone = z
 
+        # Figure out how many of each allegiance there has to be
+        counts_dict = {
+            4: (2, 0, 2),
+            5: (2, 1, 2),
+            6: (2, 2, 2),
+            7: (2, 3, 2),
+            8: (3, 2, 3)
+        }
+
         # Randomly assign characters and point game context
-        character_q = copy.deepcopy(characters)
+        character_q = copy.deepcopy(self.characters)
         random.shuffle(character_q)
+        queue = []
+        while character_q:
+            ch = character_q.pop()
+            already_in = len([c for c in queue if c.alleg == ch.alleg])
+            if (already_in < counts_dict[len(self.players)][ch.alleg]):
+                queue.append(ch)
+
+        assert(len(queue) == len(self.players))
+
         for player in self.players:
-            player.setCharacter(character_q.pop())
+            player.setCharacter(queue.pop())
             player.gc = self
 
 
@@ -54,6 +94,12 @@ class GameContext:
 
     def getDeadPlayers(self):
         return [p for p in self.players if p.state == 0]
+
+    def getPlayersAt(self, location_name):
+        live = self.getLivePlayers()
+        live_loc = [p for p in live if p.location]
+        return [p for p in live_loc if p.location.name == location_name]
+
 
     def _checkWinConditions(self):
         return [p for p in self.players if p.character.win_cond(self, p)]
@@ -64,35 +110,43 @@ class GameContext:
             self.game_over = True
             winners = self._checkWinConditions()  # Hack to collect Allie
             if tell:
+                display_data = {'type': 'win', 'winners': [p.dump() for p in winners]}
+                self.show_h(display_data)
                 for w in winners:
-                    self.tell_h("{} ({}: {}) won! {}".format(w.user_id, elements.ALLEGIANCE_MAP[w.character.alleg], w.character.name, w.character.win_cond_desc))
+                    self.tell_h("{} ({}: {}) won! {}", [
+                        w.user_id,
+                        elements.ALLEGIANCE_MAP[w.character.alleg],
+                        w.character.name,
+                        w.character.win_cond_desc
+                    ])
             return winners
 
-
     def play(self):
-        for z in range(len(self.zones)):
-            self.tell_h("Zone {} contains: {}.".format(z+1, ', '.join([a.name for a in self.zones[z].areas])))
-        for p in self.players:
-            self.direct_h("You ({}) are {} ({}).".format(p.user_id, p.character.name, elements.ALLEGIANCE_MAP[p.character.alleg]), p.socket_id)
+        turn = random.randint(0, len(self.turn_order) - 1)
         while True:
-            living = self.getLivePlayers()
-            while len(living):
-                player = living.pop()
-                player.takeTurn()
-                winners = self.checkWinConditions()
-                living = [p for p in living if p.state != 0]
-                if winners:
-                    return winners
+            current_player = self.turn_order[turn]
+            if current_player.state:
+                current_player.takeTurn()
+            winners = self.checkWinConditions()
+            if winners:
+                break
+            turn += 1
+            if turn >= len(self.turn_order):
+                turn = 0
+                self.round_count += 1
+                self.turn_order = list(self.players)
 
     def dump(self):
+        # Note that public_players and private_state are no longer keyed by
+        # socket_ids
         public_zones = [z.dump() for z in self.zones]
-        private_players = {p.socket_id: p.dump() for p in self.players}
+        private_players = [p.dump() for p in self.players]
         public_players = copy.deepcopy(private_players)
 
         # Hide character information if player hasn't revealed themselves
-        for k,v in public_players.items():
-            if public_players[k]['state'] == 2:
-                public_players[k]['character'] = {}
+        for p in public_players:
+            if p['state'] == 2:
+                p['character'] = {}
 
         # Collect the public states
         public_state = {

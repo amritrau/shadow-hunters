@@ -1,4 +1,4 @@
-from tests import helpers
+import helpers
 import pytest
 import card, deck
 
@@ -12,7 +12,6 @@ c1 = card.Card(
     color = None, # placeholder
     holder = None,  # placeholder
     is_equip = False,
-    force_use = False,
     use = lambda: 0  # placeholder
 )
 
@@ -22,12 +21,11 @@ c2 = card.Card(
     color = None,  # placeholder
     holder = None,  # placeholder
     is_equip = True,
-    force_use = False,
     use = lambda: 1  # placeholder
 )
 
 def test_fields():
-    
+
     # test initialization
     card_list = [c1, c2]
     d = deck.Deck(cards = card_list)

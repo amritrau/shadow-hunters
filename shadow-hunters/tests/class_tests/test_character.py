@@ -1,4 +1,4 @@
-from tests import helpers
+import helpers
 import pytest
 import character
 
@@ -15,6 +15,7 @@ def test_fields():
         win_cond = lambda: 5,
         win_cond_desc = "win_desc",
         special = lambda: 5,
+        special_desc = "special_desc",
         resource_id = "r_id"
     )
 
@@ -25,12 +26,13 @@ def test_fields():
     assert c.win_cond() == 5
     assert c.win_cond_desc == "win_desc"
     assert c.special() == 5
+    assert c.special_desc == "special_desc"
     assert c.resource_id == "r_id"
 
     # test dump
     dump = c.dump()
     assert dump['name'] == "char_name"
-    assert dump['alleg'] == 1
+    assert dump['alleg'] == "Neutral"
     assert dump['max_damage'] == 10
     assert dump['win_cond_desc'] == "win_desc"
     assert dump['resource_id'] == "r_id"

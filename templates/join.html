@@ -7,14 +7,15 @@
 		body, html {
 			height: 100%;
 			margin: 0;
+			font-family: Palatino, "Times New Roman", Times;
 		}
 
 		.bg {
 			/* The image used */
-			background-image: url("https://s3.amazonaws.com/shadowhunters.gfxresources/waitRoom.png");
+			background-image: url("https://s3.amazonaws.com/shadowhunters.gfxresources/waitRoom.svg");
 
 			/* Full height */
-			height: 100%; 
+			height: 100%;
 
 			/* Center and scale the image */
 			background-position: center;
@@ -36,16 +37,26 @@
 
 	<div class="bg">
 		<div class="centered">
+			<p style="position: absolute; top: 200px; left: -50px">
+					<a href="/rules" class="pull-left"><img src="https://s3.amazonaws.com/shadowhunters.gfxresources/rules.png" width="100"></a>
+				</p>
 			<body>
 				<center>
-					<div style="width: 500px; border: 5px solid; padding: 10px; box-shadow: 5px 10px #000000; background-color: #DFDFDF">
+					<div style="color: #FFFFFF; background-color: #000000; opacity: .3; position: absolute; top: 325px; left: -195px; font-size: 12px">
+						<p class=flashes style="width: 390px; height: 0px">
+							<p>Disconnected? Re-enter your name and room ID to rejoin your game!</p>
+						</p>
+					</div>
+				</center>
+				<center>
+					<div style="width: 350px; border: 5px solid; padding: 10px; box-shadow: 5px 10px #000000; background-color: #DFDFDF;height: 75px; position: fixed; left: -191px">
 						<form action="/room" method="POST">
 							<center>
-								<div><b style="color: #3f2b6d">Enter a screen name and a room ID to join a game!</b></div>
+								<div><b style="color: #3f2b6d; font-size: 14px">Enter a screen name and a room ID to join a game!</b></div>
 								<div><br /></div>
-								<input type="text" name="username" placeholder="Screen Name"/>
-								<input type="text" name="room_id" placeholder="Room ID"/>
-								<input type="submit" value="Join"/>
+								<input style="font-family: Palatino, 'Times New Roman', Times;" type="text" name="username" placeholder="Screen Name" autocomplete="off"/>
+								<input style="font-family: Palatino, 'Times New Roman', Times;"type="text" name="room_id" placeholder="Room ID" autocomplete="off"/>
+								<input style="font-family: Palatino, 'Times New Roman', Times;"type="submit" value="Join"/>
 								<div><br /></div>
 							</center>
 						</form>
@@ -53,14 +64,12 @@
 				</center>
 				<div><br /></div>
 				<center>
-					<div style="color: #FFFFFF; background-color: #F93F2A">
+					<div style="color: #FFFFFF; background-color: #000000; opacity: .3; position: absolute; top: 125px; left: -75px; font-size: 12px">
 						{% with messages = get_flashed_messages() %}
 						{% if messages %}
-						<p class=flashes>
+						<p class=flashes style="width: 150px; height: 0px">
 							{% for message in messages %}
-							<br />
 							<p>{{ message }}</p>
-							<br />
 							{% endfor %}
 						</p>
 						{% endif %}
