@@ -8,6 +8,7 @@ import helpers
 # test_win_conds.py
 # Tests the win conditions of each character
 
+
 def test_hunters_win():
 
     # Check that hunters don't win until shadows are dead
@@ -18,6 +19,7 @@ def test_hunters_win():
         if p != h:
             p.setDamage(14, p)
     assert h.character.win_cond(gc, h)
+
 
 def test_shadows_win():
 
@@ -38,6 +40,7 @@ def test_shadows_win():
             p.setDamage(14, p)
     assert s.character.win_cond(gc, s)
 
+
 def test_allie_win():
 
     # Get a game containing Allie
@@ -54,6 +57,7 @@ def test_allie_win():
     p.setDamage(14, p)
     assert not p.character.win_cond(gc, p)
 
+
 def test_bob_win():
 
     # Get a game containing Bob
@@ -69,6 +73,7 @@ def test_bob_win():
     assert p.character.win_cond(gc, p)
     p.equipment = ['dummy_equipment'] * 10
     assert p.character.win_cond(gc, p)
+
 
 def test_catherine_win():
 
