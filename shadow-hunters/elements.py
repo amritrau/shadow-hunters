@@ -1,4 +1,7 @@
-import card, deck, character, area
+import card
+import deck
+import character
+import area
 from threading import Lock
 
 # elements.py
@@ -6,14 +9,14 @@ from threading import Lock
 # game areas, decks, and cards in an element factory. Every
 # game context is initialized with its own element factory.
 
-## Enum for allegiances
+# Enum for allegiances
 ALLEGIANCE_MAP = {
     0: "Shadow",
     1: "Neutral",
     2: "Hunter"
 }
 
-## Enum for card types
+# Enum for card types
 CARD_COLOR_MAP = {
     0: "White",
     1: "Black",
@@ -40,10 +43,11 @@ TEXT_COLORS = {
 # Lock for manipulating reveals
 reveal_lock = Lock()
 
+
 class ElementFactory:
     def __init__(self):
 
-        ## White card usage functions
+        # White card usage functions
 
         def use_first_aid(args):
 
@@ -149,7 +153,7 @@ class ElementFactory:
             args['self'].gc.ask_h('confirm', {'options': ["Summon a Guardian Angel"]}, args['self'].user_id)
             args['self'].modifiers['guardian_angel'] = True
 
-        ## Initialize white cards
+        # Initialize white cards
 
         WHITE_CARDS = [
             card.Card(
@@ -247,10 +251,10 @@ class ElementFactory:
             card.Card(
                 title = "Holy Robe",
                 desc = "Your attacks do 1 less damage and the amount of damage you receive from attacks is reduced by 1 point.",
-                color = 0, # 0 : WHITE
+                color = 0,  # 0 : WHITE
                 holder = None,
                 is_equip = True,
-                use = lambda is_attack, successful, amt: max(0, amt - 1) # applies to both attack and defend
+                use = lambda is_attack, successful, amt: max(0, amt - 1)
             ),
             card.Card(
                 title = "Flare of Judgement",
@@ -286,7 +290,7 @@ class ElementFactory:
             )
         ]
 
-        ## Black card usage functions
+        # Black card usage functions
 
         def use_bloodthirsty_spider(args):
 
@@ -429,13 +433,13 @@ class ElementFactory:
                 target.moveDamage(-3, args['self'])
                 args['self'].gc.tell_h('The {} cursed {}!', [args['card'].title, target.user_id])
 
-        ## Initialize black cards
+        # Initialize black cards
 
         BLACK_CARDS = [
             card.Card(
                 title = "Cursed Sword Masamune",
                 desc = "You must attack another character on your turn. This attack uses the 4-sided die.",
-                color = 1, # 1 : BLACK
+                color = 1,  # 1 : BLACK
                 holder = None,
                 is_equip = True,
                 use = None
@@ -566,7 +570,7 @@ class ElementFactory:
             )
         ]
 
-        ## Hermit card usage functions
+        # Hermit card usage functions
 
         def hermit_blackmail(args):
 
@@ -991,14 +995,14 @@ class ElementFactory:
             ], args['self'].socket_id)
             target.gc.tell_h("{} revealed their identity secretly to {}!", [target.user_id, args['self'].user_id])
 
-        ## Initialize hermit cards
+        # Initialize hermit cards
 
         GREEN_CARDS = [
             card.Card(
                 title = "Hermit\'s Blackmail",
                 desc = ("I bet you're either a Neutral or a Hunter. "
                         "If so, you must either give an Equipment card to the current player or receive 1 damage!"),
-                color = 2, # 2 : GREEN
+                color = 2,  # 2 : GREEN
                 holder = None,
                 is_equip = False,
                 use = hermit_blackmail
@@ -1133,13 +1137,13 @@ class ElementFactory:
             )
         ]
 
-        ## Initialize white, black, hermit decks
+        # Initialize white, black, hermit decks
 
         self.WHITE_DECK = deck.Deck(cards = WHITE_CARDS)
         self.BLACK_DECK = deck.Deck(cards = BLACK_CARDS)
         self.GREEN_DECK = deck.Deck(cards = GREEN_CARDS)
 
-        ## Character win condition functions
+        # Character win condition functions
 
         def shadow_win_cond(gc, player):
 
@@ -1171,9 +1175,9 @@ class ElementFactory:
             last_two = (player in gc.getLivePlayers()) and (len(gc.getLivePlayers()) <= 2)
             return first_to_die or last_two
 
-        ## Specials
+        # Specials
 
-        ########## Neutrals
+        # Neutrals
 
         def allie_special(gc, player, turn_pos):
             # ANY TIME
@@ -1189,35 +1193,27 @@ class ElementFactory:
                     gc.tell_h("{} used her special ability: {}", ["Allie", player.character.special_desc])
 
         def bob_special(gc, player, turn_pos):
-            if player.modifiers['special_used'] == False:
+            if not player.modifiers['special_used']:
                 if 4 <= len(gc.players) <= 6:
                     player.modifiers['steal_for_damage'] = True
                 else:
                     # Update modifiers
                     player.modifiers['steal_all_on_kill'] = True
 
-
         def catherine_special(gc, player, turn_pos):
             # START OF TURN
-            if turn_pos == 'start' and player.modifiers['special_used'] == False:
+            if turn_pos == 'start' and not player.modifiers['special_used']:
                 # Catherine is *required* to heal at the beginning of the turn
                 player.moveDamage(1, player)
 
                 # Tell
                 gc.tell_h("{} used her special ability: {}", ["Catherine", player.character.special_desc])
 
-        ########## Hunters
-
+        # Hunters
         def george_special(gc, player, turn_pos):
-            # print("george_special:", player.user_id, turn_pos)
             # START OF TURN
             if turn_pos == 'start':
                 if not player.modifiers['special_used']:
-                    # print("\tgeorge_special BP 1")
-                    # Tell the player that they'll get the special at the start of
-                    # the turn
-                    # gc.tell_h("Special ability activated. You will be able to use this ability at the start of your turn.", player.socket_id)
-
                     player.modifiers['special_used'] = True
 
                     # Tell
@@ -1233,7 +1229,6 @@ class ElementFactory:
                     roll_result = player.rollDice('4')
                     dealt = player.attack(target_Player, roll_result)
                     gc.tell_h("{} ({})'s special ability gave {} {} damage!", ["George", player.user_id, target, dealt])
-
 
         def fuka_special(gc, player, turn_pos):
             # print("fuka_special:", player.user_id, turn_pos)
@@ -1260,7 +1255,6 @@ class ElementFactory:
                     # Set selected player to 7 damage
                     [p for p in gc.getLivePlayers() if p.user_id == target][0].setDamage(7, player)
 
-
                 else:
                     # Already used special
                     gc.tell_h("This special ability can be used only once.", [], player.socket_id)
@@ -1271,7 +1265,7 @@ class ElementFactory:
             # gc.tell_h("Franklin special activated", player.socket_id)
 
             if turn_pos == 'start':
-                if player.modifiers['special_used'] == False:
+                if not player.modifiers['special_used']:
                     # Tell the player that they'll get the special at the start of
                     # the turn
                     # gc.tell_h("Special ability activiated. You will be able to use this ability at the start of your turn.", player.socket_id)
@@ -1291,10 +1285,7 @@ class ElementFactory:
                     dealt = player.attack(target_Player, roll_result)
                     gc.tell_h("{} ({})'s special ability gave {} {} damage!", ["Franklin", player.user_id, target, dealt])
 
-
         def ellen_special(gc, player, turn_pos):
-            # print("ellen_special:", player.user_id, turn_pos)
-            # START OF TURN
             if turn_pos == 'start':
                 if not player.modifiers['special_used']:
                     # Tell the player that they'll get the special at the start of
@@ -1318,15 +1309,14 @@ class ElementFactory:
 
                     gc.tell_h("{} cancelled {}'s special ability for the rest of the game!", ["Ellen", target])
 
-
                 else:
                     # Already used special
                     gc.tell_h("This special ability can be used only once.", [], player.socket_id)
 
-        ########## Shadows
+        # Shadows
 
         def valkyrie_special(gc, player, turn_pos):
-            if (player.modifiers['special_active'] == False) and player.modifiers['special_used'] == False:
+            if not player.modifiers['special_active'] and not player.modifiers['special_used']:
                 # Tell
                 gc.tell_h("{} used her special ability: {}", ["Valkyrie", player.character.special_desc])
                 player.modifiers['attack_dice_type'] = "4"
@@ -1334,7 +1324,7 @@ class ElementFactory:
 
         def vampire_special(gc, player, turn_pos):
             # print("vampire_special:", player.user_id, turn_pos)
-            if player.modifiers['special_active'] == False and player.modifiers['special_used'] == False:
+            if not player.modifiers['special_active'] and not player.modifiers['special_used']:
                 # Tell
                 gc.tell_h("{} used his special ability: {}", ["Vampire", player.character.special_desc])
                 player.modifiers['damage_dealt_fn'] = lambda player: player.moveDamage(2, player)
@@ -1344,7 +1334,7 @@ class ElementFactory:
                 # print("vampire player.modifiers special_active = ", player.modifiers['special_active'])
 
         def werewolf_special(gc, player, turn_pos):
-            if player.modifiers['special_used'] == False:
+            if not player.modifiers['special_used']:
                 # Tell
                 # gc.tell_h("{} activated their special ability: {}", ["Werewolf", player.character.special_desc])
                 player.modifiers['counterattack'] = True
@@ -1353,7 +1343,7 @@ class ElementFactory:
         def ultra_soul_special(gc, player, turn_pos):
             # print("ultra_soul_special:", player.user_id, turn_pos)
             # START OF TURN
-            if turn_pos == 'start' and (player.modifiers['special_used'] == False):
+            if turn_pos == 'start' and not player.modifiers['special_used']:
                 # No need to bother every turn if there's nobody at UG
                 targets = gc.getPlayersAt("Underworld Gate")
                 targets = [t for t in targets if t != player]
@@ -1367,9 +1357,7 @@ class ElementFactory:
                     dealt = player.attack(target_Player, 3)
                     gc.tell_h("{} ({})'s Murder Ray gave {} {} damage!", ["Ultra Soul", player.user_id, target, dealt])
 
-
-        ## Initialize characters
-
+        # Initialize characters
         self.CHARACTERS = [
             character.Character(
                 name = "Valkyrie",
@@ -1495,7 +1483,7 @@ class ElementFactory:
             )
         ]
 
-        ## Area action functions
+        # Area action functions
 
         def underworld_gate_action(gc, player):
 
@@ -1557,7 +1545,7 @@ class ElementFactory:
                 # If no one has equipment to steal, nothing happens
                 gc.tell_h("Nobody has any items for {} to steal.", [player.user_id])
 
-        ## Initialize areas
+        # Initialize areas
 
         self.AREAS = [
             area.Area(
