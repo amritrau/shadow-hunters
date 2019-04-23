@@ -102,8 +102,11 @@ def room(methods=['GET', 'POST']):
 
         # check for username taken
         connection_lock.acquire()
-        username_taken = username in rooms[room_id]['connections'].values()
-        if (room_id in rooms) and username_taken:
+
+        def username_taken(uname):
+            return uname in rooms[room_id]['connections'].values()
+
+        if (room_id in rooms) and username_taken(username):
             flash("Someone in the room has taken your name")
             connection_lock.release()
             return redirect('/')
@@ -145,7 +148,7 @@ def room(methods=['GET', 'POST']):
 
 # ROOM HELPERS
 def not_in_game(rid):
-    return rooms[room_id]['status'] != 'GAME'
+    return rooms[rid]['status'] != 'GAME'
 
 # SOCKET EMITTERS
 
@@ -251,7 +254,7 @@ def on_start(json):
            'rgb(62,99,171)', 'rgb(197,97,163)', 'rgb(219,62,62)',
            'rgb(249,234,48)', 'rgb(239,136,43)']
     humans = [Player(n[0], n[1], rgb.pop(0), False) for n in names_sids]
-    rng = range(1, n_players - len(human_players) + 1)
+    rng = range(1, n_players - len(humans) + 1)
     ais = [Player("CPU_{}".format(i), str(i), rgb.pop(0), True) for i in rng]
     players = humans + ais
 
@@ -384,7 +387,7 @@ def on_message(json):
     json['name'] = rooms[room_id]['connections'][request.sid]
 
     # If player is not in game, or spectating, their color is grey
-    ps = rooms[room_id]['gc'].players
+    ps = [] if not_in_game(room_id) else rooms[room_id]['gc'].players
     if not_in_game(room_id) or (request.sid not in [p.socket_id for p in ps]):
         json['color'] = elements.TEXT_COLORS['server']
     else:
