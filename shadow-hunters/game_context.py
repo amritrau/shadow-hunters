@@ -8,8 +8,9 @@ import elements
 # game_context.py
 # Implements a GameContext.
 
+
 class GameContext:
-    def __init__(self, players, characters, black_cards, white_cards, green_cards, areas, ask_h, tell_h, show_h, update_h, modifiers = dict()):
+    def __init__(self, players, characters, black_cards, white_cards, green_cards, areas, ask_h, tell_h, show_h, update_h, modifiers=dict()):
 
         # Instantiate gameplay objects
         self.players = players
@@ -18,11 +19,13 @@ class GameContext:
 
         # Instantiate characters
         self.characters = characters
-        if len(self.players) <= 6: # hack to send bobs
-            self.characters = [ch for ch in self.characters if ch.resource_id != "bob2"]
+        if len(self.players) <= 6:  # hack to send bobs
+            self.characters = [
+                ch for ch in self.characters if ch.resource_id != "bob2"]
         else:
-            self.characters = [ch for ch in self.characters if ch.resource_id != "bob1"]
-        self.characters.sort(key = lambda x: -x.max_damage)
+            self.characters = [
+                ch for ch in self.characters if ch.resource_id != "bob1"]
+        self.characters.sort(key=lambda x: -x.max_damage)
         # valid_for_n_players = lambda c: c.modifiers['min_players'] <= len(self.players) <= c.modifiers['max_players']
         # self.characters = list(filter(valid_for_n_players, characters))
         # self.characters.sort(key = lambda x: -x.max_damage)
@@ -88,7 +91,6 @@ class GameContext:
             player.setCharacter(queue.pop())
             player.gc = self
 
-
     def getLivePlayers(self):
         return [p for p in self.players if p.state > 0]
 
@@ -100,17 +102,17 @@ class GameContext:
         live_loc = [p for p in live if p.location]
         return [p for p in live_loc if p.location.name == location_name]
 
-
     def _checkWinConditions(self):
         return [p for p in self.players if p.character.win_cond(self, p)]
 
-    def checkWinConditions(self, tell = True):
+    def checkWinConditions(self, tell=True):
         winners = self._checkWinConditions()
         if len(winners):
             self.game_over = True
             winners = self._checkWinConditions()  # Hack to collect Allie
             if tell:
-                display_data = {'type': 'win', 'winners': [p.dump() for p in winners]}
+                display_data = {'type': 'win', 'winners': [
+                    p.dump() for p in winners]}
                 self.show_h(display_data)
                 for w in winners:
                     self.tell_h("{} ({}: {}) won! {}", [
@@ -155,6 +157,5 @@ class GameContext:
             'characters': [c.dump() for c in self.characters]
         }
         private_state = private_players
-
 
         return public_state, private_state

@@ -1,42 +1,45 @@
 import helpers
 import pytest
-import card, deck
+import card
+import deck
 
 # test_deck.py
 # Tests for the Deck object
 
 # Initialize some global objects
 c1 = card.Card(
-    title = "Card 1",
-    desc = "Some card",
-    color = None, # placeholder
-    holder = None,  # placeholder
-    is_equip = False,
-    use = lambda: 0  # placeholder
+    title="Card 1",
+    desc="Some card",
+    color=None,  # placeholder
+    holder=None,  # placeholder
+    is_equip=False,
+    use=lambda: 0  # placeholder
 )
 
 c2 = card.Card(
-    title = "Card 2",
-    desc = "Another card",
-    color = None,  # placeholder
-    holder = None,  # placeholder
-    is_equip = True,
-    use = lambda: 1  # placeholder
+    title="Card 2",
+    desc="Another card",
+    color=None,  # placeholder
+    holder=None,  # placeholder
+    is_equip=True,
+    use=lambda: 1  # placeholder
 )
+
 
 def test_fields():
 
     # test initialization
     card_list = [c1, c2]
-    d = deck.Deck(cards = card_list)
+    d = deck.Deck(cards=card_list)
 
     # test fields
     assert d.cards == card_list
     assert not d.discard
 
+
 def test_hashability():
-    d1 = deck.Deck(cards = [c1, c2])
-    d2 = deck.Deck(cards = [c1, c2])
+    d1 = deck.Deck(cards=[c1, c2])
+    d2 = deck.Deck(cards=[c1, c2])
 
     # Shuffle `d1` until it is reversed
     desired_order = (c2, c1)
@@ -53,8 +56,9 @@ def test_hashability():
 
     assert(hash(d1) != hash(d2))  # hash of different decks should not be equal
 
+
 def test_shuffle():
-    d = deck.Deck(cards = [c1, c2])
+    d = deck.Deck(cards=[c1, c2])
     initial_order = tuple(d.cards)
 
     def check_shuffled(i):
@@ -64,8 +68,9 @@ def test_shuffle():
     unmatch_initial = map(check_shuffled, range(100))  # Pr(FN) = 1/(2^100)
     assert(any(unmatch_initial))
 
+
 def test_drawCard():
-    d = deck.Deck(cards = [c1, c2])
+    d = deck.Deck(cards=[c1, c2])
     desired_order = (c1, c2)
 
     # Shuffle until `c2` is at the top of the deck

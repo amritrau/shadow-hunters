@@ -5,15 +5,16 @@ import area
 # test_area.py
 # Tests for the Area object
 
+
 def test_fields():
 
     # test initialization
     a = area.Area(
-        name = "area_name",
-        desc = "area_desc",
-        domain = [9],
-        action = lambda: 5,
-        resource_id = "r_id"
+        name="area_name",
+        desc="area_desc",
+        domain=[9],
+        action=lambda: 5,
+        resource_id="r_id"
     )
 
     # test fields

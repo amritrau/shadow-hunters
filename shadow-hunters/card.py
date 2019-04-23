@@ -3,10 +3,12 @@ import elements
 # card.py
 # Implements the Card object.
 
+
 class Card:
     """
     A Card of any type.
     """
+
     def __init__(self, title, desc, color, holder, is_equip, use):
         self.title = title
         self.desc = desc

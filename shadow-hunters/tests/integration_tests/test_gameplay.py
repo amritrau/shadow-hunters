@@ -9,6 +9,7 @@ import helpers
 # test_gameplay.py
 # Tests random walks through the game state for runtime errors
 
+
 def test_gameplay():
     for _ in range(1000):
         gc, ef = helpers.fresh_gc_ef()

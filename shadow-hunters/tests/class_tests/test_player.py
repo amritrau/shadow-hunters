@@ -11,6 +11,7 @@ import elements
 # test_player.py
 # Tests for the player object
 
+
 def test_fields():
 
     # test initialization
@@ -27,7 +28,7 @@ def test_fields():
     assert not p.equipment
     assert p.modifiers['attack_dice_type'] == 'attack'
     assert p.damage == 0
-    assert p.ai == False
+    assert not p.ai
 
     # test dump
     dump = p.dump()
@@ -38,26 +39,28 @@ def test_fields():
     assert dump['damage'] == 0
     assert dump['location'] == {}
     assert dump['character'] == {}
-    assert dump['ai'] == False
+    assert not dump['ai']
+
 
 def test_setCharacter():
     p = player.Player('Max', 'socket_id', lambda x, y, z: 5, False)
 
     # dummy character
     c = character.Character(
-        name = "char_name",
-        alleg = 1,
-        max_damage = 10,
-        win_cond = lambda: 5,
-        win_cond_desc = "win_desc",
-        special_desc = "special_desc",
-        special = lambda: 5,
-        resource_id = "r_id"
+        name="char_name",
+        alleg=1,
+        max_damage=10,
+        win_cond=lambda: 5,
+        win_cond_desc="win_desc",
+        special_desc="special_desc",
+        special=lambda: 5,
+        resource_id="r_id"
     )
 
     # Check that setting a character updates player character
     p.setCharacter(c)
     assert p.character == c
+
 
 def test_reveal():
     p = helpers.fresh_gc_ef()[0].players[0]
@@ -65,6 +68,7 @@ def test_reveal():
     # Check that reveal sets state to 1
     p.reveal()
     assert p.state == 1
+
 
 def test_drawCard():
 
@@ -90,6 +94,7 @@ def test_drawCard():
     p1.drawCard(gc.green_cards)
     assert gc.green_cards.cards != original_deck
 
+
 def test_rollDice():
 
     # Setup rigged game context
@@ -112,6 +117,7 @@ def test_rollDice():
     for _ in range(100):
         assert 0 <= p1.rollDice('attack') <= 5
 
+
 def test_choosePlayer():
 
     # Setup rigged game context
@@ -122,6 +128,7 @@ def test_choosePlayer():
     for _ in range(100):
         p2 = p1.choosePlayer()
         assert p2 in gc.players and p2 != p1
+
 
 def test_chooseEquipment():
 
@@ -137,6 +144,7 @@ def test_chooseEquipment():
     for _ in range(100):
         eq = p2.chooseEquipment(p1)
         assert eq == roly_hobe or eq == talisman
+
 
 def test_giveEquipment():
 
@@ -154,6 +162,7 @@ def test_giveEquipment():
     assert roly_hobe.holder == p2
     assert not p1.equipment
     assert roly_hobe in p2.equipment
+
 
 def test_attack():
 
@@ -181,6 +190,7 @@ def test_attack():
     p1.attack(p2, 0)
     assert p2.damage == 0
 
+
 def test_defend():
 
     # Setup rigged game context
@@ -191,6 +201,7 @@ def test_defend():
     # Check that damage is dealt properly
     p1.defend(p2, 5)
     assert p1.damage == 5
+
 
 def test_moveDamage():
     p = helpers.fresh_gc_ef()[0].players[0]
@@ -207,12 +218,14 @@ def test_moveDamage():
     p.moveDamage(100, p)
     assert p.damage == 0
 
+
 def test_setDamage():
     p = helpers.fresh_gc_ef()[0].players[0]
 
     # Check setting damage changes player damage
     p.setDamage(5, p)
     assert p.damage == 5
+
 
 def test_checkDeath():
     p = helpers.fresh_gc_ef()[0].players[0]
@@ -225,6 +238,7 @@ def test_checkDeath():
     p.damage = 20
     p.checkDeath(p)
     assert p.state == 0
+
 
 def test_die():
 
@@ -243,7 +257,8 @@ def test_die():
     assert p1.state == 0
     assert not p1.equipment
     assert bool(roly_hobe in p2.equipment) != bool(talisman in p2.equipment)
-    assert p1.location == None
+    assert p1.location is None
+
 
 def test_move():
 
