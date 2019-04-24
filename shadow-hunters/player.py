@@ -398,8 +398,10 @@ class Player:
         self.gc.tell_h("{} hit {} for {} damage!", [
                        other.user_id, self.user_id, dealt])
 
-        # Check for counterattack
-        if self.modifiers['counterattack']:
+
+        if self.state > 0:
+            # Check for counterattack
+            if self.modifiers['counterattack']:
             # Ask if player wants to counterattack
             self.gc.tell_h(
                 "{}, the {}, is deciding whether to counterattack!",
