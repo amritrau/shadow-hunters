@@ -1,10 +1,10 @@
 matrix:
   include:
-    #- language: python
-    #  python: "3.6"
-    #  script:
-    #    - pytest
-    #    - pycodestyle --statistics -q .
+    - language: python
+      python: "3.6"
+      script:
+        - pytest
+        - pycodestyle --statistics -q .
     - language: node_js
       node_js: "stable"
       language: python

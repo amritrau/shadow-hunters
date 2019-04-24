@@ -50,17 +50,8 @@ test('Roll dice', async t => {
         .click(rollDice);
 });
 
-test('Reveal', async t => {
-    await t
-        .typeText('#screen-name', screen_name)
-        .typeText('#room-id', room_id)
-        .click('#submit-button')
-        .click('#start-game')
-        .wait(10000)
-        .click('#reveal');
-});
 
-test('Use special', async t => {
+test('Reveal & use special', async t => {
     await t
         .typeText('#screen-name', screen_name)
         .typeText('#room-id', room_id)
