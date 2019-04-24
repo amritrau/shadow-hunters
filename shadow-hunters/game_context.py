@@ -98,10 +98,21 @@ class GameContext:
         res = filter(filter_fn, [p for p in self.players if p.state < 1])
         return list(res)
 
-    def getPlayersAt(self, location_name):
+    def getPlayersAt(self, location_name, invert=False):
         live = self.getLivePlayers()
         live_loc = [p for p in live if p.location]
-        return [p for p in live_loc if p.location.name == location_name]
+        if invert:
+            return [p for p in live_loc if p.location.name != location_name]
+        else:
+            return [p for p in live_loc if p.location.name == location_name]
+
+    def getAreas(self):
+        areas = []
+        for z in self.zones:
+            for a in z.areas:
+                areas.append(a.name)
+
+        return areas
 
     def getAreaFromRoll(self, roll_result):
         # Get area from roll

@@ -101,7 +101,7 @@ class Player:
         self.gc.tell_h("{} is rolling for movement...", [self.user_id])
         roll_result = self.rollDice('area')
 
-        if "Mystic Compass" in [e.title for e in self.equipment]:
+        if self.hasEquipment("Mystic Compass"):
 
             # If player has mystic compass, roll again
             self.gc.tell_h("{}'s {} lets them roll again!",
@@ -119,11 +119,7 @@ class Player:
 
             # Select an area
             self.gc.tell_h("{} is selecting an area...", [self.user_id])
-            area_options = []
-            for z in self.gc.zones:
-                for a in z.areas:
-                    area_options.append(a.name)
-            data = {'options': area_options}
+            data = {'options': self.gc.getAreas()}
             destination = self.gc.ask_h('select', data, self.user_id)['value']
 
             # Get Area object from area name
@@ -166,19 +162,19 @@ class Player:
         # Give player option to attack or decline
         self.gc.tell_h("{} is deciding to attack...", [self.user_id])
         options = ["Attack other players!"]
-        if "Cursed Sword Masamune" not in [e.title for e in self.equipment]:
+        if not self.hasEquipment("Cursed Sword Masamune"):
             options.append("Decline")
+
         answer = self.gc.ask_h(
             'yesno', {'options': options}, self.user_id)["value"]
 
         if answer != "Decline":
-
             # Get attackable players
-            live_players = [p for p in self.gc.getLivePlayers() if p.location]
+            live_players = self.gc.getLivePlayers(lambda p: p.location)
             targets = [p for p in live_players if (
                 p.location.zone == self.location.zone and p != self)]
 
-            if "Handgun" in [e.title for e in self.equipment]:
+            if self.hasEquipment("Handgun"):
                 self.gc.tell_h("{}'s {} reverses their attack range.", [
                                self.user_id, "Handgun"])
                 targets = [p for p in live_players if (
@@ -187,7 +183,7 @@ class Player:
             # If player has Masamune, can't decline unless there are no options
             data = {'options': [t.user_id for t in targets]}
             has_opts = len(data['options'])
-            if self.hasEquipment("Cursed Sword Masamune") or not has_opts:
+            if not self.hasEquipment("Cursed Sword Masamune") or not has_opts:
                 data['options'].append("Decline")
             answer = self.gc.ask_h('select', data, self.user_id)['value']
 
@@ -216,7 +212,7 @@ class Player:
 
                 # If player has Machine Gun, launch attack on everyone in the
                 # zone. Otherwise, attack the target
-                if "Machine Gun" in [e.title for e in self.equipment]:
+                if self.hasEquipment("Machine Gun"):
                     self.gc.tell_h(
                         "{}'s {} hits everyone in their attack range!",
                         [self.user_id, "Machine Gun"]
@@ -413,8 +409,7 @@ class Player:
                     self.gc.tell_h("{} is counterattacking!", [self.user_id])
                     # Roll with the 4-sided die if the player has masamune
                     roll_result = 0
-                    if "Cursed Sword Masamune" in [
-                            e.title for e in self.equipment]:
+                    if self.hasEquipment("Cursed Sword Masamune"):
                         self.gc.tell_h(
                             "{} rolls with the 4-sided die using the {}!",
                             [self.user_id, "Cursed Sword Masamune"]
