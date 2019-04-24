@@ -223,11 +223,42 @@ class Player:
 
                 for t in targets:
                     # Dry run the attack if we're Bob
-                    potential_damage = self.attack(t, roll_result, dryrun=True)
-                    # TODO if (potential_damage): <snippet from move_damage>
+                    if self.modifiers['steal_for_damage']:
+                        potential_damage = self.attack(
+                            t,
+                            roll_result,
+                            dryrun=True
+                        )
+                        if potential_damage >= 2 and len(t.equipment):
+                            # Ask whether to steal equipment or deal damage
+                            data = {
+                                'options': [
+                                    "Steal equipment",
+                                    "Deal {} damage".format(potential_damage)
+                                ]
+                            }
+                            choose_steal = self.gc.ask_h(
+                                'yesno', data, self.user_id
+                            )['value'] == "Steal equipment"
 
-                    # Actually deal damage
-                    damage_dealt = self.attack(t, roll_result)
+                            if choose_steal:
+                                desired_eq = self.chooseEquipment(t)
+                                t.giveEquipment(self, desired_eq)
+                                self.gc.tell_h(
+                                    ("{} stole {}'s {} instead "
+                                     "of dealing {} damage!"),
+                                    [self.user_id, t.user_id, desired_eq.title,
+                                     potential_damage]
+                                )
+                            else:
+                                # Actually deal damage
+                                damage_dealt = self.attack(t, roll_result)
+                        else:
+                            # Actually deal damage
+                            damage_dealt = self.attack(t, roll_result)
+                    else:
+                        # Actually deal damage
+                        damage_dealt = self.attack(t, roll_result)
 
             else:
                 self.gc.tell_h("{} declined to attack.", [self.user_id])
@@ -396,9 +427,10 @@ class Player:
 
         # Return damage dealt
         dealt = amount
-        if not dryrun:
-            self.moveDamage(-dealt, attacker=other)
+        if dryrun:
+            return dealt
 
+        self.moveDamage(-dealt, attacker=other)
         self.gc.tell_h("{} hit {} for {} damage!", [
                        other.user_id, self.user_id, dealt])
 
@@ -436,33 +468,12 @@ class Player:
         return dealt
 
     def moveDamage(self, damage_change, attacker):
+
+        # Tell frontend to animate sprite
         if damage_change < 0:
             self.gc.show_h({'type': 'damage', 'player': self.dump()})
 
-        # TODO Move this to attackSequence.py (see skeleton)
-        if attacker.modifiers['steal_for_damage']:
-            if (damage_change <= -2) and len(self.equipment):
-                # Ask attacker whether to steal equipment or deal damage
-                data = {
-                    'options': [
-                        "Steal equipment",
-                        "Deal {} damage".format(abs(damage_change))
-                    ]
-                }
-                choose_steal = attacker.gc.ask_h(
-                    'select', data, attacker.user_id
-                )['value'] == "Steal equipment"
-
-                if choose_steal:
-                    desired_eq = attacker.chooseEquipment(self)
-                    self.giveEquipment(attacker, desired_eq)
-                    self.gc.tell_h(
-                        "{} stole {}'s {} instead of dealing {} damage!",
-                        [attacker.user_id, self.user_id, desired_eq.title,
-                         abs(damage_change)]
-                    )
-                    return self.damage
-
+        # Set new damage
         self.damage = min(self.damage - damage_change,
                           self.character.max_damage)
         self.damage = max(0, self.damage)

@@ -130,7 +130,6 @@ def room(methods=['GET', 'POST']):
             }
 
             # Reconnect to game
-            # TODO: make actual browser cookie
             if username in rooms[room_id]['reconnections']:
                 context['spectate'] = False
                 context['reconnect'] = True
@@ -159,7 +158,7 @@ def socket_ask(form, data, user_id, room_id):
 
     # Get player
     connection_lock.acquire()
-    if room_id in rooms:
+    if room_id in rooms and rooms[room_id]['gc']:
         pl = [p for p in rooms[room_id]['gc'].players if p.user_id == user_id]
         player = pl[0]
     else:
@@ -209,7 +208,7 @@ def socket_tell(str, args, gc, room_id, client=None):
     data = color_format(str, args, gc)
     packet = {'strings': data[0], 'colors': data[1]}
     socketio.emit('message', packet, room=client[0])
-    if room_id in rooms:
+    if room_id in rooms and rooms[room_id]['gc']:
         socketio.sleep(SOCKET_SLEEP)
 
 
@@ -218,13 +217,13 @@ def socket_show(data, gc, room_id, client=None):
     if not client:
         client = (room_id,)
     socketio.emit('display', data, room=client[0])
-    if room_id in rooms:
+    if room_id in rooms and rooms[room_id]['gc']:
         socketio.sleep(SOCKET_SLEEP)
 
 
 def socket_update(data, room_id):
     socketio.emit('update', data, room=room_id)
-    if room_id in rooms:
+    if room_id in rooms and rooms[room_id]['gc']:
         socketio.sleep(SOCKET_SLEEP)
 
 # SOCKET RECEIVERS
@@ -489,6 +488,9 @@ def on_disconnect():
         # Close the room
         if gc and [p for p in gc.players if p.socket_id == request.sid]:
             [p for p in gc.players if p.socket_id == request.sid][0].ai = True
+            gc.tell_h = lambda x, y, *z: 0
+            gc.show_h = lambda x, *y: 0
+            gc.update_h = lambda: 0
         socketio.close_room(room_id)
         rooms.pop(room_id)
         connection_lock.release()
