@@ -1,4 +1,5 @@
 import elements
+import concurrency
 import helpers
 import random
 from collections import defaultdict
@@ -52,20 +53,20 @@ class Player:
             del self.modifiers["guardian_angel"]
 
         # If AI player, chance to reveal and use special at turn start
-        elements.reveal_lock.acquire()
+        concurrency.reveal_lock.acquire()
         if self.ai and self.state == 2:
             reveal_chance = self.gc.round_count / 20
             if random.random() <= reveal_chance:
                 self.state = 1  # Guard
                 self.special_active = True  # Guard
-                elements.reveal_lock.release()
+                concurrency.reveal_lock.release()
                 self.reveal()
                 self.character.special(self.gc, self, turn_pos='now')
                 self.gc.update_h()
             else:
-                elements.reveal_lock.release()
+                concurrency.reveal_lock.release()
         else:
-            elements.reveal_lock.release()
+            concurrency.reveal_lock.release()
 
         # Before turn check for special ability
         if self.special_active:
@@ -450,9 +451,9 @@ class Player:
     def die(self, attacker):
 
         # Set state to 0 (DEAD)
-        elements.reveal_lock.acquire()
+        concurrency.reveal_lock.acquire()
         self.state = 0
-        elements.reveal_lock.release()
+        concurrency.reveal_lock.release()
 
         # Report to console
         display_data = {'type': 'die', 'player': self.dump()}

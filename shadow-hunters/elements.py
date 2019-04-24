@@ -7,16 +7,11 @@ import single_use
 import hermit
 import win_conditions
 import specials
-from threading import Lock
 
 # elements.py
 # Encodes all characters, win conditions, special abilities,
 # game areas, decks, and cards in an element factory. Every
 # game context is initialized with its own element factory.
-
-
-# Lock for manipulating reveals
-reveal_lock = Lock()
 
 
 class ElementFactory:

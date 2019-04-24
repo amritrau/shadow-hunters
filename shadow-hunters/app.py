@@ -9,6 +9,7 @@ from game_context import GameContext
 from player import Player
 import elements
 import constants
+import concurrency
 from helpers import color_format, get_room_id
 
 # app config
@@ -311,10 +312,10 @@ def on_reveal():
 
     # Reveal them (if they're alive and unrevealed)
     connection_lock.release()
-    elements.reveal_lock.acquire()
+    concurrency.reveal_lock.acquire()
     if player.state == 2:
         player.state = 1  # Guard
-        elements.reveal_lock.release()
+        concurrency.reveal_lock.release()
         player.reveal()
 
 
@@ -335,10 +336,10 @@ def on_special():
     connection_lock.release()
 
     # Use special
-    elements.reveal_lock.acquire()
+    concurrency.reveal_lock.acquire()
     if not player.special_active:
         player.special_active = True  # Guard
-        elements.reveal_lock.release()
+        concurrency.reveal_lock.release()
         player.gc.tell_h(
             "You've activated your special ability. It will take effect next time its requirements are met.", [], request.sid)
         player.character.special(rooms[room_id]['gc'], player, turn_pos='now')
