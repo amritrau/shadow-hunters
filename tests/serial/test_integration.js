@@ -51,7 +51,7 @@ test('Roll dice', async t => {
 });
 
 
-test('Reveal & use special', async t => {
+/*test('Reveal & use special', async t => {
     await t
         .typeText('#screen-name', screen_name)
         .typeText('#room-id', room_id)
@@ -61,4 +61,4 @@ test('Reveal & use special', async t => {
         .click('#reveal')
         .wait(1000)
         .click('#special');
-});
+});*/
