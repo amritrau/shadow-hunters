@@ -3,7 +3,6 @@ matrix:
     #- language: python
     #  python: "3.6"
     #  script:
-    #    - pip3 install pycodestyle
     #    - pytest
     #    - pycodestyle --statistics -q .
     - language: node_js
@@ -26,6 +25,6 @@ matrix:
         - "sh -e /etc/init.d/xvfb start"
         - sleep 3
         - fluxbox >/dev/null 2>&1 &
-      script:
         - npm install testcafe
+      script:
         - npm test
