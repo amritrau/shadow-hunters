@@ -2,6 +2,7 @@ import constants
 
 # hermit.py
 
+
 def blackmail(args):
 
     # Choose a player to give the card to
@@ -50,6 +51,7 @@ def blackmail(args):
         data = {'options': ['Do nothing']}
         target.gc.ask_h('confirm', data, target.user_id)
         target.gc.tell_h("{} did nothing.", [target.user_id])
+
 
 def greed(args):
 
@@ -100,6 +102,7 @@ def greed(args):
         target.gc.ask_h('confirm', data, target.user_id)
         target.gc.tell_h("{} did nothing.", [target.user_id])
 
+
 def anger(args):
 
     # Choose a player to give the card to
@@ -149,6 +152,7 @@ def anger(args):
         target.gc.ask_h('confirm', data, target.user_id)
         target.gc.tell_h("{} did nothing.", [target.user_id])
 
+
 def slap(args):
 
     # Choose a player to give the card to
@@ -180,6 +184,7 @@ def slap(args):
         data = {'options': ['Do nothing']}
         target.gc.ask_h('confirm', data, target.user_id)
         target.gc.tell_h("{} did nothing.", [target.user_id])
+
 
 def spell(args):
 
@@ -213,6 +218,7 @@ def spell(args):
         target.gc.ask_h('confirm', data, target.user_id)
         target.gc.tell_h("{} did nothing.", [target.user_id])
 
+
 def exorcism(args):
 
     # Choose a player to give the card to
@@ -243,6 +249,7 @@ def exorcism(args):
         data = {'options': ['Do nothing']}
         target.gc.ask_h('confirm', data, target.user_id)
         target.gc.tell_h("{} did nothing.", [target.user_id])
+
 
 def nurturance(args):
 
@@ -290,6 +297,7 @@ def nurturance(args):
         target.gc.ask_h('confirm', data, target.user_id)
         target.gc.tell_h("{} did nothing.", [target.user_id])
 
+
 def aid(args):
 
     # Choose a player to give the card to
@@ -335,6 +343,7 @@ def aid(args):
         data = {'options': ['Do nothing']}
         target.gc.ask_h('confirm', data, target.user_id)
         target.gc.tell_h("{} did nothing.", [target.user_id])
+
 
 def huddle(args):
 
@@ -382,6 +391,7 @@ def huddle(args):
         target.gc.ask_h('confirm', data, target.user_id)
         target.gc.tell_h("{} did nothing.", [target.user_id])
 
+
 def lesson(args):
 
     # Choose a player to give the card to
@@ -414,6 +424,7 @@ def lesson(args):
         target.gc.ask_h('confirm', data, target.user_id)
         target.gc.tell_h("{} did nothing.", [target.user_id])
 
+
 def bully(args):
 
     # Choose a player to give the card to
@@ -445,6 +456,7 @@ def bully(args):
         data = {'options': ['Do nothing']}
         target.gc.ask_h('confirm', data, target.user_id)
         target.gc.tell_h("{} did nothing.", [target.user_id])
+
 
 def prediction(args):
     # Choose a player to give the card to

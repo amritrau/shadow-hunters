@@ -41,6 +41,7 @@ def underworld_gate_action(gc, player):
     else:
         player.drawCard(gc.green_cards)
 
+
 def weird_woods_action(gc, player):
 
     # Choose which player to attack or heal
@@ -61,6 +62,7 @@ def weird_woods_action(gc, player):
             gc.tell_h("The power of the {} damaged {}!", [
                       "Weird Woods", target_Player.user_id])
             target_Player.moveDamage(-2, player)
+
 
 def erstwhile_altar_action(gc, player):
 

@@ -82,4 +82,7 @@ def test_underworld_gate():
 
     # Make sure one of the card piles was taken from
     area.action(gc, p1)
-    assert gc.white_cards.cards != whites or gc.black_cards.cards != blacks or gc.green_cards.cards != greens
+    neq_whites = gc.white_cards.cards != whites
+    neq_blacks = gc.black_cards.cards != blacks
+    neq_greens = gc.green_cards.cards != greens
+    assert neq_whites or neq_blacks or neq_greens

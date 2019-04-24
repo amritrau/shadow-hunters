@@ -2,6 +2,7 @@
 
 # Neutrals
 
+
 def allie(gc, player, turn_pos):
     # ANY TIME
     if turn_pos == 'now':
@@ -17,6 +18,7 @@ def allie(gc, player, turn_pos):
             # Update modifiers
             player.modifiers['special_used'] = True
 
+
 def bob(gc, player, turn_pos):
     if not player.modifiers['special_used']:
         if 4 <= len(gc.players) <= 6:
@@ -24,6 +26,7 @@ def bob(gc, player, turn_pos):
         else:
             # Update modifiers
             player.modifiers['steal_all_on_kill'] = True
+
 
 def catherine(gc, player, turn_pos):
     # START OF TURN
@@ -37,6 +40,7 @@ def catherine(gc, player, turn_pos):
         player.moveDamage(1, player)
 
 # Hunters
+
 
 def george(gc, player, turn_pos):
     # START OF TURN
@@ -60,6 +64,7 @@ def george(gc, player, turn_pos):
             target_Player.moveDamage(-1 * roll_result, player)
             gc.tell_h("{}'s Hammer gave {} {} damage!", [
                       player.user_id, target_Player.user_id, roll_result])
+
 
 def fuka(gc, player, turn_pos):
     # START OF TURN
@@ -87,6 +92,7 @@ def fuka(gc, player, turn_pos):
             gc.tell_h("{} gave a killing cure to {}!", [
                       player.user_id, target_Player.user_id])
 
+
 def franklin(gc, player, turn_pos):
 
     if turn_pos == 'start':
@@ -108,6 +114,7 @@ def franklin(gc, player, turn_pos):
             target_Player.moveDamage(-1 * roll_result, player)
             gc.tell_h("{}'s Lightning gave {} {} damage!", [
                       player.user_id, target_Player.user_id, roll_result])
+
 
 def ellen(gc, player, turn_pos):
     # START OF TURN
@@ -132,6 +139,7 @@ def ellen(gc, player, turn_pos):
 
 # Shadows
 
+
 def valkyrie(gc, player, turn_pos):
     if (not player.modifiers['special_active']) and (not player.modifiers['special_used']):
         # Tell
@@ -139,6 +147,7 @@ def valkyrie(gc, player, turn_pos):
                   player.user_id, player.character.name, player.character.special_desc])
         player.modifiers['attack_dice_type'] = "4"
         player.modifiers['special_active'] = True
+
 
 def vampire(gc, player, turn_pos):
     if (not player.modifiers['special_active']) and (not player.modifiers['special_used']):
@@ -149,10 +158,12 @@ def vampire(gc, player, turn_pos):
             2, player)
         player.modifiers['special_active'] = True
 
+
 def werewolf(gc, player, turn_pos):
     if not player.modifiers['special_used']:
         player.modifiers['counterattack'] = True
         player.modifiers['special_active'] = True
+
 
 def ultra_soul(gc, player, turn_pos):
     # START OF TURN
