@@ -92,16 +92,26 @@ class GameContext:
             player.setCharacter(queue.pop())
             player.gc = self
 
-    def getLivePlayers(self):
-        return [p for p in self.players if p.state > 0]
+    def getLivePlayers(self, filter_fn=(lambda x: True)):
+        return list(filter(filter_fn, [p for p in self.players if p.state > 0]))
 
-    def getDeadPlayers(self):
-        return [p for p in self.players if p.state == 0]
+    def getDeadPlayers(self, filter_fn=(lambda x: True)):
+        return list(filter(filter_fn, [p for p in self.players if p.state < 1]))
 
     def getPlayersAt(self, location_name):
         live = self.getLivePlayers()
         live_loc = [p for p in live if p.location]
         return [p for p in live_loc if p.location.name == location_name]
+
+    def getAreaFromRoll(self, roll_result):
+        # Get area from roll
+        destination_Area = None
+        for z in self.zones:
+            for a in z.areas:
+                if roll_result in a.domain:
+                    destination_Area = a
+
+        return destination_Area
 
     def _checkWinConditions(self):
         return [p for p in self.players if p.character.win_cond(self, p)]

@@ -131,11 +131,7 @@ class Player:
         else:
 
             # Get area from roll
-            destination_Area = None
-            for z in self.gc.zones:
-                for a in z.areas:
-                    if roll_result in a.domain:
-                        destination_Area = a
+            destination_Area = self.gc.getAreaFromRoll(roll_result)
 
             # Get string from area
             destination = destination_Area.name
@@ -287,12 +283,22 @@ class Player:
         self.gc.tell_h(message[0], message[1])
         return result
 
-    def choosePlayer(self):
+    def choosePlayer(self, include_self=False, filter_fn=(lambda x: True)):
 
-        # Select a player from all live playerts who arent you
+        # Select a player from all live players who arent you
+        if not include_self:
+            opts = [p for p in self.gc.getLivePlayers() if p != self]
+        else:
+            opts = self.gc.getLivePlayers()
+
+        opts = list(filter(filter_fn, opts))
+
+        if not len(opts):  # nobody to choose from
+            return None
+
+        data = {'options': [p.user_id for p in opts]}
+
         self.gc.tell_h("{} is choosing a player...", [self.user_id])
-        data = {'options': [
-            p.user_id for p in self.gc.getLivePlayers() if p != self]}
         target = self.gc.ask_h('select', data, self.user_id)['value']
 
         # Return the chosen player
@@ -324,6 +330,9 @@ class Player:
         self.gc.tell_h("{} forfeited their {} to {}!", [
                        self.user_id, eq.title, receiver.user_id])
         self.gc.update_h()
+
+    def hasEquipment(self, equipment_name):
+        return equipment_name in [eq.title for eq in self.equipment]
 
     def attack(self, other, amount, dryrun=False):
 
