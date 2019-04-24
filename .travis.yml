@@ -1,7 +1,30 @@
-language: python
-python:
-  - "3.6"
-script:
-  - pip3 install pycodestyle
-  - pytest
-  - pycodestyle --statistics -q .
+matrix:
+  include:
+    - language: python
+      python: "3.6"
+      script:
+        - pytest
+        - pycodestyle --statistics -q .
+    - language: node_js
+      node_js: "stable"
+      language: python
+      python: "3.6"
+      before_install:
+        - stty cols 80
+      dist: trusty
+      sudo: required
+      addons:
+        firefox: latest
+        apt:
+          sources:
+            - google-chrome
+          packages:
+            - google-chrome-stable fluxbox
+      before_script:
+        - "export DISPLAY=:99.0"
+        - "sh -e /etc/init.d/xvfb start"
+        - sleep 3
+        - fluxbox >/dev/null 2>&1 &
+        - npm install testcafe
+      script:
+        - npm test

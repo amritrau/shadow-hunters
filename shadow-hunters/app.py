@@ -34,8 +34,15 @@ def after_request(response):
 
 
 # sleep times after socket emissions (to pace frontend)
-SOCKET_SLEEP = 0.25
-AI_SLEEP = 2.0
+def getEnvVarOrElse(var, default):
+    if os.environ.get(var):
+        return os.environ.get(var)
+    else:
+        return default
+
+
+SOCKET_SLEEP = float(getEnvVarOrElse('SOCKET_SLEEP', 0.25))
+AI_SLEEP = float(getEnvVarOrElse('AI_SLEEP', 2.0))
 
 # rooms are indexed by room_id, with a status, gc, and connections field
 # status is LOBBY or GAME. gc is None if status is LOBBY, otherwise a
