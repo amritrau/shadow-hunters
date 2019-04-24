@@ -181,11 +181,12 @@ class Player:
                     p.location.zone != self.location.zone and p != self)]
 
             # If player has Masamune, can't decline unless there are no options
-            data = {'options': [t.user_id for t in targets]}
-            has_opts = len(data['options'])
-            if not self.hasEquipment("Cursed Sword Masamune") or not has_opts:
-                data['options'].append("Decline")
-            answer = self.gc.ask_h('select', data, self.user_id)['value']
+            opts = [t.user_id for t in targets]
+            if not self.hasEquipment("Cursed Sword Masamune") or not len(opts):
+                opts.append("Decline")
+
+            answer = self.gc.ask_h('select', {'options': opts}, self.user_id)
+            answer = answer['value']
 
             if answer != 'Decline':
 
