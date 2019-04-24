@@ -29,3 +29,6 @@ TEXT_COLORS = {
     'Hermit\'s Cabin': 'rgb(143,194,0)',
     'Underworld Gate': 'rgb(150,0,150)'
 }
+
+# Number of gameplay tests to run
+N_GAMEPLAY_TESTS = 1000

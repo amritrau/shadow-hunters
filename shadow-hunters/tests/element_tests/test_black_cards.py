@@ -17,7 +17,8 @@ def test_bloodthirsty_spider():
         p1 = gc.players[0]
         c = helpers.get_card_by_title(ef, "Bloodthirsty Spider")
 
-        # Check that user and target take 2 damage and everyone else is unaffected
+        # Check that user and target take 2 damage and everyone else is
+        # unaffected
         c.use({'self': p1, 'card': c})
         damages = [p.damage for p in gc.players]
         assert p1.damage == 2
@@ -33,7 +34,8 @@ def test_vampire_bat():
         p1 = gc.players[0]
         c = helpers.get_card_by_title(ef, "Vampire Bat")
 
-        # Check that user heals 1 damage and target takes 2 damage and everyone else is unaffected
+        # Check that user heals 1 damage and target takes 2 damage and everyone
+        # else is unaffected
         p1.damage == 1
         c.use({'self': p1, 'card': c})
         damages = [p.damage for p in gc.players]

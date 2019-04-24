@@ -34,7 +34,8 @@ def test_first_aid():
         p1 = gc.players[0]
         c = helpers.get_card_by_title(ef, "First Aid")
 
-        # Check that someone gets set to 7 by first aid and everyone else is unaffected
+        # Check that someone gets set to 7 by first aid and everyone else is
+        # unaffected
         c.use({'self': p1, 'card': c})
         damages = [p.damage for p in gc.players]
         assert len([d for d in damages if d == 7]) == 1
@@ -100,7 +101,8 @@ def test_blessing():
         p1 = gc.players[0]
         c = helpers.get_card_by_title(ef, "Blessing")
 
-        # Check that user is not healed, but someone is and everyone else is unaffected
+        # Check that user is not healed, but someone is and everyone else is
+        # unaffected
         for p in gc.players:
             p.damage = 6
         c.use({'self': p1, 'card': c})
@@ -177,7 +179,9 @@ def test_concealed_knowledge():
 
         # Check that card inserts player in proper place
         c.use({'self': p1, 'card': c})
-        assert gc.turn_order[position] == p1 and gc.turn_order[position+1] == p1
+        cur_turn = gc.turn_order[position] == p1
+        next_turn = gc.turn_order[position+1] == p1
+        assert cur_turn and next_turn
 
 
 def test_guardian_angel():

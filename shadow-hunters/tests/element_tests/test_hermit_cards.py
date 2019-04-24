@@ -34,7 +34,7 @@ def test_hermit_blackmail():
         "Use Hermit\'s Blackmail",
         n.user_id, 'Receive 1 damage',                   # test for neutral
         "Use Hermit\'s Blackmail",
-        h.user_id, 'Give an equipment card', 'Holy Robe'  # test for giving equipment
+        h.user_id, 'Give an equipment card', 'Holy Robe'  # test give equipment
     ])
 
     # Check that hunters take 1 damage
@@ -74,7 +74,7 @@ def test_hermit_greed():
         "Use Hermit\'s Greed",
         n.user_id, 'Receive 1 damage',                   # test for neutral
         "Use Hermit\'s Greed",
-        s.user_id, 'Give an equipment card', 'Holy Robe'  # test for giving equipment
+        s.user_id, 'Give an equipment card', 'Holy Robe'  # test give equipment
     ])
 
     # Check that hunters do nothing
@@ -114,7 +114,7 @@ def test_hermit_anger():
         "Use Hermit\'s Anger",
         n.user_id, 'Do nothing',                         # test for neutral
         "Use Hermit\'s Anger",
-        s.user_id, 'Give an equipment card', 'Holy Robe'  # test for giving equipment
+        s.user_id, 'Give an equipment card', 'Holy Robe'  # test give equipment
     ])
 
     # Check that hunters take 1 damage
