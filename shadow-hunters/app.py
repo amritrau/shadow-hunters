@@ -320,6 +320,8 @@ def on_reveal():
         player.state = 1  # Guard
         concurrency.reveal_lock.release()
         player.reveal()
+    else:
+        concurrency.reveal_lock.release()
 
 
 @socketio.on('special')
@@ -340,7 +342,7 @@ def on_special():
 
     # Use special
     concurrency.reveal_lock.acquire()
-    if not player.special_active:
+    if player.state == 1 and not player.special_active:  # player must be alive
         player.special_active = True  # Guard
         concurrency.reveal_lock.release()
         msg = "You've activated your special ability."
@@ -348,6 +350,8 @@ def on_special():
         player.gc.tell_h(msg, [], request.sid)
         player.character.special(rooms[room_id]['gc'], player, turn_pos='now')
         rooms[room_id]['gc'].update_h()
+    else:
+        concurrency.reveal_lock.release()
 
 
 @socketio.on('answer')
