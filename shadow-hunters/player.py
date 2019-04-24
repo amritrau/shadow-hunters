@@ -217,10 +217,17 @@ class Player:
                         "{}'s {} hits everyone in their attack range!",
                         [self.user_id, "Machine Gun"]
                     )
-                    for t in targets:
-                        damage_dealt = self.attack(t, roll_result)
                 else:
-                    damage_dealt = self.attack(target_Player, roll_result)
+                    targets = [target_Player]
+
+                for t in targets:
+                    # Dry run the attack if we're Bob
+                    potential_damage = self.attack(t, roll_result, dryrun=True)
+                    # TODO if (potential_damage): <snippet from move_damage>
+
+                    # Actually deal damage
+                    damage_dealt = self.attack(t, roll_result)
+
             else:
                 self.gc.tell_h("{} declined to attack.", [self.user_id])
         else:
