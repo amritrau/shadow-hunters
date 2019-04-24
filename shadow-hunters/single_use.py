@@ -136,7 +136,7 @@ def vampire_bat(args):
         args['self'].moveDamage(1, args['self'])
 
 def moody_goblin(args):
-    """Steal equipment from players"""
+    """Steal equipment from a player"""
 
     # Show confirmation
     args['self'].gc.ask_h('confirm', {'options': ["Steal an Equipment Card"]}, args['self'].user_id)

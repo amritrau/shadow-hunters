@@ -64,33 +64,11 @@ def weird_woods_action(gc, player):
 
 def erstwhile_altar_action(gc, player):
 
-    # Get players who have equipment
-    players_w_items = [p for p in gc.getLivePlayers() if (
-        len(p.equipment) and p != player)]
-
-    # If someone has equipment to steal and isn't current player, offer choice
-    if len(players_w_items):
-
-        # Choose player to steal from
-        data = {'options': [p.user_id for p in players_w_items]}
-        target = player.gc.ask_h(
-            'select', data, player.user_id)['value']
-        target_Player = [
-            p for p in players_w_items if p.user_id == target][0]
-
-        # Choose equipment to take from player
-        data = {'options': [
-            eq.title for eq in target_Player.equipment]}
-        equip = player.gc.ask_h(
-            'select', data, player.user_id)['value']
-        equip_Equipment = [
-            eq for eq in target_Player.equipment if eq.title == equip][0]
-
-        # Transfer equipment from one player to the other
+    # Show confirmation
+    # gc.ask_h('confirm', {'options': ["Steal an Equipment card"]}, player.user_id)
+    target_Player = player.choosePlayer(filter_fn=lambda x: len(x.equipment))
+    if target_Player:
+        equip_Equipment = player.chooseEquipment(target_Player)
         target_Player.giveEquipment(player, equip_Equipment)
-
     else:
-
-        # If no one has equipment to steal, nothing happens
-        gc.tell_h("Nobody has any items for {} to steal.",
-                  [player.user_id])
+        gc.tell_h("Nobody has any items for {} to steal.", [player.user_id])
