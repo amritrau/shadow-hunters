@@ -439,6 +439,7 @@ class Player:
         if damage_change < 0:
             self.gc.show_h({'type': 'damage', 'player': self.dump()})
 
+        # TODO Move this to attackSequence.py (see skeleton)
         if attacker.modifiers['steal_for_damage']:
             if (damage_change <= -2) and len(self.equipment):
                 # Ask attacker whether to steal equipment or deal damage
