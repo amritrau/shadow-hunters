@@ -10,7 +10,8 @@ def allie(gc, player, turn_pos):
 
             # Tell
             gc.tell_h("{} ({}) used their special ability: {}", [
-                      player.user_id, player.character.name, player.character.special_desc])
+                      player.user_id, player.character.name,
+                      player.character.special_desc])
 
             # Full heal
             player.setDamage(0, player)
@@ -34,7 +35,8 @@ def catherine(gc, player, turn_pos):
 
         # Tell
         gc.tell_h("{} ({}) used their special ability: {}", [
-                  player.user_id, player.character.name, player.character.special_desc])
+                  player.user_id, player.character.name,
+                  player.character.special_desc])
 
         # Catherine is *required* to heal at the beginning of the turn
         player.moveDamage(1, player)
@@ -50,7 +52,8 @@ def george(gc, player, turn_pos):
 
             # Tell
             gc.tell_h("{} ({}) used their special ability: {}", [
-                      player.user_id, player.character.name, player.character.special_desc])
+                      player.user_id, player.character.name,
+                      player.character.special_desc])
 
             # Present player with list of attack options
             targets = [p for p in gc.getLivePlayers()]
@@ -74,12 +77,14 @@ def fuka(gc, player, turn_pos):
 
             # Tell
             gc.tell_h("{} ({}) used their special ability: {}", [
-                      player.user_id, player.character.name, player.character.special_desc])
+                      player.user_id, player.character.name,
+                      player.character.special_desc])
 
             # Enter set damage to 7 sequence
             # Select a player to use special on (includes user)
             player.gc.ask_h(
-                'confirm', {'options': ["Use special ability"]}, player.user_id)
+                'confirm', {'options': ["Use special ability"]},
+                player.user_id)
             data = {'options': [
                 t.user_id for t in gc.getLivePlayers()]}
             target = player.gc.ask_h(
@@ -101,7 +106,8 @@ def franklin(gc, player, turn_pos):
 
             # Tell
             gc.tell_h("{} ({}) used their special ability: {}", [
-                      player.user_id, player.character.name, player.character.special_desc])
+                      player.user_id, player.character.name,
+                      player.character.special_desc])
 
             # Present player with list of attack options
             gc.tell_h("{} is choosing a target...", [player.user_id])
@@ -124,7 +130,8 @@ def ellen(gc, player, turn_pos):
 
             # Tell
             gc.tell_h("{} ({}) used their special ability: {}", [
-                      player.user_id, player.character.name, player.character.special_desc])
+                      player.user_id, player.character.name,
+                      player.character.special_desc])
 
             # Choose a player to cancel their special
             target_Player = player.choosePlayer()
@@ -133,9 +140,10 @@ def ellen(gc, player, turn_pos):
             target_Player.resetModifiers()
             target_Player.modifiers['special_used'] = True
             target_Player.special = lambda gc, player, turn_pos: gc.tell_h(
-                "Your special ability was voided by {}.", [player.user_id], player.socket_id)
-            gc.tell_h("{} voided {}'s special ability for the rest of the game!", [
-                      player.user_id, target_Player.user_id])
+                "Your special ability was voided by {}.", [player.user_id],
+                player.socket_id)
+            msg = "{} voided {}'s special ability for the rest of the game!"
+            gc.tell_h(msg, [player.user_id, target_Player.user_id])
 
 # Shadows
 
@@ -145,7 +153,8 @@ def valkyrie(gc, player, turn_pos):
             not player.modifiers['special_used']):
         # Tell
         gc.tell_h("{} ({}) used their special ability: {}", [
-                  player.user_id, player.character.name, player.character.special_desc])
+                  player.user_id, player.character.name,
+                  player.character.special_desc])
         player.modifiers['attack_dice_type'] = "4"
         player.modifiers['special_active'] = True
 
@@ -155,7 +164,8 @@ def vampire(gc, player, turn_pos):
             not player.modifiers['special_used']):
         # Tell
         gc.tell_h("{} ({}) used their special ability: {}", [
-                  player.user_id, player.character.name, player.character.special_desc])
+                  player.user_id, player.character.name,
+                  player.character.special_desc])
         player.modifiers['damage_dealt_fn'] = lambda player: player.moveDamage(
             2, player)
         player.modifiers['special_active'] = True
@@ -176,7 +186,8 @@ def ultra_soul(gc, player, turn_pos):
         if len(targets) > 0:
             # Present player with list of attack options
             gc.tell_h("{} ({}) used their special ability: {}", [
-                      player.user_id, player.character.name, player.character.special_desc])
+                      player.user_id, player.character.name,
+                      player.character.special_desc])
             gc.tell_h("{} is choosing a target...", [player.user_id])
             data = {'options': [
                 p.user_id for p in targets if p != player]}
