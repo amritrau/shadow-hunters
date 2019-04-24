@@ -398,7 +398,6 @@ class Player:
         self.gc.tell_h("{} hit {} for {} damage!", [
                        other.user_id, self.user_id, dealt])
 
-
         if self.state > 0:
             # Check for counterattack
             if self.modifiers['counterattack']:
@@ -426,7 +425,10 @@ class Player:
                             self.modifiers['attack_dice_type'])
                     self.attack(other, roll_result)
                 else:
-                    self.gc.tell_h("{} declined to counterattack.", [self.user_id])
+                    self.gc.tell_h(
+                        "{} declined to counterattack.",
+                        [self.user_id]
+                    )
 
         return dealt
 
