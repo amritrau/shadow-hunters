@@ -12,7 +12,8 @@ def first_aid(args):
     target_Player = args['self'].choosePlayer(include_self=True)
     target_Player.setDamage(7, args['self'])
     args['self'].gc.tell_h("{} applied {} to {}!", [
-                           args['self'].user_id, args['card'].title, target_Player.user_id])
+                           args['self'].user_id, args['card'].title,
+                           target_Player.user_id])
 
 
 def judgement(args):
@@ -33,7 +34,8 @@ def holy_water(args):
 
 
 def advent(args):
-    """If hunter, can reveal and heal fully, or heal fully if already revealed"""
+    """If hunter, can reveal and heal fully,
+    or heal fully if already revealed"""
 
     data = {'options': ["Do nothing"]}
     if args['self'].character.alleg == 2:
@@ -58,7 +60,8 @@ def disenchant_mirror(args):
     """If shadow and not unknown, force reveal"""
 
     data = {'options': ["Do nothing"]}
-    if args['self'].character.alleg == 0 and args['self'].character.name != "Unknown":
+    is_shadow = args['self'].character.alleg == 0
+    if is_shadow and args['self'].character.name != "Unknown":
         data = {'options': ["Reveal yourself"]}
 
     # Reveal character, or do nothing if hunter
@@ -87,7 +90,8 @@ def blessing(args):
 
 
 def chocolate(args):
-    """If low-hp character, can reveal and heal fully, or heal fully if already revealed"""
+    """If low-hp character, can reveal and heal fully,
+    or heal fully if already revealed"""
 
     data = {'options': ["Do nothing"]}
     if args['self'].character.name in ["Allie", "Agnes",
@@ -113,16 +117,19 @@ def concealed_knowledge(args):
     """Change turn order so that current player goes again"""
 
     args['self'].gc.ask_h(
-        'confirm', {'options': ["Use Concealed Knowledge"]}, args['self'].user_id)
+        'confirm', {'options': ["Use Concealed Knowledge"]},
+        args['self'].user_id)
     args['self'].gc.turn_order.insert(
         args['self'].gc.turn_order.index(args['self']), args['self'])
 
 
 def guardian_angel(args):
-    """User can't take damage until their next turn - this is checked in player.defend() and player.takeTurn()"""
+    """User can't take damage until their next turn.
+    (This is checked in player.defend() and player.takeTurn())"""
 
     args['self'].gc.ask_h(
-        'confirm', {'options': ["Summon a Guardian Angel"]}, args['self'].user_id)
+        'confirm', {'options': ["Summon a Guardian Angel"]},
+        args['self'].user_id)
     args['self'].modifiers['guardian_angel'] = True
 
 # Black single-use cards
@@ -133,7 +140,8 @@ def bloodthirsty_spider(args):
 
     # Choose a player to attack
     args['self'].gc.ask_h(
-        'confirm', {'options': ["Summon a Bloodthirsty Spider"]}, args['self'].user_id)
+        'confirm', {'options': ["Summon a Bloodthirsty Spider"]},
+        args['self'].user_id)
     target = args['self'].choosePlayer()
 
     if target.hasEquipment("Talisman"):
@@ -164,7 +172,8 @@ def moody_goblin(args):
 
     # Show confirmation
     args['self'].gc.ask_h(
-        'confirm', {'options': ["Steal an Equipment Card"]}, args['self'].user_id)
+        'confirm', {'options': ["Steal an Equipment Card"]},
+        args['self'].user_id)
     target_Player = args['self'].choosePlayer(
         filter_fn=lambda x: len(x.equipment))
     if target_Player:
@@ -193,7 +202,8 @@ def diabolic_ritual(args):
 
 
 def banana_peel(args):
-    """If have equipment, must give away one or take damage. If no equipment, must take damage"""
+    """If have equipment, must give away one or take damage.
+    If no equipment, must take damage"""
 
     if len(args['self'].equipment):
         data = {'options': ["Give an equipment card", "Receive 1 damage"]}
@@ -205,8 +215,10 @@ def banana_peel(args):
         'yesno', data, args['self'].user_id)['value']
     if decision == "Give an equipment card":
         # Choose an equipment card to give away
-        args['self'].gc.tell_h("{} is choosing an equipment card to give away...", [
-                               args['self'].user_id])
+        args['self'].gc.tell_h(
+            "{} is choosing an equipment card to give away...",
+            [args['self'].user_id]
+        )
         eq = args['self'].chooseEquipment(args['self'])
 
         # Give away equipment
@@ -252,7 +264,8 @@ def dynamite(args):
 
 
 def spiritual_doll(args):
-    """If roll is >= 5, user takes 3 damage. Otherwise, target takes 3 damage."""
+    """If roll is >= 5, user takes 3 damage.
+    Otherwise, target takes 3 damage."""
 
     # Choose a player to target
     args['self'].gc.ask_h(
