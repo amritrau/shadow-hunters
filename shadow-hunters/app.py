@@ -26,7 +26,8 @@ socketio = SocketIO(app, async_handlers=True)
 # disable caching
 @app.after_request
 def after_request(response):
-    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate, public, max-age=0"
+    cache_control = "no-cache, no-store, must-revalidate, public, max-age=0"
+    response.headers["Cache-Control"] = cache_control
     response.headers["Expires"] = 0
     response.headers["Pragma"] = "no-cache"
     return response
@@ -104,11 +105,11 @@ def room(methods=['GET', 'POST']):
 
         # check for username taken
         connection_lock.acquire()
-        if (room_id in rooms) and username in rooms[room_id]['connections'].values(
-        ):
-            flash("Someone in the room has taken your name")
-            connection_lock.release()
-            return redirect('/')
+        if (room_id in rooms):
+            if username in rooms[room_id]['connections'].values():
+                flash("Someone in the room has taken your name")
+                connection_lock.release()
+                return redirect('/')
 
         # check for game already in progress
         if (room_id in rooms) and rooms[room_id]['status'] == 'GAME':
@@ -244,8 +245,9 @@ def on_start(json):
         return
 
     # Initialize human and AI players
-    rgb = ['rgb(245,245,245)', 'rgb(100,100,100)', 'rgb(79,182,78)', 'rgb(62,99,171)',
-           'rgb(197,97,163)', 'rgb(219,62,62)', 'rgb(249,234,48)', 'rgb(239,136,43)']
+    rgb = ['rgb(245,245,245)', 'rgb(100,100,100)', 'rgb(79,182,78)',
+           'rgb(62,99,171)', 'rgb(197,97,163)', 'rgb(219,62,62)',
+           'rgb(249,234,48)', 'rgb(239,136,43)']
     human_players = [Player(n[0], n[1], rgb.pop(0), False)
                      for n in names_and_sids]
     ai_players = [Player("CPU_{}".format(i), str(i), rgb.pop(0), True)
@@ -341,8 +343,9 @@ def on_special():
     if not player.special_active:
         player.special_active = True  # Guard
         concurrency.reveal_lock.release()
-        player.gc.tell_h(
-            "You've activated your special ability. It will take effect next time its requirements are met.", [], request.sid)
+        msg = "You've activated your special ability."
+        msg += " It will take effect next time its use conditions are met."
+        player.gc.tell_h(msg, [], request.sid)
         player.character.special(rooms[room_id]['gc'], player, turn_pos='now')
         rooms[room_id]['gc'].update_h()
 
@@ -353,7 +356,15 @@ def on_answer(json):
     # Make sure an answer isn't already being processed
     connection_lock.acquire()
     room_id = get_room_id(rooms, request.sid)
-    if not room_id or rooms[room_id]['status'] != 'GAME' or rooms[room_id]['gc'].answer_bin['answered']:
+
+    # Define some checks (functions, not booleans, to preserve short-circuit)
+    def not_in_game(rid):
+        return rooms[rid]['status'] != 'GAME'
+
+    def room_bin_answered(rid):
+        rooms[room_id]['gc'].answer_bin['answered']
+
+    if not room_id or not_in_game(room_id) or room_bin_answered(room_id):
         connection_lock.release()
         return
     bin = rooms[room_id]['gc'].answer_bin
@@ -473,8 +484,8 @@ def on_disconnect():
 
     elif gc and not gc.game_over:
 
-        # If disconnected person was spectating, or dead, or if the game is over,
-        # don't swap them for an AI
+        # If disconnected person was spectating, or dead, or if the game is
+        # over, don't swap them for an AI
         player_in_game = [p for p in gc.players if p.socket_id == request.sid]
         if (not player_in_game) or (not player_in_game[0].state):
             connection_lock.release()
