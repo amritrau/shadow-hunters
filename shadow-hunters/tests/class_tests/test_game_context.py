@@ -9,13 +9,14 @@ import elements
 # test_game_context.py
 # Tests for the GameContext object
 
+
 def test_fields():
 
     # Multiple runs to get many different shuffles
     for _ in range(100):
 
         # test initialization
-        n_players = random.randint(4,8)
+        n_players = random.randint(4, 8)
         gc, ef = helpers.fresh_gc_ef(n_players)
 
         # test fields
@@ -39,6 +40,7 @@ def test_fields():
     # assert private == [p.dump() for p in gc.players]
     # assert public['zones'] == [z.dump() for z in gc.zones]
 
+
 def test_getLivePlayers():
     gc, ef = helpers.fresh_gc_ef()
 
@@ -49,6 +51,7 @@ def test_getLivePlayers():
     gc.players[0].setDamage(14, gc.players[1])
     assert gc.getLivePlayers() == gc.players[1:]
 
+
 def test_getDeadPlayers():
     gc, ef = helpers.fresh_gc_ef()
 
@@ -58,6 +61,7 @@ def test_getDeadPlayers():
     # Check that dead players are properly included
     gc.players[0].setDamage(14, gc.players[1])
     assert gc.getDeadPlayers() == [gc.players[0]]
+
 
 def test_checkWinConditions():
     gc, ef = helpers.fresh_gc_ef()
@@ -82,6 +86,7 @@ def test_checkWinConditions():
         if p.character.alleg == 2:
             p.setDamage(14, p)
     assert [p for p in gc.checkWinConditions() if p.character.alleg == 0]
+
 
 def test_play():
     gc, ef = helpers.fresh_gc_ef()

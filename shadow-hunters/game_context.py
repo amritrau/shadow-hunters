@@ -4,12 +4,16 @@ import copy
 from die import Die
 from zone import Zone
 import elements
+import constants
 
 # game_context.py
 # Implements a GameContext.
 
+
 class GameContext:
-    def __init__(self, players, characters, black_cards, white_cards, green_cards, areas, ask_h, tell_h, show_h, update_h, modifiers = dict()):
+    def __init__(self, players, characters, black_cards, white_cards,
+                 green_cards, areas, ask_h, tell_h, show_h, update_h,
+                 modifiers=dict()):
 
         # Instantiate gameplay objects
         self.players = players
@@ -18,15 +22,13 @@ class GameContext:
 
         # Instantiate characters
         self.characters = characters
-        if len(self.players) <= 6: # hack to send bobs
-            self.characters = [ch for ch in self.characters if ch.resource_id != "bob2"]
+        if len(self.players) <= 6:  # hack to send bobs
+            self.characters = [
+                ch for ch in self.characters if ch.resource_id != "bob2"]
         else:
-            self.characters = [ch for ch in self.characters if ch.resource_id != "bob1"]
-        self.characters.sort(key = lambda x: -x.max_damage)
-        # valid_for_n_players = lambda c: c.modifiers['min_players'] <= len(self.players) <= c.modifiers['max_players']
-        # self.characters = list(filter(valid_for_n_players, characters))
-        # self.characters.sort(key = lambda x: -x.max_damage)
-        # self.playable = copy.deepcopy(characters)
+            self.characters = [
+                ch for ch in self.characters if ch.resource_id != "bob1"]
+        self.characters.sort(key=lambda x: -x.max_damage)
 
         # Instantiate cards
         self.black_cards = black_cards
@@ -88,34 +90,45 @@ class GameContext:
             player.setCharacter(queue.pop())
             player.gc = self
 
+    def getLivePlayers(self, filter_fn=(lambda x: True)):
+        res = filter(filter_fn, [p for p in self.players if p.state > 0])
+        return list(res)
 
-    def getLivePlayers(self):
-        return [p for p in self.players if p.state > 0]
-
-    def getDeadPlayers(self):
-        return [p for p in self.players if p.state == 0]
+    def getDeadPlayers(self, filter_fn=(lambda x: True)):
+        res = filter(filter_fn, [p for p in self.players if p.state < 1])
+        return list(res)
 
     def getPlayersAt(self, location_name):
         live = self.getLivePlayers()
         live_loc = [p for p in live if p.location]
         return [p for p in live_loc if p.location.name == location_name]
 
+    def getAreaFromRoll(self, roll_result):
+        # Get area from roll
+        destination_Area = None
+        for z in self.zones:
+            for a in z.areas:
+                if roll_result in a.domain:
+                    destination_Area = a
+
+        return destination_Area
 
     def _checkWinConditions(self):
         return [p for p in self.players if p.character.win_cond(self, p)]
 
-    def checkWinConditions(self, tell = True):
+    def checkWinConditions(self, tell=True):
         winners = self._checkWinConditions()
         if len(winners):
             self.game_over = True
             winners = self._checkWinConditions()  # Hack to collect Allie
             if tell:
-                display_data = {'type': 'win', 'winners': [p.dump() for p in winners]}
+                display_data = {'type': 'win', 'winners': [
+                    p.dump() for p in winners]}
                 self.show_h(display_data)
                 for w in winners:
                     self.tell_h("{} ({}: {}) won! {}", [
                         w.user_id,
-                        elements.ALLEGIANCE_MAP[w.character.alleg],
+                        constants.ALLEGIANCE_MAP[w.character.alleg],
                         w.character.name,
                         w.character.win_cond_desc
                     ])
@@ -155,6 +168,5 @@ class GameContext:
             'characters': [c.dump() for c in self.characters]
         }
         private_state = private_players
-
 
         return public_state, private_state
