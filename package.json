@@ -1,0 +1,23 @@
+{
+  "name": "shadow-hunters",
+  "version": "1.0.0",
+  "description": "Online multiplayer deduction-based survival game",
+  "main": "setup.js",
+  "dependencies": {
+    "testcafe": "^1.1.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "testcafe chrome tests/serial/ --selector-timeout 15000 --app \"AI_SLEEP=0 SOCKET_SLEEP=0 python3 shadow-hunters/app.py\" && testcafe -c 5 chrome tests/concurrent/ --app \"AI_SLEEP=0 SOCKET_SLEEP=0 python3 shadow-hunters/app.py\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/amritrau/shadow-hunters.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/amritrau/shadow-hunters/issues"
+  },
+  "homepage": "https://github.com/amritrau/shadow-hunters#readme"
+}
