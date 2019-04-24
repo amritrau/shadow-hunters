@@ -253,7 +253,8 @@ def test_die():
     # Player 1 dies by player 2
     p1.die(p2)
 
-    # Check that player 1 is dead, location is none, loses all equipment, and gives one to player 2
+    # Check that player 1 is dead, location is none, loses all equipment, and
+    # gives one to player 2
     assert p1.state == 0
     assert not p1.equipment
     assert bool(roly_hobe in p2.equipment) != bool(talisman in p2.equipment)

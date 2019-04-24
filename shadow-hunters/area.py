@@ -67,7 +67,8 @@ def weird_woods_action(gc, player):
 def erstwhile_altar_action(gc, player):
 
     # Show confirmation
-    # gc.ask_h('confirm', {'options': ["Steal an Equipment card"]}, player.user_id)
+    # gc.ask_h('confirm', {'options': ["Steal an Equipment card"]},
+    # player.user_id)
     target_Player = player.choosePlayer(filter_fn=lambda x: len(x.equipment))
     if target_Player:
         equip_Equipment = player.chooseEquipment(target_Player)

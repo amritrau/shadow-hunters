@@ -180,7 +180,7 @@ def test_concealed_knowledge():
         # Check that card inserts player in proper place
         c.use({'self': p1, 'card': c})
         cur_turn = gc.turn_order[position] == p1
-        next_turn = gc.turn_order[position+1] == p1
+        next_turn = gc.turn_order[position + 1] == p1
         assert cur_turn and next_turn
 
 

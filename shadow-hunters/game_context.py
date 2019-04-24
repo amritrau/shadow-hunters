@@ -11,7 +11,9 @@ import constants
 
 
 class GameContext:
-    def __init__(self, players, characters, black_cards, white_cards, green_cards, areas, ask_h, tell_h, show_h, update_h, modifiers=dict()):
+    def __init__(self, players, characters, black_cards, white_cards,
+                 green_cards, areas, ask_h, tell_h, show_h, update_h,
+                 modifiers=dict()):
 
         # Instantiate gameplay objects
         self.players = players
@@ -27,10 +29,6 @@ class GameContext:
             self.characters = [
                 ch for ch in self.characters if ch.resource_id != "bob1"]
         self.characters.sort(key=lambda x: -x.max_damage)
-        # valid_for_n_players = lambda c: c.modifiers['min_players'] <= len(self.players) <= c.modifiers['max_players']
-        # self.characters = list(filter(valid_for_n_players, characters))
-        # self.characters.sort(key = lambda x: -x.max_damage)
-        # self.playable = copy.deepcopy(characters)
 
         # Instantiate cards
         self.black_cards = black_cards
@@ -93,10 +91,12 @@ class GameContext:
             player.gc = self
 
     def getLivePlayers(self, filter_fn=(lambda x: True)):
-        return list(filter(filter_fn, [p for p in self.players if p.state > 0]))
+        res = filter(filter_fn, [p for p in self.players if p.state > 0])
+        return list(res)
 
     def getDeadPlayers(self, filter_fn=(lambda x: True)):
-        return list(filter(filter_fn, [p for p in self.players if p.state < 1]))
+        res = filter(filter_fn, [p for p in self.players if p.state < 1])
+        return list(res)
 
     def getPlayersAt(self, location_name):
         live = self.getLivePlayers()

@@ -105,7 +105,7 @@ def answer_sequence(answers):
 
 def fresh_gc_ef(n_players=random.randint(4, 8)):
     players = [player.Player("CPU_{}".format(
-        i), 'unused', 'unused', True) for i in range(1, n_players+1)]
+        i), 'unused', 'unused', True) for i in range(1, n_players + 1)]
     ef = elements.ElementFactory()
 
     gc = GameContext(

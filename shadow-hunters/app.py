@@ -104,7 +104,8 @@ def room(methods=['GET', 'POST']):
 
         # check for username taken
         connection_lock.acquire()
-        if (room_id in rooms) and username in rooms[room_id]['connections'].values():
+        if (room_id in rooms) and username in rooms[room_id]['connections'].values(
+        ):
             flash("Someone in the room has taken your name")
             connection_lock.release()
             return redirect('/')
@@ -289,7 +290,7 @@ def on_start(json):
         socketio.emit('game_start', data, room=priv['socket_id'])
     socketio.sleep(1)
     gc.tell_h("Started a game with players {}".format(
-        ", ".join(['{}']*len(players))), [p.user_id for p in players])
+        ", ".join(['{}'] * len(players))), [p.user_id for p in players])
 
     # Initiate gameplay loop
     gc.play()
@@ -376,7 +377,8 @@ def on_message(json):
     json['name'] = rooms[room_id]['connections'][request.sid]
 
     # If player is not in game, or spectating, their color is grey
-    if (rooms[room_id]['status'] != 'GAME') or (request.sid not in [p.socket_id for p in rooms[room_id]['gc'].players]):
+    if (rooms[room_id]['status'] != 'GAME') or (request.sid not in [
+            p.socket_id for p in rooms[room_id]['gc'].players]):
         json['color'] = constants.TEXT_COLORS['server']
     else:
         json['color'] = [p.color for p in rooms[room_id]
@@ -415,7 +417,8 @@ def on_join(json):
         rooms[room_id] = {'status': 'LOBBY', 'gc': None,
                           'connections': {}, 'reconnections': {}}
 
-    # If this is a reconnection event, change player's socket id and AI status in game context
+    # If this is a reconnection event, change player's socket id and AI status
+    # in game context
     if reconnect:
         del rooms[room_id]['reconnections'][name]
         player = [p for p in rooms[room_id]
@@ -429,18 +432,18 @@ def on_join(json):
     connection_lock.release()
 
     # Emit welcome message to new player
-    msg = 'Welcome to Shadow Hunters Room: '+room_id
+    msg = 'Welcome to Shadow Hunters Room: ' + room_id
     if spectate:
-        msg = 'You are now spectating Shadow Hunters Room: '+room_id
+        msg = 'You are now spectating Shadow Hunters Room: ' + room_id
     elif reconnect:
-        msg = 'You\'ve rejoined your game in Shadow Hunters Room: '+room_id
+        msg = 'You\'ve rejoined your game in Shadow Hunters Room: ' + room_id
     socket_tell(msg, [], None, room_id, client=(request.sid,))
 
     # Tell player about other room members
     members = [x for x in rooms[room_id]['connections'].values() if x != name]
     msg = 'There\'s no one else here!'
     if members:
-        msg = 'Other players in the room: '+', '.join(members)
+        msg = 'Other players in the room: ' + ', '.join(members)
     if not reconnect:
         socket_tell(msg, [], None, room_id, client=(request.sid,))
 

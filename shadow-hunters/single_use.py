@@ -90,7 +90,8 @@ def chocolate(args):
     """If low-hp character, can reveal and heal fully, or heal fully if already revealed"""
 
     data = {'options': ["Do nothing"]}
-    if args['self'].character.name in ["Allie", "Agnes", "Emi", "Ellen", "Ultra Soul", "Unknown"]:
+    if args['self'].character.name in ["Allie", "Agnes",
+                                       "Emi", "Ellen", "Ultra Soul", "Unknown"]:
         if args['self'].state == 2:
             data['options'].append("Reveal and heal fully")
         else:

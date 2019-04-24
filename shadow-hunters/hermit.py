@@ -7,7 +7,10 @@ def blackmail(args):
 
     # Choose a player to give the card to
     args['self'].gc.ask_h(
-        'confirm', {'options': ["Use Hermit's Blackmail"]}, args['self'].user_id)
+        'confirm',
+        {'options': ["Use Hermit's Blackmail"]},
+        args['self'].user_id
+    )
     target = args['self'].choosePlayer()
     display_data = args['card'].dump()
     display_data['type'] = 'draw'
@@ -17,8 +20,11 @@ def blackmail(args):
     if target.character.alleg > 0:
 
         # Target is neutral or hunter, get decision
-        target.gc.tell_h("You are a {}.", [
-                         constants.ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
+        target.gc.tell_h(
+            "You are a {}.",
+            [constants.ALLEGIANCE_MAP[target.character.alleg]],
+            target.socket_id
+        )
         if len(target.equipment):
             data = {'options': [
                 "Give an equipment card", "Receive 1 damage"]}
@@ -46,8 +52,11 @@ def blackmail(args):
     else:
 
         # Target is a shadow, nothing happens
-        target.gc.tell_h("You are a {}. Do nothing.", [
-                         constants.ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
+        target.gc.tell_h(
+            "You are a {}. Do nothing.",
+            [constants.ALLEGIANCE_MAP[target.character.alleg]],
+            target.socket_id
+        )
         data = {'options': ['Do nothing']}
         target.gc.ask_h('confirm', data, target.user_id)
         target.gc.tell_h("{} did nothing.", [target.user_id])
@@ -67,15 +76,16 @@ def greed(args):
     if target.character.alleg < 2:
 
         # Target is neutral or shadow, get decision
-        target.gc.tell_h("You are a {}.", [
-                         constants.ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
+        target.gc.tell_h(
+            "You are a {}.",
+            [constants.ALLEGIANCE_MAP[target.character.alleg]],
+            target.socket_id
+        )
         if len(target.equipment):
-            data = {'options': [
-                "Give an equipment card", "Receive 1 damage"]}
+            data = {'options': ["Give an equipment card", "Receive 1 damage"]}
         else:
             data = {'options': ["Receive 1 damage"]}
-        decision = target.gc.ask_h(
-            'yesno', data, target.user_id)['value']
+        decision = target.gc.ask_h('yesno', data, target.user_id)['value']
 
         # Branch on decision
         if decision == "Give an equipment card":
@@ -90,14 +100,16 @@ def greed(args):
 
             # Target takes 1 damage
             new_damage = target.moveDamage(-1, args['self'])
-            target.gc.tell_h("{} took {} damage!",
-                             [target.user_id, "1"])
+            target.gc.tell_h("{} took {} damage!", [target.user_id, "1"])
 
     else:
 
         # Target is a hunter, nothing happens
-        target.gc.tell_h("You are a {}. Do nothing.", [
-                         constants.ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
+        target.gc.tell_h(
+            "You are a {}. Do nothing.",
+            [constants.ALLEGIANCE_MAP[target.character.alleg]],
+            target.socket_id
+        )
         data = {'options': ['Do nothing']}
         target.gc.ask_h('confirm', data, target.user_id)
         target.gc.tell_h("{} did nothing.", [target.user_id])
@@ -107,7 +119,10 @@ def anger(args):
 
     # Choose a player to give the card to
     args['self'].gc.ask_h(
-        'confirm', {'options': ["Use Hermit's Anger"]}, args['self'].user_id)
+        'confirm',
+        {'options': ["Use Hermit's Anger"]},
+        args['self'].user_id
+    )
     target = args['self'].choosePlayer()
     display_data = args['card'].dump()
     display_data['type'] = 'draw'
@@ -117,8 +132,11 @@ def anger(args):
     if target.character.alleg in [0, 2]:
 
         # Target is hunter or shadow, get decision
-        target.gc.tell_h("You are a {}.", [
-                         constants.ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
+        target.gc.tell_h(
+            "You are a {}.",
+            [constants.ALLEGIANCE_MAP[target.character.alleg]],
+            target.socket_id
+        )
         if len(target.equipment):
             data = {'options': [
                 "Give an equipment card", "Receive 1 damage"]}
@@ -146,8 +164,11 @@ def anger(args):
     else:
 
         # Target is a neutral, nothing happens
-        target.gc.tell_h("You are a {}. Do nothing.", [
-                         constants.ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
+        target.gc.tell_h(
+            "You are a {}. Do nothing.",
+            [constants.ALLEGIANCE_MAP[target.character.alleg]],
+            target.socket_id
+        )
         data = {'options': ['Do nothing']}
         target.gc.ask_h('confirm', data, target.user_id)
         target.gc.tell_h("{} did nothing.", [target.user_id])
@@ -167,8 +188,11 @@ def slap(args):
     if target.character.alleg == 2:
 
         # Prompt target to receive 1 damage
-        target.gc.tell_h("You are a {}.", [
-                         constants.ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
+        target.gc.tell_h(
+            "You are a {}.",
+            [constants.ALLEGIANCE_MAP[target.character.alleg]],
+            target.socket_id
+        )
         data = {'options': ["Receive 1 damage"]}
         target.gc.ask_h('confirm', data, target.user_id)
 
@@ -179,8 +203,11 @@ def slap(args):
     else:
 
         # Target is not a hunter, nothing happens
-        target.gc.tell_h("You are a {}. Do nothing.", [
-                         constants.ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
+        target.gc.tell_h(
+            "You are a {}. Do nothing.",
+            [constants.ALLEGIANCE_MAP[target.character.alleg]],
+            target.socket_id
+        )
         data = {'options': ['Do nothing']}
         target.gc.ask_h('confirm', data, target.user_id)
         target.gc.tell_h("{} did nothing.", [target.user_id])
@@ -200,8 +227,11 @@ def spell(args):
     if target.character.alleg == 0:
 
         # Prompt target to receive 1 damage
-        target.gc.tell_h("You are a {}.", [
-                         constants.ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
+        target.gc.tell_h(
+            "You are a {}.",
+            [constants.ALLEGIANCE_MAP[target.character.alleg]],
+            target.socket_id
+        )
         data = {'options': ["Receive 1 damage"]}
         target.gc.ask_h('confirm', data, target.user_id)
 
@@ -212,8 +242,11 @@ def spell(args):
     else:
 
         # Target is not a shadow, nothing happens
-        target.gc.tell_h("You are a {}. Do nothing.", [
-                         constants.ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
+        target.gc.tell_h(
+            "You are a {}. Do nothing.",
+            [constants.ALLEGIANCE_MAP[target.character.alleg]],
+            target.socket_id
+        )
         data = {'options': ['Do nothing']}
         target.gc.ask_h('confirm', data, target.user_id)
         target.gc.tell_h("{} did nothing.", [target.user_id])
@@ -223,7 +256,10 @@ def exorcism(args):
 
     # Choose a player to give the card to
     args['self'].gc.ask_h(
-        'confirm', {'options': ["Use Hermit's Exorcism"]}, args['self'].user_id)
+        'confirm',
+        {'options': ["Use Hermit's Exorcism"]},
+        args['self'].user_id
+    )
     target = args['self'].choosePlayer()
     display_data = args['card'].dump()
     display_data['type'] = 'draw'
@@ -232,8 +268,11 @@ def exorcism(args):
     # If shadow, take 2 damage
     if target.character.alleg == 0:
         # Prompt target to receive 2 damage
-        target.gc.tell_h("You are a {}.", [
-                         constants.ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
+        target.gc.tell_h(
+            "You are a {}.",
+            [constants.ALLEGIANCE_MAP[target.character.alleg]],
+            target.socket_id
+        )
         data = {'options': ["Receive 2 damage"]}
         target.gc.ask_h('confirm', data, target.user_id)
 
@@ -244,8 +283,11 @@ def exorcism(args):
     else:
 
         # Target is not a shadow, nothing happens
-        target.gc.tell_h("You are a {}. Do nothing.", [
-                         constants.ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
+        target.gc.tell_h(
+            "You are a {}. Do nothing.",
+            [constants.ALLEGIANCE_MAP[target.character.alleg]],
+            target.socket_id
+        )
         data = {'options': ['Do nothing']}
         target.gc.ask_h('confirm', data, target.user_id)
         target.gc.tell_h("{} did nothing.", [target.user_id])
@@ -255,7 +297,10 @@ def nurturance(args):
 
     # Choose a player to give the card to
     args['self'].gc.ask_h(
-        'confirm', {'options': ["Use Hermit's Nurturance"]}, args['self'].user_id)
+        'confirm',
+        {'options': ["Use Hermit's Nurturance"]},
+        args['self'].user_id
+    )
     target = args['self'].choosePlayer()
     display_data = args['card'].dump()
     display_data['type'] = 'draw'
@@ -264,8 +309,11 @@ def nurturance(args):
     # If neutral, heal 1 damage (unless at 0, then take 1 damage)
     if target.character.alleg == 1:
         # Branch on hp value
-        target.gc.tell_h("You are a {}.", [
-                         constants.ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
+        target.gc.tell_h(
+            "You are a {}.",
+            [constants.ALLEGIANCE_MAP[target.character.alleg]],
+            target.socket_id
+        )
         if target.damage == 0:
 
             # Hp is 0, prompt to receive 1 damage
@@ -291,8 +339,11 @@ def nurturance(args):
     else:
 
         # Target is not a neutral, nothing happens
-        target.gc.tell_h("You are a {}. Do nothing.", [
-                         constants.ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
+        target.gc.tell_h(
+            "You are a {}. Do nothing.",
+            [constants.ALLEGIANCE_MAP[target.character.alleg]],
+            target.socket_id
+        )
         data = {'options': ['Do nothing']}
         target.gc.ask_h('confirm', data, target.user_id)
         target.gc.tell_h("{} did nothing.", [target.user_id])
@@ -311,8 +362,11 @@ def aid(args):
     # If hunter, heal 1 damage (unless at 0, then take 1 damage)
     if target.character.alleg == 2:
         # Branch on hp value
-        target.gc.tell_h("You are a {}.", [
-                         constants.ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
+        target.gc.tell_h(
+            "You are a {}.",
+            [constants.ALLEGIANCE_MAP[target.character.alleg]],
+            target.socket_id
+        )
         if target.damage == 0:
 
             # Hp is 0, prompt to receive 1 damage
@@ -338,8 +392,11 @@ def aid(args):
     else:
 
         # Target is not a hunter, nothing happens
-        target.gc.tell_h("You are a {}. Do nothing.", [
-                         constants.ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
+        target.gc.tell_h(
+            "You are a {}. Do nothing.",
+            [constants.ALLEGIANCE_MAP[target.character.alleg]],
+            target.socket_id
+        )
         data = {'options': ['Do nothing']}
         target.gc.ask_h('confirm', data, target.user_id)
         target.gc.tell_h("{} did nothing.", [target.user_id])
@@ -358,8 +415,11 @@ def huddle(args):
     # If shadow, heal 1 damage (unless at 0, then take 1 damage)
     if target.character.alleg == 0:
         # Branch on hp value
-        target.gc.tell_h("You are a {}.", [
-                         constants.ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
+        target.gc.tell_h(
+            "You are a {}.",
+            [constants.ALLEGIANCE_MAP[target.character.alleg]],
+            target.socket_id
+        )
         if target.damage == 0:
 
             # Hp is 0, prompt to receive 1 damage
@@ -385,8 +445,11 @@ def huddle(args):
     else:
 
         # Target is not a shadow, nothing happens
-        target.gc.tell_h("You are a {}. Do nothing.", [
-                         constants.ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
+        target.gc.tell_h(
+            "You are a {}. Do nothing.",
+            [constants.ALLEGIANCE_MAP[target.character.alleg]],
+            target.socket_id
+        )
         data = {'options': ['Do nothing']}
         target.gc.ask_h('confirm', data, target.user_id)
         target.gc.tell_h("{} did nothing.", [target.user_id])
@@ -418,8 +481,11 @@ def lesson(args):
     else:
 
         # Target's hp is < 12, nothing happens
-        target.gc.tell_h("Your maximum hp ({}) is less than {}. Do nothing.", [
-                         target.character.max_damage, "12"], target.socket_id)
+        target.gc.tell_h(
+            "Your maximum hp ({}) is less than {}. Do nothing.",
+            [target.character.max_damage, "12"],
+            target.socket_id
+        )
         data = {'options': ['Do nothing']}
         target.gc.ask_h('confirm', data, target.user_id)
         target.gc.tell_h("{} did nothing.", [target.user_id])
@@ -451,8 +517,11 @@ def bully(args):
     else:
 
         # Target's hp is > 11, nothing happens
-        target.gc.tell_h("Your maximum hp ({}) is greater than {}. Do nothing.", [
-                         target.character.max_damage, "11"], target.socket_id)
+        target.gc.tell_h(
+            "Your maximum hp ({}) is greater than {}. Do nothing.",
+            [target.character.max_damage, "11"],
+            target.socket_id
+        )
         data = {'options': ['Do nothing']}
         target.gc.ask_h('confirm', data, target.user_id)
         target.gc.tell_h("{} did nothing.", [target.user_id])
@@ -461,7 +530,10 @@ def bully(args):
 def prediction(args):
     # Choose a player to give the card to
     args['self'].gc.ask_h(
-        'confirm', {'options': ["Use Hermit's Prediction"]}, args['self'].user_id)
+        'confirm',
+        {'options': ["Use Hermit's Prediction"]},
+        args['self'].user_id
+    )
     target = args['self'].choosePlayer()
     display_data = args['card'].dump()
     display_data['type'] = 'draw'

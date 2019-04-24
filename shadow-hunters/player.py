@@ -185,7 +185,8 @@ class Player:
 
             # If player has Masamune, can't decline unless there are no options
             data = {'options': [t.user_id for t in targets]}
-            if ("Cursed Sword Masamune" not in [e.title for e in self.equipment]) or len(data['options']) == 0:
+            if ("Cursed Sword Masamune" not in [
+                    e.title for e in self.equipment]) or len(data['options']) == 0:
                 data['options'].append("Decline")
             answer = self.gc.ask_h('select', data, self.user_id)['value']
 
@@ -200,14 +201,16 @@ class Player:
 
                 # Roll with the 4-sided die if the player has masamune
                 roll_result = 0
-                if "Cursed Sword Masamune" in [e.title for e in self.equipment]:
+                if "Cursed Sword Masamune" in [
+                        e.title for e in self.equipment]:
                     self.gc.tell_h("{} rolls with the 4-sided die using the {}!",
                                    [self.user_id, "Cursed Sword Masamune"])
                     roll_result = self.rollDice('4')
                 else:
                     roll_result = self.rollDice(dice_type)
 
-                # If player has Machine Gun, launch attack on everyone in the zone. Otherwise, attack the target
+                # If player has Machine Gun, launch attack on everyone in the
+                # zone. Otherwise, attack the target
                 if "Machine Gun" in [e.title for e in self.equipment]:
                     self.gc.tell_h("{}'s {} hits everyone in their attack range!", [
                                    self.user_id, "Machine Gun"])
@@ -398,7 +401,8 @@ class Player:
                 self.gc.tell_h("{} is counterattacking!", [self.user_id])
                 # Roll with the 4-sided die if the player has masamune
                 roll_result = 0
-                if "Cursed Sword Masamune" in [e.title for e in self.equipment]:
+                if "Cursed Sword Masamune" in [
+                        e.title for e in self.equipment]:
                     self.gc.tell_h("{} rolls with the 4-sided die using the {}!",
                                    [self.user_id, "Cursed Sword Masamune"])
                     roll_result = self.rollDice('4')

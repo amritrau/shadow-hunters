@@ -141,7 +141,8 @@ def ellen(gc, player, turn_pos):
 
 
 def valkyrie(gc, player, turn_pos):
-    if (not player.modifiers['special_active']) and (not player.modifiers['special_used']):
+    if (not player.modifiers['special_active']) and (
+            not player.modifiers['special_used']):
         # Tell
         gc.tell_h("{} ({}) used their special ability: {}", [
                   player.user_id, player.character.name, player.character.special_desc])
@@ -150,7 +151,8 @@ def valkyrie(gc, player, turn_pos):
 
 
 def vampire(gc, player, turn_pos):
-    if (not player.modifiers['special_active']) and (not player.modifiers['special_used']):
+    if (not player.modifiers['special_active']) and (
+            not player.modifiers['special_used']):
         # Tell
         gc.tell_h("{} ({}) used their special ability: {}", [
                   player.user_id, player.character.name, player.character.special_desc])
