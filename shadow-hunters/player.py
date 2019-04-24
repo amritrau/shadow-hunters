@@ -402,31 +402,31 @@ class Player:
         if self.state > 0:
             # Check for counterattack
             if self.modifiers['counterattack']:
-            # Ask if player wants to counterattack
-            self.gc.tell_h(
-                "{}, the {}, is deciding whether to counterattack!",
-                [self.user_id, "Werewolf"])
-            answer = self.gc.ask_h(
-                'confirm', {'options': ["Counterattack", "Decline"]},
-                self.user_id)['value']
+                # Ask if player wants to counterattack
+                self.gc.tell_h(
+                    "{}, the {}, is deciding whether to counterattack!",
+                    [self.user_id, "Werewolf"])
+                answer = self.gc.ask_h(
+                    'confirm', {'options': ["Counterattack", "Decline"]},
+                    self.user_id)['value']
 
-            if answer != "Decline":
-                self.gc.tell_h("{} is counterattacking!", [self.user_id])
-                # Roll with the 4-sided die if the player has masamune
-                roll_result = 0
-                if "Cursed Sword Masamune" in [
-                        e.title for e in self.equipment]:
-                    self.gc.tell_h(
-                        "{} rolls with the 4-sided die using the {}!",
-                        [self.user_id, "Cursed Sword Masamune"]
-                    )
-                    roll_result = self.rollDice('4')
+                if answer != "Decline":
+                    self.gc.tell_h("{} is counterattacking!", [self.user_id])
+                    # Roll with the 4-sided die if the player has masamune
+                    roll_result = 0
+                    if "Cursed Sword Masamune" in [
+                            e.title for e in self.equipment]:
+                        self.gc.tell_h(
+                            "{} rolls with the 4-sided die using the {}!",
+                            [self.user_id, "Cursed Sword Masamune"]
+                        )
+                        roll_result = self.rollDice('4')
+                    else:
+                        roll_result = self.rollDice(
+                            self.modifiers['attack_dice_type'])
+                    self.attack(other, roll_result)
                 else:
-                    roll_result = self.rollDice(
-                        self.modifiers['attack_dice_type'])
-                self.attack(other, roll_result)
-            else:
-                self.gc.tell_h("{} declined to counterattack.", [self.user_id])
+                    self.gc.tell_h("{} declined to counterattack.", [self.user_id])
 
         return dealt
 
