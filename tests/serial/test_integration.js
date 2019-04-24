@@ -47,7 +47,7 @@ test('Roll dice', async t => {
     const rollDice = await Selector('#confirm').with({ visibilityCheck: true})();
 
     await t
-        .click(rollDice);
+        .click(diceSelector);
 });
 
 
