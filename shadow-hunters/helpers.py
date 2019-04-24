@@ -2,6 +2,7 @@ from game_context import GameContext
 import player
 import elements
 import random
+import constants
 
 # helper functions frontend communication
 
@@ -18,31 +19,31 @@ def color_format(str, args, gc):
     areas = [a.name for a in ef.AREAS]
 
     # assign colors
-    colors = [elements.TEXT_COLORS['server']]
+    colors = [constants.TEXT_COLORS['server']]
     for n in args:
         if gc:
             p = [p for p in gc.players if p.user_id == n]
         if isinstance(n, int):
-            colors.append(elements.TEXT_COLORS['number'])
+            colors.append(constants.TEXT_COLORS['number'])
         elif n in cards:
-            card_color = elements.CARD_COLOR_MAP[(
+            card_color = constants.CARD_COLOR_MAP[(
                 [c for c in all_cards if c.title == n][0]).color]
-            colors.append(elements.TEXT_COLORS[card_color])
+            colors.append(constants.TEXT_COLORS[card_color])
         elif n == 'a Hermit Card':
-            colors.append(elements.TEXT_COLORS['Green'])
+            colors.append(constants.TEXT_COLORS['Green'])
         elif n in shadows or n == 'Shadow':
-            colors.append(elements.TEXT_COLORS['shadow'])
+            colors.append(constants.TEXT_COLORS['shadow'])
         elif n in hunters or n == 'Hunter':
-            colors.append(elements.TEXT_COLORS['hunter'])
+            colors.append(constants.TEXT_COLORS['hunter'])
         elif n in neutrals or n == 'Neutral':
-            colors.append(elements.TEXT_COLORS['neutral'])
+            colors.append(constants.TEXT_COLORS['neutral'])
         elif n in areas:
-            colors.append(elements.TEXT_COLORS[n])
+            colors.append(constants.TEXT_COLORS[n])
         elif gc and p:
             colors.append(p[0].color)
         else:
-            colors.append(elements.TEXT_COLORS['server'])
-        colors.append(elements.TEXT_COLORS['server'])
+            colors.append(constants.TEXT_COLORS['server'])
+        colors.append(constants.TEXT_COLORS['server'])
 
     # assign strings
     args += ['']

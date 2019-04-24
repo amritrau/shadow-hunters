@@ -8,6 +8,7 @@ from threading import Lock
 from game_context import GameContext
 from player import Player
 import elements
+import constants
 from helpers import color_format, get_room_id
 
 # app config
@@ -375,7 +376,7 @@ def on_message(json):
 
     # If player is not in game, or spectating, their color is grey
     if (rooms[room_id]['status'] != 'GAME') or (request.sid not in [p.socket_id for p in rooms[room_id]['gc'].players]):
-        json['color'] = elements.TEXT_COLORS['server']
+        json['color'] = constants.TEXT_COLORS['server']
     else:
         json['color'] = [p.color for p in rooms[room_id]
                          ['gc'].players if p.socket_id == request.sid][0]

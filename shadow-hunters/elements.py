@@ -2,6 +2,7 @@ import card
 import deck
 import character
 import area
+import constants
 from threading import Lock
 
 # elements.py
@@ -9,36 +10,6 @@ from threading import Lock
 # game areas, decks, and cards in an element factory. Every
 # game context is initialized with its own element factory.
 
-# Enum for allegiances
-ALLEGIANCE_MAP = {
-    0: "Shadow",
-    1: "Neutral",
-    2: "Hunter"
-}
-
-# Enum for card types
-CARD_COLOR_MAP = {
-    0: "White",
-    1: "Black",
-    2: "Green"
-}
-
-TEXT_COLORS = {
-    'server':          'rgb(200,200,200)',
-    'number':          'rgb(153,204,255)',
-    'White':           'rgb(255,255,255)',
-    'Black':           'rgb(75,75,75)',
-    'Green':           'rgb(143,194,0)',
-    'shadow':          'rgb(128,0,0)',
-    'neutral':         'rgb(255,255,153)',
-    'hunter':          'rgb(51,51,255)',
-    'Weird Woods':     'rgb(102,153,153)',
-    'Church':          'rgb(255,255,255)',
-    'Cemetery':        'rgb(75,75,75)',
-    'Erstwhile Altar': 'rgb(204,68,0)',
-    'Hermit\'s Cabin': 'rgb(143,194,0)',
-    'Underworld Gate': 'rgb(150,0,150)'
-}
 
 # Lock for manipulating reveals
 reveal_lock = Lock()
@@ -631,7 +602,7 @@ class ElementFactory:
 
                 # Target is neutral or hunter, get decision
                 target.gc.tell_h("You are a {}.", [
-                                 ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
+                                 constants.ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
                 if len(target.equipment):
                     data = {'options': [
                         "Give an equipment card", "Receive 1 damage"]}
@@ -660,7 +631,7 @@ class ElementFactory:
 
                 # Target is a shadow, nothing happens
                 target.gc.tell_h("You are a {}. Do nothing.", [
-                                 ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
+                                 constants.ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
                 data = {'options': ['Do nothing']}
                 target.gc.ask_h('confirm', data, target.user_id)
                 target.gc.tell_h("{} did nothing.", [target.user_id])
@@ -680,7 +651,7 @@ class ElementFactory:
 
                 # Target is neutral or shadow, get decision
                 target.gc.tell_h("You are a {}.", [
-                                 ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
+                                 constants.ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
                 if len(target.equipment):
                     data = {'options': [
                         "Give an equipment card", "Receive 1 damage"]}
@@ -709,7 +680,7 @@ class ElementFactory:
 
                 # Target is a hunter, nothing happens
                 target.gc.tell_h("You are a {}. Do nothing.", [
-                                 ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
+                                 constants.ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
                 data = {'options': ['Do nothing']}
                 target.gc.ask_h('confirm', data, target.user_id)
                 target.gc.tell_h("{} did nothing.", [target.user_id])
@@ -729,7 +700,7 @@ class ElementFactory:
 
                 # Target is hunter or shadow, get decision
                 target.gc.tell_h("You are a {}.", [
-                                 ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
+                                 constants.ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
                 if len(target.equipment):
                     data = {'options': [
                         "Give an equipment card", "Receive 1 damage"]}
@@ -758,7 +729,7 @@ class ElementFactory:
 
                 # Target is a neutral, nothing happens
                 target.gc.tell_h("You are a {}. Do nothing.", [
-                                 ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
+                                 constants.ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
                 data = {'options': ['Do nothing']}
                 target.gc.ask_h('confirm', data, target.user_id)
                 target.gc.tell_h("{} did nothing.", [target.user_id])
@@ -778,7 +749,7 @@ class ElementFactory:
 
                 # Prompt target to receive 1 damage
                 target.gc.tell_h("You are a {}.", [
-                                 ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
+                                 constants.ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
                 data = {'options': ["Receive 1 damage"]}
                 target.gc.ask_h('confirm', data, target.user_id)
 
@@ -790,7 +761,7 @@ class ElementFactory:
 
                 # Target is not a hunter, nothing happens
                 target.gc.tell_h("You are a {}. Do nothing.", [
-                                 ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
+                                 constants.ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
                 data = {'options': ['Do nothing']}
                 target.gc.ask_h('confirm', data, target.user_id)
                 target.gc.tell_h("{} did nothing.", [target.user_id])
@@ -810,7 +781,7 @@ class ElementFactory:
 
                 # Prompt target to receive 1 damage
                 target.gc.tell_h("You are a {}.", [
-                                 ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
+                                 constants.ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
                 data = {'options': ["Receive 1 damage"]}
                 target.gc.ask_h('confirm', data, target.user_id)
 
@@ -822,7 +793,7 @@ class ElementFactory:
 
                 # Target is not a shadow, nothing happens
                 target.gc.tell_h("You are a {}. Do nothing.", [
-                                 ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
+                                 constants.ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
                 data = {'options': ['Do nothing']}
                 target.gc.ask_h('confirm', data, target.user_id)
                 target.gc.tell_h("{} did nothing.", [target.user_id])
@@ -841,7 +812,7 @@ class ElementFactory:
             if target.character.alleg == 0:
                 # Prompt target to receive 2 damage
                 target.gc.tell_h("You are a {}.", [
-                                 ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
+                                 constants.ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
                 data = {'options': ["Receive 2 damage"]}
                 target.gc.ask_h('confirm', data, target.user_id)
 
@@ -853,7 +824,7 @@ class ElementFactory:
 
                 # Target is not a shadow, nothing happens
                 target.gc.tell_h("You are a {}. Do nothing.", [
-                                 ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
+                                 constants.ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
                 data = {'options': ['Do nothing']}
                 target.gc.ask_h('confirm', data, target.user_id)
                 target.gc.tell_h("{} did nothing.", [target.user_id])
@@ -872,7 +843,7 @@ class ElementFactory:
             if target.character.alleg == 1:
                 # Branch on hp value
                 target.gc.tell_h("You are a {}.", [
-                                 ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
+                                 constants.ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
                 if target.damage == 0:
 
                     # Hp is 0, prompt to receive 1 damage
@@ -899,7 +870,7 @@ class ElementFactory:
 
                 # Target is not a neutral, nothing happens
                 target.gc.tell_h("You are a {}. Do nothing.", [
-                                 ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
+                                 constants.ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
                 data = {'options': ['Do nothing']}
                 target.gc.ask_h('confirm', data, target.user_id)
                 target.gc.tell_h("{} did nothing.", [target.user_id])
@@ -918,7 +889,7 @@ class ElementFactory:
             if target.character.alleg == 2:
                 # Branch on hp value
                 target.gc.tell_h("You are a {}.", [
-                                 ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
+                                 constants.ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
                 if target.damage == 0:
 
                     # Hp is 0, prompt to receive 1 damage
@@ -945,7 +916,7 @@ class ElementFactory:
 
                 # Target is not a hunter, nothing happens
                 target.gc.tell_h("You are a {}. Do nothing.", [
-                                 ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
+                                 constants.ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
                 data = {'options': ['Do nothing']}
                 target.gc.ask_h('confirm', data, target.user_id)
                 target.gc.tell_h("{} did nothing.", [target.user_id])
@@ -964,7 +935,7 @@ class ElementFactory:
             if target.character.alleg == 0:
                 # Branch on hp value
                 target.gc.tell_h("You are a {}.", [
-                                 ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
+                                 constants.ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
                 if target.damage == 0:
 
                     # Hp is 0, prompt to receive 1 damage
@@ -991,7 +962,7 @@ class ElementFactory:
 
                 # Target is not a shadow, nothing happens
                 target.gc.tell_h("You are a {}. Do nothing.", [
-                                 ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
+                                 constants.ALLEGIANCE_MAP[target.character.alleg]], target.socket_id)
                 data = {'options': ['Do nothing']}
                 target.gc.ask_h('confirm', data, target.user_id)
                 target.gc.tell_h("{} did nothing.", [target.user_id])

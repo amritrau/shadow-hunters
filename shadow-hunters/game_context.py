@@ -4,6 +4,7 @@ import copy
 from die import Die
 from zone import Zone
 import elements
+import constants
 
 # game_context.py
 # Implements a GameContext.
@@ -117,7 +118,7 @@ class GameContext:
                 for w in winners:
                     self.tell_h("{} ({}: {}) won! {}", [
                         w.user_id,
-                        elements.ALLEGIANCE_MAP[w.character.alleg],
+                        constants.ALLEGIANCE_MAP[w.character.alleg],
                         w.character.name,
                         w.character.win_cond_desc
                     ])
