@@ -1,11 +1,11 @@
 matrix:
   include:
-    - language: python
-      python: "3.6"
-      script:
-        - pip3 install pycodestyle
-        - pytest
-        - pycodestyle --statistics -q .
+    #- language: python
+    #  python: "3.6"
+    #  script:
+    #    - pip3 install pycodestyle
+    #    - pytest
+    #    - pycodestyle --statistics -q .
     - language: node_js
       node_js: "stable"
       language: python
@@ -27,4 +27,5 @@ matrix:
         - sleep 3
         - fluxbox >/dev/null 2>&1 &
       script:
+        - npm install testcafe
         - npm test
