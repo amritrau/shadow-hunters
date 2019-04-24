@@ -177,6 +177,7 @@ class Player:
             live_players = [p for p in self.gc.getLivePlayers() if p.location]
             targets = [p for p in live_players if (
                 p.location.zone == self.location.zone and p != self)]
+
             if "Handgun" in [e.title for e in self.equipment]:
                 self.gc.tell_h("{}'s {} reverses their attack range.", [
                                self.user_id, "Handgun"])
@@ -185,8 +186,8 @@ class Player:
 
             # If player has Masamune, can't decline unless there are no options
             data = {'options': [t.user_id for t in targets]}
-            if ("Cursed Sword Masamune" not in [
-                    e.title for e in self.equipment]) or len(data['options']) == 0:
+            has_opts = len(data['options'])
+            if self.hasEquipment("Cursed Sword Masamune") or not has_opts:
                 data['options'].append("Decline")
             answer = self.gc.ask_h('select', data, self.user_id)['value']
 
@@ -194,17 +195,21 @@ class Player:
 
                 # Get target
                 target_name = answer
-                target_Player = [
-                    p for p in self.gc.getLivePlayers() if p.user_id == target_name][0]
-                self.gc.tell_h("{} is attacking {}!", [
-                               self.user_id, target_name])
+                target_Player = self.gc.getLivePlayers(
+                    lambda x: x.user_id == target_name
+                )[0]
+                self.gc.tell_h(
+                    "{} is attacking {}!",
+                    [self.user_id, target_name]
+                )
 
                 # Roll with the 4-sided die if the player has masamune
                 roll_result = 0
-                if "Cursed Sword Masamune" in [
-                        e.title for e in self.equipment]:
-                    self.gc.tell_h("{} rolls with the 4-sided die using the {}!",
-                                   [self.user_id, "Cursed Sword Masamune"])
+                if self.hasEquipment("Cursed Sword Masamune"):
+                    self.gc.tell_h(
+                        "{} rolls with the 4-sided die using the {}!",
+                        [self.user_id, "Cursed Sword Masamune"]
+                    )
                     roll_result = self.rollDice('4')
                 else:
                     roll_result = self.rollDice(dice_type)
@@ -212,8 +217,10 @@ class Player:
                 # If player has Machine Gun, launch attack on everyone in the
                 # zone. Otherwise, attack the target
                 if "Machine Gun" in [e.title for e in self.equipment]:
-                    self.gc.tell_h("{}'s {} hits everyone in their attack range!", [
-                                   self.user_id, "Machine Gun"])
+                    self.gc.tell_h(
+                        "{}'s {} hits everyone in their attack range!",
+                        [self.user_id, "Machine Gun"]
+                    )
                     for t in targets:
                         damage_dealt = self.attack(t, roll_result)
                 else:
@@ -239,7 +246,8 @@ class Player:
         # Use card if it's single-use, or add to arsenal if it's equipment
         if drawn.is_equipment:
             self.gc.ask_h('confirm', {'options': [
-                          "Add {} to arsenal".format(drawn.title)]}, self.user_id)
+                          "Add {} to arsenal".format(drawn.title)]},
+                          self.user_id)
             self.gc.tell_h("{} added {} to their arsenal!",
                            [self.user_id, public_title])
             self.equipment.append(drawn)
@@ -348,8 +356,9 @@ class Player:
                 amount = eq.use(is_attack, successful, amount)
 
         # Check for spear of longinus
-        has_spear = "Spear of Longinus" in [e.title for e in self.equipment]
-        if successful and self.character.alleg == 2 and self.state == 1 and has_spear:
+        has_spear = self.hasEquipment("Spear of Longinus")
+        is_hunter = self.character.alleg == 2
+        if successful and is_hunter and self.state == 1 and has_spear:
             if not dryrun:
                 self.gc.tell_h("{} strikes with their {}!", [
                                self.user_id, "Spear of Longinus"])
@@ -392,10 +401,12 @@ class Player:
         # Check for counterattack
         if self.modifiers['counterattack']:
             # Ask if player wants to counterattack
-            self.gc.tell_h("{}, the {}, is deciding whether to counterattack!", [
-                           self.user_id, "Werewolf"])
+            self.gc.tell_h(
+                "{}, the {}, is deciding whether to counterattack!",
+                [self.user_id, "Werewolf"])
             answer = self.gc.ask_h(
-                'confirm', {'options': ["Counterattack", "Decline"]}, self.user_id)['value']
+                'confirm', {'options': ["Counterattack", "Decline"]},
+                self.user_id)['value']
 
             if answer != "Decline":
                 self.gc.tell_h("{} is counterattacking!", [self.user_id])
@@ -403,8 +414,10 @@ class Player:
                 roll_result = 0
                 if "Cursed Sword Masamune" in [
                         e.title for e in self.equipment]:
-                    self.gc.tell_h("{} rolls with the 4-sided die using the {}!",
-                                   [self.user_id, "Cursed Sword Masamune"])
+                    self.gc.tell_h(
+                        "{} rolls with the 4-sided die using the {}!",
+                        [self.user_id, "Cursed Sword Masamune"]
+                    )
                     roll_result = self.rollDice('4')
                 else:
                     roll_result = self.rollDice(
@@ -422,16 +435,24 @@ class Player:
         if attacker.modifiers['steal_for_damage']:
             if (damage_change <= -2) and len(self.equipment):
                 # Ask attacker whether to steal equipment or deal damage
-                data = {'options': ["Steal equipment",
-                                    "Deal {} damage".format(abs(damage_change))]}
-                choose_steal = (attacker.gc.ask_h('select', data, attacker.user_id)[
-                                'value'] == "Steal equipment")
+                data = {
+                    'options': [
+                        "Steal equipment",
+                        "Deal {} damage".format(abs(damage_change))
+                    ]
+                }
+                choose_steal = attacker.gc.ask_h(
+                    'select', data, attacker.user_id
+                )['value'] == "Steal equipment"
 
                 if choose_steal:
                     desired_eq = attacker.chooseEquipment(self)
                     self.giveEquipment(attacker, desired_eq)
-                    self.gc.tell_h("{} stole {}'s {} instead of dealing {} damage!", [
-                                   attacker.user_id, self.user_id, desired_eq.title, abs(damage_change)])
+                    self.gc.tell_h(
+                        "{} stole {}'s {} instead of dealing {} damage!",
+                        [attacker.user_id, self.user_id, desired_eq.title,
+                         abs(damage_change)]
+                    )
                     return self.damage
 
         self.damage = min(self.damage - damage_change,
@@ -474,11 +495,17 @@ class Player:
 
                 # Steal all of the player's equipment
                 if has_silver_rosary:
-                    self.gc.tell_h("{}'s {} let them steal all of {}'s equipment!", [
-                                   attacker.user_id, "Silver Rosary", self.user_id])
+                    self.gc.tell_h(
+                        "{}'s {} let them steal all of {}'s equipment!",
+                        [attacker.user_id, "Silver Rosary", self.user_id]
+                    )
                 else:
-                    self.gc.tell_h("{} ({}) stole all of {}'s equipment using their special ability!", [
-                                   attacker.user_id, "Bob", self.user_id])
+                    msg = "{} ({}) stole all of {}'s equipment"
+                    msg += " using their special ability!"
+                    self.gc.tell_h(
+                        msg,
+                        [attacker.user_id, "Bob", self.user_id]
+                    )
 
                 attacker.equipment += self.equipment
                 for eq in attacker.equipment:
@@ -489,8 +516,13 @@ class Player:
             else:
 
                 # Choose which equipment to take
-                self.gc.ask_h('confirm', {'options': [
-                              'Take equipment from {}'.format(self.user_id)]}, attacker.user_id)
+                self.gc.ask_h(
+                    'confirm', {
+                        'options': [
+                              'Take equipment from {}'.format(self.user_id)
+                        ]
+                    }, attacker.user_id
+                )
                 equip_Equipment = attacker.chooseEquipment(self)
 
                 # Transfer equipment from one player to the other
