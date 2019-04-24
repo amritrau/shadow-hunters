@@ -23,7 +23,8 @@ class ElementFactory:
         white_cards = [
             card.Card(
                 title="Mystic Compass",
-                desc="When you move, you may roll twice and choose which result to use.",
+                desc=("When you move, you may roll twice "
+                      "and choose which result to use."),
                 color=0,
                 holder=None,
                 is_equip=True,
@@ -31,7 +32,8 @@ class ElementFactory:
             ),
             card.Card(
                 title="Talisman",
-                desc="You receive no damage from Black cards 'Bloodthirsty Spider', 'Vampire Bat', or 'Dynamite'.",
+                desc=("You receive no damage from Black cards"
+                      " 'Bloodthirsty Spider', 'Vampire Bat', or 'Dynamite'."),
                 color=0,
                 holder=None,
                 is_equip=True,
@@ -39,7 +41,9 @@ class ElementFactory:
             ),
             card.Card(
                 title="Fortune Brooch",
-                desc="You receive no damage from the area card 'Weird Woods'. You can still be healed by it.",
+                desc=(
+                    "You receive no damage from the area card"
+                    " 'Weird Woods'. You can still be healed by it."),
                 color=0,
                 holder=None,
                 is_equip=True,
@@ -47,7 +51,8 @@ class ElementFactory:
             ),
             card.Card(
                 title="Silver Rosary",
-                desc="If you kill another character, you take all of their equipment cards.",
+                desc=("If you kill another character, "
+                      "you take all of their equipment cards."),
                 color=0,
                 holder=None,
                 is_equip=True,
@@ -55,8 +60,9 @@ class ElementFactory:
             ),
             card.Card(
                 title="Spear of Longinus",
-                desc=("If you are a Hunter who has revealed their identity and your attack is successful, "
-                      "you give 2 points of extra damage."),
+                desc=("If you are a Hunter who has revealed their identity and"
+                      " your attack is successful, you give 2 points of extra"
+                      " damage."),
                 color=0,
                 holder=None,
                 is_equip=True,
@@ -65,7 +71,8 @@ class ElementFactory:
             card.Card(
                 title="Advent",
                 desc=("If you are a Hunter, you may reveal your identity. "
-                      "If you do, or if you are already revealed, you heal fully."),
+                      "If you do, or if you are already revealed,"
+                      " you heal fully."),
                 color=0,
                 holder=None,
                 is_equip=False,
@@ -73,7 +80,8 @@ class ElementFactory:
             ),
             card.Card(
                 title="Disenchant Mirror",
-                desc="If you are a Shadow, except for Unknown, you must reveal your identity.",
+                desc=("If you are a Shadow, except for Unknown, "
+                      "you must reveal your identity."),
                 color=0,
                 holder=None,
                 is_equip=False,
@@ -81,8 +89,9 @@ class ElementFactory:
             ),
             card.Card(
                 title="Blessing",
-                desc=("Pick a character other than yourself and roll the 6-sided die. "
-                      "That character heals an amount of damage equal to the die roll."),
+                desc=("Pick a character other than yourself and roll the"
+                      " 6-sided die. That character heals an amount of damage"
+                      " equal to the die roll."),
                 color=0,
                 holder=None,
                 is_equip=False,
@@ -90,8 +99,10 @@ class ElementFactory:
             ),
             card.Card(
                 title="Chocolate",
-                desc=("If you are Allie, Agnes, Emi, Ellen, Unknown, or Ultra Soul, you may reveal your identity. "
-                      "If you do, or if you are already revealed, you heal fully."),
+                desc=("If you are Allie, Agnes, Emi, Ellen, Unknown,"
+                      " or Ultra Soul, you may reveal your identity. "
+                      "If you do, or if you are already revealed, "
+                      "you heal fully."),
                 color=0,
                 holder=None,
                 is_equip=False,
@@ -107,7 +118,8 @@ class ElementFactory:
             ),
             card.Card(
                 title="Guardian Angel",
-                desc="You take no damage from the direct attacks of other characters until the start of your next turn.",
+                desc=("You take no damage from the direct attacks of "
+                      "other characters until the start of your next turn."),
                 color=0,
                 holder=None,
                 is_equip=False,
@@ -115,7 +127,9 @@ class ElementFactory:
             ),
             card.Card(
                 title="Holy Robe",
-                desc="Your attacks do 1 less damage and the amount of damage you receive from attacks is reduced by 1 point.",
+                desc=("Your attacks do 1 less damage and the amount of"
+                      " damage you receive from attacks is reduced by"
+                      " 1 point."),
                 color=0,  # 0 : WHITE
                 holder=None,
                 is_equip=True,
@@ -124,7 +138,8 @@ class ElementFactory:
             ),
             card.Card(
                 title="Flare of Judgement",
-                desc="All characters except yourself receive 2 points of damage.",
+                desc=("All characters except yourself"
+                      " receive 2 points of damage."),
                 color=0,
                 holder=None,
                 is_equip=False,
@@ -132,7 +147,8 @@ class ElementFactory:
             ),
             card.Card(
                 title="First Aid",
-                desc="Place a character's damage marker to 7 (You can choose yourself).",
+                desc=("Place a character's damage marker to 7"
+                      " (You can choose yourself)."),
                 color=0,
                 holder=None,
                 is_equip=False,
@@ -160,7 +176,9 @@ class ElementFactory:
         black_cards = [
             card.Card(
                 title="Cursed Sword Masamune",
-                desc="You must attack another character on your turn. This attack uses the 4-sided die.",
+                desc=(
+                    "You must attack another character on your turn."
+                    " This attack uses the 4-sided die."),
                 color=1,  # 1 : BLACK
                 holder=None,
                 is_equip=True,
@@ -168,7 +186,9 @@ class ElementFactory:
             ),
             card.Card(
                 title="Machine Gun",
-                desc="Your attack will affect all characters in your attack range (the dice are rolled only once).",
+                desc=(
+                    "Your attack will affect all characters in your"
+                    " attack range (the dice are rolled only once)."),
                 color=1,
                 holder=None,
                 is_equip=True,
@@ -184,29 +204,32 @@ class ElementFactory:
             ),
             card.Card(
                 title="Butcher Knife",
-                desc="If your attack is successful, you give 1 point of extra damage.",
+                desc=("If your attack is successful, "
+                      "you give 1 point of extra damage."),
                 color=1,
                 holder=None,
                 is_equip=True,
-                use=lambda is_attack, successful, amt: amt + \
+                use=lambda is_attack, successful, amt: amt +
                 1 if (is_attack and successful) else amt
             ),
             card.Card(
                 title="Chainsaw",
-                desc="If your attack is successful, you give 1 point of extra damage.",
+                desc=("If your attack is successful, "
+                      "you give 1 point of extra damage."),
                 color=1,
                 holder=None,
                 is_equip=True,
-                use=lambda is_attack, successful, amt: amt + \
+                use=lambda is_attack, successful, amt: amt +
                 1 if (is_attack and successful) else amt
             ),
             card.Card(
                 title="Rusted Broad Axe",
-                desc="If your attack is successful, you give 1 point of extra damage.",
+                desc=("If your attack is successful, "
+                      "you give 1 point of extra damage."),
                 color=1,
                 holder=None,
                 is_equip=True,
-                use=lambda is_attack, successful, amt: amt + \
+                use=lambda is_attack, successful, amt: amt +
                 1 if (is_attack and successful) else amt
             ),
             card.Card(
@@ -227,7 +250,8 @@ class ElementFactory:
             ),
             card.Card(
                 title="Bloodthirsty Spider",
-                desc="You give 2 points of damage to any character and receive 2 points of damage yourself.",
+                desc=("You give 2 points of damage to any character"
+                      " and receive 2 points of damage yourself."),
                 color=1,
                 holder=None,
                 is_equip=False,
@@ -235,7 +259,8 @@ class ElementFactory:
             ),
             card.Card(
                 title="Vampire Bat",
-                desc="You give 2 points of damage to any character and heal 1 point of your own damage.",
+                desc=("You give 2 points of damage to any character"
+                      " and heal 1 point of your own damage."),
                 color=1,
                 holder=None,
                 is_equip=False,
@@ -243,7 +268,8 @@ class ElementFactory:
             ),
             card.Card(
                 title="Vampire Bat",
-                desc="You give 2 points of damage to any character and heal 1 point of your own damage.",
+                desc=("You give 2 points of damage to any character"
+                      " and heal 1 point of your own damage."),
                 color=1,
                 holder=None,
                 is_equip=False,
@@ -251,7 +277,8 @@ class ElementFactory:
             ),
             card.Card(
                 title="Vampire Bat",
-                desc="You give 2 points of damage to any character and heal 1 point of your own damage.",
+                desc=("You give 2 points of damage to any character"
+                      " and heal 1 point of your own damage."),
                 color=1,
                 holder=None,
                 is_equip=False,
@@ -259,7 +286,8 @@ class ElementFactory:
             ),
             card.Card(
                 title="Diabolic Ritual",
-                desc="If you are a Shadow, you may reveal your identity. If you do, you fully heal you damage.",
+                desc=("If you are a Shadow, you may reveal your identity."
+                      " If you do, you fully heal you damage."),
                 color=1,
                 holder=None,
                 is_equip=False,
@@ -268,7 +296,8 @@ class ElementFactory:
             card.Card(
                 title="Banana Peel",
                 desc=("Give one of your equipment cards to another character. "
-                      "If you have no equipment cards, you receive 1 point of damage."),
+                      "If you have no equipment cards,"
+                      " you receive 1 point of damage."),
                 color=1,
                 holder=None,
                 is_equip=False,
@@ -276,8 +305,10 @@ class ElementFactory:
             ),
             card.Card(
                 title="Dynamite",
-                desc=("Roll 2 dice and give 3 points of damage to all characters in the area designated "
-                      "by the total number rolled (nothing happens if a 7 is rolled)."),
+                desc=("Roll 2 dice and give 3 points of damage to all"
+                      " characters in the area designated "
+                      "by the total number rolled "
+                      "(nothing happens if a 7 is rolled)."),
                 color=1,
                 holder=None,
                 is_equip=False,
@@ -286,8 +317,10 @@ class ElementFactory:
             card.Card(
                 title="Spiritual Doll",
                 desc=("Pick a character and roll the 6-sided die. "
-                      "If the die number is 1 to 4, you give 3 points of damage to that character. "
-                      "If the die number is 5 or 6, you get 3 points of damage."),
+                      "If the die number is 1 to 4, "
+                      "you give 3 points of damage to that character. "
+                      "If the die number is 5 or 6, "
+                      "you get 3 points of damage."),
                 color=1,
                 holder=None,
                 is_equip=False,
@@ -300,7 +333,8 @@ class ElementFactory:
             card.Card(
                 title="Hermit\'s Blackmail",
                 desc=("I bet you're either a Neutral or a Hunter. "
-                      "If so, you must either give an Equipment card to the current player or receive 1 damage!"),
+                      "If so, you must either give an Equipment card"
+                      " to the current player or receive 1 damage!"),
                 color=2,  # 2 : GREEN
                 holder=None,
                 is_equip=False,
@@ -309,7 +343,8 @@ class ElementFactory:
             card.Card(
                 title="Hermit\'s Blackmail",
                 desc=("I bet you're either a Neutral or a Hunter. "
-                      "If so, you must either give an Equipment card to the current player or receive 1 damage!"),
+                      "If so, you must either give an Equipment card"
+                      " to the current player or receive 1 damage!"),
                 color=2,
                 holder=None,
                 is_equip=False,
@@ -318,7 +353,8 @@ class ElementFactory:
             card.Card(
                 title="Hermit\'s Greed",
                 desc=("I bet you're either a Neutral or a Shadow. "
-                      "If so, you must either give an Equipment card to the current player or receive 1 damage!"),
+                      "If so, you must either give an Equipment card"
+                      " to the current player or receive 1 damage!"),
                 color=2,
                 holder=None,
                 is_equip=False,
@@ -327,7 +363,8 @@ class ElementFactory:
             card.Card(
                 title="Hermit\'s Greed",
                 desc=("I bet you're either a Neutral or a Shadow. "
-                      "If so, you must either give an Equipment card to the current player or receive 1 damage!"),
+                      "If so, you must either give an Equipment card"
+                      " to the current player or receive 1 damage!"),
                 color=2,
                 holder=None,
                 is_equip=False,
@@ -336,7 +373,8 @@ class ElementFactory:
             card.Card(
                 title="Hermit\'s Anger",
                 desc=("I bet you're either a Hunter or a Shadow. "
-                      "If so, you must either give an Equipment card to the current player or receive 1 damage!"),
+                      "If so, you must either give an Equipment card"
+                      " to the current player or receive 1 damage!"),
                 color=2,
                 holder=None,
                 is_equip=False,
@@ -345,7 +383,8 @@ class ElementFactory:
             card.Card(
                 title="Hermit\'s Anger",
                 desc=("I bet you're either a Hunter or a Shadow. "
-                      "If so, you must either give an Equipment card to the current player or receive 1 damage!"),
+                      "If so, you must either give an Equipment card"
+                      " to the current player or receive 1 damage!"),
                 color=2,
                 holder=None,
                 is_equip=False,
@@ -386,7 +425,8 @@ class ElementFactory:
             card.Card(
                 title="Hermit\'s Nurturance",
                 desc=("I bet you're a Neutral. If so, you heal 1 damage! "
-                      "(However, if you have no damage, then you receive 1 damage!)"),
+                      "(However, if you have no damage, "
+                      "then you receive 1 damage!)"),
                 color=2,
                 holder=None,
                 is_equip=False,
@@ -395,7 +435,8 @@ class ElementFactory:
             card.Card(
                 title="Hermit\'s Aid",
                 desc=("I bet you're a Hunter. If so, you heal 1 damage! "
-                      "(However, if you have no damage, then you receive 1 damage!)"),
+                      "(However, if you have no damage, "
+                      "then you receive 1 damage!)"),
                 color=2,
                 holder=None,
                 is_equip=False,
@@ -404,7 +445,8 @@ class ElementFactory:
             card.Card(
                 title="Hermit\'s Huddle",
                 desc=("I bet you're a Shadow. If so, you heal 1 damage! "
-                      "(However, if you have no damage, then you receive 1 damage!)"),
+                      "(However, if you have no damage, "
+                      "then you receive 1 damage!)"),
                 color=2,
                 holder=None,
                 is_equip=False,
@@ -412,7 +454,8 @@ class ElementFactory:
             ),
             card.Card(
                 title="Hermit\'s Lesson",
-                desc="I bet your maximum HP is 12 or more. If so, you receive 2 damage!",
+                desc=("I bet your maximum HP is 12 or more. "
+                      "If so, you receive 2 damage!"),
                 color=2,
                 holder=None,
                 is_equip=False,
@@ -420,7 +463,8 @@ class ElementFactory:
             ),
             card.Card(
                 title="Hermit\'s Bully",
-                desc="I bet your maximum HP is 11 or less. If so, you receive 1 damage!",
+                desc=("I bet your maximum HP is 11 or less. "
+                      "If so, you receive 1 damage!"),
                 color=2,
                 holder=None,
                 is_equip=False,
@@ -428,7 +472,8 @@ class ElementFactory:
             ),
             card.Card(
                 title="Hermit\'s Prediction",
-                desc="You must reveal your character information secretly to the current player!",
+                desc=("You must reveal your character information "
+                      "secretly to the current player!"),
                 color=2,
                 holder=None,
                 is_equip=False,
@@ -451,7 +496,8 @@ class ElementFactory:
                 win_cond=win_conditions.shadow,
                 win_cond_desc="All of the Hunters (or 3 Neutrals) are dead.",
                 special=specials.valkyrie,
-                special_desc="When you attack, you only roll the 4-sided die and inflict the amount of damage rolled.",
+                special_desc=("When you attack, you only roll the 4-sided die"
+                              " and inflict the amount of damage rolled."),
                 resource_id="valkyrie"
             ),
             character.Character(
@@ -461,7 +507,8 @@ class ElementFactory:
                 win_cond=win_conditions.shadow,
                 win_cond_desc="All of the Hunters (or 3 Neutrals) are dead.",
                 special=specials.vampire,
-                special_desc="If you attack a player and inflict damage, you heal 2 points of your own damage.",
+                special_desc=("If you attack a player and inflict damage, "
+                              "you heal 2 points of your own damage."),
                 resource_id="vampire"
             ),
             character.Character(
@@ -471,7 +518,8 @@ class ElementFactory:
                 win_cond=win_conditions.shadow,
                 win_cond_desc="All of the Hunters (or 3 Neutrals) are dead.",
                 special=specials.werewolf,
-                special_desc="After you are attacked, you can counterattack immediately.",
+                special_desc=("After you are attacked, "
+                              "you can counterattack immediately."),
                 resource_id="werewolf"
             ),
             character.Character(
@@ -481,7 +529,9 @@ class ElementFactory:
                 win_cond=win_conditions.shadow,
                 win_cond_desc="All of the Hunters (or 3 Neutrals) are dead.",
                 special=specials.ultra_soul,
-                special_desc="When your turn starts, you can give 3 damage to one player who is at the Underworld Gate.",
+                special_desc=("When your turn starts, you can give 3 damage"
+                              " to one player who is at"
+                              " the Underworld Gate."),
                 resource_id="ultra-soul"
             ),
             character.Character(
@@ -501,7 +551,9 @@ class ElementFactory:
                 win_cond=win_conditions.bob,
                 win_cond_desc="You have 5 or more equipment cards.",
                 special=specials.bob,
-                special_desc="If your attack inflicts 2 or more damage, you may steal an Equipment card from your target instead of giving damage.",
+                special_desc=("If your attack inflicts 2 or more damage, "
+                              "you may steal an Equipment card from your"
+                              " target instead of giving damage."),
                 resource_id="bob1",
                 modifiers={'min_players': 4, 'max_players': 6}
             ),
@@ -512,7 +564,8 @@ class ElementFactory:
                 win_cond=win_conditions.bob,
                 win_cond_desc="You have 5 or more equipment cards.",
                 special=specials.bob,
-                special_desc="If you kill another player, you may take all of their Equipment cards.",
+                special_desc=("If you kill another player, "
+                              "you may take all of their Equipment cards."),
                 resource_id="bob2",
                 modifiers={'min_players': 7, 'max_players': 8}
             ),
@@ -521,7 +574,8 @@ class ElementFactory:
                 alleg=1,  # Neutral
                 max_damage=11,
                 win_cond=win_conditions.catherine,
-                win_cond_desc="You are either the first to die or one of the last two players alive.",
+                win_cond_desc=("You are either the first to die or one of the"
+                               " last two players alive."),
                 special=specials.catherine,
                 special_desc="When your turn starts, you may heal 1 damage.",
                 resource_id="catherine"
@@ -533,7 +587,9 @@ class ElementFactory:
                 win_cond=win_conditions.hunter,
                 win_cond_desc="All of the Shadows are dead.",
                 special=specials.george,
-                special_desc="Once per game, when your turn starts, you can pick a player and damage them for the roll of a 4-sided die.",
+                special_desc=("Once per game, when your turn starts, you can"
+                              " pick a player and damage them for the"
+                              " roll of a 4-sided die."),
                 resource_id="george"
             ),
             character.Character(
@@ -543,7 +599,8 @@ class ElementFactory:
                 win_cond=win_conditions.hunter,
                 win_cond_desc="All of the Shadows are dead.",
                 special=specials.fuka,
-                special_desc="Once per game, when your turn starts, you can set the damage of any player to 7.",
+                special_desc=("Once per game, when your turn starts, "
+                              "you can set the damage of any player to 7."),
                 resource_id="fu-ka"
             ),
             character.Character(
@@ -553,7 +610,9 @@ class ElementFactory:
                 win_cond=win_conditions.hunter,
                 win_cond_desc="All of the Shadows are dead.",
                 special=specials.franklin,
-                special_desc="Once per game, when your turn starts, you can pick a player and damage them for the roll of a 6-sided die.",
+                special_desc=("Once per game, when your turn starts, "
+                              "you can pick a player and damage"
+                              " them for the roll of a 6-sided die."),
                 resource_id="franklin"
             ),
             character.Character(
@@ -563,7 +622,9 @@ class ElementFactory:
                 win_cond=win_conditions.hunter,
                 win_cond_desc="All of the Shadows are dead.",
                 special=specials.ellen,
-                special_desc="Once per game, when your turn starts, you can choose a player and permanently void their special ability.",
+                special_desc=("Once per game, when your turn starts, "
+                              "you can choose a player and permanently"
+                              " void their special ability."),
                 resource_id="ellen"
             )
         ]
