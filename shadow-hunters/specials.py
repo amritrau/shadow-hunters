@@ -56,11 +56,7 @@ def george(gc, player, turn_pos):
                       player.character.special_desc])
 
             # Present player with list of attack options
-            targets = [p for p in gc.getLivePlayers()]
-            gc.tell_h("{} is choosing a target...", [player.user_id])
             target_Player = player.choosePlayer()
-            gc.tell_h("{} chose {}!", [
-                      player.user_id, target_Player.user_id])
 
             # Roll and give damage to target
             roll_result = player.rollDice('4')
@@ -110,10 +106,7 @@ def franklin(gc, player, turn_pos):
                       player.character.special_desc])
 
             # Present player with list of attack options
-            gc.tell_h("{} is choosing a target...", [player.user_id])
             target_Player = player.choosePlayer()
-            gc.tell_h("{} chose {}!", [
-                      player.user_id, target_Player.user_id])
 
             # Roll and give damage to target
             roll_result = player.rollDice('6')

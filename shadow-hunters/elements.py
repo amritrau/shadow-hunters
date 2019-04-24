@@ -577,7 +577,7 @@ class ElementFactory:
                 win_cond_desc=("You are either the first to die or one of the"
                                " last two players alive."),
                 special=specials.catherine,
-                special_desc="When your turn starts, you may heal 1 damage.",
+                special_desc="When your turn starts, you heal 1 damage.",
                 resource_id="catherine"
             ),
             character.Character(
