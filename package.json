@@ -8,7 +8,7 @@
   },
   "devDependencies": {},
   "scripts": {
-    "test": "testcafe chrome tests/serial/ --selector-timeout 60000 --app \"AI_SLEEP=0 SOCKET_SLEEP=0.25 python3 shadow-hunters/app.py\" && testcafe -c 2 chrome tests/concurrent/ --app \"AI_SLEEP=0 SOCKET_SLEEP=0.25 python3 shadow-hunters/app.py\"",
+    "test": "testcafe chrome tests/serial/ --selector-timeout 60000 --app \"AI_SLEEP=0 SOCKET_SLEEP=0.25 python3 shadow-hunters/app.py\" && testcafe -c 2 chrome tests/concurrent/ --app \"AI_SLEEP=0 SOCKET_SLEEP=0.25 python3 shadow-hunters/app.py\""
   },
   "repository": {
     "type": "git",
