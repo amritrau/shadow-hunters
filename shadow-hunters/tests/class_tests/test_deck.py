@@ -101,6 +101,7 @@ def test_drawCard():
     # We lost `c2` to some player, so
     assert(len(d.discard) + len(d.cards) == original_length - 1)
 
+
 def test_exceptions():
     with pytest.raises(ValueError):
         d1 = deck.Deck(0)

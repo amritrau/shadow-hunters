@@ -538,7 +538,7 @@ class Player:
                 self.gc.ask_h(
                     'confirm', {
                         'options': [
-                              'Take equipment from {}'.format(self.user_id)
+                            'Take equipment from {}'.format(self.user_id)
                         ]
                     }, attacker.user_id
                 )

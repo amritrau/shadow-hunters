@@ -32,6 +32,7 @@ def test_fields():
     assert dump['domain'] == "[9]"
     assert str(dump) == str(a)
 
+
 def test_getAdjacent():
 
     # Put two areas in a zone

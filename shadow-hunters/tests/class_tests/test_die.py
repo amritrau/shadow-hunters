@@ -41,6 +41,7 @@ def test_roll():
     # Check that rolls are reasonably weighted
     assert(all(x > 250 for x in d4_rolls + d6_rolls))
 
+
 def test_exceptions():
     with pytest.raises(ValueError):
         d = die.Die(0)
