@@ -6,7 +6,7 @@ fixture `Interface`
 const screen_name = 'amritrau'
 const room_id = 'akw200'
 
-
+/*
 test('Send message', async t => {
     await t
         .typeText('#screen-name', screen_name)
@@ -18,3 +18,4 @@ test('Send message', async t => {
         .click('.send')
         .wait(2500);
 });
+*/

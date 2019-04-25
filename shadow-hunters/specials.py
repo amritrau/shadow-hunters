@@ -56,11 +56,7 @@ def george(gc, player, turn_pos):
                       player.character.special_desc])
 
             # Present player with list of attack options
-            targets = [p for p in gc.getLivePlayers()]
-            gc.tell_h("{} is choosing a target...", [player.user_id])
             target_Player = player.choosePlayer()
-            gc.tell_h("{} chose {}!", [
-                      player.user_id, target_Player.user_id])
 
             # Roll and give damage to target
             roll_result = player.rollDice('4')
@@ -110,10 +106,7 @@ def franklin(gc, player, turn_pos):
                       player.character.special_desc])
 
             # Present player with list of attack options
-            gc.tell_h("{} is choosing a target...", [player.user_id])
             target_Player = player.choosePlayer()
-            gc.tell_h("{} chose {}!", [
-                      player.user_id, target_Player.user_id])
 
             # Roll and give damage to target
             roll_result = player.rollDice('6')
@@ -189,12 +182,17 @@ def ultra_soul(gc, player, turn_pos):
                       player.user_id, player.character.name,
                       player.character.special_desc])
             gc.tell_h("{} is choosing a target...", [player.user_id])
-            data = {'options': [
-                p.user_id for p in targets if p != player]}
+            opts = [p.user_id for p in targets if p != player]
+            opts.append('Decline')
+            data = {'options': opts}
             target = player.gc.ask_h(
                 'select', data, player.user_id)['value']
-            target_Player = [
-                p for p in gc.getLivePlayers() if p.user_id == target][0]
-            target_Player.moveDamage(-3, player)
-            gc.tell_h("{}'s Murder Ray gave {} {} damage!",
-                      [player.user_id, target, 3])
+            if target != 'Decline':
+                target_Player = [
+                    p for p in gc.getLivePlayers() if p.user_id == target][0]
+                target_Player.moveDamage(-3, player)
+                gc.tell_h("{}'s Murder Ray gave {} {} damage!",
+                          [player.user_id, target, 3])
+            else:
+                gc.tell_h(
+                    "{} declined to use their Murder Ray.", [player.user_id])

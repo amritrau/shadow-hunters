@@ -101,7 +101,7 @@ class Player:
         self.gc.tell_h("{} is rolling for movement...", [self.user_id])
         roll_result = self.rollDice('area')
 
-        if "Mystic Compass" in [e.title for e in self.equipment]:
+        if self.hasEquipment("Mystic Compass"):
 
             # If player has mystic compass, roll again
             self.gc.tell_h("{}'s {} lets them roll again!",
@@ -119,11 +119,7 @@ class Player:
 
             # Select an area
             self.gc.tell_h("{} is selecting an area...", [self.user_id])
-            area_options = []
-            for z in self.gc.zones:
-                for a in z.areas:
-                    area_options.append(a.name)
-            data = {'options': area_options}
+            data = {'options': self.gc.getAreas()}
             destination = self.gc.ask_h('select', data, self.user_id)['value']
 
             # Get Area object from area name
@@ -166,30 +162,31 @@ class Player:
         # Give player option to attack or decline
         self.gc.tell_h("{} is deciding to attack...", [self.user_id])
         options = ["Attack other players!"]
-        if "Cursed Sword Masamune" not in [e.title for e in self.equipment]:
+        if not self.hasEquipment("Cursed Sword Masamune"):
             options.append("Decline")
+
         answer = self.gc.ask_h(
             'yesno', {'options': options}, self.user_id)["value"]
 
         if answer != "Decline":
-
             # Get attackable players
-            live_players = [p for p in self.gc.getLivePlayers() if p.location]
+            live_players = self.gc.getLivePlayers(lambda p: p.location)
             targets = [p for p in live_players if (
                 p.location.zone == self.location.zone and p != self)]
 
-            if "Handgun" in [e.title for e in self.equipment]:
+            if self.hasEquipment("Handgun"):
                 self.gc.tell_h("{}'s {} reverses their attack range.", [
                                self.user_id, "Handgun"])
                 targets = [p for p in live_players if (
                     p.location.zone != self.location.zone and p != self)]
 
             # If player has Masamune, can't decline unless there are no options
-            data = {'options': [t.user_id for t in targets]}
-            has_opts = len(data['options'])
-            if self.hasEquipment("Cursed Sword Masamune") or not has_opts:
-                data['options'].append("Decline")
-            answer = self.gc.ask_h('select', data, self.user_id)['value']
+            opts = [t.user_id for t in targets]
+            if not self.hasEquipment("Cursed Sword Masamune") or not len(opts):
+                opts.append("Decline")
+
+            answer = self.gc.ask_h('select', {'options': opts}, self.user_id)
+            answer = answer['value']
 
             if answer != 'Decline':
 
@@ -216,15 +213,53 @@ class Player:
 
                 # If player has Machine Gun, launch attack on everyone in the
                 # zone. Otherwise, attack the target
-                if "Machine Gun" in [e.title for e in self.equipment]:
+                if self.hasEquipment("Machine Gun"):
                     self.gc.tell_h(
                         "{}'s {} hits everyone in their attack range!",
                         [self.user_id, "Machine Gun"]
                     )
-                    for t in targets:
-                        damage_dealt = self.attack(t, roll_result)
                 else:
-                    damage_dealt = self.attack(target_Player, roll_result)
+                    targets = [target_Player]
+
+                for t in targets:
+                    # Dry run the attack if we're Bob
+                    if self.modifiers['steal_for_damage']:
+                        potential_damage = self.attack(
+                            t,
+                            roll_result,
+                            dryrun=True
+                        )
+                        if potential_damage >= 2 and len(t.equipment):
+                            # Ask whether to steal equipment or deal damage
+                            data = {
+                                'options': [
+                                    "Steal equipment",
+                                    "Deal {} damage".format(potential_damage)
+                                ]
+                            }
+                            choose_steal = self.gc.ask_h(
+                                'yesno', data, self.user_id
+                            )['value'] == "Steal equipment"
+
+                            if choose_steal:
+                                desired_eq = self.chooseEquipment(t)
+                                t.giveEquipment(self, desired_eq)
+                                self.gc.tell_h(
+                                    ("{} stole {}'s {} instead "
+                                     "of dealing {} damage!"),
+                                    [self.user_id, t.user_id, desired_eq.title,
+                                     potential_damage]
+                                )
+                            else:
+                                # Actually deal damage
+                                damage_dealt = self.attack(t, roll_result)
+                        else:
+                            # Actually deal damage
+                            damage_dealt = self.attack(t, roll_result)
+                    else:
+                        # Actually deal damage
+                        damage_dealt = self.attack(t, roll_result)
+
             else:
                 self.gc.tell_h("{} declined to attack.", [self.user_id])
         else:
@@ -392,9 +427,10 @@ class Player:
 
         # Return damage dealt
         dealt = amount
-        if not dryrun:
-            self.moveDamage(-dealt, attacker=other)
+        if dryrun:
+            return dealt
 
+        self.moveDamage(-dealt, attacker=other)
         self.gc.tell_h("{} hit {} for {} damage!", [
                        other.user_id, self.user_id, dealt])
 
@@ -413,8 +449,7 @@ class Player:
                     self.gc.tell_h("{} is counterattacking!", [self.user_id])
                     # Roll with the 4-sided die if the player has masamune
                     roll_result = 0
-                    if "Cursed Sword Masamune" in [
-                            e.title for e in self.equipment]:
+                    if self.hasEquipment("Cursed Sword Masamune"):
                         self.gc.tell_h(
                             "{} rolls with the 4-sided die using the {}!",
                             [self.user_id, "Cursed Sword Masamune"]
@@ -433,32 +468,12 @@ class Player:
         return dealt
 
     def moveDamage(self, damage_change, attacker):
+
+        # Tell frontend to animate sprite
         if damage_change < 0:
             self.gc.show_h({'type': 'damage', 'player': self.dump()})
 
-        if attacker.modifiers['steal_for_damage']:
-            if (damage_change <= -2) and len(self.equipment):
-                # Ask attacker whether to steal equipment or deal damage
-                data = {
-                    'options': [
-                        "Steal equipment",
-                        "Deal {} damage".format(abs(damage_change))
-                    ]
-                }
-                choose_steal = attacker.gc.ask_h(
-                    'select', data, attacker.user_id
-                )['value'] == "Steal equipment"
-
-                if choose_steal:
-                    desired_eq = attacker.chooseEquipment(self)
-                    self.giveEquipment(attacker, desired_eq)
-                    self.gc.tell_h(
-                        "{} stole {}'s {} instead of dealing {} damage!",
-                        [attacker.user_id, self.user_id, desired_eq.title,
-                         abs(damage_change)]
-                    )
-                    return self.damage
-
+        # Set new damage
         self.damage = min(self.damage - damage_change,
                           self.character.max_damage)
         self.damage = max(0, self.damage)
