@@ -16,7 +16,7 @@ test('Send message', async t => {
     const location = await t.eval(() => window.location);
     await t
         .expect(location.pathname).eql('/room')
-        .click('#start-game');
+        .click('#start-game')
         .wait(5000)
         .typeText('#message', "Hello, world!")
         .click('.send')
