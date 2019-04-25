@@ -74,12 +74,6 @@ var GameBoard = new Phaser.Class ({
         if("private" in this.gameData) this.charInfo = this.gameData.private.character;
         this.allPlayersInfo = this.gameData.public.players;
 
-        // console.log(this.charInfo);
-        // console.log(typeof this.charInfo);
-         console.log(this.gameData.public);
-        // console.log(this.gameData.public.players);
-        // console.log(this.gameData.private);
-
     },
 
     //the preload function is where all images that will be used in the game are loaded into
