@@ -106,4 +106,4 @@ def test_exceptions():
         d1 = deck.Deck(0)
 
     with pytest.raises(ValueError):
-        d2 = zone.Zone([1, 2, 3])
+        d2 = deck.Deck([1, 2, 3])
