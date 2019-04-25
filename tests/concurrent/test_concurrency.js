@@ -10,7 +10,7 @@ function randomId() {
   return Math.random().toString(36).substr(2, 5);
 }
 
-
+/*
 test('Start game simultaneously', async t => {
     await t
         .typeText('#screen-name', randomId())
@@ -20,3 +20,4 @@ test('Start game simultaneously', async t => {
         .click('#start-game')
         .wait(2500);
 });
+*/
