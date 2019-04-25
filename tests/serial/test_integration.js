@@ -22,7 +22,7 @@ test('Start game', async t => {
         .typeText('#screen-name', screen_name)
         .typeText('#room-id', room_id)
         .click('#submit-button')
-        .pause(3000)
+        .wait(3000)
         .click('#start-game');
 });
 
