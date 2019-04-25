@@ -35,6 +35,7 @@ def test_fields():
     # test dump
     assert z.dump() == [a1.dump(), a2.dump()]
 
+
 def test_exceptions():
     with pytest.raises(ValueError):
         z1 = zone.Zone(0)
