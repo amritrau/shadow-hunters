@@ -21,8 +21,11 @@ test('Start game', async t => {
     await t
         .typeText('#screen-name', screen_name)
         .typeText('#room-id', room_id)
-        .click('#submit-button')
-        .wait(3000)
+        .click('#submit-button');
+
+    const location = await t.eval(() => window.location);
+    await t
+        .expect(location.pathname).eql('/room')
         .click('#start-game');
 });
 
@@ -30,7 +33,11 @@ test('Load game board', async t => {
     await t
         .typeText('#screen-name', screen_name)
         .typeText('#room-id', room_id)
-        .click('#submit-button')
+        .click('#submit-button');
+
+    const location = await t.eval(() => window.location);
+    await t
+        .expect(location.pathname).eql('/room')
         .click('#start-game');
 
     const btnReveal = Selector('.reveal');
@@ -42,8 +49,12 @@ test('Roll dice', async t => {
     await t
         .typeText('#screen-name', screen_name)
         .typeText('#room-id', room_id)
-        .click('#submit-button')
-        .click('#start-game')
+        .click('#submit-button');
+
+    const location = await t.eval(() => window.location);
+    await t
+        .expect(location.pathname).eql('/room')
+        .click('#start-game');
 
     const diceSelector = Selector('#confirm')
     const rollDice = await diceSelector.with({ visibilityCheck: true})();

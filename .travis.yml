@@ -3,7 +3,7 @@ matrix:
     - language: python
       python: "3.6"
       script:
-        - pytest
+        - pytest --cov-config=.coveragerc --cov=shadow-hunters/
         - pycodestyle --statistics -q .
     - language: node_js
       node_js: "stable"

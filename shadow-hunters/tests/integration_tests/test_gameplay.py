@@ -13,6 +13,7 @@ import constants
 
 def test_gameplay():
     for _ in range(constants.N_GAMEPLAY_TESTS):
-        gc, ef = helpers.fresh_gc_ef()
-        gc.play()
+        for n in range(4, 9):
+            gc, ef = helpers.fresh_gc_ef(n)
+            gc.play()
     assert 1

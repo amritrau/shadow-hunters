@@ -34,3 +34,14 @@ def test_fields():
 
     # test dump
     assert z.dump() == [a1.dump(), a2.dump()]
+
+
+def test_exceptions():
+    with pytest.raises(ValueError):
+        z1 = zone.Zone(0)
+
+    with pytest.raises(ValueError):
+        z2 = zone.Zone([1, 2, 3])
+
+    with pytest.raises(ValueError):
+        z3 = zone.Zone([1, 2])
