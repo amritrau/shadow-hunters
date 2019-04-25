@@ -16,7 +16,7 @@ test('Join room', async t => {
     const location = await t.eval(() => window.location);
     await t.expect(location.pathname).eql('/room');
 });
-
+/*
 test('Start game', async t => {
     await t
         .typeText('#screen-name', screen_name)
@@ -36,6 +36,7 @@ test('Load game board', async t => {
     const btnReveal = Selector('.reveal');
     const btnRevealElement = await btnReveal.with({ visibilityCheck: true })();
 });
+*/
 
 // Having some trouble with this one.
 /*
