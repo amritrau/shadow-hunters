@@ -10,14 +10,13 @@ function randomId() {
   return Math.random().toString(36).substr(2, 5);
 }
 
-/*
+
 test('Start game simultaneously', async t => {
     await t
         .typeText('#screen-name', randomId())
         .typeText('#room-id', room_id)
         .click('#submit-button')
-        .wait(1000)
+        .wait(5000)
         .click('#start-game')
         .wait(2500);
 });
-*/
