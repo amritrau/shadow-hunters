@@ -30,6 +30,7 @@ def test_fields():
     assert dump['name'] == "area_name"
     assert dump['desc'] == "area_desc"
     assert dump['domain'] == "[9]"
+    assert str(dump) == str(a)
 
 def test_getAdjacent():
 
