@@ -31,25 +31,25 @@ var GameBoard = new Phaser.Class ({
 
         // list of x, y coordinates for 8 players' starting spots
         this.startSpots = [[562, 245],
-                           [504, 245],
-                           [533, 215],
-                           [533, 275],
-                           [591, 275],
-                           [510, 185],
-                           [556, 185],
-                           [475, 275]
-                           ];
+        [504, 245],
+        [533, 215],
+        [533, 275],
+        [591, 275],
+        [510, 185],
+        [556, 185],
+        [475, 275]
+        ];
 
         // Player location coordinates (row = player number, even columns are x coords, odd columns are y coords)
         this.allSpots = [[398.483,220.233,468.420,163.359,601.778,163.359,671.715,220.233,514.936,437.763,561.010,390.301],
-                         [423.487,208.877,472.424,122.003,597.774,122.003,646.711,208.877,457.931,390.407,576.005,428.945],
-                         [419.487,247.874,448.424,132.000,621.774,132.000,650.711,247.874,471.931,420.404,624.005,389.942],
-                         [394.972,180.750,448.737, 91.851,621.461, 91.851,675.226,180.750,521.618,387.255,595.521,393.817],
-                         [444.304,203.018,423.086,137.467,647.112,137.467,625.894,203.018,494.025,394.626,608.189,437.086],
-                         [378.242,228.124,499.237,113.250,570.961,113.250,691.956,228.124,449.118,434.654,550.251,428.192],
-                         [346.934,152.375,373.233, 97.393,696.965, 97.393,723.264,152.375,509.887,326.988,613.559,330.442],
-                         [323.822,194.484,403.492, 64.687,666.706, 64.687,746.376,194.484,453.340,329.579,562.671,326.552]
-                         ];
+        [423.487,208.877,472.424,122.003,597.774,122.003,646.711,208.877,457.931,390.407,576.005,428.945],
+        [419.487,247.874,448.424,132.000,621.774,132.000,650.711,247.874,471.931,420.404,624.005,389.942],
+        [394.972,180.750,448.737, 91.851,621.461, 91.851,675.226,180.750,521.618,387.255,595.521,393.817],
+        [444.304,203.018,423.086,137.467,647.112,137.467,625.894,203.018,494.025,394.626,608.189,437.086],
+        [378.242,228.124,499.237,113.250,570.961,113.250,691.956,228.124,449.118,434.654,550.251,428.192],
+        [346.934,152.375,373.233, 97.393,696.965, 97.393,723.264,152.375,509.887,326.988,613.559,330.442],
+        [323.822,194.484,403.492, 64.687,666.706, 64.687,746.376,194.484,453.340,329.579,562.671,326.552]
+        ];
 
         //y coordinates of all possible spots on health bar
         // Why are there two of these - not sure which to change, so changed both
@@ -57,9 +57,9 @@ var GameBoard = new Phaser.Class ({
         this.hpStart = 582;
         this.zoneCards = [[],[],[]];
         this.zoneSpots = [[382.000, 201.500, 433.000, 113.250],
-                          [633.000, 113.250, 684.250, 201.750],
-                          [482.000, 382.712, 584.000, 382.712]
-                          ];
+        [633.000, 113.250, 684.250, 201.750],
+        [482.000, 382.712, 584.000, 382.712]
+        ];
     },
 
     //function to initialize the data sent into gameboard from waiting room
@@ -80,6 +80,38 @@ var GameBoard = new Phaser.Class ({
     preload: function () {
         // url where gfx resources are stored
         var gfx = "https://d2naeox1pchp13.cloudfront.net/";
+
+        // loading screen
+        var progressBar = this.add.graphics();
+        var progressBox = this.add.graphics();
+        progressBox.fillStyle(0x222222, 0.8);
+        progressBox.fillRect(385.5, 285, 305, 30);
+        var assetText = this.make.text({
+            x: 533,
+            y: 350,
+            text: '',
+            style: {
+                font: '12px Palatino',
+                fill: '#ffffff'
+            }
+        });
+        assetText.setOrigin(0.5, 0.5);
+
+        this.load.on('progress', function (value) {
+            progressBar.clear();
+            progressBar.fillStyle(0xffffff, 1);
+            progressBar.fillRect(388, 287.5, 300 * value, 25);
+        });
+
+        this.load.on('fileprogress', function (file) {
+            assetText.setText('Loading visual elements...');
+        });
+
+        this.load.on('complete', function () {
+            progressBar.destroy();
+            progressBox.destroy();
+            assetText.destroy();
+        });
 
         // load background and health bar
         this.load.svg('background', gfx + 'background.svg', {width: 1066, height: 600});
@@ -228,10 +260,10 @@ var GameBoard = new Phaser.Class ({
         this.popupInfo.infoBox = this.add.image(740, 55, "popup_left");
         this.popupInfo.infoBox.depth = 30;
         this.popupInfo.displayInfo = this.add.text(this.popupInfo.infoBox.x - 80,
-                                                  this.popupInfo.infoBox.y - 40,
-                                                  "Click on things to see more information! Click on the i button to close this popup.",
-                                                  { font: '12px Palatino', fill: '#FFFFFF',
-                                                  wordWrap: { width: 130, useAdvancedWrap: true }});
+          this.popupInfo.infoBox.y - 40,
+          "Click on things to see more information! Click on the i button to close this popup.",
+          { font: '12px Palatino', fill: '#FFFFFF',
+          wordWrap: { width: 130, useAdvancedWrap: true }});
         this.popupInfo.displayInfo.depth = 30;
         this.popupInfo.setInteractive();
         this.popupInfo.on('clicked', this.clickHandler, this.popupInfo);
@@ -259,12 +291,12 @@ var GameBoard = new Phaser.Class ({
         for(var i = 0; i < this.nPlayers; i++) {
             if(("private" in this.gameData) && this.allPlayersInfo[i].user_id === this.gameData.private.user_id) {
                 this.player = this.makePlayer(this.allPlayersInfo[i].user_id,
-                                              this.allPlayersInfo[i], i+1);
+                  this.allPlayersInfo[i], i+1);
                 this.player.on('clicked', this.clickHandler, this.player);
             }
             else {
                 this.otherPlayers[count] = this.makePlayer(this.allPlayersInfo[i].user_id,
-                                                         this.allPlayersInfo[i], i+1);
+                   this.allPlayersInfo[i], i+1);
                 this.otherPlayers[count].on('clicked', this.clickHandler, this.otherPlayers[i]);
                 count++;
             }
@@ -307,7 +339,7 @@ var GameBoard = new Phaser.Class ({
                 'Team: ' + this.charInfo.alleg,
                 'Win Condition: ' + this.charInfo.win_cond_desc,
                 'Special Ability: ' + this.charInfo.special_desc
-            ]);
+                ]);
 
             this.add.image(100, 366.975, "circle" + String(this.player.number)).setScale(1.025);
             this.add.image(100, 366.975, this.charInfo.name);
@@ -333,32 +365,32 @@ var GameBoard = new Phaser.Class ({
         socket.on('display', function(data) {
             switch(data.type) {
                 case "win":
-                    self.onGameOver(data.winners);
-                    break;
+                self.onGameOver(data.winners);
+                break;
                 case "draw":
-                    self.onDraw(data);
-                    break;
+                self.onDraw(data);
+                break;
                 case "reveal":
-                    self.onReveal(data);
-                    break;
+                self.onReveal(data);
+                break;
                 case "roll":
-                    self.onRoll(data);
-                    break;
+                self.onRoll(data);
+                break;
                 case "die":
-                    self.onReveal(data);
-                    break;
+                self.onReveal(data);
+                break;
                 case "damage":
-                    self.onAttack(data.player);
-                    break;
+                self.onAttack(data.player);
+                break;
                 default:
-                    break;
+                break;
             }
         });
 
         // Warn players that they'll be disconnected if they leave
         window.onbeforeunload = function() {
             return 'If you leave this page, you will be removed from the game. ' +
-                   'Are you sure you want to leave?';
+            'Are you sure you want to leave?';
         };
 
     },
@@ -381,7 +413,7 @@ var GameBoard = new Phaser.Class ({
             equip.displayInfo.setText([
                 "Equipment: " + card.title,
                 "Effect: " + card.desc
-            ]);
+                ]);
             equip.displayInfo.setVisible(false);
             equip.displayInfo.depth = 30;
 
@@ -389,28 +421,28 @@ var GameBoard = new Phaser.Class ({
             equip.setInteractive();
             equip.on('clicked', this.clickHandler, equip);
             return equip;
-    },
+        },
 
-    makeHealthBar: function() {
-        var sprite  = this.add.image(960.160, 302.279, 'health');
-        sprite.infoBox = this.add.image(800, 175, 'health_popup');
-        sprite.infoBox.setVisible(false);
-        sprite.infoBox.depth = 30;
-        sprite.displayInfo = this.add.text(760, 15, " ", { font: '10px Palatino', fill: '#FFFFFF', wordWrap: { width: 250, useAdvancedWrap: true }});
+        makeHealthBar: function() {
+            var sprite  = this.add.image(960.160, 302.279, 'health');
+            sprite.infoBox = this.add.image(800, 175, 'health_popup');
+            sprite.infoBox.setVisible(false);
+            sprite.infoBox.depth = 30;
+            sprite.displayInfo = this.add.text(760, 15, " ", { font: '10px Palatino', fill: '#FFFFFF', wordWrap: { width: 250, useAdvancedWrap: true }});
 
-        sprite.displayInfo.lineSpacing = -2.2;
+            sprite.displayInfo.lineSpacing = -2.2;
 
 
-        var display_text = []
-        for (var i = 0; i < this.gameData.public.characters.length; i++) {
-          display_text.push("Player: " + this.gameData.public.characters[i].name, "Dies At HP: " + this.gameData.public.characters[i].max_damage + "\n");
-        }
-        sprite.displayInfo.setText(display_text);
-        sprite.displayInfo.setVisible(false);
-        sprite.displayInfo.depth = 30;
-        sprite.setInteractive();
-        return sprite;
-    },
+            var display_text = []
+            for (var i = 0; i < this.gameData.public.characters.length; i++) {
+              display_text.push("Player: " + this.gameData.public.characters[i].name, "Dies At HP: " + this.gameData.public.characters[i].max_damage + "\n");
+          }
+          sprite.displayInfo.setText(display_text);
+          sprite.displayInfo.setVisible(false);
+          sprite.displayInfo.depth = 30;
+          sprite.setInteractive();
+          return sprite;
+      },
 
     // this adds the zones to the board and makes them interactive on click
     makeZones: function(zone_num, card_num) {
@@ -439,7 +471,7 @@ var GameBoard = new Phaser.Class ({
         zone.displayInfo.setText([
             "Area: " + this.gameData.public.zones[zone_num][card_num].name,
             this.gameData.public.zones[zone_num][card_num].desc
-        ]);
+            ]);
 
         zone.infoBox.setVisible(false);
         zone.displayInfo.setVisible(false);
@@ -490,33 +522,33 @@ var GameBoard = new Phaser.Class ({
           var img_y = summaryIcon.displayCharacter[i].charImage.y;
           summaryIcon.displayCharacter[i].charImage.destroy();
           summaryIcon.displayCharacter[i].charImage = this.add.image(img_x, img_y, this.charInfo.name);
-        }
-        else {
+      }
+      else {
           summaryIcon.characters[i] = "?";
           summaryIcon.team[i] = "?";
           summaryIcon.win[i] = "?";
-        }
+      }
 
-        summaryIcon.displayInfo[i].setText([
+      summaryIcon.displayInfo[i].setText([
           "Player Name: " + summaryIcon.names[i],
           "Character: " + summaryIcon.characters[i],
           "Damage: " + summaryIcon.damage[i] + ", Team: " + summaryIcon.team[i],
           "Win Condition: " + summaryIcon.win[i],
           "Equipment: " + summaryIcon.equipment[i]
-        ]);
+          ]);
 
-        summaryIcon.displayInfo[i].depth = 40;
-        summaryIcon.displayCharacter[i].depth = 40;
-        summaryIcon.displayCharacter[i].charImage.depth = 40;
-        summaryIcon.displayCharacter[i].charImage.setVisible(false);
-        summaryIcon.displayInfo[i].setVisible(false);
-        summaryIcon.displayCharacter[i].setVisible(false);
-      }
+      summaryIcon.displayInfo[i].depth = 40;
+      summaryIcon.displayCharacter[i].depth = 40;
+      summaryIcon.displayCharacter[i].charImage.depth = 40;
+      summaryIcon.displayCharacter[i].charImage.setVisible(false);
+      summaryIcon.displayInfo[i].setVisible(false);
+      summaryIcon.displayCharacter[i].setVisible(false);
+  }
 
-      summaryIcon.infoBox.setVisible(false);
-      summaryIcon.setInteractive();
-      return summaryIcon;
-    },
+  summaryIcon.infoBox.setVisible(false);
+  summaryIcon.setInteractive();
+  return summaryIcon;
+},
 
     //the makePlayer function is what creates our sprite and adds him to the board.
     makePlayer: function (name, data, num) {
@@ -546,7 +578,7 @@ var GameBoard = new Phaser.Class ({
         sprite.displayInfo.setText([
             "Player: " + sprite.name,
             "Equipment: None"
-        ]);
+            ]);
         sprite.displayInfo.setVisible(false);
 
         //this makes the sprite interactive so that we can click on them
@@ -579,7 +611,7 @@ var GameBoard = new Phaser.Class ({
                   duration: 1000,
                   ease: 'Power2',
                   repeat: 0
-                });
+              });
             }
 
             // player.x = player.spots[data.location.name].x;
@@ -610,7 +642,7 @@ var GameBoard = new Phaser.Class ({
           duration: 1000,
           ease: 'Power2',
           repeat: 0
-        });
+      });
 
         //player.hpTracker.y = this.hpStart - 38.25*data.damage;
         this.gameSummary.damage[player.number - 1] = data.damage;
@@ -672,18 +704,18 @@ var GameBoard = new Phaser.Class ({
             this.gameSummary.win[player.number - 1] = data.character.win_cond_desc;
             if ((player.number - 1) % 2 == 0) {
               this.gameSummary.displayCharacter[player.number - 1].charImage = this.add.image(280.46, 119 + 130*((player.number - 1)/2), data.character.name);
-            }
-            else {
-              this.gameSummary.displayCharacter[player.number - 1].charImage = this.add.image(582.46, 119 + 130*((player.number-2)/2), data.character.name);
-            }
-            this.gameSummary.displayCharacter[player.number - 1].charImage.depth = 40;
-            this.gameSummary.displayCharacter[player.number - 1].charImage.setVisible(false);
           }
-        }
+          else {
+              this.gameSummary.displayCharacter[player.number - 1].charImage = this.add.image(582.46, 119 + 130*((player.number-2)/2), data.character.name);
+          }
+          this.gameSummary.displayCharacter[player.number - 1].charImage.depth = 40;
+          this.gameSummary.displayCharacter[player.number - 1].charImage.setVisible(false);
+      }
+  }
 
-        if(data.state == 0 && player.info.state != 0) {
-          this.gameSummary.characters[player.number - 1] = data.character.name+ " (Dead)";
-        }
+  if(data.state == 0 && player.info.state != 0) {
+      this.gameSummary.characters[player.number - 1] = data.character.name+ " (Dead)";
+  }
 
         // Update player info to contain new data
         player.info = data;
@@ -714,21 +746,21 @@ var GameBoard = new Phaser.Class ({
 
         if(player.info.state != 2) {
           displayName += " (" + player.info.character.name + ")";
-        }
+      }
 
-        player.displayInfo.setText([
-            "Player: " + displayName,
-            "Equipment: " + player.info.equipment.list
+      player.displayInfo.setText([
+        "Player: " + displayName,
+        "Equipment: " + player.info.equipment.list
         ]);
 
-        this.gameSummary.displayInfo[player.number - 1].setText([
+      this.gameSummary.displayInfo[player.number - 1].setText([
           "Player Name: " + this.gameSummary.names[player.number - 1],
           "Character: " + this.gameSummary.characters[player.number - 1],
           "Damage: " + this.gameSummary.damage[player.number - 1] + ", Team: " + this.gameSummary.team[player.number - 1],
           "Win Condition: " + this.gameSummary.win[player.number - 1],
           "Equipment: " + this.gameSummary.equipment[player.number - 1]
-        ]);
-    },
+          ]);
+  },
 
     //for each update, change parts of the board that need to be redrawn.
     updateBoard: function(data) {
@@ -756,19 +788,19 @@ var GameBoard = new Phaser.Class ({
             var open = player.scene.openPopups.pop();
             open.infoBox.setVisible(false);
             open.displayInfo.setVisible(false);
-          }
+        }
 
-            player.infoBox.setVisible(true);
-            player.displayInfo.setVisible(true);
-            player.scene.openPopups.push(player);
-        }
-        else
-        {
-            player.infoBox.setVisible(false);
-            player.displayInfo.setVisible(false);
-            player.scene.openPopups.pop();
-        }
-    },
+        player.infoBox.setVisible(true);
+        player.displayInfo.setVisible(true);
+        player.scene.openPopups.push(player);
+    }
+    else
+    {
+        player.infoBox.setVisible(false);
+        player.displayInfo.setVisible(false);
+        player.scene.openPopups.pop();
+    }
+},
     //click handler for popups that will delete them
     cardHandler: function(card)
     {
@@ -792,18 +824,18 @@ var GameBoard = new Phaser.Class ({
             summary.displayInfo[i].setVisible(true);
             summary.displayCharacter[i].setVisible(true);
             summary.displayCharacter[i].charImage.setVisible(true);
-          }
         }
-        else
-        {
-            summary.infoBox.setVisible(false);
-            for(var i = 0; i < summary.scene.nPlayers; i++) {
-              summary.displayInfo[i].setVisible(false);
-              summary.displayCharacter[i].setVisible(false);
-              summary.displayCharacter[i].charImage.setVisible(false);
-            }
-        }
-    },
+    }
+    else
+    {
+        summary.infoBox.setVisible(false);
+        for(var i = 0; i < summary.scene.nPlayers; i++) {
+          summary.displayInfo[i].setVisible(false);
+          summary.displayCharacter[i].setVisible(false);
+          summary.displayCharacter[i].charImage.setVisible(false);
+      }
+  }
+},
 
     //game over displays
     onGameOver: function(winners) {
@@ -826,7 +858,7 @@ var GameBoard = new Phaser.Class ({
                 'Character: ' + winners[i].character.name,
                 'Team: ' + winners[i].character.alleg,
                 'Win Condition: ' + winners[i].character.win_cond_desc
-            ]);
+                ]);
         }
 
         if($('#reveal').length) {
@@ -863,21 +895,21 @@ var GameBoard = new Phaser.Class ({
 
         if(cardInfo.is_equip) {
           type = "Equipment";
-        }
-        else {
+      }
+      else {
           type = "Single Use";
-        }
-        this.cards.cardsDrawn[cardsOut].char = true;
-        this.cards.cardsDrawn[cardsOut].cardText.setText([
-            cardInfo.title,
-            type,
-            cardInfo.desc
+      }
+      this.cards.cardsDrawn[cardsOut].char = true;
+      this.cards.cardsDrawn[cardsOut].cardText.setText([
+        cardInfo.title,
+        type,
+        cardInfo.desc
         ]);
 
-        this.cards.cardsDrawn[cardsOut].setInteractive();
-        this.cards.cardsDrawn[cardsOut].on('clicked', this.cardHandler, this.cards.cardsDrawn[cardsOut]);
-        this.cards.nDrawn = cardsOut + 1;
-    },
+      this.cards.cardsDrawn[cardsOut].setInteractive();
+      this.cards.cardsDrawn[cardsOut].on('clicked', this.cardHandler, this.cards.cardsDrawn[cardsOut]);
+      this.cards.nDrawn = cardsOut + 1;
+  },
 
     //character card displays
     onReveal: function(charInfo) {
@@ -893,7 +925,7 @@ var GameBoard = new Phaser.Class ({
             "Team: " + charInfo.player.character.alleg,
             "Win Condition: " + charInfo.player.character.win_cond_desc,
             "Special Ability: " + charInfo.player.character.special_desc
-        ]);
+            ]);
 
         this.cards.cardsDrawn[cardsOut].setInteractive();
         this.cards.cardsDrawn[cardsOut].on('clicked', this.cardHandler, this.cards.cardsDrawn[cardsOut]);
@@ -912,22 +944,22 @@ var GameBoard = new Phaser.Class ({
                 "Damage: " + this.gameSummary.damage[i] + ", Team: " + this.gameSummary.team[i],
                 "Win Condition: " + this.gameSummary.win[i],
                 "Equipment: " + this.gameSummary.equipment[i]
-              ]);
+                ]);
 
               this.gameSummary.displayCharacter[i].charImage.destroy();
 
               if (i % 2 == 0) {
                 this.gameSummary.displayCharacter[i].charImage = this.add.image(280.46, 119 + 130*(i/2), charInfo.player.character.name);
-              }
-              else {
-                this.gameSummary.displayCharacter[i].charImage = this.add.image(582.46, 119 + 130*((i-1)/2), charInfo.player.character.name);
-              }
-              this.gameSummary.displayCharacter[i].charImage.depth = 40;
-              this.gameSummary.displayCharacter[i].charImage.setVisible(false);
-              break;
             }
-          }
+            else {
+                this.gameSummary.displayCharacter[i].charImage = this.add.image(582.46, 119 + 130*((i-1)/2), charInfo.player.character.name);
+            }
+            this.gameSummary.displayCharacter[i].charImage.depth = 40;
+            this.gameSummary.displayCharacter[i].charImage.setVisible(false);
+            break;
         }
+    }
+}
 
         // popups
         this.cards.cardsDrawn[cardsOut] = this.add.image(541.58, 215, "alert");
@@ -942,18 +974,18 @@ var GameBoard = new Phaser.Class ({
 
         if(charInfo.type === "die") {
           this.cards.cardsDrawn[cardsOut].cardText.setText([charInfo.player.user_id, "died!"]);
-        }
-        else {
+      }
+      else {
           this.cards.cardsDrawn[cardsOut].cardText.setText([ charInfo.player.user_id, "revealed!"]);
-        }
-        this.cards.cardsDrawn[cardsOut].depth = 40;
-        this.cards.cardsDrawn[cardsOut].cardText.depth = 40;
-        this.cards.cardsDrawn[cardsOut].setInteractive();
-        this.cards.cardsDrawn[cardsOut].on('clicked', this.cardHandler, this.cards.cardsDrawn[cardsOut]);
-        this.cards.nDrawn = cardsOut + 1;
-    },
+      }
+      this.cards.cardsDrawn[cardsOut].depth = 40;
+      this.cards.cardsDrawn[cardsOut].cardText.depth = 40;
+      this.cards.cardsDrawn[cardsOut].setInteractive();
+      this.cards.cardsDrawn[cardsOut].on('clicked', this.cardHandler, this.cards.cardsDrawn[cardsOut]);
+      this.cards.nDrawn = cardsOut + 1;
+  },
 
-    onRoll: function(dice) {
+  onRoll: function(dice) {
       if(dice["4-sided"]) {
         if(dice["6-sided"]) {
           //both dice are present, adjust x and y values for this
@@ -967,8 +999,8 @@ var GameBoard = new Phaser.Class ({
           this.dice[1].number.setVisible(true);
           this.dice[1].setVisible(true);
           this.dice[1].number.setText(dice["6-sided"]);
-        }
-        else {
+      }
+      else {
           //6 sided is not here
           this.dice[0].x = 529.966;
           this.dice[0].number.x = 524.728;
@@ -976,15 +1008,15 @@ var GameBoard = new Phaser.Class ({
           //remove 6 sided dice
           this.dice[1].number.setVisible(false);
           this.dice[1].setVisible(false);
-        }
+      }
 
         //set 4 sided die
         this.dice[0].number.setVisible(true);
         this.dice[0].setVisible(true);
         this.dice[0].number.setText(dice["4-sided"]);
-      }
+    }
 
-      else if(dice["6-sided"]){
+    else if(dice["6-sided"]){
         //if we get here, then 4-sided is not on the board; remove it
         this.dice[0].number.setVisible(false);
         this.dice[0].setVisible(false);
@@ -997,43 +1029,43 @@ var GameBoard = new Phaser.Class ({
         this.dice[1].number.setVisible(true);
         this.dice[1].setVisible(true);
         this.dice[1].number.setText(dice["6-sided"]);
-      }
+    }
 
-      var tween = this.tweens.add({
+    var tween = this.tweens.add({
         targets: [this.dice[0], this.dice[0].number, this.dice[1], this.dice[1].number],
         y: '-=10',
         yoyo: true,
         duration: 100,
         ease: 'Power2',
         repeat: 1
-      });
+    });
 
-    },
+},
 
-    onAttack: function(victim) {
-      var player;
-      var count = 0;
-      for(var i = 0; i < this.nPlayers; i++) {
-        if(this.otherPlayers[count].name == victim.user_id) {
-          player = this.otherPlayers[count];
-          break;
-        }
-        if(this.player.name === victim.user_id) {
-          player = this.player;
-          break;
-        }
-        else {
-          count++;
-        }
-      }
+onAttack: function(victim) {
+  var player;
+  var count = 0;
+  for(var i = 0; i < this.nPlayers; i++) {
+    if(this.otherPlayers[count].name == victim.user_id) {
+      player = this.otherPlayers[count];
+      break;
+  }
+  if(this.player.name === victim.user_id) {
+      player = this.player;
+      break;
+  }
+  else {
+      count++;
+  }
+}
 
-      var tween = this.tweens.add({
-        targets: player,
-        angle: 70,
-        yoyo: true,
-        duration: 300,
-        ease: 'Power2',
-        repeat: 0
-      });
-    }
+var tween = this.tweens.add({
+    targets: player,
+    angle: 70,
+    yoyo: true,
+    duration: 300,
+    ease: 'Power2',
+    repeat: 0
+});
+}
 });
