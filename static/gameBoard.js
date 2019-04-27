@@ -79,7 +79,7 @@ var GameBoard = new Phaser.Class ({
     //the preload function is where all images that will be used in the game are loaded into
     preload: function () {
         // url where gfx resources are stored
-        var gfx = "https://s3.amazonaws.com/shadowhunters.gfxresources/";
+        var gfx = "https://d2naeox1pchp13.cloudfront.net/";
 
         // load background and health bar
         this.load.svg('background', gfx + 'background.svg', {width: 1066, height: 600});
