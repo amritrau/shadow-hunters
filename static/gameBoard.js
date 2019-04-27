@@ -81,13 +81,14 @@ var GameBoard = new Phaser.Class ({
         // url where gfx resources are stored
         var gfx = "https://d2naeox1pchp13.cloudfront.net/";
 
+
         // loading screen
         var progressBar = this.add.graphics();
         var progressBox = this.add.graphics();
         progressBox.fillStyle(0x222222, 0.8);
         progressBox.fillRect(385.5, 285, 305, 30);
         var assetText = this.make.text({
-            x: 533,
+            x: 543,
             y: 350,
             text: '',
             style: {
@@ -112,6 +113,7 @@ var GameBoard = new Phaser.Class ({
             progressBox.destroy();
             assetText.destroy();
         });
+
 
         // load background and health bar
         this.load.svg('background', gfx + 'background.svg', {width: 1066, height: 600});
