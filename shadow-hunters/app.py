@@ -19,7 +19,8 @@ app = Flask(
     __name__, template_folder=template_dir,
     static_folder=static_dir, static_url_path='/static'
 )
-app.config['SECRET_KEY'] = 'segfault hunters!'
+secret = os.getenv('SECRET_KEY')
+app.config['SECRET_KEY'] = secret if secret is not None else os.urandom(32)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 socketio = SocketIO(app, async_handlers=True)
 
