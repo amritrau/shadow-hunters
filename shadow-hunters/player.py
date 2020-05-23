@@ -57,7 +57,7 @@ class Player:
         # If AI player, chance to reveal and use special at turn start
         concurrency.reveal_lock.acquire()
         if self.ai and self.state == 2:
-            if self.agent.choose_reveal(self.gc):
+            if self.agent.choose_reveal(self, self.gc):
                 self.state = 1  # Guard
                 self.special_active = True  # Guard
                 concurrency.reveal_lock.release()
