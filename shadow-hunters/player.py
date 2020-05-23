@@ -3,6 +3,7 @@ import concurrency
 import helpers
 import random
 from collections import defaultdict
+from agent import Agent
 
 
 class Player:
@@ -20,6 +21,7 @@ class Player:
         self.modifiers['attack_dice_type'] = "attack"
         self.special_active = False
         self.ai = ai
+        self.agent = Agent()
 
     def setCharacter(self, character):
         self.character = character
@@ -55,8 +57,7 @@ class Player:
         # If AI player, chance to reveal and use special at turn start
         concurrency.reveal_lock.acquire()
         if self.ai and self.state == 2:
-            reveal_chance = self.gc.round_count / 20
-            if random.random() <= reveal_chance:
+            if self.agent.choose_reveal(self.gc):
                 self.state = 1  # Guard
                 self.special_active = True  # Guard
                 concurrency.reveal_lock.release()
