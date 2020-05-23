@@ -22,6 +22,7 @@ class Player:
         self.special_active = False
         self.ai = ai
         self.agent = Agent()
+        self.delexicalizations = dict()
 
     def setCharacter(self, character):
         self.character = character
@@ -576,5 +577,6 @@ class Player:
             'character': self.character.dump() if self.character else {},
             'location': self.location.dump() if self.location else {},
             'special_active': self.special_active,
-            'ai': self.ai
+            'ai': self.ai,
+            'delexicalizations': self.delexicalizations
         }
