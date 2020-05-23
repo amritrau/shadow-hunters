@@ -1,5 +1,6 @@
 import random
 
+
 class Agent:
     """Defines an agent that's capable of interacting with the game"""
     def __init__(self):

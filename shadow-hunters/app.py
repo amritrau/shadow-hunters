@@ -171,7 +171,9 @@ def socket_ask(form, data, user_id, room_id):
 
     # If player is a CPU, use the player's piggyback agent to make a choice
     if player.ai:
-        return player.agent.choose_action(data['options'], AI_SLEEP, gc=player.gc)
+        return player.agent.choose_action(
+            data['options'], AI_SLEEP, gc=player.gc
+        )
 
     # Otherwise, emit ask
     sid = player.socket_id
@@ -183,10 +185,12 @@ def socket_ask(form, data, user_id, room_id):
     # Loop until an answer is received
     while not bin['answered']:
         while not bin['answered']:
-            # If a player swaps out for an AI during an ask, the piggyback agent
-            # answers for them
+            # If a player swaps out for an AI during an ask, the piggyback
+            # agent answers for them
             if player.ai or player.socket_id != sid:
-                return player.agent.choose_action(data['options'], AI_SLEEP, gc=player.gc)
+                return player.agent.choose_action(
+                    data['options'], AI_SLEEP, gc=player.gc
+                )
             socketio.sleep(SOCKET_SLEEP)
 
         # Validate answerer and answer
@@ -223,6 +227,7 @@ def socket_update(data, room_id):
         socketio.sleep(SOCKET_SLEEP)
 
 # SOCKET RECEIVERS
+
 
 @socketio.on('start')
 def on_start(json):
