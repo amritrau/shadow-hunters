@@ -2,10 +2,23 @@ import random
 import json
 
 
-class RandomAgent:
-    """Defines an agent that randomly interacts with the game"""
+class AgentInterface():
+    """Defines an agent that can interact with the game"""
+
     def __init__(self):
         pass
+
+    def choose_action(self, options, player, gc):
+        """Choose an action from the options provided"""
+        raise NotImplementedError
+
+    def choose_reveal(self, player, gc):
+        """Return true if the agent chooses to reveal"""
+        raise NotImplementedError
+
+
+class RandomAgent(AgentInterface):
+    """Defines an agent that randomly interacts with the game"""
 
     def choose_action(self, options, player, gc):
         """Choose an action from the options provided"""
