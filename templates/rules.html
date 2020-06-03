@@ -23,7 +23,7 @@
 
     .bg {
       /* The image used */
-      background-image: url("https://d2naeox1pchp13.cloudfront.net/room.png");
+      background-image: url("https://s3.amazonaws.com/shadowhunters.gfxresources/room.svg");
 
       /* Full height */
       width: 100%;
@@ -113,7 +113,7 @@
 
       <h2>The Game Board</h2>
       <div class="gameimage">
-          <img src={{ url_for("static", filename="assets/ExampleBoard.png") }} width="1066" height="720">
+          <img src="https://s3.amazonaws.com/shadowhunters.gfxresources/ExampleBoard.png" width="1066" height="720">
       </div>
       <p>
         Once the game has started, the Shadow Hunters game board will appear in front of all players. It is pictured above. Highlighted numbers identify its various pieces:
@@ -272,21 +272,21 @@
       <p>
         A list of all playable characters, with their names, factions, maximum HPs, win conditions, and special abilities, is provided below: <br>
         <br>
-        <img src={{ url_for("static", filename="assets/Ellen.png") }} class = "portrait" height=105 width=105>
+        <img src=https://s3.amazonaws.com/shadowhunters.gfxresources/Ellen.png" class="portrait" height=105 width=105>
         Name: Ellen <br>
         Faction: Hunter <br>
         Maximum HP: 10 <br>
         Win Condition: All of the Shadows are dead. <br>
         Special Ability: Once per game, when your turn starts, you can choose a player and permanently void their special ability. <br>
         <br>
-        <img src={{ url_for("static", filename="assets/Franklin.png") }} class = "portrait" height=105 width=105>
+        <img src="https://s3.amazonaws.com/shadowhunters.gfxresources/Franklin.png" class="portrait" height=105 width=105>
         Name: Franklin <br>
         Faction: Hunter <br>
         Maximum HP: 12 <br>
         Win Condition: All of the Shadows are dead. <br>
         Special Ability: Once per game, when your turn starts, you can pick a player and damage them for the roll of a 6-sided die. <br>
         <br>
-        <img src={{ url_for("static", filename="assets/Fu-ka.png") }} class = "portrait" height=105 width=105>
+        <img src="https://s3.amazonaws.com/shadowhunters.gfxresources/Fu-ka.png" class="portrait" height=105 width=105>
         Name: Fu&ndash;ka <br>
         Faction: Hunter <br>
         Maximum HP: 12 <br>
@@ -294,28 +294,28 @@
         Special Ability: Once per game, when your turn starts, you can set the damage of any player to 7. <br>
         <br>
         <br>
-        <img src={{ url_for("static", filename="assets/George.png") }} class = "portrait" height=105 width=105>
+        <img src="https://s3.amazonaws.com/shadowhunters.gfxresources/George.png" class="portrait" height=105 width=105>
         Name: George <br>
         Faction: Hunter <br>
         Maximum HP: 14 <br>
         Win Condition: All of the Shadows are dead. <br>
         Special Ability: Once per game, when your turn starts, you can pick a player and damage them for the roll of a 4-sided die. <br>
         <br>
-        <img src={{ url_for("static", filename="assets/Ultrasoul.png") }} class = "portrait" height=105 width=105>
+        <img src="https://s3.amazonaws.com/shadowhunters.gfxresources/Ultrasoul.png" class="portrait" height=105 width=105>
         Name: Ultra Soul <br>
         Faction: Shadow <br>
         Maximum HP: 11 <br>
         Win Condition: All of the Hunters (or 3 Neutrals) are dead. <br>
         Special Ability: When your turn starts, you can give 3 damage to one player who is at the Underworld Gate. <br>
         <br>
-        <img src={{ url_for("static", filename="assets/Valkyrie.png") }} class = "portrait" height=105 width=105>
+        <img src="https://s3.amazonaws.com/shadowhunters.gfxresources/Valkyrie.png" class="portrait" height=105 width=105>
         Name: Valkyrie <br>
         Faction: Shadow <br>
         Maximum HP: 13 <br>
         Win Condition: All of the Hunters (or 3 Neutrals) are dead. <br>
         Special Ability: When you attack, you only roll the 4-sided die and inflict the amount of damage rolled. <br>
         <br>
-        <img src={{ url_for("static", filename="assets/Vampire.png") }} class = "portrait" height=105 width=105>
+        <img src="https://s3.amazonaws.com/shadowhunters.gfxresources/Vampire.png" class="portrait" height=105 width=105>
         Name: Vampire <br>
         Faction: Shadow <br>
         Maximum HP: 13 <br>
@@ -323,7 +323,7 @@
         Special Ability: If you attack a player and inflict damage, you heal 2 points of your own damage. <br>
         <br>
         <br>
-        <img src={{ url_for("static", filename="assets/Werewolf.png") }} class = "portrait" height=105 width=105>
+        <img src="https://s3.amazonaws.com/shadowhunters.gfxresources/Werewolf.png" class="portrait" height=105 width=105>
         Name: Werewolf <br>
         Faction: Shadow <br>
         Maximum HP: 14 <br>
@@ -331,7 +331,7 @@
         Special Ability: After you are attacked, you can counterattack immediately. <br>
         <br>
         <br>
-        <img src={{ url_for("static", filename="assets/Allie.png") }} class = "portrait" height=105 width=105>
+        <img src="https://s3.amazonaws.com/shadowhunters.gfxresources/Allie.png class="portrait" height=105 width=105>
         Name: Allie <br>
         Faction: Neutral <br>
         Maximum HP: 8 <br>
@@ -339,7 +339,7 @@
         Special Ability: Once per game, you may fully heal your damage.<br>
         <br>
         <br>
-        <img src={{ url_for("static", filename="assets/Catherine.png") }} class = "portrait" height=105 width=105>
+        <img src="https://s3.amazonaws.com/shadowhunters.gfxresources/Catherine.png class="portrait" height=105 width=105>
         Name: Catherine <br>
         Faction: Neutral <br>
         Maximum HP: 11 <br>
@@ -347,7 +347,7 @@
         Special Ability: When your turn starts, you heal 1 damage. <br>
         <br>
         <br>
-        <img src={{ url_for("static", filename="assets/Bob.png") }} class = "portrait" height=105 width=105>
+        <img src="https://s3.amazonaws.com/shadowhunters.gfxresources/Bob.png" class="portrait" height=105 width=105>
         Name: Bob <br>
         Faction: Neutral <br>
         Maximum HP: 10 <br>
