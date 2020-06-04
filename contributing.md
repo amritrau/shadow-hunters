@@ -18,7 +18,7 @@ While we fully support the addition of quality-of-life features or fun extras, s
 Please note that all contributions must have 100% (or near-100%) unit test coverage as measured by `pytest --cov-config=.coveragerc --cov=shadow-hunters/`. Submissions must also follow Python style and raise no issues with `pycodestyle --statistics -q .`
 
 ### Frontend
-Please note that we unfortunately cannot accept custom artwork; please do not include these in your pull request. This is both to ensure there are no copyright/permission issues and for consistency. If you are adding new characters, please use the anonymous smiley face (`/static/assets/anon.png`) as a placeholder for the art, and we will fill it in ourselves.
+Please note that we unfortunately cannot accept custom artwork; please do not include these in your pull request. This is both to ensure there are no copyright/permission issues and for consistency. If you are adding new characters, please use the anonymous smiley face (`http://s3.amazonaws.com/shadowhunters.gfxresources/anon.png`) as a placeholder for the art, and we will fill it in ourselves.
 
 If you feel strongly that contributing your non-code artifacts (e.g. new images or audio) would be an improvement to the game, please open an issue first to clear it with the administrators before writing code – we want to respect everyone’s time!
 

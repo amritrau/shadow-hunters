@@ -122,8 +122,8 @@ var GameBoard = new Phaser.Class ({
         this.load.svg('popup_right', gfx + 'player-popright.svg', {width: 175.424, height: 84.961});
         this.load.svg('health', gfx + 'health.svg', {width: 206.681, height: 589.442});
         this.load.svg('health_popup', gfx + 'health-popup.svg', {width: 100, height: 335});
-        this.load.image('summary', '/static/assets/scroll.png');
-        this.load.image('info', '/static/assets/info.png');
+        this.load.image('summary', gfx + 'scroll.png');
+        this.load.image('info', gfx + 'info.png');
 
         // load arsenal
         this.load.svg('arsenal', gfx + 'arsenal.svg', {width: 640, height: 125.683});
@@ -173,40 +173,39 @@ var GameBoard = new Phaser.Class ({
         this.load.svg('13hp', gfx + '13hp.svg', {width: 30.14, height: 30.14});
         this.load.svg('14hp', gfx + '14hp.svg', {width: 30.14, height: 30.14});
         this.load.svg('A', gfx + 'a.svg', {width: 36.657, height: 36.657});
-        this.load.svg('B', '/static/assets/b.svg', {width: 36.657, height: 36.657});
-        this.load.svg('C', '/static/assets/c.svg', {width: 36.657, height: 36.657});
-        this.load.svg('U', '/static/assets/u.svg', {width: 36.657, height: 36.657});
+        this.load.svg('B', gfx + 'b.svg', {width: 36.657, height: 36.657});
+        this.load.svg('C', gfx + 'c.svg', {width: 36.657, height: 36.657});
+        this.load.svg('U', gfx + 'u.svg', {width: 36.657, height: 36.657});
         this.load.svg('V', gfx + 'v.svg', {width: 36.657, height: 36.657});
-        this.load.svg('W', '/static/assets/w.svg', {width: 36.657, height: 36.657});
-        this.load.svg('E', '/static/assets/e.svg', {width: 36.657, height: 36.657});
+        this.load.svg('W', gfx + 'w.svg', {width: 36.657, height: 36.657});
+        this.load.svg('E', gfx + 'e.svg', {width: 36.657, height: 36.657});
         this.load.svg('F', gfx + 'f.svg', {width: 36.657, height: 36.657});
         this.load.svg('G', gfx + 'g.svg', {width: 36.657, height: 36.657});
 
         // possible later implementation: loop through dumped list of playable characters to load images?
-        this.load.image('Allie', '/static/assets/Allie.png');
-        this.load.image('George', '/static/assets/George.png');
-        this.load.image('Fu-ka', '/static/assets/Fu-ka.png');
-        this.load.image('Valkyrie', '/static/assets/Valkyrie.png');
-        this.load.image('Vampire', '/static/assets/Vampire.png');
-        this.load.image('Bob', '/static/assets/Bob.png');
-        this.load.image('Catherine', '/static/assets/Catherine.png');
-        this.load.image('Franklin', '/static/assets/Franklin.png');
-        this.load.image('Ellen', '/static/assets/Ellen.png');
-        this.load.image('Ultra Soul', '/static/assets/Ultrasoul.png');
-        this.load.image('Werewolf', '/static/assets/Werewolf.png');
-        this.load.image('Anon', '/static/assets/anon.png');
-        //this.load.svg('Allie', '/static/assets/Allie.svg', {width: 123, height: 123});
+        this.load.image('Allie', gfx + 'Allie.png');
+        this.load.image('George', gfx + 'George.png');
+        this.load.image('Fu-ka', gfx + 'Fu-ka.png');
+        this.load.image('Valkyrie', gfx + 'Valkyrie.png');
+        this.load.image('Vampire', gfx + 'Vampire.png');
+        this.load.image('Bob', gfx + 'Bob.png');
+        this.load.image('Catherine', gfx + 'Catherine.png');
+        this.load.image('Franklin', gfx + 'Franklin.png');
+        this.load.image('Ellen', gfx + 'Ellen.png');
+        this.load.image('Ultra Soul', gfx + 'Ultrasoul.png');
+        this.load.image('Werewolf', gfx + 'Werewolf.png');
+        this.load.image('Anon', gfx + 'anon.png');
 
-        //display popups
-        this.load.svg('gameOver', '/static/assets/gameOver.svg', {width: 642, height: 590});
-        this.load.svg('gameSummary', '/static/assets/gameSummary.svg', {width: 608.184, height: 590});
+        //display pop ups
+        this.load.svg('gameOver', gfx + 'gameOver.svg', {width: 642, height: 590});
+        this.load.svg('gameSummary', gfx + 'gameSummary.svg', {width: 608.184, height: 590});
         this.load.svg('whitecard', gfx + 'whitecard.svg', {width: 150, height: 200});
         this.load.svg('blackcard', gfx + 'blackcard.svg', {width: 150, height: 200});
         this.load.svg('greencard', gfx + 'greencard.svg', {width: 150, height: 200});
         this.load.svg('redcard', gfx + 'redcard.svg', {width: 150, height: 200});
-        this.load.svg('alert', '/static/assets/alert.svg', {width: 318.804, height: 101.562});
-        this.load.svg('4die', '/static/assets/4sided.svg', {width: 60, height: 50});
-        this.load.svg('6die', '/static/assets/6sided.svg', {width: 50, height: 50});
+        this.load.svg('alert', gfx + 'alert.svg', {width: 318.804, height: 101.562});
+        this.load.svg('4die', gfx + '4sided.svg', {width: 60, height: 50});
+        this.load.svg('6die', gfx + '6sided.svg', {width: 50, height: 50});
 
         // load bitmap text
         this.load.bitmapFont('adventur', gfx + 'Adventur.png', gfx + 'Adventur.fnt');
