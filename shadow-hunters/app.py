@@ -104,6 +104,7 @@ def room(methods=['GET', 'POST']):
         element_names = [c.title for c in all_cards]
         element_names += [ch.name for ch in ef.CHARACTERS]
         element_names += [a.name for a in ef.AREAS]
+        element_names += ["Shadow", "Hunter", "Neutral"]
 
         name_reserved = username.startswith(
             'CPU') or (username in element_names)
