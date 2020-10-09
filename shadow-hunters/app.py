@@ -4,6 +4,7 @@ import random
 import os
 import re
 from threading import Lock
+import html
 
 from game_context import GameContext
 from player import Player
@@ -410,6 +411,7 @@ def on_message(json):
 
     # Broadcast non-empty message
     if 'data' in json and json['data'].strip():
+        json['data'] = html.escape(json['data'])
         socketio.emit('message', json, room=room_id)
 
 
