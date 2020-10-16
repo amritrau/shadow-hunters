@@ -70,47 +70,35 @@ def rules():
 def room(methods=['GET', 'POST']):
     if request.method == 'POST':
 
-        # collect fields
+        # make sure room and username were provided
         username = request.form.get('username').strip()
         room_id = request.form.get('room_id').strip()
-
-        # check for valid characters in username and room id
         if not username or not room_id:
             flash("Please enter a name and room ID")
             return redirect('/')
+
+        # collected reserved words
+        ef = elements.ElementFactory()
+        reserved = [c.title for c in ef.WHITE_DECK.cards + ef.BLACK_DECK.cards + ef.GREEN_DECK.cards]
+        reserved += [ch.name for ch in ef.CHARACTERS]
+        reserved += [a.name for a in ef.AREAS]
+        reserved += ["Shadow", "Hunter", "Neutral", "Decline"]
+
+        # username and room ID validation
         if len(username) > 10 or len(room_id) > 10:
             flash("Name and room ID must not exceed 10 characters")
             return redirect('/')
-
-        username_valid = re.match(r"^[\w\d ]*$", username)
-        room_id_valid = re.match(r"^[\w\d ]*$", room_id)
-
-        if (not username_valid) or (not room_id_valid):
+        elif (not re.match(r"^[\w\d ]*$", username)) or (not re.match(r"^[\w\d ]*$", room_id)):
             flash("Name and room ID must not contain special characters")
             return redirect('/')
-
-        username_reserved = (username == "undefined") or username.isdigit()
-        room_id_reserved = (room_id == "undefined") or room_id.isdigit()
-
-        if username_reserved or room_id_reserved:
-            flash("The username or room ID you chose is reserved.")
+        elif username.isdigit() or room_id.isdigit():
+            flash("Name and room ID must not be numbers")
             return redirect('/')
-
-        # Check for reserved usernames
-        ef = elements.ElementFactory()
-        all_cards = ef.WHITE_DECK.cards
-        all_cards += ef.BLACK_DECK.cards
-        all_cards += ef.GREEN_DECK.cards
-
-        element_names = [c.title for c in all_cards]
-        element_names += [ch.name for ch in ef.CHARACTERS]
-        element_names += [a.name for a in ef.AREAS]
-        element_names += ["Shadow", "Hunter", "Neutral"]
-
-        name_reserved = username.startswith(
-            'CPU') or (username in element_names)
-        if name_reserved or (username == 'Decline'):
-            flash("The username you chose is reserved")
+        elif username == "undefined" or room_id == "undefined":
+            flash("Name and room ID must not be 'undefined'")
+            return redirect('/')
+        elif username.startswith('CPU') or (username in reserved):
+            flash("The username '{}' is reserved for gameplay. Please choose another".format(username))
             return redirect('/')
 
         # check for username taken
