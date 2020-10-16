@@ -11,7 +11,7 @@ from player import Player
 import elements
 import constants
 import concurrency
-from helpers import color_format, get_room_id
+from helpers import color_format, get_room_id, get_reserved_words
 
 # app config
 template_dir = os.path.abspath('./templates')
@@ -80,21 +80,13 @@ def room(methods=['GET', 'POST']):
             flash("Please enter a name and room ID")
             return redirect('/')
 
-        # collected reserved words
-        ef = elements.ElementFactory()
-        cards = ef.WHITE_DECK.cards + ef.BLACK_DECK.cards + ef.GREEN_DECK.cards
-        reserved = [c.title for c in cards]
-        reserved += [ch.name for ch in ef.CHARACTERS]
-        reserved += [a.name for a in ef.AREAS]
-        reserved += ["Shadow", "Hunter", "Neutral", "Decline"]
-
         # username and room ID validation
         uname_special = re.match(r"^[\w\d ]*$", username)
         room_special = re.match(r"^[\w\d ]*$", room_id)
         if len(username) > 10 or len(room_id) > 10:
             flash("Name and room ID must not exceed 10 characters")
             return redirect('/')
-        elif not uname_special or not re_special:
+        elif not uname_special or not room_special:
             flash("Name and room ID must not contain special characters")
             return redirect('/')
         elif username.isdigit() or room_id.isdigit():
@@ -103,7 +95,7 @@ def room(methods=['GET', 'POST']):
         elif username == "undefined" or room_id == "undefined":
             flash("Name and room ID must not be 'undefined'")
             return redirect('/')
-        elif username.startswith('CPU') or (username in reserved):
+        elif username.startswith('CPU') or (username in get_reserved_words()):
             m = "The name '{}' is reserved for gameplay. Please choose another"
             flash(m.format(username))
             return redirect('/')

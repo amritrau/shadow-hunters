@@ -64,6 +64,16 @@ def get_room_id(rooms, sid):
         return candidates[0]
 
 
+def get_reserved_words():
+    ef = elements.ElementFactory()
+    cards = ef.WHITE_DECK.cards + ef.BLACK_DECK.cards + ef.GREEN_DECK.cards
+    reserved = [c.title for c in cards]
+    reserved += [ch.name for ch in ef.CHARACTERS]
+    reserved += [a.name for a in ef.AREAS]
+    reserved += ["Shadow", "Hunter", "Neutral", "Decline"]
+    return reserved
+
+
 def get_card_by_title(ef, title):
     all_cards = ef.WHITE_DECK.cards + ef.BLACK_DECK.cards + ef.GREEN_DECK.cards
     return [c for c in all_cards if c.title == title][0]
