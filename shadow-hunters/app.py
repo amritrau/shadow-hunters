@@ -79,7 +79,8 @@ def room(methods=['GET', 'POST']):
 
         # collected reserved words
         ef = elements.ElementFactory()
-        reserved = [c.title for c in ef.WHITE_DECK.cards + ef.BLACK_DECK.cards + ef.GREEN_DECK.cards]
+        cards = ef.WHITE_DECK.cards + ef.BLACK_DECK.cards + ef.GREEN_DECK.cards
+        reserved = [c.title for c in cards]
         reserved += [ch.name for ch in ef.CHARACTERS]
         reserved += [a.name for a in ef.AREAS]
         reserved += ["Shadow", "Hunter", "Neutral", "Decline"]
@@ -88,7 +89,8 @@ def room(methods=['GET', 'POST']):
         if len(username) > 10 or len(room_id) > 10:
             flash("Name and room ID must not exceed 10 characters")
             return redirect('/')
-        elif (not re.match(r"^[\w\d ]*$", username)) or (not re.match(r"^[\w\d ]*$", room_id)):
+        elif not re.match(r"^[\w\d ]*$", username)
+          or not re.match(r"^[\w\d ]*$", room_id):
             flash("Name and room ID must not contain special characters")
             return redirect('/')
         elif username.isdigit() or room_id.isdigit():
@@ -98,7 +100,8 @@ def room(methods=['GET', 'POST']):
             flash("Name and room ID must not be 'undefined'")
             return redirect('/')
         elif username.startswith('CPU') or (username in reserved):
-            flash("The username '{}' is reserved for gameplay. Please choose another".format(username))
+            m = "The name '{}' is reserved for gameplay. Please choose another"
+            flash(m.format(username))
             return redirect('/')
 
         # check for username taken
