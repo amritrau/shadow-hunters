@@ -4,6 +4,7 @@ import random
 import os
 import re
 from threading import Lock
+import html
 
 from game_context import GameContext
 from player import Player
@@ -104,6 +105,7 @@ def room(methods=['GET', 'POST']):
         element_names = [c.title for c in all_cards]
         element_names += [ch.name for ch in ef.CHARACTERS]
         element_names += [a.name for a in ef.AREAS]
+        element_names += ["Shadow", "Hunter", "Neutral"]
 
         name_reserved = username.startswith(
             'CPU') or (username in element_names)
@@ -409,6 +411,7 @@ def on_message(json):
 
     # Broadcast non-empty message
     if 'data' in json and json['data'].strip():
+        json['data'] = html.escape(json['data'])
         socketio.emit('message', json, room=room_id)
 
 

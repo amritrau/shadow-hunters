@@ -7,7 +7,7 @@ This project is a labor of love! We’re happy to accept your thoughts & contrib
 Please report bugs using GitHub issues. Bugs include:
 
 Cases in which the front-end or back-end crashes (please include steps to reproduce the crash in your issue, if possible).
-Any game behavior which differs from the Shadow Hunters rulebook in any way (https://images.zmangames.com/filer_public/64/5b/645bebeb-6bef-4d62-8d92-b9ca65450e85/shadow-hunter-rules.pdf)
+Any game behavior which differs from the Shadow Hunters [rulebook](https://images.zmangames.com/filer_public/64/5b/645bebeb-6bef-4d62-8d92-b9ca65450e85/shadow-hunter-rules.pdf) in any way.
 
 ## Pull requests
 We are happy to accept pull requests with your contributions! Contributions might be bug fixes or brand new features (such as adding missing characters).
