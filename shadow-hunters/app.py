@@ -25,6 +25,7 @@ app.config['SECRET_KEY'] = secret if secret is not None else os.urandom(32)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 socketio = SocketIO(app, async_handlers=True)
 
+
 # disable caching
 @app.after_request
 def after_request(response):
@@ -56,6 +57,8 @@ rooms = {}
 connection_lock = Lock()
 
 # APP ROUTES
+
+
 @app.route('/')
 def join():
     return render_template('join.html')
@@ -86,11 +89,12 @@ def room(methods=['GET', 'POST']):
         reserved += ["Shadow", "Hunter", "Neutral", "Decline"]
 
         # username and room ID validation
+        uname_special = re.match(r"^[\w\d ]*$", username)
+        room_special = re.match(r"^[\w\d ]*$", room_id)
         if len(username) > 10 or len(room_id) > 10:
             flash("Name and room ID must not exceed 10 characters")
             return redirect('/')
-        elif not re.match(r"^[\w\d ]*$", username)
-          or not re.match(r"^[\w\d ]*$", room_id):
+        elif not uname_special or not re_special:
             flash("Name and room ID must not contain special characters")
             return redirect('/')
         elif username.isdigit() or room_id.isdigit():
