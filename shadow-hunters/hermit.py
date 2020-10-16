@@ -323,7 +323,7 @@ def nurturance(args):
             # Give target 1 damage
             new_damage = target.moveDamage(-1, args['self'])
             target.gc.tell_h("{} took {} damage!",
-                             [target.user_id, "2"])
+                             [target.user_id, "1"])
 
         else:
 
@@ -476,7 +476,7 @@ def lesson(args):
 
         # Give 2 damage to target
         new_damage = target.moveDamage(-2, args['self'])
-        target.gc.tell_h("{} took {} damage!", [target.user_id, "1"])
+        target.gc.tell_h("{} took {} damage!", [target.user_id, "2"])
 
     else:
 
