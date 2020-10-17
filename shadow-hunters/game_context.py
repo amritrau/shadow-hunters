@@ -32,10 +32,10 @@ class GameContext:
         #  > p.delexicalizations[q.user_id] = 1
         # ... and so on.
         for p in self.players:
-            n = turn_order.index(p) - 1
-            d = turn_order[-n:] + turn_order[:-n]
+            n = self.turn_order.index(p) - 1
+            d = self.turn_order[-n:] + self.turn_order[:-n]
             inv = dict(enumerate(d)).items()
-            p.delexicalizations = {v: k.user_id for k, v in inv}
+            p.delexicalizations = {v.user_id: k for k, v in inv}
 
         # Instantiate characters
         self.characters = characters
