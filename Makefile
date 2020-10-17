@@ -14,8 +14,8 @@ clean:
 
 # Lint using pycodestyle
 lint:
-	pycodestyle .
+	pycodestyle --statistics -q .
 
 # Run tests
 check: lint
-	pytest .
+	pytest --cov-config=.coveragerc --cov=shadow-hunters/
