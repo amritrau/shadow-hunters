@@ -23,7 +23,7 @@ class GameContext:
         # Assign "local delexicalizations" for each player.
         # Reason: This allows a game-playing agent to parse data dumps about
         # its opponents regardless of what their particular screen names are.
-        # 
+        #
         # Implementation: Each player has `delexicalizations`, which is a
         # dictionary that maps user_id => delexicalization. Player p's
         # delexicalization dictionary follows the turn order starting with p,
