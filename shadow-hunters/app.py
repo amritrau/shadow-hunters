@@ -4,13 +4,14 @@ import random
 import os
 import re
 from threading import Lock
+import html
 
 from game_context import GameContext
 from player import Player
 import elements
 import constants
 import concurrency
-from helpers import color_format, get_room_id
+from helpers import color_format, get_room_id, get_reserved_words
 
 # app config
 template_dir = os.path.abspath('./templates')
@@ -23,6 +24,7 @@ secret = os.getenv('SECRET_KEY')
 app.config['SECRET_KEY'] = secret if secret is not None else os.urandom(32)
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 socketio = SocketIO(app, async_handlers=True)
+
 
 # disable caching
 @app.after_request
@@ -55,6 +57,8 @@ rooms = {}
 connection_lock = Lock()
 
 # APP ROUTES
+
+
 @app.route('/')
 def join():
     return render_template('join.html')
@@ -69,46 +73,31 @@ def rules():
 def room(methods=['GET', 'POST']):
     if request.method == 'POST':
 
-        # collect fields
+        # make sure room and username were provided
         username = request.form.get('username').strip()
         room_id = request.form.get('room_id').strip()
-
-        # check for valid characters in username and room id
         if not username or not room_id:
             flash("Please enter a name and room ID")
             return redirect('/')
+
+        # username and room ID validation
+        uname_special = re.match(r"^[\w\d ]*$", username)
+        room_special = re.match(r"^[\w\d ]*$", room_id)
         if len(username) > 10 or len(room_id) > 10:
             flash("Name and room ID must not exceed 10 characters")
             return redirect('/')
-
-        username_valid = re.match(r"^[\w\d ]*$", username)
-        room_id_valid = re.match(r"^[\w\d ]*$", room_id)
-
-        if (not username_valid) or (not room_id_valid):
+        elif not uname_special or not room_special:
             flash("Name and room ID must not contain special characters")
             return redirect('/')
-
-        username_reserved = (username == "undefined") or username.isdigit()
-        room_id_reserved = (room_id == "undefined") or room_id.isdigit()
-
-        if username_reserved or room_id_reserved:
-            flash("The username or room ID you chose is reserved.")
+        elif username.isdigit() or room_id.isdigit():
+            flash("Name and room ID must not be numbers")
             return redirect('/')
-
-        # Check for reserved usernames
-        ef = elements.ElementFactory()
-        all_cards = ef.WHITE_DECK.cards
-        all_cards += ef.BLACK_DECK.cards
-        all_cards += ef.GREEN_DECK.cards
-
-        element_names = [c.title for c in all_cards]
-        element_names += [ch.name for ch in ef.CHARACTERS]
-        element_names += [a.name for a in ef.AREAS]
-
-        name_reserved = username.startswith(
-            'CPU') or (username in element_names)
-        if name_reserved or (username == 'Decline'):
-            flash("The username you chose is reserved")
+        elif username == "undefined" or room_id == "undefined":
+            flash("Name and room ID must not be 'undefined'")
+            return redirect('/')
+        elif username.startswith('CPU') or (username in get_reserved_words()):
+            m = "The name '{}' is reserved for gameplay. Please choose another"
+            flash(m.format(username))
             return redirect('/')
 
         # check for username taken
@@ -410,6 +399,7 @@ def on_message(json):
 
     # Broadcast non-empty message
     if 'data' in json and json['data'].strip():
+        json['data'] = html.escape(json['data'])
         socketio.emit('message', json, room=room_id)
 
 
