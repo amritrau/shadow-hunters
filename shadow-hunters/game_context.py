@@ -23,21 +23,19 @@ class GameContext:
         # Assign "local delexicalizations" for each player.
         # Reason: This allows a game-playing agent to parse data dumps about
         # its opponents regardless of what their particular screen names are.
-        # These delexicalized IDs will be the same across many games to allow
-        # for training.
+        # 
         # Implementation: Each player has `delexicalizations`, which is a
-        # dictionary that maps user_id => delexicalization. For a player p,
-        # the delexicalization for player q is just a unique incremental
-        # integer ID starting from 1 unless p == q, in which case the
-        # delexicalization is 0.
+        # dictionary that maps user_id => delexicalization. Player p's
+        # delexicalization dictionary follows the turn order starting with p,
+        # so that p.delexicalizations[p.user_id] = 0. The player whose turn is
+        # next, q, is delexicalized from p's view as 1:
+        #  > p.delexicalizations[q.user_id] = 1
+        # ... and so on.
         for p in self.players:
-            i = 1
-            for q in self.players:
-                if p == q:
-                    p.delexicalizations[q.user_id] = 0
-                else:
-                    p.delexicalizations[q.user_id] = i
-                    i += 1
+            n = turn_order.index(p) - 1
+            d = turn_order[-n:] + turn_order[:-n]
+            inv = dict(enumerate(d)).items()
+            p.delexicalizations = {v: k.user_id for k, v in inv}
 
         # Instantiate characters
         self.characters = characters
