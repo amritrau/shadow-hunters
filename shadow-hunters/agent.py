@@ -14,7 +14,7 @@ class AgentInterface():
 
     def choose_reveal(self, player, gc):
         """Return true if the agent chooses to reveal"""
-        
+
         raise NotImplementedError
 
 
