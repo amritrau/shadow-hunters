@@ -1,10 +1,12 @@
-from flask import Flask, render_template, url_for, redirect, request, flash
-from flask_socketio import SocketIO, join_room, leave_room
 import random
 import os
 import re
+import secrets
 from threading import Lock
 import html
+
+from flask import Flask, render_template, url_for, redirect, request, flash
+from flask_socketio import SocketIO, join_room, leave_room
 
 from game_context import GameContext
 from player import Player
@@ -20,8 +22,7 @@ app = Flask(
     __name__, template_folder=template_dir,
     static_folder=static_dir, static_url_path='/static'
 )
-secret = os.getenv('SECRET_KEY')
-app.config['SECRET_KEY'] = secret if secret is not None else os.urandom(32)
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', secrets.token_hex(32))
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 socketio = SocketIO(app, async_handlers=True)
 
@@ -37,15 +38,8 @@ def after_request(response):
 
 
 # sleep times after socket emissions (to pace frontend)
-def getEnvVarOrElse(var, default):
-    if os.environ.get(var):
-        return os.environ.get(var)
-    else:
-        return default
-
-
-SOCKET_SLEEP = float(getEnvVarOrElse('SOCKET_SLEEP', 0.25))
-AI_SLEEP = float(getEnvVarOrElse('AI_SLEEP', 2.0))
+SOCKET_SLEEP = float(os.getenv('SOCKET_SLEEP', 0.25))
+AI_SLEEP = float(os.getenv('AI_SLEEP', 2.0))
 
 # rooms are indexed by room_id, with a status, gc, and connections field
 # status is LOBBY or GAME. gc is None if status is LOBBY, otherwise a
@@ -167,14 +161,14 @@ def socket_ask(form, data, user_id, room_id):
 
     # Otherwise, emit ask
     sid = player.socket_id
-    bin = rooms[room_id]['gc'].answer_bin
+    mailbox = rooms[room_id]['gc'].answer_bin
     data['form'] = form
-    bin['answered'] = False
+    mailbox['answered'] = False
     socketio.emit('ask', data, room=sid)
 
     # Loop until an answer is received
-    while not bin['answered']:
-        while not bin['answered']:
+    while not mailbox['answered']:
+        while not mailbox['answered']:
             # If a player swaps out for an AI during an ask, the piggyback
             # agent answers for them
             if player.ai or player.socket_id != sid:
@@ -185,12 +179,13 @@ def socket_ask(form, data, user_id, room_id):
             socketio.sleep(SOCKET_SLEEP)
 
         # Validate answerer and answer
-        if bin['sid'] != sid or bin['data']['value'] not in data['options']:
-            bin['answered'] = False
+        invalid_option = mailbox['data']['value'] not in data['options']
+        if mailbox['sid'] != sid or invalid_option:
+            mailbox['answered'] = False
 
     # Return answer
-    bin['answered'] = False
-    return bin['data']
+    mailbox['answered'] = False
+    return mailbox['data']
 
 
 def socket_tell(str, args, gc, room_id, client=None):
