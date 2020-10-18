@@ -152,12 +152,12 @@ def socket_ask(form, data, user_id, room_id):
         return {'value': random.choice(data['options'])}
     connection_lock.release()
 
-    # If player is a CPU, choose randomly from options
+    # If player is a CPU, use the player's piggyback agent to make a choice
     if player.ai:
         socketio.sleep(AI_SLEEP)
-        if 'Decline' in data['options'] and len(data['options']) > 1:
-            data['options'].remove('Decline')
-        return {'value': random.choice(data['options'])}
+        return player.agent.choose_action(
+            data['options'], player=player, gc=player.gc
+        )
 
     # Otherwise, emit ask
     sid = player.socket_id
@@ -169,12 +169,13 @@ def socket_ask(form, data, user_id, room_id):
     # Loop until an answer is received
     while not mailbox['answered']:
         while not mailbox['answered']:
-            # If a player swaps out for an AI during an ask, the AI answers
-            # for them
+            # If a player swaps out for an AI during an ask, the piggyback
+            # agent answers for them
             if player.ai or player.socket_id != sid:
-                if 'Decline' in data['options'] and len(data['options']) > 1:
-                    data['options'].remove('Decline')
-                return {'value': random.choice(data['options'])}
+                socketio.sleep(AI_SLEEP)
+                return player.agent.choose_action(
+                    data['options'], player=player, gc=player.gc
+                )
             socketio.sleep(SOCKET_SLEEP)
 
         # Validate answerer and answer

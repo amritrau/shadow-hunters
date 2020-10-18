@@ -20,9 +20,26 @@ class GameContext:
         self.turn_order = copy.copy(players)
         self.round_count = 0
 
+        # Assign "local delexicalizations" for each player.
+        # Reason: This allows a game-playing agent to parse data dumps about
+        # its opponents regardless of what their particular screen names are.
+        #
+        # Implementation: Each player has `delexicalizations`, which is a
+        # dictionary that maps user_id => delexicalization. Player p's
+        # delexicalization dictionary follows the turn order starting with p,
+        # so that p.delexicalizations[p.user_id] = 0. The player whose turn is
+        # next, q, is delexicalized from p's view as 1:
+        #  > p.delexicalizations[q.user_id] = 1
+        # ... and so on.
+        for p in self.players:
+            n = self.turn_order.index(p) - 1
+            d = self.turn_order[-n:] + self.turn_order[:-n]
+            inv = dict(enumerate(d)).items()
+            p.delexicalizations = {v.user_id: k for k, v in inv}
+
         # Instantiate characters
         self.characters = characters
-        if len(self.players) <= 6:  # hack to send bobs
+        if len(self.players) <= 6:
             self.characters = [
                 ch for ch in self.characters if ch.resource_id != "bob2"]
         else:
