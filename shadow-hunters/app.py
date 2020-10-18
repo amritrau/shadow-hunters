@@ -167,14 +167,14 @@ def socket_ask(form, data, user_id, room_id):
 
     # Otherwise, emit ask
     sid = player.socket_id
-    bin = rooms[room_id]['gc'].answer_bin
+    mailbox = rooms[room_id]['gc'].answer_bin
     data['form'] = form
-    bin['answered'] = False
+    mailbox['answered'] = False
     socketio.emit('ask', data, room=sid)
 
     # Loop until an answer is received
-    while not bin['answered']:
-        while not bin['answered']:
+    while not mailbox['answered']:
+        while not mailbox['answered']:
             # If a player swaps out for an AI during an ask, the AI answers
             # for them
             if player.ai or player.socket_id != sid:
@@ -184,12 +184,13 @@ def socket_ask(form, data, user_id, room_id):
             socketio.sleep(SOCKET_SLEEP)
 
         # Validate answerer and answer
-        if bin['sid'] != sid or bin['data']['value'] not in data['options']:
-            bin['answered'] = False
+        invalid_option = mailbox['data']['value'] not in data['options']
+        if mailbox['sid'] != sid or invalid_option:
+            mailbox['answered'] = False
 
     # Return answer
-    bin['answered'] = False
-    return bin['data']
+    mailbox['answered'] = False
+    return mailbox['data']
 
 
 def socket_tell(str, args, gc, room_id, client=None):
