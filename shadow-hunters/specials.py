@@ -81,14 +81,9 @@ def fuka(gc, player, turn_pos):
             player.gc.ask_h(
                 'confirm', {'options': ["Use special ability"]},
                 player.user_id)
-            data = {'options': [
-                t.user_id for t in gc.getLivePlayers()]}
-            target = player.gc.ask_h(
-                'select', data, player.user_id)['value']
 
             # Set selected player to 7 damage
-            target_Player = [
-                p for p in gc.getLivePlayers() if p.user_id == target][0]
+            target_Player = player.choosePlayer(include_self=True)
             target_Player.setDamage(7, player)
             gc.tell_h("{} gave a killing cure to {}!", [
                       player.user_id, target_Player.user_id])
