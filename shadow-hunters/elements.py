@@ -338,7 +338,7 @@ class ElementFactory:
                 color=2,  # 2 : GREEN
                 holder=None,
                 is_equip=False,
-                use=hermit.blackmail
+                use=hermit.blackmail.use
             ),
             card.Card(
                 title="Hermit\'s Blackmail",
@@ -348,7 +348,7 @@ class ElementFactory:
                 color=2,
                 holder=None,
                 is_equip=False,
-                use=hermit.blackmail
+                use=hermit.blackmail.use
             ),
             card.Card(
                 title="Hermit\'s Greed",
@@ -358,7 +358,7 @@ class ElementFactory:
                 color=2,
                 holder=None,
                 is_equip=False,
-                use=hermit.greed
+                use=hermit.greed.use
             ),
             card.Card(
                 title="Hermit\'s Greed",
@@ -368,7 +368,7 @@ class ElementFactory:
                 color=2,
                 holder=None,
                 is_equip=False,
-                use=hermit.greed
+                use=hermit.greed.use
             ),
             card.Card(
                 title="Hermit\'s Anger",
@@ -378,7 +378,7 @@ class ElementFactory:
                 color=2,
                 holder=None,
                 is_equip=False,
-                use=hermit.anger
+                use=hermit.anger.use
             ),
             card.Card(
                 title="Hermit\'s Anger",
@@ -388,7 +388,7 @@ class ElementFactory:
                 color=2,
                 holder=None,
                 is_equip=False,
-                use=hermit.anger
+                use=hermit.anger.use
             ),
             card.Card(
                 title="Hermit\'s Slap",
@@ -396,7 +396,7 @@ class ElementFactory:
                 color=2,
                 holder=None,
                 is_equip=False,
-                use=hermit.slap
+                use=hermit.slap.use
             ),
             card.Card(
                 title="Hermit\'s Slap",
@@ -404,7 +404,7 @@ class ElementFactory:
                 color=2,
                 holder=None,
                 is_equip=False,
-                use=hermit.slap
+                use=hermit.slap.use
             ),
             card.Card(
                 title="Hermit\'s Spell",
@@ -412,7 +412,7 @@ class ElementFactory:
                 color=2,
                 holder=None,
                 is_equip=False,
-                use=hermit.spell
+                use=hermit.spell.use
             ),
             card.Card(
                 title="Hermit\'s Exorcism",
@@ -420,7 +420,7 @@ class ElementFactory:
                 color=2,
                 holder=None,
                 is_equip=False,
-                use=hermit.exorcism
+                use=hermit.exorcism.use
             ),
             card.Card(
                 title="Hermit\'s Nurturance",
@@ -430,7 +430,7 @@ class ElementFactory:
                 color=2,
                 holder=None,
                 is_equip=False,
-                use=hermit.nurturance
+                use=hermit.nurturance.use
             ),
             card.Card(
                 title="Hermit\'s Aid",
@@ -440,7 +440,7 @@ class ElementFactory:
                 color=2,
                 holder=None,
                 is_equip=False,
-                use=hermit.aid
+                use=hermit.aid.use
             ),
             card.Card(
                 title="Hermit\'s Huddle",
@@ -450,7 +450,7 @@ class ElementFactory:
                 color=2,
                 holder=None,
                 is_equip=False,
-                use=hermit.huddle
+                use=hermit.huddle.use
             ),
             card.Card(
                 title="Hermit\'s Lesson",
@@ -459,7 +459,7 @@ class ElementFactory:
                 color=2,
                 holder=None,
                 is_equip=False,
-                use=hermit.lesson
+                use=hermit.lesson.use
             ),
             card.Card(
                 title="Hermit\'s Bully",
@@ -468,7 +468,7 @@ class ElementFactory:
                 color=2,
                 holder=None,
                 is_equip=False,
-                use=hermit.bully
+                use=hermit.bully.use
             ),
             card.Card(
                 title="Hermit\'s Prediction",
@@ -477,7 +477,7 @@ class ElementFactory:
                 color=2,
                 holder=None,
                 is_equip=False,
-                use=hermit.prediction
+                use=hermit.prediction.use
             )
         ]
 
