@@ -24,10 +24,10 @@ class HermitEffect():
         # (this changes how the information is presented to the target)
         if hp_test:
             self.info = "Your maximum hp is {}."
-            self.eval = lambda t: [t.character.max_damage]
+            self.info_args = lambda t: [t.character.max_damage]
         else:
             self.info = "You are a {}."
-            self.eval = lambda t: [C.ALLEGIANCE_MAP[t.character.alleg]]
+            self.info_args = lambda t: [C.ALLEGIANCE_MAP[t.character.alleg]]
 
     def give_card(self, args):
 
@@ -50,7 +50,7 @@ class HermitEffect():
     def get_options(self, t):
 
         # Tell the target they are affected by the card
-        t.gc.tell_h(self.info, self.eval(t), t.socket_id)
+        t.gc.tell_h(self.info, self.info_args(t), t.socket_id)
 
         # Give the amount of damage the target should take or heal as an option
         d = self.damage_to(t)
@@ -80,7 +80,7 @@ class HermitEffect():
     def no_effect_on(self, t):
 
         # Prompt target to do nothing
-        t.gc.tell_h(self.info + " Do nothing.", self.eval(t), t.socket_id)
+        t.gc.tell_h(self.info + " Do nothing.", self.info_args(t), t.socket_id)
         data = {'options': ['Do nothing']}
         t.gc.ask_h('confirm', data, t.user_id)
 
@@ -100,7 +100,7 @@ class HermitEffect():
         t.gc.tell_h("{} revealed their identity secretly to {}!", [
                          t.user_id, args['self'].user_id])
 
-    def use(self, args):
+    def __call__(self, args):
 
         # Give card to target
         target = self.give_card(args)
