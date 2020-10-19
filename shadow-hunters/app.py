@@ -305,8 +305,8 @@ def on_reveal():
     # Reveal them (if they're alive and unrevealed)
     CC.connection_lock.release()
     CC.reveal_lock.acquire()
-    if player.state == 2:
-        player.state = 1  # Guard
+    if player.state == C.PlayerState.Hidden:
+        player.state = C.PlayerState.Revealed  # Guard
         CC.reveal_lock.release()
         player.reveal()
     else:
@@ -331,7 +331,7 @@ def on_special():
 
     # Use special
     CC.reveal_lock.acquire()
-    if player.state == 1 and not player.special_active:  # player must be alive
+    if player.state == C.PlayerState.Revealed and not player.special_active:
         player.special_active = True  # Guard
         CC.reveal_lock.release()
         msg = "You've activated your special ability."
@@ -484,13 +484,12 @@ def on_disconnect():
         # If disconnected person was spectating, or dead, or if the game is
         # over, don't swap them for an AI
         player_in_game = [p for p in gc.players if p.socket_id == request.sid]
-        if (not player_in_game) or (not player_in_game[0].state):
+        if not player_in_game or player_in_game[0].state == C.PlayerState.Dead:
             CC.connection_lock.release()
             return
 
         # Swap player for AI
         player_in_game[0].ai = True
-        # TODO: make actual browser cookie
         rooms[room_id]['reconnections'][player_in_game[0].user_id] = 'cookie'
         CC.connection_lock.release()
         socket_tell('A computer player has taken their place!',

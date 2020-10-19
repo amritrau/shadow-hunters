@@ -108,12 +108,12 @@ class GameContext:
             player.gc = self
 
     def getLivePlayers(self, filter_fn=(lambda x: True)):
-        res = filter(filter_fn, [p for p in self.players if p.state > 0])
-        return list(res)
+        live = [p for p in self.players if p.state != C.PlayerState.Dead]
+        return list(filter(filter_fn, live))
 
     def getDeadPlayers(self, filter_fn=(lambda x: True)):
-        res = filter(filter_fn, [p for p in self.players if p.state < 1])
-        return list(res)
+        dead = [p for p in self.players if p.state == C.PlayerState.Dead]
+        return list(filter(filter_fn, dead))
 
     def getPlayersAt(self, location_name):
         live = self.getLivePlayers()
@@ -163,7 +163,7 @@ class GameContext:
         turn = random.randint(0, len(self.turn_order) - 1)
         while True:
             current_player = self.turn_order[turn]
-            if current_player.state:
+            if current_player.state != C.PlayerState.Dead:
                 current_player.takeTurn()
             winners = self.checkWinConditions()
             if winners:

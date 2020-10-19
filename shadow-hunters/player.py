@@ -11,7 +11,7 @@ class Player:
         self.socket_id = socket_id
         self.color = color
         self.gc = None  # game context (abbreviated for convenience)
-        self.state = 2  # 2 for ALIVE_ANON, 1 for ALIVE_KNOWN, 0 for DEAD
+        self.state = C.PlayerState.Hidden
         self.character = None
         self.equipment = []
         self.damage = 0
@@ -33,7 +33,7 @@ class Player:
     def reveal(self):
 
         # Set state
-        self.state = 1
+        self.state = C.PlayerState.Revealed
 
         # Reveal character to frontend
         self.gc.update_h()
@@ -56,9 +56,9 @@ class Player:
 
         # If AI player, chance to reveal and use special at turn start
         CC.reveal_lock.acquire()
-        if self.ai and self.state == 2:
+        if self.ai and self.state == C.PlayerState.Hidden:
             if self.agent.choose_reveal(self, self.gc):
-                self.state = 1  # Guard
+                self.state = C.PlayerState.Revealed  # Guard
                 self.special_active = True  # Guard
                 CC.reveal_lock.release()
                 self.reveal()
@@ -78,7 +78,7 @@ class Player:
             return  # let the win conditions check in GameContext.play() handle
 
         # The current player could have died -- if so end their turn
-        if self.state == 0:
+        if self.state == C.PlayerState.Dead:
             return
 
         # takeTurn
@@ -89,7 +89,7 @@ class Player:
             return  # let the win conditions check in GameContext.play() handle
 
         # The current player could have died -- if so end their turn
-        if self.state == 0:
+        if self.state == C.PlayerState.Dead:
             return
 
         # After turn check for special ability
@@ -153,7 +153,7 @@ class Player:
             return  # let the win conditions check in GameContext.play() handle
 
         # The current player could have died -- if so end their turn
-        if self.state == 0:
+        if self.state == C.PlayerState.Dead:
             return
 
         # Attack
@@ -396,7 +396,8 @@ class Player:
         # Check for spear of longinus
         has_spear = self.hasEquipment("Spear of Longinus")
         is_hunter = self.character.alleg == C.Alleg.Hunter
-        if successful and is_hunter and self.state == 1 and has_spear:
+        is_revealed = self.state == C.PlayerState.Revealed
+        if successful and is_hunter and is_revealed and has_spear:
             if not dryrun:
                 self.gc.tell_h("{} strikes with their {}!", [
                                self.user_id, "Spear of Longinus"])
@@ -437,7 +438,7 @@ class Player:
         self.gc.tell_h("{} hit {} for {} damage!", [
                        other.user_id, self.user_id, dealt])
 
-        if self.state > 0:
+        if self.state != C.PlayerState.Dead:
             # Check for counterattack
             if self.modifiers['counterattack']:
                 # Ask if player wants to counterattack
@@ -497,9 +498,9 @@ class Player:
 
     def die(self, attacker):
 
-        # Set state to 0 (DEAD)
+        # Set state to dead
         CC.reveal_lock.acquire()
-        self.state = 0
+        self.state = C.PlayerState.Dead
         CC.reveal_lock.release()
 
         # Report to console
@@ -572,7 +573,7 @@ class Player:
             'user_id': self.user_id,
             'socket_id': self.socket_id,
             'color': self.color,
-            'state': self.state,
+            'state': self.state.value,
             'equipment': [eq.dump() for eq in self.equipment],
             'damage': self.damage,
             'character': self.character.dump() if self.character else {},

@@ -22,7 +22,7 @@ def test_fields():
     assert p.socket_id == 'socket_id'
     assert p.color == 'c'
     assert not p.gc
-    assert p.state == 2
+    assert p.state == C.PlayerState.Hidden
     assert not p.character
     assert not p.location
     assert not p.equipment
@@ -67,7 +67,7 @@ def test_reveal():
 
     # Check that reveal sets state to 1
     p.reveal()
-    assert p.state == 1
+    assert p.state == C.PlayerState.Revealed
 
 
 def test_drawCard():
@@ -232,12 +232,12 @@ def test_checkDeath():
 
     # Check that player is initially not dead
     p.checkDeath(p)
-    assert p.state == 2
+    assert p.state == C.PlayerState.Hidden
 
     # Check that player dies when damage > max_damage
     p.damage = 20
     p.checkDeath(p)
-    assert p.state == 0
+    assert p.state == C.PlayerState.Dead
 
 
 def test_die():
@@ -255,7 +255,7 @@ def test_die():
 
     # Check that player 1 is dead, location is none, loses all equipment, and
     # gives one to player 2
-    assert p1.state == 0
+    assert p1.state == C.PlayerState.Dead
     assert not p1.equipment
     assert bool(roly_hobe in p2.equipment) != bool(talisman in p2.equipment)
     assert p1.location is None

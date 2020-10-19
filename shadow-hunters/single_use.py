@@ -41,7 +41,7 @@ def advent(args):
 
     data = {'options': ["Do nothing"]}
     if args['self'].character.alleg == C.Alleg.Hunter:
-        if args['self'].state == 2:
+        if args['self'].state == C.PlayerState.Hidden:
             data['options'].append("Reveal and heal fully")
         else:
             data['options'].append("Heal fully")
@@ -98,7 +98,7 @@ def chocolate(args):
     data = {'options': ["Do nothing"]}
     low_hp = ["Allie", "Agnes", "Emi", "Ellen", "Ultra Soul", "Unknown"]
     if args['self'].character.name in low_hp:
-        if args['self'].state == 2:
+        if args['self'].state == C.PlayerState.Hidden:
             data['options'].append("Reveal and heal fully")
         else:
             data['options'].append("Heal fully")
@@ -191,7 +191,7 @@ def diabolic_ritual(args):
 
     data = {'options': ["Do nothing"]}
     is_shadow = args['self'].character.alleg == C.Alleg.Shadow
-    if is_shadow and args['self'].state != 1:
+    if is_shadow and args['self'].state == C.PlayerState.Hidden:
         data['options'].append("Reveal and heal fully")
 
     # Get decision and take corresponding action

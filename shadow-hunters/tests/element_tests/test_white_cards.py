@@ -1,5 +1,6 @@
 import pytest
 
+import constants as C
 import helpers as H
 import random
 
@@ -67,28 +68,28 @@ def test_advent():
         # Check that shadows do nothing
         s.damage = 3
         c.use({'self': s, 'card': c})
-        assert s.state == 2 and s.damage == 3
+        assert s.state == C.PlayerState.Hidden and s.damage == 3
 
         # Check that neutrals do nothing
         n.damage = 3
         c.use({'self': n, 'card': c})
-        assert n.state == 2 and n.damage == 3
+        assert n.state == C.PlayerState.Hidden and n.damage == 3
 
         # Hunter do nothing
         gc.ask_h = H.answer_sequence(
             ['Do nothing', 'Reveal and heal fully', 'Heal fully'])
         h.damage = 3
         c.use({'self': h, 'card': c})
-        assert h.state == 2 and h.damage == 3
+        assert h.state == C.PlayerState.Hidden and h.damage == 3
 
         # Hunter reveal and full heal
         c.use({'self': h, 'card': c})
-        assert h.state == 1 and h.damage == 0
+        assert h.state == C.PlayerState.Revealed and h.damage == 0
 
         # Hunter full heal
         h.damage = 3
         c.use({'self': h, 'card': c})
-        assert h.state == 1 and h.damage == 0
+        assert h.state == C.PlayerState.Revealed and h.damage == 0
 
 
 def test_blessing():
@@ -122,15 +123,15 @@ def test_disenchant_mirror():
 
         # Check that shadows reveal
         c.use({'self': s, 'card': c})
-        assert s.state == 1
+        assert s.state == C.PlayerState.Revealed
 
         # Check that hunters do nothing
         c.use({'self': h, 'card': c})
-        assert h.state == 2
+        assert h.state == C.PlayerState.Hidden
 
         # Check that neutrals do nothing
         c.use({'self': n, 'card': c})
-        assert n.state == 2
+        assert n.state == C.PlayerState.Hidden
 
 
 def test_chocolate():
@@ -147,23 +148,23 @@ def test_chocolate():
         # Strong player do nothing
         strong.damage = 3
         c.use({'self': strong, 'card': c})
-        assert strong.state == 2 and strong.damage == 3
+        assert strong.state == C.PlayerState.Hidden and strong.damage == 3
 
         # Weak player do nothing
         gc.ask_h = H.answer_sequence(
             ['Do nothing', 'Reveal and heal fully', 'Heal fully'])
         weak.damage = 3
         c.use({'self': weak, 'card': c})
-        assert weak.state == 2 and weak.damage == 3
+        assert weak.state == C.PlayerState.Hidden and weak.damage == 3
 
         # Weak player reveal and full heal
         c.use({'self': weak, 'card': c})
-        assert weak.state == 1 and weak.damage == 0
+        assert weak.state == C.PlayerState.Revealed and weak.damage == 0
 
         # Weak player full heal
         weak.damage = 3
         c.use({'self': weak, 'card': c})
-        assert weak.state == 1 and weak.damage == 0
+        assert weak.state == C.PlayerState.Revealed and weak.damage == 0
 
 
 def test_concealed_knowledge():

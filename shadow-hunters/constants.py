@@ -15,6 +15,13 @@ class CardType(Enum):
     Hermit = 2
 
 
+# Enum for player state
+class PlayerState(Enum):
+    Dead = 0
+    Revealed = 1
+    Hidden = 2
+
+
 # Enum for text colors
 TEXT_COLORS = {
     'server': 'rgb(200,200,200)',
