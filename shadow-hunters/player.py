@@ -1,10 +1,8 @@
-import elements
-import concurrency
-import helpers
-import random
-from collections import defaultdict
 from agent import Agent
 
+import helpers as H
+import concurrency as CC
+from collections import defaultdict
 
 class Player:
     def __init__(self, user_id, socket_id, color, ai):
@@ -56,19 +54,19 @@ class Player:
             del self.modifiers["guardian_angel"]
 
         # If AI player, chance to reveal and use special at turn start
-        concurrency.reveal_lock.acquire()
+        CC.reveal_lock.acquire()
         if self.ai and self.state == 2:
             if self.agent.choose_reveal(self, self.gc):
                 self.state = 1  # Guard
                 self.special_active = True  # Guard
-                concurrency.reveal_lock.release()
+                CC.reveal_lock.release()
                 self.reveal()
                 self.character.special(self.gc, self, turn_pos='now')
                 self.gc.update_h()
             else:
-                concurrency.reveal_lock.release()
+                CC.reveal_lock.release()
         else:
-            concurrency.reveal_lock.release()
+            CC.reveal_lock.release()
 
         # Before turn check for special ability
         if self.special_active:
@@ -125,7 +123,7 @@ class Player:
             destination = self.gc.ask_h('select', data, self.user_id)['value']
 
             # Get Area object from area name
-            destination_Area = helpers.get_area_by_name(self.gc, destination)
+            destination_Area = H.get_area_by_name(self.gc, destination)
 
         else:
 
@@ -497,9 +495,9 @@ class Player:
     def die(self, attacker):
 
         # Set state to 0 (DEAD)
-        concurrency.reveal_lock.acquire()
+        CC.reveal_lock.acquire()
         self.state = 0
-        concurrency.reveal_lock.release()
+        CC.reveal_lock.release()
 
         # Report to console
         display_data = {'type': 'die', 'player': self.dump()}

@@ -1,10 +1,9 @@
-import random
-import copy
-
 from die import Die
 from zone import Zone
-import elements
-import constants
+
+import constants as C
+import random
+import copy
 
 # game_context.py
 # Implements a GameContext.
@@ -153,7 +152,7 @@ class GameContext:
                 for w in winners:
                     self.tell_h("{} ({}: {}) won! {}", [
                         w.user_id,
-                        constants.ALLEGIANCE_MAP[w.character.alleg],
+                        C.ALLEGIANCE_MAP[w.character.alleg],
                         w.character.name,
                         w.character.win_cond_desc
                     ])

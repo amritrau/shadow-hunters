@@ -2,7 +2,6 @@ import card
 import deck
 import character
 import area
-import constants
 import single_use
 import hermit
 import win_conditions

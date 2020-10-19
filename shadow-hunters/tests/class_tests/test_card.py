@@ -1,6 +1,6 @@
-import helpers
 import pytest
-import card
+
+from card import Card
 
 # test_card.py
 # Tests for the Card object
@@ -9,7 +9,7 @@ import card
 def test_fields():
 
     # test initialization
-    c = card.Card(
+    c = Card(
         title="card_title",
         desc="card_desc",
         color=1,

@@ -1,9 +1,7 @@
 import pytest
-import random
 
-import game_context
-import player
-import helpers
+import helpers as H
+import random
 
 # test_black_cards.py
 # Tests the usage of each black single-use card
@@ -13,9 +11,9 @@ def test_bloodthirsty_spider():
 
     for _ in range(100):
         # Setup rigged game context
-        gc, ef = helpers.fresh_gc_ef()
+        gc, ef = H.fresh_gc_ef()
         p1 = gc.players[0]
-        c = helpers.get_card_by_title(ef, "Bloodthirsty Spider")
+        c = H.get_card_by_title(ef, "Bloodthirsty Spider")
 
         # Check that user and target take 2 damage and everyone else is
         # unaffected
@@ -30,9 +28,9 @@ def test_vampire_bat():
 
     for _ in range(100):
         # Setup rigged game context
-        gc, ef = helpers.fresh_gc_ef()
+        gc, ef = H.fresh_gc_ef()
         p1 = gc.players[0]
-        c = helpers.get_card_by_title(ef, "Vampire Bat")
+        c = H.get_card_by_title(ef, "Vampire Bat")
 
         # Check that user heals 1 damage and target takes 2 damage and everyone
         # else is unaffected
@@ -47,17 +45,17 @@ def test_moody_goblin():
 
     for _ in range(100):
         # Setup rigged game context
-        gc, ef = helpers.fresh_gc_ef()
+        gc, ef = H.fresh_gc_ef()
         p1 = gc.players[0]
         p2 = gc.players[1]
-        c = helpers.get_card_by_title(ef, "Moody Goblin")
+        c = H.get_card_by_title(ef, "Moody Goblin")
 
         # Check that nothing happens if no one has equipment
         c.use({'self': p2, 'card': c})
         assert not p2.equipment
 
         # Give p1 holy robe
-        roly_hobe = helpers.get_card_by_title(ef, "Holy Robe")
+        roly_hobe = H.get_card_by_title(ef, "Holy Robe")
         p1.equipment.append(roly_hobe)
 
         # Check that robe is stolen
@@ -70,11 +68,11 @@ def test_diabolic_ritual():
 
     for _ in range(100):
         # Setup rigged game context
-        gc, ef = helpers.fresh_gc_ef(random.randint(5, 8))
-        h = helpers.get_a_hunter(gc)
-        s = helpers.get_a_shadow(gc)
-        n = helpers.get_a_neutral(gc)
-        c = helpers.get_card_by_title(ef, "Diabolic Ritual")
+        gc, ef = H.fresh_gc_ef(random.randint(5, 8))
+        h = H.get_a_hunter(gc)
+        s = H.get_a_shadow(gc)
+        n = H.get_a_neutral(gc)
+        c = H.get_card_by_title(ef, "Diabolic Ritual")
 
         # Check that hunters do nothing
         h.damage = 3
@@ -87,7 +85,7 @@ def test_diabolic_ritual():
         assert n.state == 2 and n.damage == 3
 
         # Shadow do nothing
-        gc.ask_h = helpers.answer_sequence(
+        gc.ask_h = H.answer_sequence(
             ['Do nothing', 'Reveal and heal fully'])
         s.damage = 3
         c.use({'self': s, 'card': c})
@@ -102,19 +100,19 @@ def test_banana_peel():
 
     for _ in range(100):
         # Setup rigged game context
-        gc, ef = helpers.fresh_gc_ef()
+        gc, ef = H.fresh_gc_ef()
         p1 = gc.players[0]
         p2 = gc.players[1]
-        gc.ask_h = helpers.answer_sequence([
+        gc.ask_h = H.answer_sequence([
             "Receive 1 damage",
             "Give an equipment card",
             "Holy Robe",
             p2.user_id
         ])
-        c = helpers.get_card_by_title(ef, "Banana Peel")
+        c = H.get_card_by_title(ef, "Banana Peel")
 
         # Give p1 holy robe
-        roly_hobe = helpers.get_card_by_title(ef, "Holy Robe")
+        roly_hobe = H.get_card_by_title(ef, "Holy Robe")
         p1.equipment.append(roly_hobe)
 
         # Check take one damage
@@ -133,14 +131,14 @@ def test_dynamite():
 
     for _ in range(100):
         # Setup rigged game context
-        gc, ef = helpers.fresh_gc_ef(6)
+        gc, ef = H.fresh_gc_ef(6)
         p1 = gc.players[0]
-        c = helpers.get_card_by_title(ef, "Dynamite")
+        c = H.get_card_by_title(ef, "Dynamite")
 
         # Put one player in each area
         area_names = ["Church", "Cemetery", "Erstwhile Altar",
                       "Weird Woods", "Hermit\'s Cabin", "Underworld Gate"]
-        areas = [helpers.get_area_by_name(gc, a) for a in area_names]
+        areas = [H.get_area_by_name(gc, a) for a in area_names]
         for p in gc.players:
             p.move(areas.pop(0))
 
@@ -155,11 +153,11 @@ def test_spiritual_doll():
 
     for _ in range(100):
         # Setup rigged game context
-        gc, ef = helpers.fresh_gc_ef()
+        gc, ef = H.fresh_gc_ef()
         p1 = gc.players[0]
         p2 = gc.players[1]
-        c = helpers.get_card_by_title(ef, "Spiritual Doll")
-        gc.ask_h = helpers.answer_sequence([
+        c = H.get_card_by_title(ef, "Spiritual Doll")
+        gc.ask_h = H.answer_sequence([
             "Use Spiritual Doll",
             p2.user_id,
             "Roll the 6-sided die!"

@@ -1,7 +1,7 @@
-import helpers
 import pytest
-import area
-import zone
+
+from area import Area
+from zone import Zone
 
 # test_area.py
 # Tests for the Area object
@@ -10,7 +10,7 @@ import zone
 def test_fields():
 
     # test initialization
-    a = area.Area(
+    a = Area(
         name="area_name",
         desc="area_desc",
         domain=[9],
@@ -36,21 +36,21 @@ def test_fields():
 def test_getAdjacent():
 
     # Put two areas in a zone
-    a = area.Area(
+    a = Area(
         name="A",
         desc="area_desc",
         domain=[8],
         action=lambda: 5,
         resource_id="a_id"
     )
-    b = area.Area(
+    b = Area(
         name="B",
         desc="area_desc",
         domain=[9],
         action=lambda: 5,
         resource_id="b_id"
     )
-    z = zone.Zone([a, b])
+    z = Zone([a, b])
     for x in z.areas:
         x.zone = z
 

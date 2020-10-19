@@ -1,10 +1,7 @@
 import pytest
-import random
-import copy
 
-import game_context
-import player
-import helpers
+import helpers as H
+import copy
 
 # test_area_actions.py
 # Tests the possible actions at each area
@@ -16,13 +13,13 @@ import helpers
 def test_weird_woods():
 
     # Set up rigged game context
-    gc, ef = helpers.fresh_gc_ef()
-    area = helpers.get_area_by_name(gc, "Weird Woods")
+    gc, ef = H.fresh_gc_ef()
+    area = H.get_area_by_name(gc, "Weird Woods")
 
-    target = helpers.get_a_shadow(gc)
-    actor = helpers.get_a_hunter(gc)
+    target = H.get_a_shadow(gc)
+    actor = H.get_a_hunter(gc)
 
-    gc.ask_h = helpers.answer_sequence([
+    gc.ask_h = H.answer_sequence([
         target.user_id, 'Give 2 damage',  # test damage
         target.user_id, 'Heal 1 damage',  # test heal
     ])
@@ -39,13 +36,13 @@ def test_weird_woods():
 def test_erstwhile_altar():
 
     # Set up rigged game context
-    gc, ef = helpers.fresh_gc_ef()
-    area = helpers.get_area_by_name(gc, "Erstwhile Altar")
+    gc, ef = H.fresh_gc_ef()
+    area = H.get_area_by_name(gc, "Erstwhile Altar")
 
-    target = helpers.get_a_shadow(gc)
-    actor = helpers.get_a_hunter(gc)
+    target = H.get_a_shadow(gc)
+    actor = H.get_a_hunter(gc)
 
-    gc.ask_h = helpers.answer_sequence([
+    gc.ask_h = H.answer_sequence([
         target.user_id, 'Holy Robe'  # test pick an equipment to steal
     ])
 
@@ -54,15 +51,15 @@ def test_erstwhile_altar():
     assert all([len(p.equipment) == 0 for p in gc.players])
 
     # Check that nothing happens if only current player has equipment
-    chainsaw = helpers.get_card_by_title(ef, "Chainsaw")
+    chainsaw = H.get_card_by_title(ef, "Chainsaw")
     actor.equipment.append(chainsaw)
     area.action(gc, actor)
     assert all([len(p.equipment) == 0 for p in gc.players if p != actor])
     assert actor.equipment == [chainsaw]
 
     # Check that selected equipment is stolen from selected player
-    axe = helpers.get_card_by_title(ef, "Rusted Broad Axe")
-    roly_hobe = helpers.get_card_by_title(ef, "Holy Robe")
+    axe = H.get_card_by_title(ef, "Rusted Broad Axe")
+    roly_hobe = H.get_card_by_title(ef, "Holy Robe")
     target.equipment.append(axe)
     target.equipment.append(roly_hobe)
     area.action(gc, actor)
@@ -73,9 +70,9 @@ def test_erstwhile_altar():
 def test_underworld_gate():
 
     # Set up rigged game context
-    gc, ef = helpers.fresh_gc_ef()
+    gc, ef = H.fresh_gc_ef()
     p1 = gc.players[0]
-    area = helpers.get_area_by_name(gc, "Underworld Gate")
+    area = H.get_area_by_name(gc, "Underworld Gate")
     whites = copy.copy(gc.white_cards.cards)
     blacks = copy.copy(gc.black_cards.cards)
     greens = copy.copy(gc.green_cards.cards)

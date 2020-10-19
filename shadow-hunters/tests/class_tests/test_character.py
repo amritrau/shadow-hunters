@@ -1,6 +1,6 @@
-import helpers
 import pytest
-import character
+
+from character import Character
 
 # test_character.py
 # Tests for the Character object
@@ -9,7 +9,7 @@ import character
 def test_fields():
 
     # test initialization
-    c = character.Character(
+    c = Character(
         name="char_name",
         alleg=1,
         max_damage=10,

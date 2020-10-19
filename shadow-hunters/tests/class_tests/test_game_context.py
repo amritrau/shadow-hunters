@@ -1,10 +1,7 @@
-import helpers
 import pytest
-import random
 
-import game_context
-import player
-import elements
+from helpers import fresh_gc_ef
+import random
 
 # test_game_context.py
 # Tests for the GameContext object
@@ -17,7 +14,7 @@ def test_fields():
 
         # test initialization
         n_players = random.randint(4, 8)
-        gc, ef = helpers.fresh_gc_ef(n_players)
+        gc, ef = fresh_gc_ef(n_players)
 
         # test fields
         assert len(gc.players) == n_players
@@ -42,7 +39,7 @@ def test_fields():
 
 
 def test_getLivePlayers():
-    gc, ef = helpers.fresh_gc_ef()
+    gc, ef = fresh_gc_ef()
 
     # Check that all players are initially alive
     assert gc.getLivePlayers() == gc.players
@@ -53,7 +50,7 @@ def test_getLivePlayers():
 
 
 def test_getDeadPlayers():
-    gc, ef = helpers.fresh_gc_ef()
+    gc, ef = fresh_gc_ef()
 
     # Check that no players are initially dead
     assert not gc.getDeadPlayers()
@@ -64,7 +61,7 @@ def test_getDeadPlayers():
 
 
 def test_checkWinConditions():
-    gc, ef = helpers.fresh_gc_ef()
+    gc, ef = fresh_gc_ef()
 
     # Check that no one has initially won
     assert not gc.checkWinConditions()
@@ -74,14 +71,14 @@ def test_checkWinConditions():
     assert gc.checkWinConditions()
 
     # Check that hunters win when everyone else is dead
-    gc, ef = helpers.fresh_gc_ef()
+    gc, ef = fresh_gc_ef()
     for p in gc.players:
         if p.character.alleg == 0:
             p.setDamage(14, p)
     assert [p for p in gc.checkWinConditions() if p.character.alleg == 2]
 
     # Check that shadows win when everyone else is dead
-    gc, ef = helpers.fresh_gc_ef()
+    gc, ef = fresh_gc_ef()
     for p in gc.players:
         if p.character.alleg == 2:
             p.setDamage(14, p)
@@ -89,7 +86,7 @@ def test_checkWinConditions():
 
 
 def test_play():
-    gc, ef = helpers.fresh_gc_ef()
+    gc, ef = fresh_gc_ef()
 
     # Check that a game plays to completion
     gc.play()
