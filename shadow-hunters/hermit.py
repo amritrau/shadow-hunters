@@ -127,33 +127,40 @@ class HermitEffect():
             # Card doesn't apply to target
             self.no_effect_on(target)
 
+# Convenience
+is_hunter = lambda c: c.alleg == C.Alleg.Hunter
+is_shadow = lambda c: c.alleg == C.Alleg.Shadow
+is_neutral = lambda c: c.alleg == C.Alleg.Neutral
+is_hunter_or_neutral = lambda c: is_hunter(c) or is_neutral(c)
+is_shadow_or_neutral = lambda c: is_shadow(c) or is_neutral(c)
+is_hunter_or_shadow = lambda c: is_hunter(c) or is_shadow(c)
 
 # If hunter/neutral, take 1 damage or give equipment
-blackmail = HermitEffect("Blackmail", lambda c: c.alleg > 0, -1, eq_opt=True)
+blackmail = HermitEffect("Blackmail", is_hunter_or_neutral, -1, eq_opt=True)
 
 # If shadow/neutral, take 1 damage or give equipment
-greed = HermitEffect("Greed", lambda c: c.alleg < 2, -1, eq_opt=True)
+greed = HermitEffect("Greed", is_shadow_or_neutral, -1, eq_opt=True)
 
 # If hunter/shadow, take 1 damage or give equipment
-anger = HermitEffect("Anger", lambda c: c.alleg in [0, 2], -1, eq_opt=True)
+anger = HermitEffect("Anger", is_hunter_or_shadow, -1, eq_opt=True)
 
 # If hunter, take 1 damage
-slap = HermitEffect("Slap", lambda c: c.alleg == 2, -1)
+slap = HermitEffect("Slap", is_hunter, -1)
 
 # If shadow, take 1 damage
-spell = HermitEffect("Spell", lambda c: c.alleg == 0, -1)
+spell = HermitEffect("Spell", is_shadow, -1)
 
 # If shadow, take 2 damage
-exorcism = HermitEffect("Exorcism", lambda c: c.alleg == 0, -2)
+exorcism = HermitEffect("Exorcism", is_shadow, -2)
 
 # If neutral, heal 1 damage (or take 1 damage if at 0)
-nurturance = HermitEffect("Nurturance", lambda c: c.alleg == 1, 1)
+nurturance = HermitEffect("Nurturance", is_neutral, 1)
 
 # If hunter, heal 1 damage (or take 1 damage if at 0)
-aid = HermitEffect("Aid", lambda c: c.alleg == 2, 1)
+aid = HermitEffect("Aid", is_hunter, 1)
 
 # If shadow, heal 1 damage (or take 1 damage if at 0)
-huddle = HermitEffect("Huddle", lambda c: c.alleg == 0, 1)
+huddle = HermitEffect("Huddle", is_shadow, 1)
 
 # If max hp >= 12, take 2 damage
 lesson = HermitEffect("Lesson", lambda c: c.max_damage >= 12, -2, hp_test=True)
