@@ -11,7 +11,7 @@ import copy
 
 class GameContext:
     def __init__(self, players, characters, black_cards, white_cards,
-                 green_cards, areas, ask_h, tell_h, show_h, update_h,
+                 hermit_cards, areas, ask_h, tell_h, show_h, update_h,
                  modifiers=dict()):
 
         # Instantiate gameplay objects
@@ -49,7 +49,7 @@ class GameContext:
         # Instantiate cards
         self.black_cards = black_cards
         self.white_cards = white_cards
-        self.green_cards = green_cards
+        self.hermit_cards = hermit_cards
 
         # Instantiate status
         self.game_over = False

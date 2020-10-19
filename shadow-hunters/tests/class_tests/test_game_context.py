@@ -21,7 +21,7 @@ def test_fields():
         assert len(gc.players) == n_players
         assert gc.black_cards == ef.BLACK_DECK
         assert gc.white_cards == ef.WHITE_DECK
-        assert gc.green_cards == ef.GREEN_DECK
+        assert gc.hermit_cards == ef.HERMIT_DECK
         assert not gc.modifiers
         assert gc.die4.n_sides == 4
         assert gc.die6.n_sides == 6

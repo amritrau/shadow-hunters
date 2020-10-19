@@ -250,7 +250,7 @@ def on_start(json):
         characters=ef.CHARACTERS,
         black_cards=ef.BLACK_DECK,
         white_cards=ef.WHITE_DECK,
-        green_cards=ef.GREEN_DECK,
+        hermit_cards=ef.HERMIT_DECK,
         areas=ef.AREAS,
         ask_h=lambda x, y, z: socket_ask(x, y, z, room_id),
         tell_h=None,

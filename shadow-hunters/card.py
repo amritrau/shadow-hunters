@@ -1,5 +1,3 @@
-import constants as C
-
 # card.py
 # Implements the Card object.
 
@@ -9,10 +7,10 @@ class Card:
     A Card of any type.
     """
 
-    def __init__(self, title, desc, color, holder, is_equip, use):
+    def __init__(self, title, desc, type, holder, is_equip, use):
         self.title = title
         self.desc = desc
-        self.color = color
+        self.type = type
         self.holder = holder
         self.is_equipment = is_equip
         self.use = use
@@ -21,6 +19,6 @@ class Card:
         return {
             'title': self.title,
             'desc': self.desc,
-            'color': C.CARD_COLOR_MAP[self.color],
+            'color': self.type.name,
             'is_equip': self.is_equipment
         }

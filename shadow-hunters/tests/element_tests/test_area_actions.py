@@ -75,11 +75,11 @@ def test_underworld_gate():
     area = H.get_area_by_name(gc, "Underworld Gate")
     whites = copy.copy(gc.white_cards.cards)
     blacks = copy.copy(gc.black_cards.cards)
-    greens = copy.copy(gc.green_cards.cards)
+    hermits = copy.copy(gc.hermit_cards.cards)
 
     # Make sure one of the card piles was taken from
     area.action(gc, p1)
     neq_whites = gc.white_cards.cards != whites
     neq_blacks = gc.black_cards.cards != blacks
-    neq_greens = gc.green_cards.cards != greens
-    assert neq_whites or neq_blacks or neq_greens
+    neq_hermits = gc.hermit_cards.cards != hermits
+    assert neq_whites or neq_blacks or neq_hermits

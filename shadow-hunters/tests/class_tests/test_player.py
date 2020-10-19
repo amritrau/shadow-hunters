@@ -89,10 +89,10 @@ def test_drawCard():
     assert gc.black_cards.cards != original_deck
 
     # Draw hermit card
-    original_deck = copy.copy(gc.green_cards.cards)
-    assert gc.green_cards.cards == original_deck
-    p1.drawCard(gc.green_cards)
-    assert gc.green_cards.cards != original_deck
+    original_deck = copy.copy(gc.hermit_cards.cards)
+    assert gc.hermit_cards.cards == original_deck
+    p1.drawCard(gc.hermit_cards)
+    assert gc.hermit_cards.cards != original_deck
 
 
 def test_rollDice():

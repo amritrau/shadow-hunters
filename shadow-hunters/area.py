@@ -39,7 +39,7 @@ def underworld_gate_action(gc, player):
     elif answer == "Draw Black Card":
         player.drawCard(gc.black_cards)
     else:
-        player.drawCard(gc.green_cards)
+        player.drawCard(gc.hermit_cards)
 
 
 def weird_woods_action(gc, player):

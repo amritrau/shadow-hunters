@@ -8,12 +8,11 @@ class Alleg(Enum):
     Hunter = 2
 
 
-# Enum for card colors
-CARD_COLOR_MAP = {
-    0: "White",
-    1: "Black",
-    2: "Green"
-}
+# Enum for card type
+class CardType(Enum):
+    White = 0
+    Black = 1
+    Hermit = 2
 
 
 # Enum for text colors

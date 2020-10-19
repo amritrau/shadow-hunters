@@ -12,8 +12,8 @@ def color_format(str, args, gc):
 
     # get all elements by name
     ef = ElementFactory()
-    all_cards = ef.WHITE_DECK.cards + ef.BLACK_DECK.cards + ef.GREEN_DECK.cards
-    cards = [c.title for c in all_cards]
+    decks = ef.WHITE_DECK.cards + ef.BLACK_DECK.cards + ef.HERMIT_DECK.cards
+    cards = [c.title for c in decks]
     shadows = [c.name for c in ef.CHARACTERS if c.alleg == C.Alleg.Shadow]
     hunters = [c.name for c in ef.CHARACTERS if c.alleg == C.Alleg.Hunter]
     neutrals = [c.name for c in ef.CHARACTERS if c.alleg == C.Alleg.Neutral]
@@ -27,8 +27,8 @@ def color_format(str, args, gc):
         if isinstance(n, int):
             colors.append(C.TEXT_COLORS['number'])
         elif n in cards:
-            card_color = C.CARD_COLOR_MAP[(
-                [c for c in all_cards if c.title == n][0]).color]
+            card_type = [c for c in decks if c.title == n][0].type.name
+            card_color = 'Green' if card_type == 'Hermit' else card_type
             colors.append(C.TEXT_COLORS[card_color])
         elif n == 'a Hermit Card':
             colors.append(C.TEXT_COLORS['Green'])
@@ -67,7 +67,7 @@ def get_room_id(rooms, sid):
 
 def get_reserved_words():
     ef = ElementFactory()
-    cards = ef.WHITE_DECK.cards + ef.BLACK_DECK.cards + ef.GREEN_DECK.cards
+    cards = ef.WHITE_DECK.cards + ef.BLACK_DECK.cards + ef.HERMIT_DECK.cards
     reserved = [c.title for c in cards]
     reserved += [ch.name for ch in ef.CHARACTERS]
     reserved += [a.name for a in ef.AREAS]
@@ -76,8 +76,8 @@ def get_reserved_words():
 
 
 def get_card_by_title(ef, title):
-    all_cards = ef.WHITE_DECK.cards + ef.BLACK_DECK.cards + ef.GREEN_DECK.cards
-    return [c for c in all_cards if c.title == title][0]
+    decks = ef.WHITE_DECK.cards + ef.BLACK_DECK.cards + ef.HERMIT_DECK.cards
+    return [c for c in decks if c.title == title][0]
 
 
 def get_area_by_name(gc, name):
@@ -124,7 +124,7 @@ def fresh_gc_ef(n_players=random.randint(4, 8)):
         characters=ef.CHARACTERS,
         black_cards=ef.BLACK_DECK,
         white_cards=ef.WHITE_DECK,
-        green_cards=ef.GREEN_DECK,
+        hermit_cards=ef.HERMIT_DECK,
         areas=ef.AREAS,
         ask_h=lambda x, y, z: {'value': random.choice(y['options'])},
         tell_h=lambda x, y, *z: 0,
