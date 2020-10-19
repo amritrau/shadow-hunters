@@ -1,8 +1,9 @@
 from agent import Agent
 
-import helpers as H
+# import helpers as H
 import concurrency as CC
 from collections import defaultdict
+
 
 class Player:
     def __init__(self, user_id, socket_id, color, ai):
@@ -120,25 +121,26 @@ class Player:
             # Select an area
             self.gc.tell_h("{} is selecting an area...", [self.user_id])
             data = {'options': self.gc.getAreas()}
-            destination = self.gc.ask_h('select', data, self.user_id)['value']
+            dst_name = self.gc.ask_h('select', data, self.user_id)['value']
 
             # Get Area object from area name
-            destination_Area = H.get_area_by_name(self.gc, destination)
+            zs = self.gc.zones
+            dst = [a for z in zs for a in z.areas if a.name == dst_name][0]
 
         else:
 
             # Get area from roll
-            destination_Area = self.gc.getAreaFromRoll(roll_result)
+            dst = self.gc.getAreaFromRoll(roll_result)
 
             # Get string from area
-            destination = destination_Area.name
+            dst_name = dst.name
 
         # Move to area
-        self.move(destination_Area)
-        self.gc.tell_h("{} moves to {}!", [self.user_id, destination])
+        self.move(dst)
+        self.gc.tell_h("{} moves to {}!", [self.user_id, dst_name])
 
         # Take area action
-        data = {'options': [destination_Area.desc, 'Decline']}
+        data = {'options': [dst.desc, 'Decline']}
         answer = self.gc.ask_h('yesno', data, self.user_id)['value']
         if answer != 'Decline':
             self.location.action(self.gc, self)
