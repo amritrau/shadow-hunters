@@ -27,7 +27,7 @@ class HermitEffect():
             self.info_args = lambda t: [t.character.max_damage]
         else:
             self.info = "You are a {}."
-            self.info_args = lambda t: [C.ALLEGIANCE_MAP[t.character.alleg]]
+            self.info_args = lambda t: [t.character.alleg.name]
 
     def give_card(self, args):
 
