@@ -1,11 +1,10 @@
-# Enum for allegiances
-ALLEGIANCE_MAP = {
-    0: "Shadow",
-    1: "Neutral",
-    2: "Hunter"
-}
+from enum import Enum
 
-# Enum for card types
+class Alleg(Enum):
+    Shadow = 0
+    Neutral = 1
+    Hunter = 2
+
 CARD_COLOR_MAP = {
     0: "White",
     1: "Black",

@@ -1,5 +1,6 @@
 import pytest
 
+import constants as C
 from helpers import fresh_gc_ef
 import random
 
@@ -73,16 +74,16 @@ def test_checkWinConditions():
     # Check that hunters win when everyone else is dead
     gc, ef = fresh_gc_ef()
     for p in gc.players:
-        if p.character.alleg == 0:
+        if p.character.alleg == C.Alleg.Shadow:
             p.setDamage(14, p)
-    assert [p for p in gc.checkWinConditions() if p.character.alleg == 2]
+    assert [p for p in gc.checkWinConditions() if p.character.alleg == C.Alleg.Hunter]
 
     # Check that shadows win when everyone else is dead
     gc, ef = fresh_gc_ef()
     for p in gc.players:
-        if p.character.alleg == 2:
+        if p.character.alleg == C.Alleg.Hunter:
             p.setDamage(14, p)
-    assert [p for p in gc.checkWinConditions() if p.character.alleg == 0]
+    assert [p for p in gc.checkWinConditions() if p.character.alleg == C.Alleg.Shadow]
 
 
 def test_play():

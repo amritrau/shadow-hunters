@@ -7,6 +7,8 @@ import hermit
 import win_conditions
 import specials
 
+from constants import Alleg
+
 # elements.py
 # Encodes all characters, win conditions, special abilities,
 # game areas, decks, and cards in an element factory. Every
@@ -490,7 +492,7 @@ class ElementFactory:
         self.CHARACTERS = [
             character.Character(
                 name="Valkyrie",
-                alleg=0,  # Shadow
+                alleg=Alleg.Shadow,
                 max_damage=13,
                 win_cond=win_conditions.shadow,
                 win_cond_desc="All of the Hunters (or 3 Neutrals) are dead.",
@@ -501,7 +503,7 @@ class ElementFactory:
             ),
             character.Character(
                 name="Vampire",
-                alleg=0,  # Shadow
+                alleg=Alleg.Shadow,
                 max_damage=13,
                 win_cond=win_conditions.shadow,
                 win_cond_desc="All of the Hunters (or 3 Neutrals) are dead.",
@@ -512,7 +514,7 @@ class ElementFactory:
             ),
             character.Character(
                 name="Werewolf",
-                alleg=0,  # Shadow
+                alleg=Alleg.Shadow,
                 max_damage=14,
                 win_cond=win_conditions.shadow,
                 win_cond_desc="All of the Hunters (or 3 Neutrals) are dead.",
@@ -523,7 +525,7 @@ class ElementFactory:
             ),
             character.Character(
                 name="Ultra Soul",
-                alleg=0,  # Shadow
+                alleg=Alleg.Shadow,
                 max_damage=11,
                 win_cond=win_conditions.shadow,
                 win_cond_desc="All of the Hunters (or 3 Neutrals) are dead.",
@@ -535,7 +537,7 @@ class ElementFactory:
             ),
             character.Character(
                 name="Allie",
-                alleg=1,  # Neutral
+                alleg=Alleg.Neutral,
                 max_damage=8,
                 win_cond=win_conditions.allie,
                 win_cond_desc="You're not dead when the game is over.",
@@ -545,7 +547,7 @@ class ElementFactory:
             ),
             character.Character(
                 name="Bob",
-                alleg=1,  # Neutral
+                alleg=Alleg.Neutral,
                 max_damage=10,
                 win_cond=win_conditions.bob,
                 win_cond_desc="You have 5 or more equipment cards.",
@@ -558,7 +560,7 @@ class ElementFactory:
             ),
             character.Character(
                 name="Bob",
-                alleg=1,  # Neutral
+                alleg=Alleg.Neutral,
                 max_damage=10,
                 win_cond=win_conditions.bob,
                 win_cond_desc="You have 5 or more equipment cards.",
@@ -570,7 +572,7 @@ class ElementFactory:
             ),
             character.Character(
                 name="Catherine",
-                alleg=1,  # Neutral
+                alleg=Alleg.Neutral,
                 max_damage=11,
                 win_cond=win_conditions.catherine,
                 win_cond_desc=("You are either the first to die or one of the"
@@ -581,7 +583,7 @@ class ElementFactory:
             ),
             character.Character(
                 name="George",
-                alleg=2,  # Hunter
+                alleg=Alleg.Hunter,
                 max_damage=14,
                 win_cond=win_conditions.hunter,
                 win_cond_desc="All of the Shadows are dead.",
@@ -593,7 +595,7 @@ class ElementFactory:
             ),
             character.Character(
                 name="Fu-ka",
-                alleg=2,  # Hunter
+                alleg=Alleg.Hunter,
                 max_damage=12,
                 win_cond=win_conditions.hunter,
                 win_cond_desc="All of the Shadows are dead.",
@@ -604,7 +606,7 @@ class ElementFactory:
             ),
             character.Character(
                 name="Franklin",
-                alleg=2,  # Hunter
+                alleg=Alleg.Hunter,
                 max_damage=12,
                 win_cond=win_conditions.hunter,
                 win_cond_desc="All of the Shadows are dead.",
@@ -616,7 +618,7 @@ class ElementFactory:
             ),
             character.Character(
                 name="Ellen",
-                alleg=2,  # Hunter
+                alleg=Alleg.Hunter,
                 max_damage=10,
                 win_cond=win_conditions.hunter,
                 win_cond_desc="All of the Shadows are dead.",

@@ -14,9 +14,9 @@ def color_format(str, args, gc):
     ef = ElementFactory()
     all_cards = ef.WHITE_DECK.cards + ef.BLACK_DECK.cards + ef.GREEN_DECK.cards
     cards = [c.title for c in all_cards]
-    shadows = [ch.name for ch in ef.CHARACTERS if ch.alleg == 0]
-    hunters = [ch.name for ch in ef.CHARACTERS if ch.alleg == 2]
-    neutrals = [ch.name for ch in ef.CHARACTERS if ch.alleg == 1]
+    shadows = [c.name for c in ef.CHARACTERS if c.alleg == C.Alleg.Shadow]
+    hunters = [c.name for c in ef.CHARACTERS if c.alleg == C.Alleg.Hunter]
+    neutrals = [c.name for c in ef.CHARACTERS if c.alleg == C.Alleg.Neutral]
     areas = [a.name for a in ef.AREAS]
 
     # assign colors
@@ -92,15 +92,15 @@ def get_character_by_name(ef, name):
 
 
 def get_a_hunter(gc):
-    return [p for p in gc.players if p.character.alleg == 2][0]
+    return [p for p in gc.players if p.character.alleg == C.Alleg.Hunter][0]
 
 
 def get_a_shadow(gc):
-    return [p for p in gc.players if p.character.alleg == 0][0]
+    return [p for p in gc.players if p.character.alleg == C.Alleg.Shadow][0]
 
 
 def get_a_neutral(gc):
-    return [p for p in gc.players if p.character.alleg == 1][0]
+    return [p for p in gc.players if p.character.alleg == C.Alleg.Neutral][0]
 
 # Helper functions for unit testing
 

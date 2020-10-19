@@ -1,3 +1,5 @@
+import constants as C
+
 # single_use.py
 # card.use(args) function implementations.
 
@@ -38,7 +40,7 @@ def advent(args):
     or heal fully if already revealed"""
 
     data = {'options': ["Do nothing"]}
-    if args['self'].character.alleg == 2:
+    if args['self'].character.alleg == C.Alleg.Hunter:
         if args['self'].state == 2:
             data['options'].append("Reveal and heal fully")
         else:
@@ -60,7 +62,7 @@ def disenchant_mirror(args):
     """If shadow and not unknown, force reveal"""
 
     data = {'options': ["Do nothing"]}
-    is_shadow = args['self'].character.alleg == 0
+    is_shadow = args['self'].character.alleg == C.Alleg.Shadow
     if is_shadow and args['self'].character.name != "Unknown":
         data = {'options': ["Reveal yourself"]}
 
@@ -188,7 +190,8 @@ def diabolic_ritual(args):
     """If shadow, can reveal and heal fully"""
 
     data = {'options': ["Do nothing"]}
-    if args['self'].character.alleg == 0 and args['self'].state != 1:
+    is_shadow = args['self'].character.alleg == C.Alleg.Shadow
+    if is_shadow and args['self'].state != 1:
         data['options'].append("Reveal and heal fully")
 
     # Get decision and take corresponding action

@@ -82,12 +82,17 @@ class GameContext:
                 a.zone = z
 
         # Figure out how many of each allegiance there has to be
+        faction_dict = lambda h, n, s: {
+            C.Alleg.Hunter: h,
+            C.Alleg.Neutral: n,
+            C.Alleg.Shadow: s
+        }
         counts_dict = {
-            4: (2, 0, 2),
-            5: (2, 1, 2),
-            6: (2, 2, 2),
-            7: (2, 3, 2),
-            8: (3, 2, 3)
+            4: faction_dict(2, 0, 2),
+            5: faction_dict(2, 1, 2),
+            6: faction_dict(2, 2, 2),
+            7: faction_dict(2, 3, 2),
+            8: faction_dict(3, 2, 3),
         }
 
         # Randomly assign characters and point game context
@@ -152,7 +157,7 @@ class GameContext:
                 for w in winners:
                     self.tell_h("{} ({}: {}) won! {}", [
                         w.user_id,
-                        C.ALLEGIANCE_MAP[w.character.alleg],
+                        w.character.alleg.name,
                         w.character.name,
                         w.character.win_cond_desc
                     ])

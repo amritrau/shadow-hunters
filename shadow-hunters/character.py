@@ -1,5 +1,3 @@
-import constants as C
-
 # character.py
 # Implements a Character.
 
@@ -21,7 +19,7 @@ class Character:
     def dump(self):
         return {
             'name': self.name,
-            'alleg': C.ALLEGIANCE_MAP[self.alleg],
+            'alleg': self.alleg.name,
             'max_damage': self.max_damage,
             'win_cond_desc': self.win_cond_desc,
             'special_desc': self.special_desc,

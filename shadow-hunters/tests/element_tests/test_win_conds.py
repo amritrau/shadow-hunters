@@ -1,6 +1,7 @@
 import pytest
 
 import helpers as H
+import constants as C
 
 # test_win_conds.py
 # Tests the win conditions of each character
@@ -33,7 +34,7 @@ def test_shadows_win():
     gc, ef = H.fresh_gc_ef(7)
     s = H.get_a_shadow(gc)
     for p in gc.players:
-        if p.character.alleg == 1:
+        if p.character.alleg == C.Alleg.Neutral:
             p.setDamage(14, p)
     assert s.character.win_cond(gc, s)
 
@@ -94,6 +95,6 @@ def test_catherine_win():
     # Check that Catherine wins if she's in the last two standing
     gc, ef, p = H.get_game_with_character("Catherine", n_players=6)
     for pl in gc.players:
-        if pl.character.alleg != 1:
+        if pl.character.alleg != C.Alleg.Neutral:
             pl.setDamage(14, pl)
     assert p.character.win_cond(gc, p)

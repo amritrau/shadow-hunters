@@ -1,6 +1,6 @@
 from agent import Agent
 
-# import helpers as H
+import constants as C
 import concurrency as CC
 from collections import defaultdict
 
@@ -394,7 +394,7 @@ class Player:
 
         # Check for spear of longinus
         has_spear = self.hasEquipment("Spear of Longinus")
-        is_hunter = self.character.alleg == 2
+        is_hunter = self.character.alleg == C.Alleg.Hunter
         if successful and is_hunter and self.state == 1 and has_spear:
             if not dryrun:
                 self.gc.tell_h("{} strikes with their {}!", [
