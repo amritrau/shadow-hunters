@@ -1,22 +1,25 @@
+import constants as C
+
 # win_conditions.py
 
-import constants as C
 
 def shadow(gc, player):
 
     # Shadows win if all hunters are dead or 3 neutrals are dead
-    no_living_hunters = (
-        len([p for p in gc.getLivePlayers() if p.character.alleg == C.Alleg.Hunter]) == 0)
-    neutrals_dead_3 = (
-        len([p for p in gc.getDeadPlayers() if p.character.alleg == C.Alleg.Neutral]) >= 3)
+    A = C.Alleg
+    h = [p for p in gc.getLivePlayers() if p.character.alleg == A.Hunter]
+    no_living_hunters = len(h) == 0
+    n = [p for p in gc.getDeadPlayers() if p.character.alleg == A.Neutral]
+    neutrals_dead_3 = len(n) >= 3
     return no_living_hunters or neutrals_dead_3
 
 
 def hunter(gc, player):
 
     # Hunters win if all shadows are dead
-    no_living_shadows = (
-        len([p for p in gc.getLivePlayers() if p.character.alleg == C.Alleg.Shadow]) == 0)
+    A = C.Alleg
+    s = [p for p in gc.getLivePlayers() if p.character.alleg == A.Shadow]
+    no_living_shadows = len(s) == 0
     return no_living_shadows
 
 

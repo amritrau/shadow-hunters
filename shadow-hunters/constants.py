@@ -1,15 +1,20 @@
 from enum import Enum
 
+
+# Enum for character allegiances
 class Alleg(Enum):
     Shadow = 0
     Neutral = 1
     Hunter = 2
 
+
+# Enum for card colors
 CARD_COLOR_MAP = {
     0: "White",
     1: "Black",
     2: "Green"
 }
+
 
 # Enum for text colors
 TEXT_COLORS = {
