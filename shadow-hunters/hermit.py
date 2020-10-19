@@ -1,552 +1,165 @@
-import constants
+import constants as C
 
 # hermit.py
 
 
-def blackmail(args):
+class HermitEffect():
+    """Models the possible effects of drawing and playing a hermit card"""
 
-    # Choose a player to give the card to
-    args['self'].gc.ask_h(
-        'confirm',
-        {'options': ["Use Hermit's Blackmail"]},
-        args['self'].user_id
-    )
-    target = args['self'].choosePlayer()
-    display_data = args['card'].dump()
-    display_data['type'] = 'draw'
-    args['self'].gc.show_h(display_data, target.socket_id)
+    def __init__(self, name, test, dmg, eq_opt=False, hp_test=False):
 
-    # If target is neutral or hunter, must give equipment or take 1 damage
-    if target.character.alleg > 0:
+        # What is the card called?
+        self.name = name
 
-        # Target is neutral or hunter, get decision
-        target.gc.tell_h(
-            "You are a {}.",
-            [constants.ALLEGIANCE_MAP[target.character.alleg]],
-            target.socket_id
-        )
-        if len(target.equipment):
-            data = {'options': [
-                "Give an equipment card", "Receive 1 damage"]}
+        # Does the card apply to the target?
+        self.test = test
+
+        # Can the target give an equipment card instead of taking damage?
+        self.eq_opt = eq_opt
+
+        # How much damage should the target receive or heal?
+        self.damage_to = lambda t: -1 if dmg > 0 and not t.damage else dmg
+
+        # Does the test check the target's max hp, rather than allegience?
+        # (this changes how the information is presented to the target)
+        if hp_test:
+            self.info = "Your maximum hp is {}."
+            self.info_args = lambda t: [t.character.max_damage]
         else:
-            data = {'options': ["Receive 1 damage"]}
-        decision = target.gc.ask_h(
-            'yesno', data, target.user_id)['value']
+            self.info = "You are a {}."
+            self.info_args = lambda t: [C.ALLEGIANCE_MAP[t.character.alleg]]
 
-        # Branch on decision
+    def give_card(self, args):
+
+        # Ask the user to use the card
+        args['self'].gc.ask_h(
+            'confirm',
+            {'options': ["Use Hermit's {}".format(self.name)]},
+            args['self'].user_id
+        )
+
+        # Get the user's chosen target
+        target = args['self'].choosePlayer()
+
+        # Present the card to the target
+        display_data = args['card'].dump()
+        display_data['type'] = 'draw'
+        args['self'].gc.show_h(display_data, target.socket_id)
+        return target
+
+    def get_options(self, t):
+
+        # Tell the target they are affected by the card
+        t.gc.tell_h(self.info, self.info_args(t), t.socket_id)
+
+        # Give the amount of damage the target should take or heal as an option
+        d = self.damage_to(t)
+        verb = "Heal" if d > 0 else "Receive"
+        opts = {'options': ["{} {} damage".format(verb, str(abs(d)))]}
+
+        # If the target has equipment and this hermit effect allows it,
+        # the target has the option of forfeiting an equipment card
+        if self.eq_opt and len(t.equipment):
+            opts['options'].append("Give an equipment card")
+        return opts
+
+    def apply_decision(self, args, t, decision):
+
+        # Target forfeits an equipment card
         if decision == "Give an equipment card":
+            eq = t.chooseEquipment(t)
+            t.giveEquipment(args['self'], eq)
 
-            # Target chooses an equipment card to give away
-            eq = target.chooseEquipment(target)
+        # Target receives/heals damage
+        else:
+            d = self.damage_to(t)
+            verb2 = "healed" if d > 0 else "took"
+            t.moveDamage(d, args['self'])
+            t.gc.tell_h("{} {} {} damage!", [t.user_id, verb2, abs(d)])
 
-            # Transfer equipment from target to user
-            target.giveEquipment(args['self'], eq)
+    def no_effect_on(self, t):
+
+        # Prompt target to do nothing
+        t.gc.tell_h(self.info + " Do nothing.", self.info_args(t), t.socket_id)
+        data = {'options': ['Do nothing']}
+        t.gc.ask_h('confirm', data, t.user_id)
+
+        # Inform other players
+        t.gc.tell_h("{} did nothing.", [t.user_id])
+
+    def force_reveal(self, args, t):
+
+        # Prompt target to reveal themself
+        t.gc.tell_h("You have no choice. Reveal yourself to {}.", [
+                         args['self'].user_id], t.socket_id)
+        t.gc.ask_h('confirm', {'options': ["Reveal"]}, t.user_id)
+
+        # Send target's information to user
+        display_data = {'type': 'reveal', 'player': t.dump()}
+        args['self'].gc.show_h(display_data, args['self'].socket_id)
+        t.gc.tell_h("{} revealed their identity secretly to {}!", [
+                         t.user_id, args['self'].user_id])
+
+    def __call__(self, args):
+
+        # Give card to target
+        target = self.give_card(args)
+
+        # Does card apply to target?
+        if self.test(target.character):
+
+            # Special case for Hermit's Prediction
+            if self.name == "Prediction":
+                self.force_reveal(args, target)
+                return
+
+            # Get target's choices
+            opts = self.get_options(target)
+
+            # Get target's decision
+            decision = target.gc.ask_h('yesno', opts, target.user_id)['value']
+
+            # Apply target's decision
+            self.apply_decision(args, target, decision)
 
         else:
 
-            # Target takes 1 damage
-            new_damage = target.moveDamage(-1, args['self'])
-            target.gc.tell_h("{} took {} damage!",
-                             [target.user_id, "1"])
+            # Card doesn't apply to target
+            self.no_effect_on(target)
 
-    else:
 
-        # Target is a shadow, nothing happens
-        target.gc.tell_h(
-            "You are a {}. Do nothing.",
-            [constants.ALLEGIANCE_MAP[target.character.alleg]],
-            target.socket_id
-        )
-        data = {'options': ['Do nothing']}
-        target.gc.ask_h('confirm', data, target.user_id)
-        target.gc.tell_h("{} did nothing.", [target.user_id])
+# If hunter/neutral, take 1 damage or give equipment
+blackmail = HermitEffect("Blackmail", lambda c: c.alleg > 0, -1, eq_opt=True)
 
+# If shadow/neutral, take 1 damage or give equipment
+greed = HermitEffect("Greed", lambda c: c.alleg < 2, -1, eq_opt=True)
 
-def greed(args):
+# If hunter/shadow, take 1 damage or give equipment
+anger = HermitEffect("Anger", lambda c: c.alleg in [0, 2], -1, eq_opt=True)
 
-    # Choose a player to give the card to
-    args['self'].gc.ask_h(
-        'confirm', {'options': ["Use Hermit's Greed"]}, args['self'].user_id)
-    target = args['self'].choosePlayer()
-    display_data = args['card'].dump()
-    display_data['type'] = 'draw'
-    args['self'].gc.show_h(display_data, target.socket_id)
+# If hunter, take 1 damage
+slap = HermitEffect("Slap", lambda c: c.alleg == 2, -1)
 
-    # If target is neutral or shadow, must give equipment or take 1 damage
-    if target.character.alleg < 2:
+# If shadow, take 1 damage
+spell = HermitEffect("Spell", lambda c: c.alleg == 0, -1)
 
-        # Target is neutral or shadow, get decision
-        target.gc.tell_h(
-            "You are a {}.",
-            [constants.ALLEGIANCE_MAP[target.character.alleg]],
-            target.socket_id
-        )
-        if len(target.equipment):
-            data = {'options': ["Give an equipment card", "Receive 1 damage"]}
-        else:
-            data = {'options': ["Receive 1 damage"]}
-        decision = target.gc.ask_h('yesno', data, target.user_id)['value']
+# If shadow, take 2 damage
+exorcism = HermitEffect("Exorcism", lambda c: c.alleg == 0, -2)
 
-        # Branch on decision
-        if decision == "Give an equipment card":
+# If neutral, heal 1 damage (or take 1 damage if at 0)
+nurturance = HermitEffect("Nurturance", lambda c: c.alleg == 1, 1)
 
-            # Target chooses an equipment card to give away
-            eq = target.chooseEquipment(target)
+# If hunter, heal 1 damage (or take 1 damage if at 0)
+aid = HermitEffect("Aid", lambda c: c.alleg == 2, 1)
 
-            # Transfer equipment from target to user
-            target.giveEquipment(args['self'], eq)
+# If shadow, heal 1 damage (or take 1 damage if at 0)
+huddle = HermitEffect("Huddle", lambda c: c.alleg == 0, 1)
 
-        else:
+# If max hp >= 12, take 2 damage
+lesson = HermitEffect("Lesson", lambda c: c.max_damage >= 12, -2, hp_test=True)
 
-            # Target takes 1 damage
-            new_damage = target.moveDamage(-1, args['self'])
-            target.gc.tell_h("{} took {} damage!", [target.user_id, "1"])
+# If max hp <= 11, take 1 damage
+bully = HermitEffect("Bully", lambda c: c.max_damage <= 11, -1, hp_test=True)
 
-    else:
-
-        # Target is a hunter, nothing happens
-        target.gc.tell_h(
-            "You are a {}. Do nothing.",
-            [constants.ALLEGIANCE_MAP[target.character.alleg]],
-            target.socket_id
-        )
-        data = {'options': ['Do nothing']}
-        target.gc.ask_h('confirm', data, target.user_id)
-        target.gc.tell_h("{} did nothing.", [target.user_id])
-
-
-def anger(args):
-
-    # Choose a player to give the card to
-    args['self'].gc.ask_h(
-        'confirm',
-        {'options': ["Use Hermit's Anger"]},
-        args['self'].user_id
-    )
-    target = args['self'].choosePlayer()
-    display_data = args['card'].dump()
-    display_data['type'] = 'draw'
-    args['self'].gc.show_h(display_data, target.socket_id)
-
-    # If target is hunter or shadow, must give equipment or take 1 damage
-    if target.character.alleg in [0, 2]:
-
-        # Target is hunter or shadow, get decision
-        target.gc.tell_h(
-            "You are a {}.",
-            [constants.ALLEGIANCE_MAP[target.character.alleg]],
-            target.socket_id
-        )
-        if len(target.equipment):
-            data = {'options': [
-                "Give an equipment card", "Receive 1 damage"]}
-        else:
-            data = {'options': ["Receive 1 damage"]}
-        decision = target.gc.ask_h(
-            'yesno', data, target.user_id)['value']
-
-        # Branch on decision
-        if decision == "Give an equipment card":
-
-            # Target chooses an equipment card to give away
-            eq = target.chooseEquipment(target)
-
-            # Transfer equipment from target to user
-            target.giveEquipment(args['self'], eq)
-
-        else:
-
-            # Target takes 1 damage
-            new_damage = target.moveDamage(-1, args['self'])
-            target.gc.tell_h("{} took {} damage!",
-                             [target.user_id, "1"])
-
-    else:
-
-        # Target is a neutral, nothing happens
-        target.gc.tell_h(
-            "You are a {}. Do nothing.",
-            [constants.ALLEGIANCE_MAP[target.character.alleg]],
-            target.socket_id
-        )
-        data = {'options': ['Do nothing']}
-        target.gc.ask_h('confirm', data, target.user_id)
-        target.gc.tell_h("{} did nothing.", [target.user_id])
-
-
-def slap(args):
-
-    # Choose a player to give the card to
-    args['self'].gc.ask_h(
-        'confirm', {'options': ["Use Hermit's Slap"]}, args['self'].user_id)
-    target = args['self'].choosePlayer()
-    display_data = args['card'].dump()
-    display_data['type'] = 'draw'
-    args['self'].gc.show_h(display_data, target.socket_id)
-
-    # If hunter, take 1 damage
-    if target.character.alleg == 2:
-
-        # Prompt target to receive 1 damage
-        target.gc.tell_h(
-            "You are a {}.",
-            [constants.ALLEGIANCE_MAP[target.character.alleg]],
-            target.socket_id
-        )
-        data = {'options': ["Receive 1 damage"]}
-        target.gc.ask_h('confirm', data, target.user_id)
-
-        # Give 1 damage to target
-        new_damage = target.moveDamage(-1, args['self'])
-        target.gc.tell_h("{} took {} damage!", [target.user_id, "1"])
-
-    else:
-
-        # Target is not a hunter, nothing happens
-        target.gc.tell_h(
-            "You are a {}. Do nothing.",
-            [constants.ALLEGIANCE_MAP[target.character.alleg]],
-            target.socket_id
-        )
-        data = {'options': ['Do nothing']}
-        target.gc.ask_h('confirm', data, target.user_id)
-        target.gc.tell_h("{} did nothing.", [target.user_id])
-
-
-def spell(args):
-
-    # Choose a player to give the card to
-    args['self'].gc.ask_h(
-        'confirm', {'options': ["Use Hermit's Spell"]}, args['self'].user_id)
-    target = args['self'].choosePlayer()
-    display_data = args['card'].dump()
-    display_data['type'] = 'draw'
-    args['self'].gc.show_h(display_data, target.socket_id)
-
-    # If shadow, take 1 damage
-    if target.character.alleg == 0:
-
-        # Prompt target to receive 1 damage
-        target.gc.tell_h(
-            "You are a {}.",
-            [constants.ALLEGIANCE_MAP[target.character.alleg]],
-            target.socket_id
-        )
-        data = {'options': ["Receive 1 damage"]}
-        target.gc.ask_h('confirm', data, target.user_id)
-
-        # Give 1 damage to target
-        new_damage = target.moveDamage(-1, args['self'])
-        target.gc.tell_h("{} took {} damage!", [target.user_id, "1"])
-
-    else:
-
-        # Target is not a shadow, nothing happens
-        target.gc.tell_h(
-            "You are a {}. Do nothing.",
-            [constants.ALLEGIANCE_MAP[target.character.alleg]],
-            target.socket_id
-        )
-        data = {'options': ['Do nothing']}
-        target.gc.ask_h('confirm', data, target.user_id)
-        target.gc.tell_h("{} did nothing.", [target.user_id])
-
-
-def exorcism(args):
-
-    # Choose a player to give the card to
-    args['self'].gc.ask_h(
-        'confirm',
-        {'options': ["Use Hermit's Exorcism"]},
-        args['self'].user_id
-    )
-    target = args['self'].choosePlayer()
-    display_data = args['card'].dump()
-    display_data['type'] = 'draw'
-    args['self'].gc.show_h(display_data, target.socket_id)
-
-    # If shadow, take 2 damage
-    if target.character.alleg == 0:
-        # Prompt target to receive 2 damage
-        target.gc.tell_h(
-            "You are a {}.",
-            [constants.ALLEGIANCE_MAP[target.character.alleg]],
-            target.socket_id
-        )
-        data = {'options': ["Receive 2 damage"]}
-        target.gc.ask_h('confirm', data, target.user_id)
-
-        # Give 2 damage to target
-        new_damage = target.moveDamage(-2, args['self'])
-        target.gc.tell_h("{} took {} damage!", [target.user_id, "2"])
-
-    else:
-
-        # Target is not a shadow, nothing happens
-        target.gc.tell_h(
-            "You are a {}. Do nothing.",
-            [constants.ALLEGIANCE_MAP[target.character.alleg]],
-            target.socket_id
-        )
-        data = {'options': ['Do nothing']}
-        target.gc.ask_h('confirm', data, target.user_id)
-        target.gc.tell_h("{} did nothing.", [target.user_id])
-
-
-def nurturance(args):
-
-    # Choose a player to give the card to
-    args['self'].gc.ask_h(
-        'confirm',
-        {'options': ["Use Hermit's Nurturance"]},
-        args['self'].user_id
-    )
-    target = args['self'].choosePlayer()
-    display_data = args['card'].dump()
-    display_data['type'] = 'draw'
-    args['self'].gc.show_h(display_data, target.socket_id)
-
-    # If neutral, heal 1 damage (unless at 0, then take 1 damage)
-    if target.character.alleg == 1:
-        # Branch on hp value
-        target.gc.tell_h(
-            "You are a {}.",
-            [constants.ALLEGIANCE_MAP[target.character.alleg]],
-            target.socket_id
-        )
-        if target.damage == 0:
-
-            # Hp is 0, prompt to receive 1 damage
-            data = {'options': ["Receive 1 damage"]}
-            target.gc.ask_h('confirm', data, target.user_id)
-
-            # Give target 1 damage
-            new_damage = target.moveDamage(-1, args['self'])
-            target.gc.tell_h("{} took {} damage!",
-                             [target.user_id, "1"])
-
-        else:
-
-            # Hp is nonzero, prompt to heal 1 damage
-            data = {'options': ["Heal 1 damage"]}
-            target.gc.ask_h('confirm', data, target.user_id)
-
-            # Heal target 1 damage
-            new_damage = target.moveDamage(1, args['self'])
-            target.gc.tell_h("{} healed {} damage!",
-                             [target.user_id, "1"])
-
-    else:
-
-        # Target is not a neutral, nothing happens
-        target.gc.tell_h(
-            "You are a {}. Do nothing.",
-            [constants.ALLEGIANCE_MAP[target.character.alleg]],
-            target.socket_id
-        )
-        data = {'options': ['Do nothing']}
-        target.gc.ask_h('confirm', data, target.user_id)
-        target.gc.tell_h("{} did nothing.", [target.user_id])
-
-
-def aid(args):
-
-    # Choose a player to give the card to
-    args['self'].gc.ask_h(
-        'confirm', {'options': ["Use Hermit's Aid"]}, args['self'].user_id)
-    target = args['self'].choosePlayer()
-    display_data = args['card'].dump()
-    display_data['type'] = 'draw'
-    args['self'].gc.show_h(display_data, target.socket_id)
-
-    # If hunter, heal 1 damage (unless at 0, then take 1 damage)
-    if target.character.alleg == 2:
-        # Branch on hp value
-        target.gc.tell_h(
-            "You are a {}.",
-            [constants.ALLEGIANCE_MAP[target.character.alleg]],
-            target.socket_id
-        )
-        if target.damage == 0:
-
-            # Hp is 0, prompt to receive 1 damage
-            data = {'options': ["Receive 1 damage"]}
-            target.gc.ask_h('confirm', data, target.user_id)
-
-            # Give target 1 damage
-            new_damage = target.moveDamage(-1, args['self'])
-            target.gc.tell_h("{} took {} damage!",
-                             [target.user_id, "1"])
-
-        else:
-
-            # Hp is nonzero, prompt to heal 1 damage
-            data = {'options': ["Heal 1 damage"]}
-            target.gc.ask_h('confirm', data, target.user_id)
-
-            # Heal target 1 damage
-            new_damage = target.moveDamage(1, args['self'])
-            target.gc.tell_h("{} healed {} damage!",
-                             [target.user_id, "1"])
-
-    else:
-
-        # Target is not a hunter, nothing happens
-        target.gc.tell_h(
-            "You are a {}. Do nothing.",
-            [constants.ALLEGIANCE_MAP[target.character.alleg]],
-            target.socket_id
-        )
-        data = {'options': ['Do nothing']}
-        target.gc.ask_h('confirm', data, target.user_id)
-        target.gc.tell_h("{} did nothing.", [target.user_id])
-
-
-def huddle(args):
-
-    # Choose a player to give the card to
-    args['self'].gc.ask_h(
-        'confirm', {'options': ["Use Hermit's Huddle"]}, args['self'].user_id)
-    target = args['self'].choosePlayer()
-    display_data = args['card'].dump()
-    display_data['type'] = 'draw'
-    args['self'].gc.show_h(display_data, target.socket_id)
-
-    # If shadow, heal 1 damage (unless at 0, then take 1 damage)
-    if target.character.alleg == 0:
-        # Branch on hp value
-        target.gc.tell_h(
-            "You are a {}.",
-            [constants.ALLEGIANCE_MAP[target.character.alleg]],
-            target.socket_id
-        )
-        if target.damage == 0:
-
-            # Hp is 0, prompt to receive 1 damage
-            data = {'options': ["Receive 1 damage"]}
-            target.gc.ask_h('confirm', data, target.user_id)
-
-            # Give target 1 damage
-            new_damage = target.moveDamage(-1, args['self'])
-            target.gc.tell_h("{} took {} damage!",
-                             [target.user_id, "1"])
-
-        else:
-
-            # Hp is nonzero, prompt to heal 1 damage
-            data = {'options': ["Heal 1 damage"]}
-            target.gc.ask_h('confirm', data, target.user_id)
-
-            # Heal target 1 damage
-            new_damage = target.moveDamage(1, args['self'])
-            target.gc.tell_h("{} healed {} damage!",
-                             [target.user_id, "1"])
-
-    else:
-
-        # Target is not a shadow, nothing happens
-        target.gc.tell_h(
-            "You are a {}. Do nothing.",
-            [constants.ALLEGIANCE_MAP[target.character.alleg]],
-            target.socket_id
-        )
-        data = {'options': ['Do nothing']}
-        target.gc.ask_h('confirm', data, target.user_id)
-        target.gc.tell_h("{} did nothing.", [target.user_id])
-
-
-def lesson(args):
-
-    # Choose a player to give the card to
-    args['self'].gc.ask_h(
-        'confirm', {'options': ["Use Hermit's Lesson"]}, args['self'].user_id)
-    target = args['self'].choosePlayer()
-    display_data = args['card'].dump()
-    display_data['type'] = 'draw'
-    args['self'].gc.show_h(display_data, target.socket_id)
-
-    # If target's hp is >= 12, they take 2 damage.
-    if target.character.max_damage >= 12:
-
-        # Prompt target to receive 2 damage
-        target.gc.tell_h("Your maximum hp ({}) is {} or more.", [
-                         target.character.max_damage, "12"], target.socket_id)
-        data = {'options': ["Receive 2 damage"]}
-        target.gc.ask_h('confirm', data, target.user_id)
-
-        # Give 2 damage to target
-        new_damage = target.moveDamage(-2, args['self'])
-        target.gc.tell_h("{} took {} damage!", [target.user_id, "2"])
-
-    else:
-
-        # Target's hp is < 12, nothing happens
-        target.gc.tell_h(
-            "Your maximum hp ({}) is less than {}. Do nothing.",
-            [target.character.max_damage, "12"],
-            target.socket_id
-        )
-        data = {'options': ['Do nothing']}
-        target.gc.ask_h('confirm', data, target.user_id)
-        target.gc.tell_h("{} did nothing.", [target.user_id])
-
-
-def bully(args):
-
-    # Choose a player to give the card to
-    args['self'].gc.ask_h(
-        'confirm', {'options': ["Use Hermit's Bully"]}, args['self'].user_id)
-    target = args['self'].choosePlayer()
-    display_data = args['card'].dump()
-    display_data['type'] = 'draw'
-    args['self'].gc.show_h(display_data, target.socket_id)
-
-    # If target's hp is <= 11, they take 1 damage.
-    if target.character.max_damage <= 11:
-
-        # Prompt target to receive 1 damage
-        target.gc.tell_h("Your maximum hp ({}) is {} or less.", [
-                         target.character.max_damage, "11"], target.socket_id)
-        data = {'options': ["Receive 1 damage"]}
-        target.gc.ask_h('confirm', data, target.user_id)
-
-        # Give 1 damage to target
-        new_damage = target.moveDamage(-1, args['self'])
-        target.gc.tell_h("{} took {} damage!", [target.user_id, "1"])
-
-    else:
-
-        # Target's hp is > 11, nothing happens
-        target.gc.tell_h(
-            "Your maximum hp ({}) is greater than {}. Do nothing.",
-            [target.character.max_damage, "11"],
-            target.socket_id
-        )
-        data = {'options': ['Do nothing']}
-        target.gc.ask_h('confirm', data, target.user_id)
-        target.gc.tell_h("{} did nothing.", [target.user_id])
-
-
-def prediction(args):
-    # Choose a player to give the card to
-    args['self'].gc.ask_h(
-        'confirm',
-        {'options': ["Use Hermit's Prediction"]},
-        args['self'].user_id
-    )
-    target = args['self'].choosePlayer()
-    display_data = args['card'].dump()
-    display_data['type'] = 'draw'
-    args['self'].gc.show_h(display_data, target.socket_id)
-
-    # Prompt target to reveal themself
-    target.gc.tell_h("You have no choice. Reveal yourself to {}.", [
-                     args['self'].user_id], target.socket_id)
-    data = {'options': ["Reveal"]}
-    target.gc.ask_h('confirm', data, target.user_id)
-
-    # Send target's information to user
-    display_data = {'type': 'reveal', 'player': target.dump()}
-    args['self'].gc.show_h(display_data, args['self'].socket_id)
-    target.gc.tell_h("{} revealed their identity secretly to {}!", [
-                     target.user_id, args['self'].user_id])
+# Reveal character card
+prediction = HermitEffect("Prediction", lambda c: True, 0)
