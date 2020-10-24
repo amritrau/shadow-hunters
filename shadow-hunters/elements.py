@@ -298,7 +298,7 @@ class ElementFactory:
                 desc=("Give one of your equipment cards to another character. "
                       "If you have no equipment cards,"
                       " you receive 1 point of damage."),
-                color=2,
+                color=1,
                 holder=None,
                 is_equip=False,
                 use=single_use.banana_peel
