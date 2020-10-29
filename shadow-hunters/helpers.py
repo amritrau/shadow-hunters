@@ -5,7 +5,7 @@ from player import Player
 import constants as C
 import random
 
-# helper functions frontend communication
+# helper functions for frontend communication
 
 
 def color_format(str, args, gc):

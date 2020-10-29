@@ -41,5 +41,9 @@ TEXT_COLORS = {
 }
 
 # Number of gameplay tests to run
-N_GAMEPLAY_TESTS = 250
+N_GAMEPLAY_TESTS = 100  # = 500 games
+N_REGRESSION_TESTS = 20  # = 100 games
 N_ELEMENT_TESTS = 100
+
+# Random seed for testing
+TEST_RANDOM_SEED = 124

@@ -45,6 +45,7 @@ AI_SLEEP = float(os.getenv('AI_SLEEP', 2.0))
 # status is LOBBY or GAME. gc is None if status is LOBBY, otherwise a
 # GameContext object connections is a dict indexed by socket_id whose value is
 # the username of that connection
+# TODO replace with Redis (#209)
 rooms = {}
 
 # APP ROUTES
