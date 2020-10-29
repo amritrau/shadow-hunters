@@ -6,20 +6,27 @@ import constants as C
 def shadow(gc, player):
 
     # Shadows win if all hunters are dead or 3 neutrals are dead
-    A = C.Alleg
-    h = [p for p in gc.getLivePlayers() if p.character.alleg == A.Hunter]
+    def is_hunter(p): return p.character.alleg == C.Alleg.Hunter
+    def is_neutral(p): return p.character.alleg == C.Alleg.Neutral
+
+    h = [p for p in gc.getLivePlayers() if is_hunter(p)]
+    n = [p for p in gc.getDeadPlayers() if is_neutral(p)]
+
     no_living_hunters = len(h) == 0
-    n = [p for p in gc.getDeadPlayers() if p.character.alleg == A.Neutral]
     neutrals_dead_3 = len(n) >= 3
+
     return no_living_hunters or neutrals_dead_3
 
 
 def hunter(gc, player):
 
     # Hunters win if all shadows are dead
-    A = C.Alleg
-    s = [p for p in gc.getLivePlayers() if p.character.alleg == A.Shadow]
+    def is_shadow(p): return p.character.alleg == C.Alleg.Shadow
+
+    s = [p for p in gc.getLivePlayers() if is_shadow(p)]
+
     no_living_shadows = len(s) == 0
+
     return no_living_shadows
 
 

@@ -82,13 +82,12 @@ class GameContext:
                 a.zone = z
 
         # Figure out how many of each allegiance there has to be
-        A = C.Alleg
         counts_dict = {
-            4: {A.Hunter: 2, A.Neutral: 0, A.Shadow: 2},
-            5: {A.Hunter: 2, A.Neutral: 1, A.Shadow: 2},
-            6: {A.Hunter: 2, A.Neutral: 2, A.Shadow: 2},
-            7: {A.Hunter: 2, A.Neutral: 3, A.Shadow: 2},
-            8: {A.Hunter: 3, A.Neutral: 2, A.Shadow: 3},
+            4: {C.Alleg.Hunter: 2, C.Alleg.Neutral: 0, C.Alleg.Shadow: 2},
+            5: {C.Alleg.Hunter: 2, C.Alleg.Neutral: 1, C.Alleg.Shadow: 2},
+            6: {C.Alleg.Hunter: 2, C.Alleg.Neutral: 2, C.Alleg.Shadow: 2},
+            7: {C.Alleg.Hunter: 2, C.Alleg.Neutral: 3, C.Alleg.Shadow: 2},
+            8: {C.Alleg.Hunter: 3, C.Alleg.Neutral: 2, C.Alleg.Shadow: 3},
         }
 
         # Randomly assign characters and point game context
