@@ -1,16 +1,26 @@
-# Enum for allegiances
-ALLEGIANCE_MAP = {
-    0: "Shadow",
-    1: "Neutral",
-    2: "Hunter"
-}
+from enum import Enum
 
-# Enum for card types
-CARD_COLOR_MAP = {
-    0: "White",
-    1: "Black",
-    2: "Green"
-}
+
+# Enum for character allegiances
+class Alleg(Enum):
+    Shadow = 0
+    Neutral = 1
+    Hunter = 2
+
+
+# Enum for card type
+class CardType(Enum):
+    White = 0
+    Black = 1
+    Hermit = 2
+
+
+# Enum for player state
+class PlayerState(Enum):
+    Dead = 0
+    Revealed = 1
+    Hidden = 2
+
 
 # Enum for text colors
 TEXT_COLORS = {
@@ -31,4 +41,9 @@ TEXT_COLORS = {
 }
 
 # Number of gameplay tests to run
-N_GAMEPLAY_TESTS = 250
+N_GAMEPLAY_TESTS = 100  # = 500 games
+N_REGRESSION_TESTS = 20  # = 100 games
+N_ELEMENT_TESTS = 100
+
+# Random seed for testing
+TEST_RANDOM_SEED = 124

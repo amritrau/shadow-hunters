@@ -1,9 +1,8 @@
-import elements
-import concurrency
-import helpers
-import random
-from collections import defaultdict
 from agent import Agent
+
+import constants as C
+import concurrency as R
+from collections import defaultdict
 
 
 class Player:
@@ -12,7 +11,7 @@ class Player:
         self.socket_id = socket_id
         self.color = color
         self.gc = None  # game context (abbreviated for convenience)
-        self.state = 2  # 2 for ALIVE_ANON, 1 for ALIVE_KNOWN, 0 for DEAD
+        self.state = C.PlayerState.Hidden
         self.character = None
         self.equipment = []
         self.damage = 0
@@ -34,7 +33,7 @@ class Player:
     def reveal(self):
 
         # Set state
-        self.state = 1
+        self.state = C.PlayerState.Revealed
 
         # Reveal character to frontend
         self.gc.update_h()
@@ -56,19 +55,19 @@ class Player:
             del self.modifiers["guardian_angel"]
 
         # If AI player, chance to reveal and use special at turn start
-        concurrency.reveal_lock.acquire()
-        if self.ai and self.state == 2:
+        R.reveal_lock.acquire()
+        if self.ai and self.state == C.PlayerState.Hidden:
             if self.agent.choose_reveal(self, self.gc):
-                self.state = 1  # Guard
+                self.state = C.PlayerState.Revealed  # Guard
                 self.special_active = True  # Guard
-                concurrency.reveal_lock.release()
+                R.reveal_lock.release()
                 self.reveal()
                 self.character.special(self.gc, self, turn_pos='now')
                 self.gc.update_h()
             else:
-                concurrency.reveal_lock.release()
+                R.reveal_lock.release()
         else:
-            concurrency.reveal_lock.release()
+            R.reveal_lock.release()
 
         # Before turn check for special ability
         if self.special_active:
@@ -79,7 +78,7 @@ class Player:
             return  # let the win conditions check in GameContext.play() handle
 
         # The current player could have died -- if so end their turn
-        if self.state == 0:
+        if self.state == C.PlayerState.Dead:
             return
 
         # takeTurn
@@ -90,7 +89,7 @@ class Player:
             return  # let the win conditions check in GameContext.play() handle
 
         # The current player could have died -- if so end their turn
-        if self.state == 0:
+        if self.state == C.PlayerState.Dead:
             return
 
         # After turn check for special ability
@@ -122,25 +121,26 @@ class Player:
             # Select an area
             self.gc.tell_h("{} is selecting an area...", [self.user_id])
             data = {'options': self.gc.getAreas()}
-            destination = self.gc.ask_h('select', data, self.user_id)['value']
+            dst_name = self.gc.ask_h('select', data, self.user_id)['value']
 
             # Get Area object from area name
-            destination_Area = helpers.get_area_by_name(self.gc, destination)
+            zs = self.gc.zones
+            dst = [a for z in zs for a in z.areas if a.name == dst_name][0]
 
         else:
 
             # Get area from roll
-            destination_Area = self.gc.getAreaFromRoll(roll_result)
+            dst = self.gc.getAreaFromRoll(roll_result)
 
             # Get string from area
-            destination = destination_Area.name
+            dst_name = dst.name
 
         # Move to area
-        self.move(destination_Area)
-        self.gc.tell_h("{} moves to {}!", [self.user_id, destination])
+        self.move(dst)
+        self.gc.tell_h("{} moves to {}!", [self.user_id, dst_name])
 
         # Take area action
-        data = {'options': [destination_Area.desc, 'Decline']}
+        data = {'options': [dst.desc, 'Decline']}
         answer = self.gc.ask_h('yesno', data, self.user_id)['value']
         if answer != 'Decline':
             self.location.action(self.gc, self)
@@ -153,7 +153,7 @@ class Player:
             return  # let the win conditions check in GameContext.play() handle
 
         # The current player could have died -- if so end their turn
-        if self.state == 0:
+        if self.state == C.PlayerState.Dead:
             return
 
         # Attack
@@ -271,11 +271,12 @@ class Player:
 
         # Draw card and tell frontend about it
         drawn = deck.drawCard()
-        public_title = drawn.title if drawn.color != 2 else 'a Hermit Card'
+        is_hermit = drawn.color == C.CardType.Hermit
+        public_title = drawn.title if not is_hermit else 'a Hermit Card'
         self.gc.tell_h("{} drew {}!", [self.user_id, public_title])
         display_data = drawn.dump()
         display_data['type'] = 'draw'
-        if drawn.color != 2:
+        if not is_hermit:
             self.gc.show_h(display_data)
         else:
             self.gc.show_h(display_data, self.socket_id)
@@ -394,8 +395,9 @@ class Player:
 
         # Check for spear of longinus
         has_spear = self.hasEquipment("Spear of Longinus")
-        is_hunter = self.character.alleg == 2
-        if successful and is_hunter and self.state == 1 and has_spear:
+        is_hunter = self.character.alleg == C.Alleg.Hunter
+        is_revealed = self.state == C.PlayerState.Revealed
+        if successful and is_hunter and is_revealed and has_spear:
             if not dryrun:
                 self.gc.tell_h("{} strikes with their {}!", [
                                self.user_id, "Spear of Longinus"])
@@ -436,7 +438,7 @@ class Player:
         self.gc.tell_h("{} hit {} for {} damage!", [
                        other.user_id, self.user_id, dealt])
 
-        if self.state > 0:
+        if self.state != C.PlayerState.Dead:
             # Check for counterattack
             if self.modifiers['counterattack']:
                 # Ask if player wants to counterattack
@@ -496,10 +498,10 @@ class Player:
 
     def die(self, attacker):
 
-        # Set state to 0 (DEAD)
-        concurrency.reveal_lock.acquire()
-        self.state = 0
-        concurrency.reveal_lock.release()
+        # Set state to dead
+        R.reveal_lock.acquire()
+        self.state = C.PlayerState.Dead
+        R.reveal_lock.release()
 
         # Report to console
         display_data = {'type': 'die', 'player': self.dump()}
@@ -552,9 +554,9 @@ class Player:
         # Put remaining equipment back in the deck (discard pile)
         while self.equipment:
             eq = self.equipment.pop()
-            if eq.color == 1:  # Black
+            if eq.color == C.CardType.Black:
                 self.gc.black_cards.addToDiscard(eq)
-            elif eq.color == 3:  # White
+            elif eq.color == C.CardType.White:
                 self.gc.white_cards.addToDiscard(eq)
 
             # Green cards should never be popped here
@@ -571,7 +573,7 @@ class Player:
             'user_id': self.user_id,
             'socket_id': self.socket_id,
             'color': self.color,
-            'state': self.state,
+            'state': self.state.value,
             'equipment': [eq.dump() for eq in self.equipment],
             'damage': self.damage,
             'character': self.character.dump() if self.character else {},

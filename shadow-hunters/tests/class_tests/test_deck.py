@@ -1,13 +1,13 @@
-import helpers
 import pytest
-import card
-import deck
+
+from card import Card
+from deck import Deck
 
 # test_deck.py
 # Tests for the Deck object
 
 # Initialize some global objects
-c1 = card.Card(
+c1 = Card(
     title="Card 1",
     desc="Some card",
     color=None,  # placeholder
@@ -16,7 +16,7 @@ c1 = card.Card(
     use=lambda: 0  # placeholder
 )
 
-c2 = card.Card(
+c2 = Card(
     title="Card 2",
     desc="Another card",
     color=None,  # placeholder
@@ -30,7 +30,7 @@ def test_fields():
 
     # test initialization
     card_list = [c1, c2]
-    d = deck.Deck(cards=card_list)
+    d = Deck(cards=card_list)
 
     # test fields
     assert d.cards == card_list
@@ -38,8 +38,8 @@ def test_fields():
 
 
 def test_hashability():
-    d1 = deck.Deck(cards=[c1, c2])
-    d2 = deck.Deck(cards=[c1, c2])
+    d1 = Deck(cards=[c1, c2])
+    d2 = Deck(cards=[c1, c2])
 
     # Shuffle `d1` until it is reversed
     desired_order = (c2, c1)
@@ -58,7 +58,7 @@ def test_hashability():
 
 
 def test_shuffle():
-    d = deck.Deck(cards=[c1, c2])
+    d = Deck(cards=[c1, c2])
     initial_order = tuple(d.cards)
 
     def check_shuffled(i):
@@ -70,7 +70,7 @@ def test_shuffle():
 
 
 def test_drawCard():
-    d = deck.Deck(cards=[c1, c2])
+    d = Deck(cards=[c1, c2])
     desired_order = (c1, c2)
 
     # Shuffle until `c2` is at the top of the deck
@@ -104,7 +104,7 @@ def test_drawCard():
 
 def test_exceptions():
     with pytest.raises(ValueError):
-        d1 = deck.Deck(0)
+        d1 = Deck(0)
 
     with pytest.raises(ValueError):
-        d2 = deck.Deck([1, 2, 3])
+        d2 = Deck([1, 2, 3])

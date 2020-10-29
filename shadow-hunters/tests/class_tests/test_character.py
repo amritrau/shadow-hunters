@@ -1,6 +1,7 @@
-import helpers
 import pytest
-import character
+
+from character import Character
+import constants as C
 
 # test_character.py
 # Tests for the Character object
@@ -9,9 +10,9 @@ import character
 def test_fields():
 
     # test initialization
-    c = character.Character(
+    c = Character(
         name="char_name",
-        alleg=1,
+        alleg=C.Alleg.Neutral,
         max_damage=10,
         win_cond=lambda: 5,
         win_cond_desc="win_desc",
@@ -22,7 +23,7 @@ def test_fields():
 
     # test fields
     assert c.name == "char_name"
-    assert c.alleg == 1
+    assert c.alleg == C.Alleg.Neutral
     assert c.max_damage == 10
     assert c.win_cond() == 5
     assert c.win_cond_desc == "win_desc"

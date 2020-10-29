@@ -1,5 +1,3 @@
-import constants
-
 # card.py
 # Implements the Card object.
 
@@ -21,6 +19,6 @@ class Card:
         return {
             'title': self.title,
             'desc': self.desc,
-            'color': constants.CARD_COLOR_MAP[self.color],
+            'color': self.color.name,
             'is_equip': self.is_equipment
         }

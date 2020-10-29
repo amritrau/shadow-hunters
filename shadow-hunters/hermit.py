@@ -1,4 +1,4 @@
-import constants as C
+from constants import Alleg
 
 # hermit.py
 
@@ -27,7 +27,7 @@ class HermitEffect():
             self.info_args = lambda t: [t.character.max_damage]
         else:
             self.info = "You are a {}."
-            self.info_args = lambda t: [C.ALLEGIANCE_MAP[t.character.alleg]]
+            self.info_args = lambda t: [t.character.alleg.name]
 
     def give_card(self, args):
 
@@ -129,31 +129,46 @@ class HermitEffect():
 
 
 # If hunter/neutral, take 1 damage or give equipment
-blackmail = HermitEffect("Blackmail", lambda c: c.alleg > 0, -1, eq_opt=True)
+blackmail = HermitEffect(
+    "Blackmail",
+    lambda c: c.alleg == Alleg.Hunter or c.alleg == Alleg.Neutral,
+    -1,
+    eq_opt=True
+)
 
 # If shadow/neutral, take 1 damage or give equipment
-greed = HermitEffect("Greed", lambda c: c.alleg < 2, -1, eq_opt=True)
+greed = HermitEffect(
+    "Greed",
+    lambda c: c.alleg == Alleg.Shadow or c.alleg == Alleg.Neutral,
+    -1,
+    eq_opt=True
+)
 
 # If hunter/shadow, take 1 damage or give equipment
-anger = HermitEffect("Anger", lambda c: c.alleg in [0, 2], -1, eq_opt=True)
+anger = HermitEffect(
+    "Anger",
+    lambda c: c.alleg == Alleg.Hunter or c.alleg == Alleg.Shadow,
+    -1,
+    eq_opt=True
+)
 
 # If hunter, take 1 damage
-slap = HermitEffect("Slap", lambda c: c.alleg == 2, -1)
+slap = HermitEffect("Slap", lambda c: c.alleg == Alleg.Hunter, -1)
 
 # If shadow, take 1 damage
-spell = HermitEffect("Spell", lambda c: c.alleg == 0, -1)
+spell = HermitEffect("Spell", lambda c: c.alleg == Alleg.Shadow, -1)
 
 # If shadow, take 2 damage
-exorcism = HermitEffect("Exorcism", lambda c: c.alleg == 0, -2)
+exorcism = HermitEffect("Exorcism", lambda c: c.alleg == Alleg.Shadow, -2)
 
 # If neutral, heal 1 damage (or take 1 damage if at 0)
-nurturance = HermitEffect("Nurturance", lambda c: c.alleg == 1, 1)
+nurturance = HermitEffect("Nurturance", lambda c: c.alleg == Alleg.Neutral, 1)
 
 # If hunter, heal 1 damage (or take 1 damage if at 0)
-aid = HermitEffect("Aid", lambda c: c.alleg == 2, 1)
+aid = HermitEffect("Aid", lambda c: c.alleg == Alleg.Hunter, 1)
 
 # If shadow, heal 1 damage (or take 1 damage if at 0)
-huddle = HermitEffect("Huddle", lambda c: c.alleg == 0, 1)
+huddle = HermitEffect("Huddle", lambda c: c.alleg == Alleg.Shadow, 1)
 
 # If max hp >= 12, take 2 damage
 lesson = HermitEffect("Lesson", lambda c: c.max_damage >= 12, -2, hp_test=True)

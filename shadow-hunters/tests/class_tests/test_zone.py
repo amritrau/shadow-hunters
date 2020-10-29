@@ -1,7 +1,6 @@
-import helpers
 import pytest
-import area
-import zone
+from area import Area
+from zone import Zone
 
 # test_zone.py
 # Tests for the Zone object
@@ -10,14 +9,14 @@ import zone
 def test_fields():
 
     # sample areas
-    a1 = area.Area(
+    a1 = Area(
         name="area1",
         desc="area desc",
         domain=[8],
         action=lambda: 1,
         resource_id="r_id"
     )
-    a2 = area.Area(
+    a2 = Area(
         name="area2",
         desc="area desc",
         domain=[9],
@@ -27,7 +26,7 @@ def test_fields():
 
     # test initialization
     areas = [a1, a2]
-    z = zone.Zone(areas)
+    z = Zone(areas)
 
     # test fields
     assert z.areas == areas
@@ -38,10 +37,10 @@ def test_fields():
 
 def test_exceptions():
     with pytest.raises(ValueError):
-        z1 = zone.Zone(0)
+        z1 = Zone(0)
 
     with pytest.raises(ValueError):
-        z2 = zone.Zone([1, 2, 3])
+        z2 = Zone([1, 2, 3])
 
     with pytest.raises(ValueError):
-        z3 = zone.Zone([1, 2])
+        z3 = Zone([1, 2])
