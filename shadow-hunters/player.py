@@ -1,7 +1,7 @@
 from agent import Agent
 
 import constants as C
-import concurrency as CC
+import concurrency as R
 from collections import defaultdict
 
 
@@ -55,19 +55,19 @@ class Player:
             del self.modifiers["guardian_angel"]
 
         # If AI player, chance to reveal and use special at turn start
-        CC.reveal_lock.acquire()
+        R.reveal_lock.acquire()
         if self.ai and self.state == C.PlayerState.Hidden:
             if self.agent.choose_reveal(self, self.gc):
                 self.state = C.PlayerState.Revealed  # Guard
                 self.special_active = True  # Guard
-                CC.reveal_lock.release()
+                R.reveal_lock.release()
                 self.reveal()
                 self.character.special(self.gc, self, turn_pos='now')
                 self.gc.update_h()
             else:
-                CC.reveal_lock.release()
+                R.reveal_lock.release()
         else:
-            CC.reveal_lock.release()
+            R.reveal_lock.release()
 
         # Before turn check for special ability
         if self.special_active:
@@ -499,9 +499,9 @@ class Player:
     def die(self, attacker):
 
         # Set state to dead
-        CC.reveal_lock.acquire()
+        R.reveal_lock.acquire()
         self.state = C.PlayerState.Dead
-        CC.reveal_lock.release()
+        R.reveal_lock.release()
 
         # Report to console
         display_data = {'type': 'die', 'player': self.dump()}
