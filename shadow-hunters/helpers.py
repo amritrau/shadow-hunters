@@ -4,7 +4,7 @@ import elements
 import random
 import constants
 
-# helper functions frontend communication
+# helper functions for frontend communication
 
 
 def color_format(str, args, gc):

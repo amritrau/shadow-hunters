@@ -3,6 +3,7 @@ import copy
 
 from die import Die
 from zone import Zone
+from utils import make_hash_sha256
 import elements
 import constants
 
@@ -129,7 +130,6 @@ class GameContext:
         return areas
 
     def getAreaFromRoll(self, roll_result):
-        # Get area from roll
         destination_Area = None
         for z in self.zones:
             for a in z.areas:
@@ -159,9 +159,16 @@ class GameContext:
                     ])
             return winners
 
-    def play(self):
+    def play(self, debug=False):
+        game_hash = ""
         turn = random.randint(0, len(self.turn_order) - 1)
         while True:
+            # Hash each successive game state
+            # (effectively Reduce(states, lambda a, b: hash(a + b)))
+            if debug:
+                hashed_game_state = make_hash_sha256(self.dump())
+                game_hash = make_hash_sha256(game_hash + hashed_game_state)
+
             current_player = self.turn_order[turn]
             if current_player.state:
                 current_player.takeTurn()
@@ -173,6 +180,9 @@ class GameContext:
                 turn = 0
                 self.round_count += 1
                 self.turn_order = list(self.players)
+
+        if debug:
+            return game_hash
 
     def dump(self):
         # Note that public_players and private_state are no longer keyed by
