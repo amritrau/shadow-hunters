@@ -10,7 +10,7 @@ import random
 
 def test_flare_judgement():
 
-    for _ in range(100):
+    for _ in range(C.N_ELEMENT_TESTS):
         # Setup rigged game context
         gc, ef = H.fresh_gc_ef()
         p1 = gc.players[0]
@@ -27,7 +27,7 @@ def test_flare_judgement():
 
 def test_first_aid():
 
-    for _ in range(100):
+    for _ in range(C.N_ELEMENT_TESTS):
         # Setup rigged game context
         gc, ef = H.fresh_gc_ef()
         p1 = gc.players[0]
@@ -43,7 +43,7 @@ def test_first_aid():
 
 def test_holy_water():
 
-    for _ in range(100):
+    for _ in range(C.N_ELEMENT_TESTS):
         # Setup rigged game context
         gc, ef = H.fresh_gc_ef()
         p1 = gc.players[0]
@@ -57,7 +57,7 @@ def test_holy_water():
 
 def test_advent():
 
-    for _ in range(100):
+    for _ in range(C.N_ELEMENT_TESTS):
         # Setup rigged game context
         gc, ef = H.fresh_gc_ef(random.randint(5, 8))
         h = H.get_a_hunter(gc)
@@ -94,7 +94,7 @@ def test_advent():
 
 def test_blessing():
 
-    for _ in range(100):
+    for _ in range(C.N_ELEMENT_TESTS):
         # Setup rigged game context
         gc, ef = H.fresh_gc_ef()
         p1 = gc.players[0]
@@ -113,7 +113,7 @@ def test_blessing():
 
 def test_disenchant_mirror():
 
-    for _ in range(100):
+    for _ in range(C.N_ELEMENT_TESTS):
         # Setup rigged game context
         gc, ef = H.fresh_gc_ef(random.randint(5, 8))
         h = H.get_a_hunter(gc)
@@ -136,7 +136,7 @@ def test_disenchant_mirror():
 
 def test_chocolate():
 
-    for _ in range(100):
+    for _ in range(C.N_ELEMENT_TESTS):
         # Setup rigged game context
         gc, ef = H.fresh_gc_ef(n_players=7)
         weak = [p for p in gc.players if p.character.name in [
@@ -169,7 +169,7 @@ def test_chocolate():
 
 def test_concealed_knowledge():
 
-    for _ in range(100):
+    for _ in range(C.N_ELEMENT_TESTS):
         # Setup rigged game context
         gc, ef = H.fresh_gc_ef(8)
         position = random.randint(0, 7)
@@ -185,7 +185,7 @@ def test_concealed_knowledge():
 
 def test_guardian_angel():
 
-    for _ in range(100):
+    for _ in range(C.N_ELEMENT_TESTS):
         # Setup rigged game context
         gc, ef = H.fresh_gc_ef()
         p1 = gc.players[0]

@@ -42,3 +42,4 @@ TEXT_COLORS = {
 
 # Number of gameplay tests to run
 N_GAMEPLAY_TESTS = 250
+N_ELEMENT_TESTS = 100

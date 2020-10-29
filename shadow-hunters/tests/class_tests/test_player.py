@@ -102,19 +102,19 @@ def test_rollDice():
     p1 = gc.players[0]
 
     # Check 4-sided rolls
-    for _ in range(100):
+    for _ in range(C.N_ELEMENT_TESTS):
         assert 1 <= p1.rollDice('4') <= 4
 
     # Check 6-sided rolls
-    for _ in range(100):
+    for _ in range(C.N_ELEMENT_TESTS):
         assert 1 <= p1.rollDice('6') <= 6
 
     # Check movement rolls
-    for _ in range(100):
+    for _ in range(C.N_ELEMENT_TESTS):
         assert 2 <= p1.rollDice('area') <= 10
 
     # Check attack rolls
-    for _ in range(100):
+    for _ in range(C.N_ELEMENT_TESTS):
         assert 0 <= p1.rollDice('attack') <= 5
 
 
@@ -125,7 +125,7 @@ def test_choosePlayer():
     p1 = gc.players[0]
 
     # Check that chosen player is in gc and not self
-    for _ in range(100):
+    for _ in range(C.N_ELEMENT_TESTS):
         p2 = p1.choosePlayer()
         assert p2 in gc.players and p2 != p1
 
@@ -141,7 +141,7 @@ def test_chooseEquipment():
     p1.equipment = [roly_hobe, talisman]
 
     # Check that p2 always chooses an equipment from the options
-    for _ in range(100):
+    for _ in range(C.N_ELEMENT_TESTS):
         eq = p2.chooseEquipment(p1)
         assert eq == roly_hobe or eq == talisman
 
@@ -215,7 +215,7 @@ def test_moveDamage():
     assert p.damage == p.character.max_damage
 
     # Check floor of 0
-    p.moveDamage(100, p)
+    p.moveDamage(99, p)
     assert p.damage == 0
 
 

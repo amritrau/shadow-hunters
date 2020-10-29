@@ -10,7 +10,7 @@ import random
 
 def test_bloodthirsty_spider():
 
-    for _ in range(100):
+    for _ in range(C.N_ELEMENT_TESTS):
         # Setup rigged game context
         gc, ef = H.fresh_gc_ef()
         p1 = gc.players[0]
@@ -27,7 +27,7 @@ def test_bloodthirsty_spider():
 
 def test_vampire_bat():
 
-    for _ in range(100):
+    for _ in range(C.N_ELEMENT_TESTS):
         # Setup rigged game context
         gc, ef = H.fresh_gc_ef()
         p1 = gc.players[0]
@@ -44,7 +44,7 @@ def test_vampire_bat():
 
 def test_moody_goblin():
 
-    for _ in range(100):
+    for _ in range(C.N_ELEMENT_TESTS):
         # Setup rigged game context
         gc, ef = H.fresh_gc_ef()
         p1 = gc.players[0]
@@ -67,7 +67,7 @@ def test_moody_goblin():
 
 def test_diabolic_ritual():
 
-    for _ in range(100):
+    for _ in range(C.N_ELEMENT_TESTS):
         # Setup rigged game context
         gc, ef = H.fresh_gc_ef(random.randint(5, 8))
         h = H.get_a_hunter(gc)
@@ -99,7 +99,7 @@ def test_diabolic_ritual():
 
 def test_banana_peel():
 
-    for _ in range(100):
+    for _ in range(C.N_ELEMENT_TESTS):
         # Setup rigged game context
         gc, ef = H.fresh_gc_ef()
         p1 = gc.players[0]
@@ -130,7 +130,7 @@ def test_banana_peel():
 
 def test_dynamite():
 
-    for _ in range(100):
+    for _ in range(C.N_ELEMENT_TESTS):
         # Setup rigged game context
         gc, ef = H.fresh_gc_ef(6)
         p1 = gc.players[0]
@@ -152,7 +152,7 @@ def test_dynamite():
 
 def test_spiritual_doll():
 
-    for _ in range(100):
+    for _ in range(C.N_ELEMENT_TESTS):
         # Setup rigged game context
         gc, ef = H.fresh_gc_ef()
         p1 = gc.players[0]

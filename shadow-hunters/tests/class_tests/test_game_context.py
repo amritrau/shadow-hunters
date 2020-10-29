@@ -1,6 +1,6 @@
 import pytest
 
-from constants import Alleg
+import constants as C
 from helpers import fresh_gc_ef
 import random
 
@@ -11,7 +11,7 @@ import random
 def test_fields():
 
     # Multiple runs to get many different shuffles
-    for _ in range(100):
+    for _ in range(C.N_ELEMENT_TESTS):
 
         # test initialization
         n_players = random.randint(4, 8)
@@ -74,18 +74,18 @@ def test_checkWinConditions():
     # Check that hunters win when everyone else is dead
     gc, ef = fresh_gc_ef()
     for p in gc.players:
-        if p.character.alleg == Alleg.Shadow:
+        if p.character.alleg == C.Alleg.Shadow:
             p.setDamage(14, p)
     assert [p for p in gc.checkWinConditions()
-            if p.character.alleg == Alleg.Hunter]
+            if p.character.alleg == C.Alleg.Hunter]
 
     # Check that shadows win when everyone else is dead
     gc, ef = fresh_gc_ef()
     for p in gc.players:
-        if p.character.alleg == Alleg.Hunter:
+        if p.character.alleg == C.Alleg.Hunter:
             p.setDamage(14, p)
     assert [p for p in gc.checkWinConditions()
-            if p.character.alleg == Alleg.Shadow]
+            if p.character.alleg == C.Alleg.Shadow]
 
 
 def test_play():
