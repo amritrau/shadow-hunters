@@ -27,7 +27,7 @@ def color_format(str, args, gc):
         if isinstance(n, int):
             colors.append(C.TEXT_COLORS['number'])
         elif n in cards:
-            card_type = [c for c in decks if c.title == n][0].type.name
+            card_type = [c for c in decks if c.title == n][0].color.name
             card_color = 'Green' if card_type == 'Hermit' else card_type
             colors.append(C.TEXT_COLORS[card_color])
         elif n == 'a Hermit Card':

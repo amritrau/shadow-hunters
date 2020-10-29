@@ -10,7 +10,7 @@ from deck import Deck
 c1 = Card(
     title="Card 1",
     desc="Some card",
-    type=None,  # placeholder
+    color=None,  # placeholder
     holder=None,  # placeholder
     is_equip=False,
     use=lambda: 0  # placeholder
@@ -19,7 +19,7 @@ c1 = Card(
 c2 = Card(
     title="Card 2",
     desc="Another card",
-    type=None,  # placeholder
+    color=None,  # placeholder
     holder=None,  # placeholder
     is_equip=True,
     use=lambda: 1  # placeholder

@@ -271,7 +271,7 @@ class Player:
 
         # Draw card and tell frontend about it
         drawn = deck.drawCard()
-        is_hermit = drawn.type == C.CardType.Hermit
+        is_hermit = drawn.color == C.CardType.Hermit
         public_title = drawn.title if not is_hermit else 'a Hermit Card'
         self.gc.tell_h("{} drew {}!", [self.user_id, public_title])
         display_data = drawn.dump()
@@ -554,9 +554,9 @@ class Player:
         # Put remaining equipment back in the deck (discard pile)
         while self.equipment:
             eq = self.equipment.pop()
-            if eq.type == C.CardType.Black:
+            if eq.color == C.CardType.Black:
                 self.gc.black_cards.addToDiscard(eq)
-            elif eq.type == C.CardType.White:
+            elif eq.color == C.CardType.White:
                 self.gc.white_cards.addToDiscard(eq)
 
             # Green cards should never be popped here
