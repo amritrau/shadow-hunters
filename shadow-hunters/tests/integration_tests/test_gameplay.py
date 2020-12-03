@@ -5,6 +5,7 @@ from utils import make_hash_sha256
 from helpers import fresh_gc_ef
 import constants as C
 
+
 # test_gameplay.py
 # Tests random walks through the game state for runtime errors
 def test_gameplay():
