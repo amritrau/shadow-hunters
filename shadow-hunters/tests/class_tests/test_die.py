@@ -1,6 +1,6 @@
-import helpers
 import pytest
-import die
+
+from die import Die
 
 # test_die.py
 # Tests for the Die object
@@ -9,7 +9,7 @@ import die
 def test_fields():
 
     # test initialization
-    d4 = die.Die(n_sides=4)
+    d4 = Die(n_sides=4)
 
     # test fields
     assert d4.n_sides == 4
@@ -21,8 +21,8 @@ def test_fields():
 def test_roll():
 
     # Initialize
-    d4 = die.Die(n_sides=4)
-    d6 = die.Die(n_sides=6)
+    d4 = Die(n_sides=4)
+    d6 = Die(n_sides=6)
 
     d4_rolls = [0, 0, 0, 0]
     d6_rolls = [0, 0, 0, 0, 0, 0]
@@ -44,4 +44,4 @@ def test_roll():
 
 def test_exceptions():
     with pytest.raises(ValueError):
-        d = die.Die(0)
+        d = Die(0)

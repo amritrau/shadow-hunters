@@ -1,12 +1,12 @@
-import helpers
 import pytest
+
+from player import Player
+from character import Character
+
+import helpers as H
+import constants as C
 import copy
 
-import player
-import area
-import character
-import game_context
-import elements
 
 # test_player.py
 # Tests for the player object
@@ -15,14 +15,14 @@ import elements
 def test_fields():
 
     # test initialization
-    p = player.Player('Max', 'socket_id', 'c', False)
+    p = Player('Max', 'socket_id', 'c', False)
 
     # test fields
     assert p.user_id == 'Max'
     assert p.socket_id == 'socket_id'
     assert p.color == 'c'
     assert not p.gc
-    assert p.state == 2
+    assert p.state == C.PlayerState.Hidden
     assert not p.character
     assert not p.location
     assert not p.equipment
@@ -43,12 +43,12 @@ def test_fields():
 
 
 def test_setCharacter():
-    p = player.Player('Max', 'socket_id', lambda x, y, z: 5, False)
+    p = Player('Max', 'socket_id', lambda x, y, z: 5, False)
 
     # dummy character
-    c = character.Character(
+    c = Character(
         name="char_name",
-        alleg=1,
+        alleg=C.Alleg.Neutral,
         max_damage=10,
         win_cond=lambda: 5,
         win_cond_desc="win_desc",
@@ -63,17 +63,17 @@ def test_setCharacter():
 
 
 def test_reveal():
-    p = helpers.fresh_gc_ef()[0].players[0]
+    p = H.fresh_gc_ef()[0].players[0]
 
     # Check that reveal sets state to 1
     p.reveal()
-    assert p.state == 1
+    assert p.state == C.PlayerState.Revealed
 
 
 def test_drawCard():
 
     # Setup rigged game context
-    gc, ef = helpers.fresh_gc_ef()
+    gc, ef = H.fresh_gc_ef()
     p1 = gc.players[0]
 
     # Draw white card
@@ -89,43 +89,43 @@ def test_drawCard():
     assert gc.black_cards.cards != original_deck
 
     # Draw hermit card
-    original_deck = copy.copy(gc.green_cards.cards)
-    assert gc.green_cards.cards == original_deck
-    p1.drawCard(gc.green_cards)
-    assert gc.green_cards.cards != original_deck
+    original_deck = copy.copy(gc.hermit_cards.cards)
+    assert gc.hermit_cards.cards == original_deck
+    p1.drawCard(gc.hermit_cards)
+    assert gc.hermit_cards.cards != original_deck
 
 
 def test_rollDice():
 
     # Setup rigged game context
-    gc, ef = helpers.fresh_gc_ef()
+    gc, ef = H.fresh_gc_ef()
     p1 = gc.players[0]
 
     # Check 4-sided rolls
-    for _ in range(100):
+    for _ in range(C.N_ELEMENT_TESTS):
         assert 1 <= p1.rollDice('4') <= 4
 
     # Check 6-sided rolls
-    for _ in range(100):
+    for _ in range(C.N_ELEMENT_TESTS):
         assert 1 <= p1.rollDice('6') <= 6
 
     # Check movement rolls
-    for _ in range(100):
+    for _ in range(C.N_ELEMENT_TESTS):
         assert 2 <= p1.rollDice('area') <= 10
 
     # Check attack rolls
-    for _ in range(100):
+    for _ in range(C.N_ELEMENT_TESTS):
         assert 0 <= p1.rollDice('attack') <= 5
 
 
 def test_choosePlayer():
 
     # Setup rigged game context
-    gc, ef = helpers.fresh_gc_ef()
+    gc, ef = H.fresh_gc_ef()
     p1 = gc.players[0]
 
     # Check that chosen player is in gc and not self
-    for _ in range(100):
+    for _ in range(C.N_ELEMENT_TESTS):
         p2 = p1.choosePlayer()
         assert p2 in gc.players and p2 != p1
 
@@ -133,15 +133,15 @@ def test_choosePlayer():
 def test_chooseEquipment():
 
     # Setup rigged game context
-    gc, ef = helpers.fresh_gc_ef()
+    gc, ef = H.fresh_gc_ef()
     p1 = gc.players[0]
     p2 = gc.players[1]
-    roly_hobe = helpers.get_card_by_title(ef, "Holy Robe")
-    talisman = helpers.get_card_by_title(ef, "Talisman")
+    roly_hobe = H.get_card_by_title(ef, "Holy Robe")
+    talisman = H.get_card_by_title(ef, "Talisman")
     p1.equipment = [roly_hobe, talisman]
 
     # Check that p2 always chooses an equipment from the options
-    for _ in range(100):
+    for _ in range(C.N_ELEMENT_TESTS):
         eq = p2.chooseEquipment(p1)
         assert eq == roly_hobe or eq == talisman
 
@@ -149,10 +149,10 @@ def test_chooseEquipment():
 def test_giveEquipment():
 
     # Setup rigged game context
-    gc, ef = helpers.fresh_gc_ef()
+    gc, ef = H.fresh_gc_ef()
     p1 = gc.players[0]
     p2 = gc.players[1]
-    roly_hobe = helpers.get_card_by_title(ef, "Holy Robe")
+    roly_hobe = H.get_card_by_title(ef, "Holy Robe")
     p1.equipment.append(roly_hobe)
 
     # P1 gives holy robe to P2
@@ -167,7 +167,7 @@ def test_giveEquipment():
 def test_attack():
 
     # Setup rigged game context
-    gc, ef = helpers.fresh_gc_ef()
+    gc, ef = H.fresh_gc_ef()
     p1 = gc.players[0]
     p2 = gc.players[1]
 
@@ -178,9 +178,9 @@ def test_attack():
     # Check that equipment works
     p2.damage = 0
     p1.equipment = [
-        helpers.get_card_by_title(ef, "Holy Robe"),
-        helpers.get_card_by_title(ef, "Chainsaw"),
-        helpers.get_card_by_title(ef, "Butcher Knife")
+        H.get_card_by_title(ef, "Holy Robe"),
+        H.get_card_by_title(ef, "Chainsaw"),
+        H.get_card_by_title(ef, "Butcher Knife")
     ]
     p1.attack(p2, 5)
     assert p2.damage == 6
@@ -194,7 +194,7 @@ def test_attack():
 def test_defend():
 
     # Setup rigged game context
-    gc, ef = helpers.fresh_gc_ef()
+    gc, ef = H.fresh_gc_ef()
     p1 = gc.players[0]
     p2 = gc.players[1]
 
@@ -204,7 +204,7 @@ def test_defend():
 
 
 def test_moveDamage():
-    p = helpers.fresh_gc_ef()[0].players[0]
+    p = H.fresh_gc_ef()[0].players[0]
 
     # Check in-bounds movement
     p.moveDamage(-5, p)
@@ -215,12 +215,12 @@ def test_moveDamage():
     assert p.damage == p.character.max_damage
 
     # Check floor of 0
-    p.moveDamage(100, p)
+    p.moveDamage(99, p)
     assert p.damage == 0
 
 
 def test_setDamage():
-    p = helpers.fresh_gc_ef()[0].players[0]
+    p = H.fresh_gc_ef()[0].players[0]
 
     # Check setting damage changes player damage
     p.setDamage(5, p)
@@ -228,26 +228,26 @@ def test_setDamage():
 
 
 def test_checkDeath():
-    p = helpers.fresh_gc_ef()[0].players[0]
+    p = H.fresh_gc_ef()[0].players[0]
 
     # Check that player is initially not dead
     p.checkDeath(p)
-    assert p.state == 2
+    assert p.state == C.PlayerState.Hidden
 
     # Check that player dies when damage > max_damage
     p.damage = 20
     p.checkDeath(p)
-    assert p.state == 0
+    assert p.state == C.PlayerState.Dead
 
 
 def test_die():
 
     # Setup rigged game context
-    gc, ef = helpers.fresh_gc_ef()
+    gc, ef = H.fresh_gc_ef()
     p1 = gc.players[0]
     p2 = gc.players[1]
-    talisman = helpers.get_card_by_title(ef, "Talisman")
-    roly_hobe = helpers.get_card_by_title(ef, "Holy Robe")
+    talisman = H.get_card_by_title(ef, "Talisman")
+    roly_hobe = H.get_card_by_title(ef, "Holy Robe")
     p1.equipment = [roly_hobe, talisman]
 
     # Player 1 dies by player 2
@@ -255,7 +255,7 @@ def test_die():
 
     # Check that player 1 is dead, location is none, loses all equipment, and
     # gives one to player 2
-    assert p1.state == 0
+    assert p1.state == C.PlayerState.Dead
     assert not p1.equipment
     assert bool(roly_hobe in p2.equipment) != bool(talisman in p2.equipment)
     assert p1.location is None
@@ -264,10 +264,10 @@ def test_die():
 def test_move():
 
     # Setup rigged game context
-    gc, ef = helpers.fresh_gc_ef()
+    gc, ef = H.fresh_gc_ef()
     p1 = gc.players[0]
 
     # Check that moving to a location updates player location
-    a = helpers.get_area_by_name(gc, "Weird Woods")
+    a = H.get_area_by_name(gc, "Weird Woods")
     p1.move(a)
     assert p1.location == a

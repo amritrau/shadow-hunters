@@ -1,11 +1,10 @@
-import random
-import copy
-
 from die import Die
 from zone import Zone
+
 from utils import make_hash_sha256
-import elements
-import constants
+import constants as C
+import random
+import copy
 
 # game_context.py
 # Implements a GameContext.
@@ -13,7 +12,7 @@ import constants
 
 class GameContext:
     def __init__(self, players, characters, black_cards, white_cards,
-                 green_cards, areas, ask_h, tell_h, show_h, update_h,
+                 hermit_cards, areas, ask_h, tell_h, show_h, update_h,
                  modifiers=dict()):
 
         # Instantiate gameplay objects
@@ -51,7 +50,7 @@ class GameContext:
         # Instantiate cards
         self.black_cards = black_cards
         self.white_cards = white_cards
-        self.green_cards = green_cards
+        self.hermit_cards = hermit_cards
 
         # Instantiate status
         self.game_over = False
@@ -85,11 +84,11 @@ class GameContext:
 
         # Figure out how many of each allegiance there has to be
         counts_dict = {
-            4: (2, 0, 2),
-            5: (2, 1, 2),
-            6: (2, 2, 2),
-            7: (2, 3, 2),
-            8: (3, 2, 3)
+            4: {C.Alleg.Hunter: 2, C.Alleg.Neutral: 0, C.Alleg.Shadow: 2},
+            5: {C.Alleg.Hunter: 2, C.Alleg.Neutral: 1, C.Alleg.Shadow: 2},
+            6: {C.Alleg.Hunter: 2, C.Alleg.Neutral: 2, C.Alleg.Shadow: 2},
+            7: {C.Alleg.Hunter: 2, C.Alleg.Neutral: 3, C.Alleg.Shadow: 2},
+            8: {C.Alleg.Hunter: 3, C.Alleg.Neutral: 2, C.Alleg.Shadow: 3},
         }
 
         # Randomly assign characters and point game context
@@ -109,12 +108,12 @@ class GameContext:
             player.gc = self
 
     def getLivePlayers(self, filter_fn=(lambda x: True)):
-        res = filter(filter_fn, [p for p in self.players if p.state > 0])
-        return list(res)
+        live = [p for p in self.players if p.state != C.PlayerState.Dead]
+        return list(filter(filter_fn, live))
 
     def getDeadPlayers(self, filter_fn=(lambda x: True)):
-        res = filter(filter_fn, [p for p in self.players if p.state < 1])
-        return list(res)
+        dead = [p for p in self.players if p.state == C.PlayerState.Dead]
+        return list(filter(filter_fn, dead))
 
     def getPlayersAt(self, location_name):
         live = self.getLivePlayers()
@@ -153,7 +152,7 @@ class GameContext:
                 for w in winners:
                     self.tell_h("{} ({}: {}) won! {}", [
                         w.user_id,
-                        constants.ALLEGIANCE_MAP[w.character.alleg],
+                        w.character.alleg.name,
                         w.character.name,
                         w.character.win_cond_desc
                     ])
@@ -170,7 +169,7 @@ class GameContext:
                 game_hash = make_hash_sha256(game_hash + hashed_game_state)
 
             current_player = self.turn_order[turn]
-            if current_player.state:
+            if current_player.state != C.PlayerState.Dead:
                 current_player.takeTurn()
             winners = self.checkWinConditions()
             if winners:

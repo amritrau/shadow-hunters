@@ -2,11 +2,12 @@ import card
 import deck
 import character
 import area
-import constants
 import single_use
 import hermit
 import win_conditions
 import specials
+
+from constants import Alleg, CardType
 
 # elements.py
 # Encodes all characters, win conditions, special abilities,
@@ -25,7 +26,7 @@ class ElementFactory:
                 title="Mystic Compass",
                 desc=("When you move, you may roll twice "
                       "and choose which result to use."),
-                color=0,
+                color=CardType.White,
                 holder=None,
                 is_equip=True,
                 use=None
@@ -34,7 +35,7 @@ class ElementFactory:
                 title="Talisman",
                 desc=("You receive no damage from Black cards"
                       " 'Bloodthirsty Spider', 'Vampire Bat', or 'Dynamite'."),
-                color=0,
+                color=CardType.White,
                 holder=None,
                 is_equip=True,
                 use=None
@@ -44,7 +45,7 @@ class ElementFactory:
                 desc=(
                     "You receive no damage from the area card"
                     " 'Weird Woods'. You can still be healed by it."),
-                color=0,
+                color=CardType.White,
                 holder=None,
                 is_equip=True,
                 use=None
@@ -53,7 +54,7 @@ class ElementFactory:
                 title="Silver Rosary",
                 desc=("If you kill another character, "
                       "you take all of their equipment cards."),
-                color=0,
+                color=CardType.White,
                 holder=None,
                 is_equip=True,
                 use=None
@@ -63,7 +64,7 @@ class ElementFactory:
                 desc=("If you are a Hunter who has revealed their identity and"
                       " your attack is successful, you give 2 points of extra"
                       " damage."),
-                color=0,
+                color=CardType.White,
                 holder=None,
                 is_equip=True,
                 use=None
@@ -73,7 +74,7 @@ class ElementFactory:
                 desc=("If you are a Hunter, you may reveal your identity. "
                       "If you do, or if you are already revealed,"
                       " you heal fully."),
-                color=0,
+                color=CardType.White,
                 holder=None,
                 is_equip=False,
                 use=single_use.advent
@@ -82,7 +83,7 @@ class ElementFactory:
                 title="Disenchant Mirror",
                 desc=("If you are a Shadow, except for Unknown, "
                       "you must reveal your identity."),
-                color=0,
+                color=CardType.White,
                 holder=None,
                 is_equip=False,
                 use=single_use.disenchant_mirror
@@ -92,7 +93,7 @@ class ElementFactory:
                 desc=("Pick a character other than yourself and roll the"
                       " 6-sided die. That character heals an amount of damage"
                       " equal to the die roll."),
-                color=0,
+                color=CardType.White,
                 holder=None,
                 is_equip=False,
                 use=single_use.blessing
@@ -103,7 +104,7 @@ class ElementFactory:
                       " or Ultra Soul, you may reveal your identity. "
                       "If you do, or if you are already revealed, "
                       "you heal fully."),
-                color=0,
+                color=CardType.White,
                 holder=None,
                 is_equip=False,
                 use=single_use.chocolate
@@ -111,7 +112,7 @@ class ElementFactory:
             card.Card(
                 title="Concealed Knowledge",
                 desc="When this turn is over, it will be your turn again.",
-                color=0,
+                color=CardType.White,
                 holder=None,
                 is_equip=False,
                 use=single_use.concealed_knowledge
@@ -120,7 +121,7 @@ class ElementFactory:
                 title="Guardian Angel",
                 desc=("You take no damage from the direct attacks of "
                       "other characters until the start of your next turn."),
-                color=0,
+                color=CardType.White,
                 holder=None,
                 is_equip=False,
                 use=single_use.guardian_angel
@@ -130,7 +131,7 @@ class ElementFactory:
                 desc=("Your attacks do 1 less damage and the amount of"
                       " damage you receive from attacks is reduced by"
                       " 1 point."),
-                color=0,  # 0 : WHITE
+                color=CardType.White,
                 holder=None,
                 is_equip=True,
                 use=lambda is_attack, successful, amt: max(
@@ -140,7 +141,7 @@ class ElementFactory:
                 title="Flare of Judgement",
                 desc=("All characters except yourself"
                       " receive 2 points of damage."),
-                color=0,
+                color=CardType.White,
                 holder=None,
                 is_equip=False,
                 use=single_use.judgement
@@ -149,7 +150,7 @@ class ElementFactory:
                 title="First Aid",
                 desc=("Place a character's damage marker to 7"
                       " (You can choose yourself)."),
-                color=0,
+                color=CardType.White,
                 holder=None,
                 is_equip=False,
                 use=single_use.first_aid
@@ -157,7 +158,7 @@ class ElementFactory:
             card.Card(
                 title="Holy Water of Healing",
                 desc="Heal 2 points of your damage.",
-                color=0,
+                color=CardType.White,
                 holder=None,
                 is_equip=False,
                 use=single_use.holy_water
@@ -165,7 +166,7 @@ class ElementFactory:
             card.Card(
                 title="Holy Water of Healing",
                 desc="Heal 2 points of your damage.",
-                color=0,
+                color=CardType.White,
                 holder=None,
                 is_equip=False,
                 use=single_use.holy_water
@@ -179,7 +180,7 @@ class ElementFactory:
                 desc=(
                     "You must attack another character on your turn."
                     " This attack uses the 4-sided die."),
-                color=1,  # 1 : BLACK
+                color=CardType.Black,
                 holder=None,
                 is_equip=True,
                 use=None
@@ -189,7 +190,7 @@ class ElementFactory:
                 desc=(
                     "Your attack will affect all characters in your"
                     " attack range (the dice are rolled only once)."),
-                color=1,
+                color=CardType.Black,
                 holder=None,
                 is_equip=True,
                 use=None
@@ -197,7 +198,7 @@ class ElementFactory:
             card.Card(
                 title="Handgun",
                 desc="All ranges but yours become your attack range.",
-                color=1,
+                color=CardType.Black,
                 holder=None,
                 is_equip=True,
                 use=None
@@ -206,7 +207,7 @@ class ElementFactory:
                 title="Butcher Knife",
                 desc=("If your attack is successful, "
                       "you give 1 point of extra damage."),
-                color=1,
+                color=CardType.Black,
                 holder=None,
                 is_equip=True,
                 use=lambda is_attack, successful, amt: amt +
@@ -216,7 +217,7 @@ class ElementFactory:
                 title="Chainsaw",
                 desc=("If your attack is successful, "
                       "you give 1 point of extra damage."),
-                color=1,
+                color=CardType.Black,
                 holder=None,
                 is_equip=True,
                 use=lambda is_attack, successful, amt: amt +
@@ -226,7 +227,7 @@ class ElementFactory:
                 title="Rusted Broad Axe",
                 desc=("If your attack is successful, "
                       "you give 1 point of extra damage."),
-                color=1,
+                color=CardType.Black,
                 holder=None,
                 is_equip=True,
                 use=lambda is_attack, successful, amt: amt +
@@ -235,7 +236,7 @@ class ElementFactory:
             card.Card(
                 title="Moody Goblin",
                 desc="You steal an equipment card from any character.",
-                color=1,
+                color=CardType.Black,
                 holder=None,
                 is_equip=False,
                 use=single_use.moody_goblin
@@ -243,7 +244,7 @@ class ElementFactory:
             card.Card(
                 title="Moody Goblin",
                 desc="You steal an equipment card from any character.",
-                color=1,
+                color=CardType.Black,
                 holder=None,
                 is_equip=False,
                 use=single_use.moody_goblin
@@ -252,7 +253,7 @@ class ElementFactory:
                 title="Bloodthirsty Spider",
                 desc=("You give 2 points of damage to any character"
                       " and receive 2 points of damage yourself."),
-                color=1,
+                color=CardType.Black,
                 holder=None,
                 is_equip=False,
                 use=single_use.bloodthirsty_spider
@@ -261,7 +262,7 @@ class ElementFactory:
                 title="Vampire Bat",
                 desc=("You give 2 points of damage to any character"
                       " and heal 1 point of your own damage."),
-                color=1,
+                color=CardType.Black,
                 holder=None,
                 is_equip=False,
                 use=single_use.vampire_bat
@@ -270,7 +271,7 @@ class ElementFactory:
                 title="Vampire Bat",
                 desc=("You give 2 points of damage to any character"
                       " and heal 1 point of your own damage."),
-                color=1,
+                color=CardType.Black,
                 holder=None,
                 is_equip=False,
                 use=single_use.vampire_bat
@@ -279,7 +280,7 @@ class ElementFactory:
                 title="Vampire Bat",
                 desc=("You give 2 points of damage to any character"
                       " and heal 1 point of your own damage."),
-                color=1,
+                color=CardType.Black,
                 holder=None,
                 is_equip=False,
                 use=single_use.vampire_bat
@@ -288,7 +289,7 @@ class ElementFactory:
                 title="Diabolic Ritual",
                 desc=("If you are a Shadow, you may reveal your identity."
                       " If you do, you fully heal you damage."),
-                color=1,
+                color=CardType.Black,
                 holder=None,
                 is_equip=False,
                 use=single_use.diabolic_ritual
@@ -298,7 +299,7 @@ class ElementFactory:
                 desc=("Give one of your equipment cards to another character. "
                       "If you have no equipment cards,"
                       " you receive 1 point of damage."),
-                color=1,
+                color=CardType.Black,
                 holder=None,
                 is_equip=False,
                 use=single_use.banana_peel
@@ -309,7 +310,7 @@ class ElementFactory:
                       " characters in the area designated "
                       "by the total number rolled "
                       "(nothing happens if a 7 is rolled)."),
-                color=1,
+                color=CardType.Black,
                 holder=None,
                 is_equip=False,
                 use=single_use.dynamite
@@ -321,7 +322,7 @@ class ElementFactory:
                       "you give 3 points of damage to that character. "
                       "If the die number is 5 or 6, "
                       "you get 3 points of damage."),
-                color=1,
+                color=CardType.Black,
                 holder=None,
                 is_equip=False,
                 use=single_use.spiritual_doll
@@ -329,13 +330,13 @@ class ElementFactory:
         ]
 
         # Initialize hermit cards
-        green_cards = [
+        hermit_cards = [
             card.Card(
                 title="Hermit\'s Blackmail",
                 desc=("I bet you're either a Neutral or a Hunter. "
                       "If so, you must either give an Equipment card"
                       " to the current player or receive 1 damage!"),
-                color=2,  # 2 : GREEN
+                color=CardType.Hermit,
                 holder=None,
                 is_equip=False,
                 use=hermit.blackmail
@@ -345,7 +346,7 @@ class ElementFactory:
                 desc=("I bet you're either a Neutral or a Hunter. "
                       "If so, you must either give an Equipment card"
                       " to the current player or receive 1 damage!"),
-                color=2,
+                color=CardType.Hermit,
                 holder=None,
                 is_equip=False,
                 use=hermit.blackmail
@@ -355,7 +356,7 @@ class ElementFactory:
                 desc=("I bet you're either a Neutral or a Shadow. "
                       "If so, you must either give an Equipment card"
                       " to the current player or receive 1 damage!"),
-                color=2,
+                color=CardType.Hermit,
                 holder=None,
                 is_equip=False,
                 use=hermit.greed
@@ -365,7 +366,7 @@ class ElementFactory:
                 desc=("I bet you're either a Neutral or a Shadow. "
                       "If so, you must either give an Equipment card"
                       " to the current player or receive 1 damage!"),
-                color=2,
+                color=CardType.Hermit,
                 holder=None,
                 is_equip=False,
                 use=hermit.greed
@@ -375,7 +376,7 @@ class ElementFactory:
                 desc=("I bet you're either a Hunter or a Shadow. "
                       "If so, you must either give an Equipment card"
                       " to the current player or receive 1 damage!"),
-                color=2,
+                color=CardType.Hermit,
                 holder=None,
                 is_equip=False,
                 use=hermit.anger
@@ -385,7 +386,7 @@ class ElementFactory:
                 desc=("I bet you're either a Hunter or a Shadow. "
                       "If so, you must either give an Equipment card"
                       " to the current player or receive 1 damage!"),
-                color=2,
+                color=CardType.Hermit,
                 holder=None,
                 is_equip=False,
                 use=hermit.anger
@@ -393,7 +394,7 @@ class ElementFactory:
             card.Card(
                 title="Hermit\'s Slap",
                 desc="I bet you're a Hunter. If so, you receive 1 damage!",
-                color=2,
+                color=CardType.Hermit,
                 holder=None,
                 is_equip=False,
                 use=hermit.slap
@@ -401,7 +402,7 @@ class ElementFactory:
             card.Card(
                 title="Hermit\'s Slap",
                 desc="I bet you're a Hunter. If so, you receive 1 damage!",
-                color=2,
+                color=CardType.Hermit,
                 holder=None,
                 is_equip=False,
                 use=hermit.slap
@@ -409,7 +410,7 @@ class ElementFactory:
             card.Card(
                 title="Hermit\'s Spell",
                 desc="I bet you're a Shadow. If so, you receive 1 damage!",
-                color=2,
+                color=CardType.Hermit,
                 holder=None,
                 is_equip=False,
                 use=hermit.spell
@@ -417,7 +418,7 @@ class ElementFactory:
             card.Card(
                 title="Hermit\'s Exorcism",
                 desc="I bet you're a Shadow. If so, you receive 2 damage!",
-                color=2,
+                color=CardType.Hermit,
                 holder=None,
                 is_equip=False,
                 use=hermit.exorcism
@@ -427,7 +428,7 @@ class ElementFactory:
                 desc=("I bet you're a Neutral. If so, you heal 1 damage! "
                       "(However, if you have no damage, "
                       "then you receive 1 damage!)"),
-                color=2,
+                color=CardType.Hermit,
                 holder=None,
                 is_equip=False,
                 use=hermit.nurturance
@@ -437,7 +438,7 @@ class ElementFactory:
                 desc=("I bet you're a Hunter. If so, you heal 1 damage! "
                       "(However, if you have no damage, "
                       "then you receive 1 damage!)"),
-                color=2,
+                color=CardType.Hermit,
                 holder=None,
                 is_equip=False,
                 use=hermit.aid
@@ -447,7 +448,7 @@ class ElementFactory:
                 desc=("I bet you're a Shadow. If so, you heal 1 damage! "
                       "(However, if you have no damage, "
                       "then you receive 1 damage!)"),
-                color=2,
+                color=CardType.Hermit,
                 holder=None,
                 is_equip=False,
                 use=hermit.huddle
@@ -456,7 +457,7 @@ class ElementFactory:
                 title="Hermit\'s Lesson",
                 desc=("I bet your maximum HP is 12 or more. "
                       "If so, you receive 2 damage!"),
-                color=2,
+                color=CardType.Hermit,
                 holder=None,
                 is_equip=False,
                 use=hermit.lesson
@@ -465,7 +466,7 @@ class ElementFactory:
                 title="Hermit\'s Bully",
                 desc=("I bet your maximum HP is 11 or less. "
                       "If so, you receive 1 damage!"),
-                color=2,
+                color=CardType.Hermit,
                 holder=None,
                 is_equip=False,
                 use=hermit.bully
@@ -474,7 +475,7 @@ class ElementFactory:
                 title="Hermit\'s Prediction",
                 desc=("You must reveal your character information "
                       "secretly to the current player!"),
-                color=2,
+                color=CardType.Hermit,
                 holder=None,
                 is_equip=False,
                 use=hermit.prediction
@@ -484,14 +485,14 @@ class ElementFactory:
         # Initialize white, black, hermit decks
         self.WHITE_DECK = deck.Deck(cards=white_cards)
         self.BLACK_DECK = deck.Deck(cards=black_cards)
-        self.GREEN_DECK = deck.Deck(cards=green_cards)
+        self.HERMIT_DECK = deck.Deck(cards=hermit_cards)
 
         # Initialize characters
 
         self.CHARACTERS = [
             character.Character(
                 name="Valkyrie",
-                alleg=0,  # Shadow
+                alleg=Alleg.Shadow,
                 max_damage=13,
                 win_cond=win_conditions.shadow,
                 win_cond_desc="All of the Hunters (or 3 Neutrals) are dead.",
@@ -502,7 +503,7 @@ class ElementFactory:
             ),
             character.Character(
                 name="Vampire",
-                alleg=0,  # Shadow
+                alleg=Alleg.Shadow,
                 max_damage=13,
                 win_cond=win_conditions.shadow,
                 win_cond_desc="All of the Hunters (or 3 Neutrals) are dead.",
@@ -513,7 +514,7 @@ class ElementFactory:
             ),
             character.Character(
                 name="Werewolf",
-                alleg=0,  # Shadow
+                alleg=Alleg.Shadow,
                 max_damage=14,
                 win_cond=win_conditions.shadow,
                 win_cond_desc="All of the Hunters (or 3 Neutrals) are dead.",
@@ -524,7 +525,7 @@ class ElementFactory:
             ),
             character.Character(
                 name="Ultra Soul",
-                alleg=0,  # Shadow
+                alleg=Alleg.Shadow,
                 max_damage=11,
                 win_cond=win_conditions.shadow,
                 win_cond_desc="All of the Hunters (or 3 Neutrals) are dead.",
@@ -536,7 +537,7 @@ class ElementFactory:
             ),
             character.Character(
                 name="Allie",
-                alleg=1,  # Neutral
+                alleg=Alleg.Neutral,
                 max_damage=8,
                 win_cond=win_conditions.allie,
                 win_cond_desc="You're not dead when the game is over.",
@@ -546,7 +547,7 @@ class ElementFactory:
             ),
             character.Character(
                 name="Bob",
-                alleg=1,  # Neutral
+                alleg=Alleg.Neutral,
                 max_damage=10,
                 win_cond=win_conditions.bob,
                 win_cond_desc="You have 5 or more equipment cards.",
@@ -559,7 +560,7 @@ class ElementFactory:
             ),
             character.Character(
                 name="Bob",
-                alleg=1,  # Neutral
+                alleg=Alleg.Neutral,
                 max_damage=10,
                 win_cond=win_conditions.bob,
                 win_cond_desc="You have 5 or more equipment cards.",
@@ -571,7 +572,7 @@ class ElementFactory:
             ),
             character.Character(
                 name="Catherine",
-                alleg=1,  # Neutral
+                alleg=Alleg.Neutral,
                 max_damage=11,
                 win_cond=win_conditions.catherine,
                 win_cond_desc=("You are either the first to die or one of the"
@@ -582,7 +583,7 @@ class ElementFactory:
             ),
             character.Character(
                 name="George",
-                alleg=2,  # Hunter
+                alleg=Alleg.Hunter,
                 max_damage=14,
                 win_cond=win_conditions.hunter,
                 win_cond_desc="All of the Shadows are dead.",
@@ -594,7 +595,7 @@ class ElementFactory:
             ),
             character.Character(
                 name="Fu-ka",
-                alleg=2,  # Hunter
+                alleg=Alleg.Hunter,
                 max_damage=12,
                 win_cond=win_conditions.hunter,
                 win_cond_desc="All of the Shadows are dead.",
@@ -605,7 +606,7 @@ class ElementFactory:
             ),
             character.Character(
                 name="Franklin",
-                alleg=2,  # Hunter
+                alleg=Alleg.Hunter,
                 max_damage=12,
                 win_cond=win_conditions.hunter,
                 win_cond_desc="All of the Shadows are dead.",
@@ -617,7 +618,7 @@ class ElementFactory:
             ),
             character.Character(
                 name="Ellen",
-                alleg=2,  # Hunter
+                alleg=Alleg.Hunter,
                 max_damage=10,
                 win_cond=win_conditions.hunter,
                 win_cond_desc="All of the Shadows are dead.",
@@ -635,7 +636,7 @@ class ElementFactory:
                 name="Hermit's Cabin",
                 desc="Draw a Hermit Card.",
                 domain=[2, 3],
-                action=lambda gc, player: player.drawCard(gc.green_cards),
+                action=lambda gc, player: player.drawCard(gc.hermit_cards),
                 resource_id="hermits-cabin"
             ),
             area.Area(
