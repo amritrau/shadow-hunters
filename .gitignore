@@ -117,3 +117,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Bash output
+nohup.out
