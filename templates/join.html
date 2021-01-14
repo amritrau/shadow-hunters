@@ -3,59 +3,72 @@
 <head>
 	<title>Shadow Hunters</title>
 	<meta name="Shadow Hunters" content="width=device-width, initial-scale=1">
-	
+
 	<!-- Global site tag (gtag.js) - Google Analytics -->
 	<script async src="https://www.googletagmanager.com/gtag/js?id=UA-138967428-1"></script>
 	<script>
-	  window.dataLayer = window.dataLayer || [];
-	  function gtag(){dataLayer.push(arguments);}
-	  gtag('js', new Date());
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
 
-	  gtag('config', 'UA-138967428-1');
+	gtag('config', 'UA-138967428-1');
+	</script>
+	<script src="https://cdn.jsdelivr.net/npm/@widgetbot/crate@3" async="" defer="">
+	new Crate({
+		server: '774628310822289431', // Shadow Hunters
+		channel: '774628311267541023', // #find-a-game
+		color: '#000'
+	})
 	</script>
 
 	<style>
-		body, html {
-			height: 100%;
-			margin: 0;
-			font-family: Palatino, "Times New Roman", Times;
-		}
+	body, html {
+		height: 100%;
+		margin: 0;
+		font-family: Palatino, "Times New Roman", Times;
+	}
 
-		.bg {
-			/* The image used */
-			background-image: url("https://d2naeox1pchp13.cloudfront.net/waitRoom.svg");
+	.bg {
+		/* The image used */
+		background-image: url("https://d2naeox1pchp13.cloudfront.net/waitRoom.svg");
 
-			/* Full height */
-			height: 100%;
+		/* Full height */
+		height: 100%;
 
-			/* Center and scale the image */
-			background-position: center;
-			background-repeat: no-repeat;
-			background-size: cover;
-		}
-		.centered {
-			position: absolute;
-			top: 50%;
-			left: 50%;
-			transform: translate(-50%, -50%);
-		}
+		/* Center and scale the image */
+		background-position: center;
+		background-repeat: no-repeat;
+		background-size: cover;
+	}
+	.centered {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+	}
 	</style>
 </head>
 
 
 
 <body>
-
 	<div class="bg">
 		<div class="centered">
 			<p style="position: absolute; top: 200px; left: -50px">
-					<a href="/rules" class="pull-left"><img src="https://d2naeox1pchp13.cloudfront.net/rules.png" width="100"></a>
-				</p>
+				<a href="/rules" class="pull-left"><img src="https://d2naeox1pchp13.cloudfront.net/rules.png" width="100"></a>
+			</p>
 			<body>
 				<center>
-					<div style="color: #FFFFFF; background-color: #000000; opacity: .3; position: absolute; top: 325px; left: -195px; font-size: 12px">
+					<div style="color: #FFFFFF; background-color: #000000; opacity: .4; position: absolute; top: 300px; left: -195px; font-size: 12px">
 						<p class=flashes style="width: 390px; height: 0px">
-							<p>Disconnected? Re-enter your name and room ID to rejoin your game!</p>
+							<p>Find a game on our <a href="https://discord.gg/HwnNfaz9zD" style="color:#FFFFFF">Discord</a> by clicking the Crate in the bottom right!</p>
+						</p>
+					</div>
+				</center>
+				<center>
+					<div style="color: #FFFFFF; background-color: #000000; opacity: .4; position: absolute; top: 365px; left: -195px; font-size: 12px">
+						<p class=flashes style="width: 390px; height: 0px">
+							<p>Disconnected? Re-enter your name and room ID to rejoin your game.</p>
 						</p>
 					</div>
 				</center>
@@ -90,6 +103,5 @@
 			</body>
 		</div>
 	</div>
-
 </body>
 </html>

@@ -5,79 +5,86 @@
   <meta name="Shadow Hunters" content="width=device-width, initial-scale=1">
 
   <!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-138967428-1"></script>
-<script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-138967428-1"></script>
+  <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 
   gtag('config', 'UA-138967428-1');
 </script>
+<script src="https://cdn.jsdelivr.net/npm/@widgetbot/crate@3" async="" defer="">
+new Crate({
+  server: '774628310822289431', // Shadow Hunters
+  channel: '774628311267541023', // #find-a-game
+  color: '#000'
+})
+</script>
 
-  <style>
-    body, html {
-      height: 100%;
-      margin: 0;
-      font-family: Palatino, "Times New Roman", Times;
-    }
+<style>
+body, html {
+  height: 100%;
+  margin: 0;
+  font-family: Palatino, "Times New Roman", Times;
+}
 
-    .bg {
-      /* The image used */
-      background-image: url("https://d2naeox1pchp13.cloudfront.net/room.svg");
+.bg {
+  /* The image used */
+  background-image: url("https://d2naeox1pchp13.cloudfront.net/room.svg");
 
-      /* Full height */
-      height: 100%;
+  /* Full height */
+  height: max(800px,100%);
 
-      /* Center and scale the image nicely */
-      background-position: center;
-      background-repeat: repeat-y;
-      background-size: cover;
-    }
+  /* Center and scale the image nicely */
+  background-position: center;
+  background-repeat: repeat-y;
+  background-size: cover;
+}
 
-    .centered {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
+.centered {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
 
-    .nav {
-      list-style:none;
-      margin: 0;
-      padding: 0;
-      padding-top: 20px;
-      text-align:center;
-    }
+.nav {
+  list-style:none;
+  margin: 0;
+  padding: 0;
+  padding-top: 20px;
+  text-align:center;
+}
 
-    .nav li {
-      display:inline;
-    }
+.nav li {
+  display:inline;
+}
 
-    .nav a {
-      display:inline-block;
-      padding:5px;
-    }
+.nav a {
+  display:inline-block;
+  padding:5px;
+}
 
-  </style>
-  <script src={{ url_for("static", filename="deps/phaser-3.15.1.min.js") }}></script>
-  <script src={{ url_for("static", filename="deps/jquery-1.12.4.min.js") }}></script>
-  <script src={{ url_for("static", filename="deps/socketio-2.2.0.min.js") }}></script>
-  <script> var usrctx = {{ context|tojson }}; </script>
-  <script> var socket; var WaitingRoom; var GameBoard; </script>
-  <script src={{ url_for("static", filename="waitRoom.js") }}></script>
-  <script src={{ url_for("static", filename="gameBoard.js") }}></script>
-  <script src={{ url_for("static", filename="setup.js") }}></script>
-  <link rel= "stylesheet" type= "text/css" href= {{ url_for('static',filename='styles/shadow.css') }}>
+</style>
+<script src={{ url_for("static", filename="deps/phaser-3.15.1.min.js") }}></script>
+<script src={{ url_for("static", filename="deps/jquery-1.12.4.min.js") }}></script>
+<script src={{ url_for("static", filename="deps/socketio-2.2.0.min.js") }}></script>
+<script> var usrctx = {{ context|tojson }}; </script>
+<script> var socket; var WaitingRoom; var GameBoard; </script>
+<script src={{ url_for("static", filename="waitRoom.js") }}></script>
+<script src={{ url_for("static", filename="gameBoard.js") }}></script>
+<script src={{ url_for("static", filename="setup.js") }}></script>
+<link rel= "stylesheet" type= "text/css" href= {{ url_for('static',filename='styles/shadow.css') }}>
 
-  <style>
-    select { width: 12em; text-indent: 5px}
+<style>
+select { width: 12em; text-indent: 5px}
 
-    #ingame {
-      top: 375px;
-      left: 765px;
-    }
+#ingame {
+  top: 375px;
+  left: 765px;
+}
 
-  </style>
+</style>
 
 </head>
 
@@ -129,7 +136,7 @@
       </div>
     </div>
 
-    <h5 style="color:white;padding-top:50px;">Like Shadow Hunters? Support the <a href="https://github.com/amritrau/shadow-hunters" target="_blank" style="color: white">game</a> by donating! Any amount is appreciated.</h5>
+    <h5 style="color:white;padding-top:50px;">Like Shadow Hunters? Join our <a href="https://discord.gg/HwnNfaz9zD" style="color:#FFFFFF">Discord</a> or support the <a href="https://github.com/amritrau/shadow-hunters" target="_blank" style="color: white">game</a> by donating!</h5>
     <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
       <input type="hidden" name="cmd" value="_donations" />
       <input type="hidden" name="business" value="NGDMKE4W4VYU6" />

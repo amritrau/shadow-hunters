@@ -7,75 +7,82 @@
   <!-- Global site tag (gtag.js) - Google Analytics -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=UA-138967428-1"></script>
   <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
 
-    gtag('config', 'UA-138967428-1');
+  gtag('config', 'UA-138967428-1');
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@widgetbot/crate@3" async="" defer="">
+  new Crate({
+    server: '774628310822289431', // Shadow Hunters
+    channel: '774628311267541023', // #find-a-game
+    color: '#000'
+  })
   </script>
 
   <style>
-    body, html {
-      height: 100%;
-      margin: 0;
-      font-family: Palatino, "Times New Roman", Times;
-    }
+  body, html {
+    height: 100%;
+    margin: 0;
+    font-family: Palatino, "Times New Roman", Times;
+  }
 
-    .bg {
-      /* The image used */
-      background-image: url("https://s3.amazonaws.com/shadowhunters.gfxresources/room.svg");
+  .bg {
+    /* The image used */
+    background-image: url("https://s3.amazonaws.com/shadowhunters.gfxresources/room.svg");
 
-      /* Full height */
-      width: 100%;
+    /* Full height */
+    width: 100%;
 
-      /* Center and scale the image nicely */
-      background-position: center;
-      background-repeat: repeat-y;
-    }
+    /* Center and scale the image nicely */
+    background-position: center;
+    background-repeat: repeat-y;
+  }
 
-    .centered {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
+  .centered {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
 
-    .nav {
-      list-style:none;
-      margin: 0;
-      padding: 0;
-      padding-top: 20px;
-      text-align: center;
-    }
+  .nav {
+    list-style:none;
+    margin: 0;
+    padding: 0;
+    padding-top: 20px;
+    text-align: center;
+  }
 
-    .nav li {
-      display: inline;
-    }
+  .nav li {
+    display: inline;
+  }
 
-    .nav a {
-      display:inline-block;
-      padding:5px;
-    }
+  .nav a {
+    display:inline-block;
+    padding:5px;
+  }
 
-    .rules {
-      position: relative;
-      left: 25%;
-      width: 50%;
-      color: #FFFFFF;
-      padding-bottom: 20px;
-    }
+  .rules {
+    position: relative;
+    left: 25%;
+    width: 50%;
+    color: #FFFFFF;
+    padding-bottom: 20px;
+  }
 
-    .gameimage {
-        max-width: 100%;
-		max-height: 100%;
-		display: block;
-		margin: auto auto;
-    }
+  .gameimage {
+    max-width: 100%;
+    max-height: 100%;
+    display: block;
+    margin: auto auto;
+  }
 
-    .portrait {
-        float: left;
-        margin: 0px 20px 0px 0px;
-    }
+  .portrait {
+    float: left;
+    margin: 0px 20px 0px 0px;
+  }
 
   </style>
 
@@ -116,7 +123,7 @@
 
       <h2>The Game Board</h2>
       <div class="gameimage">
-          <img src="https://s3.amazonaws.com/shadowhunters.gfxresources/ExampleBoard.png" width="100%">
+        <img src="https://s3.amazonaws.com/shadowhunters.gfxresources/ExampleBoard.png" width="100%">
       </div>
       <p>
         Once the game has started, the Shadow Hunters game board will appear in front of all players. It is pictured above. Highlighted numbers identify its various pieces:
@@ -361,19 +368,19 @@
         Maximum HP: 10 <br>
         Win Condition: You have 5 or more equipment cards. <br>
         Special Ability: If your attack inflicts 2 or more damage, you may steal an Equipment card from your target instead of giving damage.<br>
-        </p>
+      </p>
 
-        <center>
-          <h5 style="color:white;padding-top:50px;">Like Shadow Hunters? Support the game by donating! Any amount is appreciated.</h5>
-          <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
-            <input type="hidden" name="cmd" value="_donations" />
-            <input type="hidden" name="business" value="NGDMKE4W4VYU6" />
-            <input type="hidden" name="item_name" value="Support shadowhunters.live!" />
-            <input type="hidden" name="currency_code" value="USD" />
-            <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
-            <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
-          </form>
-        </center>
+      <center>
+        <h5 style="color:white;padding-top:50px;">Like Shadow Hunters? Support the game by donating! Any amount is appreciated.</h5>
+        <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
+          <input type="hidden" name="cmd" value="_donations" />
+          <input type="hidden" name="business" value="NGDMKE4W4VYU6" />
+          <input type="hidden" name="item_name" value="Support shadowhunters.live!" />
+          <input type="hidden" name="currency_code" value="USD" />
+          <input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" />
+          <img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
+        </form>
+      </center>
 
     </div>
   </div>
