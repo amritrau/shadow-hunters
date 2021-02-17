@@ -1,0 +1,332 @@
+phrase_id,lang,text
+1,en,Enter a screen name and a room ID to join a game!
+2,en,Screen Name
+3,en,Room ID
+4,en,Number of Players: 4 to 8
+5,en,Play Time: 30-45 min
+6,en,Rules written by Max Levatich
+7,en,Found a bug? Report it here or check our code!
+8,en,Find a game on our Discord by clicking the Crate in the bottom right!
+9,en,Disconnected? Re-enter your name and room ID to rejoin your game.
+10,en,"Overview
+
+Shadow Hunters is an online multiplayer game (based on the board game of the same name) in which players assume the identities of characters belonging to three opposing factions. The Shadows, inhabitants of the underworld, aim to destroy all Hunters, while the Hunters, protectors of the mortal realm, seek to banish the Shadows. Neutrals, caught in the crossfire, pursue their own hidden objectives.
+
+As night settles on the ruins of abandoned town at the edge of a mysterious forest, the identities of ally and enemy alike are obscured by a shifting fog, and players must discover who is friend and who is foe before striking from the darkness! "
+11,en,"How to Start a Game
+
+To play a game of Shadow Hunters, enter a username and room on the main page – clicking join will take you to a new page where you can talk to other players who have joined the same room. Once the desired number of players have joined the same room, any player can click the ‘Start Game’ button to begin a game with those players.
+
+In the waiting room, the desired number of players for the game can also be specified above the ‘Start Game’ button. If the number is greater than the number of players currently in the room, the remaining slots will be filled by computer players. (The number of players is submitted by the person who clicks ‘Start Game’; all other numbers will be disregarded).
+
+In the process of playing the game, players with inconsistent Wi–Fi connections may be disconnected from the game server. Those players will be redirected back to the main page, and in the game they will be replaced by a CPU player. Disconnected players can easily reconnect and tag in for their CPUs by rejoining the same room, with the same username, from the main page. If all players leave a game, it will be terminated.
+
+If a player attempts to join a room with a game already in progress, they will begin spectating that game – they can talk with other players in the chat and see what’s happening, but cannot otherwise influence the game. "
+12,en,"The Game Board
+
+Once the game has started, the Shadow Hunters game board will appear in front of all players. It is pictured above. Highlighted numbers identify its various pieces: "
+13,en,"Your character portrait. On the top left of the portrait is a colored bubble which identifies your faction – red for Shadows, blue for Hunters, and yellow for Neutrals. The bubble in the bottom right gives your maximum HP. A thin colored circle around your portrait identifies which colored sprite you are on the game board. "
+14,en,"Below your character portrait is all of the details about your character – their name, faction, win condition, and special ability. Satisfy your win condition to win the game! "
+15,en,"Your arsenal contains all of the equipment cards you own. Each slot in the arsenal holds a picture of one piece of equipment, and clicking on it will give the name and effect of that equipment. Equipment cards will be used automatically in the situations they apply – they do not need to be activated. "
+16,en," The health bar shows the current damage of every player in the game, identified by colored tokens corresponding to each player’s assigned color. Tokens move up and down the health bar as players take and heal damage. When a player’s damage reaches their character’s maximum HP, they die and are out of the game! Clicking on the health bar displays the HP values at which the playable characters die. Keep track of where the other players are to determine which characters they may or may not be! Clicking on the health bar again will dismiss this pop–up. "
+17,en," The three zones, each containing two areas, take up the center of the game board, and denote the different locations players can occupy. Each area has a name and one or more numbers identifying the dice rolls that will take a player to that particular area. Clicking on an area card will display the action that can be performed at that area. "
+18,en," The sprites of each player are shown on the game board. Each sprite has a color which identifies them as a particular player, and matches their token on the health bar. The location of a sprite on the game board reflects the area that player is at. Clicking on a sprite will display the player’s name and the equipment they own, as well as their character’s identity if they have revealed it. Clicking the sprite again will dismiss the pop–up. "
+19,en,"Whenever players are required to take action, either because it is their turn or because they have been given a Hermit card or have used their special ability, button prompts will appear in the bottom right corner of the game board giving the player their options. When a player must choose from many options, such as when picking another player to attack or an area to move to, a larger prompt, spanning the middle of the game board, will appear. Click on a button to take the corresponding action! "
+20,en,"At any point in the game you may reveal your identity to everyone else by clicking the “Reveal ” button below your character portrait. Once you are revealed, you can activate your special ability!"
+21,en,"After you are revealed, the “Reveal” button will be replaced by a “Special” button. Clicking on it will activate your special ability! Some characters have restrictions on when they can use their special ability – clicking the button will still activate it, but it will only come into effect at the next point in the game when it is valid!"
+22,en,"The dice, one 4–sided and one 6–sided, are shown above the three zones, and the numbers they display always reflect the most recent roll. Players will roll to move, attack, and to use some cards, so check the dice to see the results!"
+23,en,"When players draw cards (the area action taken at the Underworld Gate, Cemetery, Church, and Hermit’s Cabin), the card will appear in the bottom left of the board (Hermit cards will only appear to the giver and receiver of the card). Black, White, and Hermit cards are identified by their colors, and the name and description of the card are displayed along with a picture. Clicking on the card will dismiss it – it will not disappear unless clicked on, so players can read at their own pace."
+24,en,"In the top right of the game board is a small button that opens a summary window, summarizing the current status of all players in the game, including their location, their character info if they have revealed themselves, and all of their equipment. Clicking the button again will close the summary window."
+25,en,"The same chatbox from the waiting room will remain once the game has started. In addition to letting you talk to the other players, the chatbox will be populated with information about what’s happening in the game, and the actions that other players are taking. Player names in the chatbox are highlighted with the corresponding player’s color, and other game elements, such as areas or cards, are also highlighted."
+26,en,"Above the game board, there are buttons to leave the room and return to the main page, or to open this rulebook in a new tab for a refresher on the rules. If you leave an active game, you can always reconnect to tag in for the CPU that replaced you by rejoining the same room, using the same username, from the main page!"
+27,en,"Gameplay
+
+Shadow Hunters is played in a series of turns. On each player’s turn, they will roll for movement, perform their area action, and may attack other players. The turn order is randomly determined when the game starts, and play will continue in that turn order until one or more players have satisfied their win condition, at which point the winners will be declared and the game will end!
+
+At the beginning of the game, players are only aware of their own character identity – they do not know who might be a potential ally and who is a threat. During their turns, players can attack, heal, build up their arsenal, and discover the allegiances of others, depending on the roll of the dice and the luck of the draw. Once players have identified their friends and foes, they can play more strategically in pursuit of their win condition!
+
+Every game is a little different – the area cards are shuffled, as are the three decks. Characters are distributed randomly to each player, but each game contains a set number of characters from each faction, depending on the total number of players. These numbers are as follows:
+
+    4–player game: 2 Hunters, 2 Shadows
+    5–player game: 2 Hunters, 2 Shadows, 1 Neutral
+    6–player game: 2 Hunters, 2 Shadows, 2 Neutrals
+    7–player game: 2 Hunters, 2 Shadows, 3 Neutrals
+    8–player game: 3 Hunters, 3 Shadows, 2 Neutrals
+
+A list of the playable characters is provided at the bottom of this page."
+28,en,"Turn Actions
+Movement
+
+At the beginning of every turn, the acting player must move to an area on the board by rolling both dice. A prompt to roll the dice will appear on the board, and the dice will be rolled when it is clicked.
+
+The numbers on the dice are summed, and the player moves to the area card with the corresponding number on it. If the dice sum to 7, then the player can pick an area to move to – there is no area card with a 7 on it.
+Area Actions
+
+Once a player has moved to an area, they may choose to perform the unique action associated with that area. The actions for each area are:
+
+    Hermit’s Cabin: Draw a Hermit Card and give it to another player.
+    Church: Draw a White Card and follow the instructions.
+    Cemetery: Draw a Black Card and follow the instructions.
+    Underworld Gate: Draw a card from any of the three decks.
+    Weird Woods: Give 2 damage to any player or heal 1 damage of any player.
+    Erstwhile Altar: Steal an equipment card from any player.
+
+Prompts will appear on the board for the corresponding area action after a player moves to an area.
+Attacking Other Players
+
+After a player has completed their area action, they may attack a player in the same zone as them. Each pair of area cards on the game board represents a single zone.
+
+If the player chooses to attack someone, they roll both dice and deal damage equal to the difference between the rolls. If the difference is greater than zero, the attack is considered successful – this is relevant for some equipment cards and special abilities.
+
+Once a player has attacked, or chosen not to attack, their turn is over and the next player begins. "
+29,en,"The Cards
+
+Shadow Hunters features three decks of cards, which are not pictured on the game board itself: the Hermit Deck, the Black Deck, and the White Deck. Players can draw these cards if they move to the Hermit’s Cabin, Cemetery, Church, or Underworld Gate.
+Hermit Cards
+
+Hermit Cards are how players discover information about each other. When a player draws a Hermit Card, they read the instructions on the card, but do not follow them. They then choose a player to give the Hermit Card to – the chosen player receives the card and follows the instructions on it.
+
+Instructions generally take the form of, “I bet you’re a Shadow. If so, receive 2 damage! ” In this way, when the chosen player follows the instructions, the player who used the Hermit Card learns something about them!
+
+If the instructions do not apply to the chosen player, then nothing happens.
+Black and White Cards
+
+Black Cards and White Cards come in two different types: Equipment and Single–Use. The type is displayed on the card when it is drawn.
+
+Single–Use cards must be used and discarded immediately. When a Single–Use card is drawn, players will be prompted to use the card and take any associated actions, like selecting a player to use the card on or rolling the dice.
+
+Equipment cards are added to a player’s arsenal when they are drawn. A player benefits from the effects of an equipment card for as long as that card is in their arsenal (equipment can be stolen by other players). The effects of equipment cards are applied automatically when relevant, and players do not need to manually activate them. They can also be combined – multiple damage bonuses add up!
+
+White Cards are generally defensive, and some White Cards are only useful to Hunters. Black Cards, on the other hand, are generally offensive, and some of them are only beneficial to Shadows.
+
+If any deck runs out of cards, the discard pile is shuffled and becomes the new draw pile for that deck. There are 16 cards in each deck. "
+30,en,"Special Abilities
+
+At any point during the game, any player may click the button below their character portrait to reveal their identity to everyone else in the game. From this point forward, other players will be able to see information about the revealed player’s character by clicking on their sprite, or opening the game summary tab.
+
+While it is generally useful to keep one’s identity hidden, once a player has revealed they may use their character’s special ability, and the “Reveal” button will be replaced by a “Special” button. Each character in Shadow Hunters has a unique special ability.
+
+Some characters have restrictions on when they can use their special ability – clicking the button will still activate it, but it will only come into effect at the next point in the game when it is valid. A list of all characters and their special abilities is provided at the bottom of this page. "
+31,en,"Death
+
+When players take damage from attacks or cards, their colored token moves on the HP bar to reflect their current damage.
+
+If a player’s damage reaches or exceeds their character’s maximum HP (displayed in a red circle next to the character portrait), they will die. If the player had any Equipment Cards, the killer chooses one to steal, and the rest are discarded.
+
+Dead players will have their turn skipped, but they can still win if their win conditions are satisfied (for example, if a Hunter dies, but the remaining Hunters kill all of the Shadows, all of the Hunters win).
+
+Dead players who leave the game will not be replaced by a computer player, and will not be able to reconnect to the game. "
+32,en,"Game End
+
+As soon as any player has satisfied their character’s win condition, the game ends immediately and that player is declared the winner. It is possible for many players to win simultaneously, even if they are in different factions, if they all satisfy their win conditions at once.
+
+A popup will show the identities of the winning players. The chat can still be used after the game is over, but a new game can only be started by returning to the main page and joining a new room.
+
+We sincerely hope you enjoy playing Shadow Hunters! With love from the team,
+
+Amrit Rau, Gia Reyes, Vishal Patel, Max Levatich, and Joanna Wu "
+33,en,"Characters
+
+A list of all playable characters, with their names, factions, maximum HPs, win conditions, and special abilities, is provided below: "
+34,en,Name
+35,en,Faction
+36,en,Maximum HP
+37,en,Hunter
+38,en,Shadow
+39,en,Neutral
+40,en,Win Condition: All of the Shadows are dead.
+41,en,"Special Ability: Once per game, when your turn starts, you can choose a player and permanently void their special ability."
+42,en,"Special Ability: Once per game, when your turn starts, you can pick a player and damage them for the roll of a 6-sided die."
+43,en,"Special Ability: Once per game, when your turn starts, you can set the damage of any player to 7."
+44,en,"Special Ability: Once per game, when your turn starts, you can pick a player and damage them for the roll of a 4-sided die."
+45,en,Win Condition: All of the Hunters (or 3 Neutrals) are dead.
+46,en,"Special Ability: When your turn starts, you can give 3 damage to one player who is at the Underworld Gate."
+47,en,"Special Ability: When you attack, you only roll the 4-sided die and inflict the amount of damage rolled."
+48,en,"Special Ability: If you attack a player and inflict damage, you heal 2 points of your own damage."
+49,en,"Special Ability: After you are attacked, you can counterattack immediately."
+50,en,Win Condition: You're not dead when the game is over.
+51,en,"Special Ability: Once per game, you may fully heal your damage."
+52,en,Win Condition: You are either the first to die or one of the last two players alive.
+53,en,"Special Ability: When your turn starts, you heal 1 damage."
+54,en,Win Condition: You have 5 or more equipment cards.
+55,en,"Special Ability: If your attack inflicts 2 or more damage, you may steal an Equipment card from your target instead of giving damage."
+56,en,Like Shadow Hunters? Support the game by donating! Any amount is appreciated.
+57,en,Name and room ID must not exceed 10 characters
+58,en,Welcome to Shadow Hunters Room
+59,en,There's no one else here!
+60,en,Like Shadow Hunters? Join our Discord or support the game by donating!
+61,en,Players
+62,en,Start Game
+63,en,Loading visual elements...
+64,en,Arsenal
+65,en,Team
+66,en,Reveal
+67,en,Special
+68,en,Send
+69,en,Damage
+70,en,Loading game...
+71,en,Click on things to see more information! Click on the i button to close this popup.
+72,en,Please enter a name and room ID
+73,en,Name and room ID must not contain special characters
+74,en,Name and room ID must not be numbers
+75,en,Name and room ID must not be 'undefined'
+76,en,The name '{}' is reserved for gameplay. Please choose another
+77,en,Someone in the room has taken your name
+78,en,Started a game with players
+79,en,You've activated your special ability. It will take effect next time its use conditions are met.
+80,en,{} has joined the room!
+81,en,{} has joined the room as a spectator!
+82,en,{} has rejoined the room!
+83,en,You are now spectating Shadow Hunters Room
+84,en,You've rejoined your game in Shadow Hunters Room
+85,en,Other players in the room
+86,en,{} has left the room
+87,en,A computer player has taken their place!
+88,en,"You have lost connection to the server – click 'Ok' to return to the home page, where you may reconnect if you were in a game."
+89,en,You cannot start a X-player game when there are Y people in the room.
+90,en,"If you leave this page, you will be removed from the game. Are you sure you want to leave?"
+91,en,Character X At HP: Y
+92,en,Equipment
+93,en,Dead
+94,en,({}) used their special ability
+95,en,{} gave a killing cure to {}
+96,en,{}'s Lightning gave {} 4 damage!
+97,en,Your special ability was voided by {}
+98,en,{} voided {}'s special ability for the rest of the game
+99,en,Hammer
+100,en,{}'s Murder Ray gave {} 4 damage
+101,en,{} declined to use their Murder Ray.
+102,en,{} is choosing a target...
+103,en,Draw White Card
+104,en,Draw Black Card
+105,en,Draw Hermit Card
+106,en,Heal X damage
+107,en,Give X damage
+108,en,The power of the Weird Woods healed {}!
+109,en,{}'s Fortune Brooch protected them from damage!
+110,en,The power of the Weird Woods damaged {}!
+111,en,Nobody has any items for {} to steal.
+112,en,It's {}'s turn!
+113,en,The effect of {}\'s Guardian Angel wore off!
+114,en,{} is rolling for movement...
+115,en,{}'s Mystic Compass lets them roll again!
+116,en,{} is selecting an area...
+117,en,{} moves to {}!
+118,en,{} declined to perform their area action.
+119,en,Add {} to arsenal
+120,en,{} added {} to their arsenal!
+121,en,a Hermit Card
+122,en,Roll the dice!
+123,en,{} rolled {}!
+124,en,Roll for damage!
+125,en,Roll the 6-sided die!
+126,en,Roll the 4-sided die!
+127,en,{} is choosing a player...
+128,en,{} chose {}!
+129,en,{} forfeited their equipment to {}!
+130,en,{}\'s Guardian Angel shielded them from damage!
+131,en,{} strikes with their Spear of Longinus!
+132,en,Take equipment from {}
+133,en,Bob stole all of {}'s equipment using their special ability!
+134,en,{} hit {} for 5 damage!
+135,en,The werewolf is deciding whether to counterattack!
+136,en,Counterattack
+137,en,Decline
+138,en,{} is counterattacking!
+139,en,{} rolls with the 4-sided die using the Cursed Sword Masamune!
+140,en,{} declined to counterattack.
+141,en,{} forfeited their equipment to {}!
+142,en,Attack other players!
+143,en,{} is deciding to attack...
+144,en,{}'s Handgun reverses their attack range.
+145,en,{} is attacking {}!
+146,en,{}'s Machine Gun hits everyone in their attack range!
+147,en,{} stole {}'s equipment instead of dealing 4 damage!
+148,en,{} declined to attack.
+149,en,Mystic Compass
+150,en,"When you move, you may roll twice and choose which result to use."
+151,en,Talisman
+152,en,"You receive no damage from Black cards 'Bloodthirsty Spider', 'Vampire Bat', or 'Dynamite'."
+153,en,Fortune Brooch
+154,en,You receive no damage from the area card 'Weird Woods'. You can still be healed by it.
+155,en,Silver Rosary
+156,en,"If you kill another character, you take all of their equipment cards."
+157,en,Spear of Longinus
+158,en,"If you are a Hunter who has revealed their identity and your attack is successful, you give 2 points of extra damage."
+159,en,Advent
+160,en,"If you are a Hunter, you may reveal your identity. If you do, or if you are already revealed, you heal fully."
+161,en,Disenchant Mirror
+162,en,"If you are a Shadow, except for Unknown, you must reveal your identity."
+163,en,Blessing
+164,en,Pick a character other than yourself and roll the 6-sided die. That character heals an amount of damage equal to the die roll.
+165,en,Chocolate
+166,en,"If you are Allie, Agnes, Emi, Ellen, Unknown, or Ultra Soul, you may reveal your identity. If you do, or if you are already revealed, you heal fully."
+167,en,Concealed Knowledge
+168,en,"When this turn is over, it will be your turn again."
+169,en,Guardian Angel
+170,en,You take no damage from the direct attacks of other characters until the start of your next turn.
+171,en,Holy Robe
+172,en,Your attacks do 1 less damage and the amount of damage you receive from attacks is reduced by 1 point.
+173,en,Flare of Judgement
+174,en,All characters except yourself receive 2 points of damage.
+175,en,First Aid
+176,en,Place a character's damage marker to 7 (You can choose yourself).
+177,en,Holy Water of Healing
+178,en,Heal 2 points of your damage.
+179,en,Cursed Sword Masamune
+180,en,You must attack another character on your turn. This attack uses the 4-sided die.
+181,en,Machine Gun
+182,en,Your attack will affect all characters in your attack range (the dice are rolled only once).
+183,en,Handgun
+184,en,All ranges but yours become your attack range.
+185,en,Butcher Knife
+186,en,Chainsaw
+187,en,Rusted Broad Axe
+188,en,"If your attack is successful, you give 1 point of extra damage."
+189,en,Moody Goblin
+190,en,You steal an equipment card from any character.
+191,en,Bloodthirsty Spider
+192,en,You give 2 points of damage to any character and receive 2 points of damage yourself.
+193,en,Vampire Bat
+194,en,You give 2 points of damage to any character and heal 1 point of your own damage.
+195,en,Diabolic Ritual
+196,en,"If you are a Shadow, you may reveal your identity. If you do, you fully heal you damage."
+197,en,Banana Peel
+198,en,"Give one of your equipment cards to another character. If you have no equipment cards, you receive 1 point of damage."
+199,en,Dynamite
+200,en,Roll 2 dice and give 3 points of damage to all characters in the area designated by the total number rolled (nothing happens if a 7 is rolled).
+201,en,Spiritual Doll
+202,en,"Pick a character and roll the 6-sided die. If the die number is 1 to 4, you give 3 points of damage to that character. If the die number is 5 or 6, you get 3 points of damage."
+203,en,Hermit's Cabin
+204,en,Underworld Gate
+205,en,Draw a card from the deck of your choice.
+206,en,Church
+207,en,Cemetery
+208,en,Weird Woods
+209,en,Heal 1 damage or give 2 damage to any player.
+210,en,Erstwhile Altar
+211,en,Steal an equipment card from any player.
+212,en,Blackmail
+213,en,Greed
+214,en,Anger
+215,en,Slap
+216,en,Spell
+217,en,Exorcism
+218,en,Nurturance
+219,en,Aid
+220,en,Huddle
+221,en,Lesson
+222,en,Bully
+223,en,Prediction
+224,en,"I bet you are a {}. If so, you must {}."
+225,en,either give an Equipment card to the current player or receive 1 damage!
+226,en,you receive 1 damage!
+227,en,"you heal 1 damage! (However, if you have no damage, then you receive 1 damage!)"
+228,en,I bet your maximum HP is 12 or more.
+229,en,I bet your maximum HP is 11 or less.
+230,en,You must reveal your character information secretly to the current player!
+231,en,Give an equipment card
+232,en,You are a {}. Do nothing.
+233,en,You have no choice. Reveal yourself to {}.
+234,en,{} revealed their identity secretly to {}!
+235,en,{}'s Talisman protected them from damage!
