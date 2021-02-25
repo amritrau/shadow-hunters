@@ -535,6 +535,18 @@ class ElementFactory:
                               " the Underworld Gate."),
                 resource_id="ultra-soul"
             ),
+            # character.Character(
+            #     name="Wight",
+            #     alleg=Alleg.Shadow,
+            #     max_damage=14,
+            #     win_cond=win_conditions.shadow,
+            #     win_cond_desc="All of the Hunters (or 3 Neutrals) are dead.",
+            #     special=specials.wight,
+            #     special_desc=("Once per game, when your turn is over, you may"
+            #                   " take an additional number of turns equal to the"
+            #                   " amount of dead characters."),
+            #     resource_id="wight"
+            # ),
             character.Character(
                 name="Allie",
                 alleg=Alleg.Neutral,
@@ -580,6 +592,30 @@ class ElementFactory:
                 special=specials.catherine,
                 special_desc="When your turn starts, you heal 1 damage.",
                 resource_id="catherine"
+            ),
+            # character.Character(
+            #     name="Charles",
+            #     alleg=Alleg.Neutral,
+            #     max_damage=11,
+            #     win_cond=win_conditions.charles,
+            #     win_cond_desc=("You kill another character after at least two"
+            #                    " characters are already dead."),
+            #     special=specials.charles,
+            #     special_desc=("After you attack, you may give yourself 2 points"
+            #                   " of damage to attack the same character again."),
+            #     resource_id="charles"
+            # ),
+            character.Character(
+                name="Gregor",
+                alleg=Alleg.Hunter,
+                max_damage=14,
+                win_cond=win_conditions.hunter,
+                win_cond_desc="All of the Shadows are dead.",
+                special=specials.gregor,
+                special_desc=("Once per game, when your turn is over, you may"
+                              " protect yourself from receiving any damage"
+                              " until the start of your next turn."),
+                resource_id="gregor"
             ),
             character.Character(
                 name="George",

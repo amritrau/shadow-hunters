@@ -49,7 +49,25 @@ def charles(gc, player, turn_pos):
 
 
 def gregor(gc, player, turn_pos):
-    pass
+    # END OF TURN
+    if turn_pos == 'end':
+        if not player.modifiers['special_used']:
+            player.modifiers['special_used'] = True
+
+            # Tell
+            gc.tell_h("{} ({}) used their special ability: {}", [
+                      player.user_id, player.character.name,
+                      player.character.special_desc])
+
+            player.modifiers['barrier'] = True
+
+            gc.tell_h("{} activated a Ghostly Barrier and is immune to damage!",
+                      [player.user_id])
+
+    # START OF NEXT TURN
+    if turn_pos == 'start' and player.modifiers['barrier']:
+        player.modifiers['barrier'] = False
+        gc.tell_h("{}'s Ghostly Barrier has dissipated!", [player.user_id])
 
 def george(gc, player, turn_pos):
     # START OF TURN
@@ -67,9 +85,10 @@ def george(gc, player, turn_pos):
 
             # Roll and give damage to target
             roll_result = player.rollDice('4')
-            target_Player.moveDamage(-1 * roll_result, player)
+            old = target_Player.damage
+            new = target_Player.moveDamage(-1 * roll_result, player)
             gc.tell_h("{}'s Hammer gave {} {} damage!", [
-                      player.user_id, target_Player.user_id, roll_result])
+                      player.user_id, target_Player.user_id, new - old])
 
 
 def fuka(gc, player, turn_pos):
@@ -112,9 +131,10 @@ def franklin(gc, player, turn_pos):
 
             # Roll and give damage to target
             roll_result = player.rollDice('6')
-            target_Player.moveDamage(-1 * roll_result, player)
+            old = target_Player.damage
+            new = target_Player.moveDamage(-1 * roll_result, player)
             gc.tell_h("{}'s Lightning gave {} {} damage!", [
-                      player.user_id, target_Player.user_id, roll_result])
+                      player.user_id, target_Player.user_id, new - old])
 
 
 def ellen(gc, player, turn_pos):
@@ -197,9 +217,10 @@ def ultra_soul(gc, player, turn_pos):
             if target != 'Decline':
                 target_Player = [
                     p for p in gc.getLivePlayers() if p.user_id == target][0]
-                target_Player.moveDamage(-3, player)
+                old = target_Player.damage
+                new = target_Player.moveDamage(-3, player)
                 gc.tell_h("{}'s Murder Ray gave {} {} damage!",
-                          [player.user_id, target, 3])
+                          [player.user_id, target, new - old])
             else:
                 gc.tell_h(
                     "{} declined to use their Murder Ray.", [player.user_id])

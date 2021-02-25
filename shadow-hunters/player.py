@@ -407,7 +407,7 @@ class Player:
         dealt = other.defend(self, amount, dryrun)
 
         # If we dealt damage, some specials might have external effects
-        if dealt > 0:
+        if dealt > 0 and not dryrun:
             if self.modifiers['damage_dealt_fn']:
                 self.modifiers['damage_dealt_fn'](self)
 
@@ -432,11 +432,15 @@ class Player:
         # Return damage dealt
         dealt = amount
         if dryrun:
-            return dealt
+            if self.modifiers['barrier']:
+                return 0
+            else:
+                return dealt
 
-        self.moveDamage(-dealt, attacker=other)
+        old = self.damage
+        new = self.moveDamage(-dealt, attacker=other)
         self.gc.tell_h("{} hit {} for {} damage!", [
-                       other.user_id, self.user_id, dealt])
+                       other.user_id, self.user_id, new - old])
 
         if self.state != C.PlayerState.Dead:
             # Check for counterattack
@@ -473,6 +477,14 @@ class Player:
 
     def moveDamage(self, damage_change, attacker):
 
+        # Gregor's special block's damage
+        if damage_change < 0 and self.modifiers['barrier']:
+            self.gc.tell_h(
+                "The Ghostly Barrier protected {} from damage!",
+                [self.user_id]
+            )
+            return self.damage
+
         # Tell frontend to animate sprite
         if damage_change < 0:
             self.gc.show_h({'type': 'damage', 'player': self.dump()})
@@ -485,7 +497,16 @@ class Player:
         return self.damage
 
     def setDamage(self, damage, attacker):
-        if damage < self.damage:
+
+        # Gregor's special block's damage
+        if damage > self.damage and self.modifiers['barrier']:
+            self.gc.tell_h(
+                "The Ghostly Barrier protected {} from damage!",
+                [self.user_id]
+            )
+            return
+
+        if damage > self.damage:
             self.gc.show_h({'type': 'damage', 'player': self.dump()})
         self.damage = damage
         self.checkDeath(attacker)

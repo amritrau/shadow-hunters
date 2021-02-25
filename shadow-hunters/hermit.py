@@ -74,8 +74,9 @@ class HermitEffect():
         else:
             d = self.damage_to(t)
             verb2 = "healed" if d > 0 else "took"
-            t.moveDamage(d, args['self'])
-            t.gc.tell_h("{} {} {} damage!", [t.user_id, verb2, abs(d)])
+            old = t.damage
+            new = t.moveDamage(d, args['self'])
+            t.gc.tell_h("{} {} {} damage!", [t.user_id, verb2, abs(old - new)])
 
     def no_effect_on(self, t):
 
