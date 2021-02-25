@@ -41,8 +41,15 @@ def catherine(gc, player, turn_pos):
         # Catherine is *required* to heal at the beginning of the turn
         player.moveDamage(1, player)
 
+
+def charles(gc, player, turn_pos):
+    pass
+
 # Hunters
 
+
+def gregor(gc, player, turn_pos):
+    pass
 
 def george(gc, player, turn_pos):
     # START OF TURN
@@ -137,32 +144,37 @@ def ellen(gc, player, turn_pos):
 
 
 def valkyrie(gc, player, turn_pos):
-    if (not player.modifiers['special_active']) and (
-            not player.modifiers['special_used']):
+    if not player.modifiers['special_used']:
+        player.modifiers['special_used'] = True
+
         # Tell
         gc.tell_h("{} ({}) used their special ability: {}", [
                   player.user_id, player.character.name,
                   player.character.special_desc])
         player.modifiers['attack_dice_type'] = "4"
-        player.modifiers['special_active'] = True
 
 
 def vampire(gc, player, turn_pos):
-    if (not player.modifiers['special_active']) and (
-            not player.modifiers['special_used']):
+    if not player.modifiers['special_used']:
+        player.modifiers['special_used'] = True
+
         # Tell
         gc.tell_h("{} ({}) used their special ability: {}", [
                   player.user_id, player.character.name,
                   player.character.special_desc])
         player.modifiers['damage_dealt_fn'] = lambda player: player.moveDamage(
             2, player)
-        player.modifiers['special_active'] = True
 
 
 def werewolf(gc, player, turn_pos):
     if not player.modifiers['special_used']:
+        player.modifiers['special_used'] = True
+
+        # Tell
+        gc.tell_h("{} ({}) used their special ability: {}", [
+                  player.user_id, player.character.name,
+                  player.character.special_desc])
         player.modifiers['counterattack'] = True
-        player.modifiers['special_active'] = True
 
 
 def ultra_soul(gc, player, turn_pos):
@@ -191,3 +203,6 @@ def ultra_soul(gc, player, turn_pos):
             else:
                 gc.tell_h(
                     "{} declined to use their Murder Ray.", [player.user_id])
+
+def wight(gc, player, turn_pos):
+    pass
