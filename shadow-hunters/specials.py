@@ -39,10 +39,6 @@ def catherine(gc, player, turn_pos):
         # Catherine is *required* to heal at the beginning of the turn
         player.moveDamage(1, player)
 
-
-def charles(gc, player, turn_pos):
-    pass
-
 # Hunters
 
 
@@ -219,4 +215,17 @@ def ultra_soul(gc, player, turn_pos):
                     "{} declined to use their Murder Ray.", [player.user_id])
 
 def wight(gc, player, turn_pos):
-    pass
+    # END OF TURN
+    if turn_pos == 'end' and not player.modifiers['special_used']:
+        player.modifiers['special_used'] = True
+
+        # Tell
+        gc.tell_h("{} ({}) used their special ability: {}", [
+                  player.user_id, player.character.name,
+                  player.character.special_desc])
+
+        num_dead = len(gc.getDeadPlayers())
+        gc.tell_h("{} harvests the souls of the dead to gain {} extra turns!",
+                  [player.user_id, num_dead])
+        for _ in range(num_dead):
+            gc.turn_order.insert(gc.turn_order.index(player), player)
