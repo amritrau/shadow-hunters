@@ -387,13 +387,6 @@ var GameBoard = new Phaser.Class ({
                 break;
             }
         });
-
-        // Warn players that they'll be disconnected if they leave
-        window.onbeforeunload = function() {
-            return 'If you leave this page, you will be removed from the game. ' +
-            'Are you sure you want to leave?';
-        };
-
     },
 
     makeEquipment: function(card, i) {
