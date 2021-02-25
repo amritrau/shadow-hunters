@@ -62,6 +62,7 @@ def gregor(gc, player, turn_pos):
         player.modifiers['barrier'] = False
         gc.tell_h("{}'s Ghostly Barrier has dissipated!", [player.user_id])
 
+
 def george(gc, player, turn_pos):
     # START OF TURN
     if turn_pos == 'start' and not player.modifiers['special_used']:
@@ -213,6 +214,7 @@ def ultra_soul(gc, player, turn_pos):
             else:
                 gc.tell_h(
                     "{} declined to use their Murder Ray.", [player.user_id])
+
 
 def wight(gc, player, turn_pos):
     # END OF TURN
