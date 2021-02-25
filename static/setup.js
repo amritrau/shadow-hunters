@@ -16,7 +16,10 @@ $('document').ready(function() {
     }
 
     // Initial connection
-    socket = io.connect('http://' + document.domain + ':' + location.port, {reconnection: false});
+    socket = io.connect('http://' + document.domain + ':' + location.port, {
+        reconnection: false,
+        'sync disconnect on unload': true
+    });
     socket.on('connect', function() {
 
         // User joins the room
@@ -149,6 +152,11 @@ $('document').ready(function() {
                   "where you may reconnect if you were in a game.");
             window.location = "/";
         });
+
+        // Close window handler
+        window.onbeforeunload = function() {
+            socket.close();
+        }
 
         // Configure game
         var config = {
