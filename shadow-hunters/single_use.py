@@ -230,10 +230,9 @@ def banana_peel(args):
 
     else:
         # Take 1 damage
-        old = args['self'].damage
-        new = args['self'].moveDamage(-1, args['self'])
+        change = args['self'].moveDamage(-1, args['self'])
         args['self'].gc.tell_h("{} took {} damage.", [
-                               args['self'].user_id, new - old])
+                               args['self'].user_id, change])
 
 
 def dynamite(args):

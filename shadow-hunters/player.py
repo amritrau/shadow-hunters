@@ -437,10 +437,9 @@ class Player:
             else:
                 return dealt
 
-        old = self.damage
-        new = self.moveDamage(-dealt, attacker=other)
+        change = self.moveDamage(-dealt, attacker=other)
         self.gc.tell_h("{} hit {} for {} damage!", [
-                       other.user_id, self.user_id, new - old])
+                       other.user_id, self.user_id, change])
 
         if self.state != C.PlayerState.Dead:
             # Check for counterattack
@@ -483,18 +482,19 @@ class Player:
                 "The Ghostly Barrier protected {} from damage!",
                 [self.user_id]
             )
-            return self.damage
+            return 0
 
         # Tell frontend to animate sprite
         if damage_change < 0:
             self.gc.show_h({'type': 'damage', 'player': self.dump()})
 
         # Set new damage
+        old = self.damage
         self.damage = min(self.damage - damage_change,
                           self.character.max_damage)
         self.damage = max(0, self.damage)
         self.checkDeath(attacker)
-        return self.damage
+        return abs(old - self.damage)
 
     def setDamage(self, damage, attacker):
 

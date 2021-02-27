@@ -78,10 +78,9 @@ def george(gc, player, turn_pos):
 
         # Roll and give damage to target
         roll_result = player.rollDice('4')
-        old = target_Player.damage
-        new = target_Player.moveDamage(-1 * roll_result, player)
+        change = target_Player.moveDamage(-1 * roll_result, player)
         gc.tell_h("{}'s Hammer gave {} {} damage!", [
-                  player.user_id, target_Player.user_id, new - old])
+                  player.user_id, target_Player.user_id, change])
 
 
 def fuka(gc, player, turn_pos):
@@ -122,10 +121,9 @@ def franklin(gc, player, turn_pos):
 
         # Roll and give damage to target
         roll_result = player.rollDice('6')
-        old = target_Player.damage
-        new = target_Player.moveDamage(-1 * roll_result, player)
+        change = target_Player.moveDamage(-1 * roll_result, player)
         gc.tell_h("{}'s Lightning gave {} {} damage!", [
-                  player.user_id, target_Player.user_id, new - old])
+                  player.user_id, target_Player.user_id, change])
 
 
 def ellen(gc, player, turn_pos):
@@ -207,10 +205,9 @@ def ultra_soul(gc, player, turn_pos):
             if target != 'Decline':
                 target_Player = [
                     p for p in gc.getLivePlayers() if p.user_id == target][0]
-                old = target_Player.damage
-                new = target_Player.moveDamage(-3, player)
+                change = target_Player.moveDamage(-3, player)
                 gc.tell_h("{}'s Murder Ray gave {} {} damage!",
-                          [player.user_id, target, new - old])
+                          [player.user_id, target, change])
             else:
                 gc.tell_h(
                     "{} declined to use their Murder Ray.", [player.user_id])
