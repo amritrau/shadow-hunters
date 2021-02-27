@@ -21,6 +21,13 @@ def allie(gc, player, turn_pos):
 
 def bob(gc, player, turn_pos):
     if not player.modifiers['special_used']:
+        player.modifiers['special_used'] = True
+
+        # Tell
+        gc.tell_h("{} ({}) used their special ability: {}", [
+                  player.user_id, player.character.name,
+                  player.character.special_desc])
+
         if 4 <= len(gc.players) <= 6:
             player.modifiers['steal_for_damage'] = True
         else:
@@ -29,7 +36,7 @@ def bob(gc, player, turn_pos):
 
 def catherine(gc, player, turn_pos):
     # START OF TURN
-    if turn_pos == 'start' and not player.modifiers['special_used']:
+    if turn_pos == 'start':
 
         # Tell
         gc.tell_h("{} ({}) used their special ability: {}", [
@@ -41,7 +48,15 @@ def catherine(gc, player, turn_pos):
 
 
 def charles(gc, player, turn_pos):
-    pass
+    if not player.modifiers['special_used']:
+        player.modifiers['special_used'] = True
+
+        # Tell
+        gc.tell_h("{} ({}) used their special ability: {}", [
+                  player.user_id, player.character.name,
+                  player.character.special_desc])
+
+        player.modifiers['bloody_feast'] = True
 
 # Hunters
 

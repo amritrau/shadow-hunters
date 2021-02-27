@@ -15,6 +15,7 @@ class Player:
         self.character = None
         self.equipment = []
         self.damage = 0
+        self.kills = []
         self.location = None
         self.modifiers = defaultdict(lambda: False)
         self.modifiers['attack_dice_type'] = "attack"
@@ -192,22 +193,60 @@ class Player:
 
             if answer != 'Decline':
 
-                self.attackTarget(answer, in_range, dice_type)
+                target = self.gc.getLivePlayers(
+                    lambda x: x.user_id == answer
+                )[0]
+                self.attackTarget(target, in_range, dice_type)
+
+                # Charles' special ability lets him attack the same character
+                # repeatedly, at the cost of 2 damage per attack
+                if self.modifiers['bloody_feast']:
+                    while C.PlayerState.Dead not in [self.state, target.state]:
+                        self.gc.tell_h(
+                            ("{} ({}) is deciding whether to suffer 2 damage"
+                             " to attack {} again in a Bloody Feast!"),
+                            [self.user_id, self.character.name, answer]
+                        )
+
+                        data = {
+                            'options': [
+                                "Take 2 damage and attack {}".format(
+                                    answer
+                                ),
+                                "End the feast"
+                            ]
+                        }
+                        stop = self.gc.ask_h(
+                            'yesno', data, self.user_id
+                        )['value'] == 'End the feast'
+                        if stop:
+                            self.gc.tell_h(
+                                "{} declined to feast.",
+                                [self.user_id]
+                            )
+                            break
+
+                        self.gc.tell_h(
+                            "{} will take 2 damage to continue the feast!",
+                            [self.user_id]
+                        )
+                        self.moveDamage(-2, self)
+                        if self.state == C.PlayerState.Dead:
+                            break
+
+                        self.attackTarget(target, in_range, dice_type)
 
             else:
                 self.gc.tell_h("{} declined to attack.", [self.user_id])
         else:
             self.gc.tell_h("{} declined to attack.", [self.user_id])
 
-    def attackTarget(self, target_name, targets_in_range, dice_type):
+    def attackTarget(self, target_Player, targets_in_range, dice_type):
 
         # Get target
-        target_Player = self.gc.getLivePlayers(
-            lambda x: x.user_id == target_name
-        )[0]
         self.gc.tell_h(
             "{} is attacking {}!",
-            [self.user_id, target_name]
+            [self.user_id, target_Player.user_id]
         )
 
         # Roll with the 4-sided die if the player has masamune
@@ -270,8 +309,6 @@ class Player:
             else:
                 # Actually deal damage
                 damage_dealt = self.attack(t, roll_result)
-
-        return target_Player, targets_in_range, dice_type
 
     def drawCard(self, deck):
 
@@ -533,6 +570,11 @@ class Player:
         # Report to console
         display_data = {'type': 'die', 'player': self.dump()}
         self.gc.show_h(display_data)
+
+        # Update the attacker's kills (if it wasn't a self kill)
+        if self != attacker:
+            num_dead = len(self.gc.getDeadPlayers())
+            attacker.kills.append((self, num_dead))
 
         # Equipment stealing if dead player has equipment
         if self.equipment and self != attacker:

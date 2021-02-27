@@ -53,4 +53,4 @@ def catherine(gc, player):
 
 
 def charles(gc, player):
-    return False
+    return any([num_died_after > 2 for _, num_died_after in player.kills])
