@@ -543,7 +543,7 @@ class ElementFactory:
                 win_cond_desc="All of the Hunters (or 3 Neutrals) are dead.",
                 special=specials.wight,
                 special_desc=("Once per game, gain an additional number of "
-                              " turns equal to the amount of dead"
+                              " turns equal to the number of dead"
                               " characters."),
                 resource_id="wight"
             ),
