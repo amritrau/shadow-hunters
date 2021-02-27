@@ -35,6 +35,6 @@ def test_regression():
             gc, ef = fresh_gc_ef(n)
             game_hashes += gc.play(debug=True)
 
-    correct_hash = 'YYRGN3eJZeq3jYVYCoqHAPOVR6YF720QSk5ZY8G94Rc='
+    correct_hash = 'z304QD5bmvTopZpmo+5630GlzwyGqnT33Kz6UqXQK0E='
     found_hash = make_hash_sha256(game_hashes)
     assert correct_hash == found_hash

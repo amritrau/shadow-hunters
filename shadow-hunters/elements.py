@@ -594,6 +594,18 @@ class ElementFactory:
                 resource_id="catherine"
             ),
             character.Character(
+                name="Charles",
+                alleg=Alleg.Neutral,
+                max_damage=11,
+                win_cond=win_conditions.charles,
+                win_cond_desc=("After you kill another character, the total"
+                               " number of dead characters is 3 or more."),
+                special=specials.charles,
+                special_desc=("After attacking, you may take 2 damage to"
+                              " attack the same character again."),
+                resource_id="charles"
+            ),
+            character.Character(
                 name="Gregor",
                 alleg=Alleg.Hunter,
                 max_damage=14,

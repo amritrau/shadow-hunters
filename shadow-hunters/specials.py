@@ -39,6 +39,10 @@ def catherine(gc, player, turn_pos):
         # Catherine is *required* to heal at the beginning of the turn
         player.moveDamage(1, player)
 
+
+def charles(gc, player, turn_pos):
+    pass
+
 # Hunters
 
 
