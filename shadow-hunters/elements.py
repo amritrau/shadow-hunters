@@ -536,6 +536,18 @@ class ElementFactory:
                 resource_id="ultra-soul"
             ),
             character.Character(
+                name="Wight",
+                alleg=Alleg.Shadow,
+                max_damage=14,
+                win_cond=win_conditions.shadow,
+                win_cond_desc="All of the Hunters (or 3 Neutrals) are dead.",
+                special=specials.wight,
+                special_desc=("Once per game, gain an additional number of "
+                              " turns equal to the number of dead"
+                              " characters."),
+                resource_id="wight"
+            ),
+            character.Character(
                 name="Allie",
                 alleg=Alleg.Neutral,
                 max_damage=8,
@@ -553,8 +565,8 @@ class ElementFactory:
                 win_cond_desc="You have 5 or more equipment cards.",
                 special=specials.bob,
                 special_desc=("If your attack inflicts 2 or more damage, "
-                              "you may steal an Equipment card from your"
-                              " target instead of giving damage."),
+                              " you may steal an Equipment card instead of"
+                              " giving damage."),
                 resource_id="bob1",
                 modifiers={'min_players': 4, 'max_players': 6}
             ),
@@ -580,6 +592,30 @@ class ElementFactory:
                 special=specials.catherine,
                 special_desc="When your turn starts, you heal 1 damage.",
                 resource_id="catherine"
+            ),
+            character.Character(
+                name="Charles",
+                alleg=Alleg.Neutral,
+                max_damage=11,
+                win_cond=win_conditions.charles,
+                win_cond_desc=("After you kill another character, the total"
+                               " number of dead characters is 3 or more."),
+                special=specials.charles,
+                special_desc=("After attacking, you may take 2 damage to"
+                              " attack the same character again."),
+                resource_id="charles"
+            ),
+            character.Character(
+                name="Gregor",
+                alleg=Alleg.Hunter,
+                max_damage=14,
+                win_cond=win_conditions.hunter,
+                win_cond_desc="All of the Shadows are dead.",
+                special=specials.gregor,
+                special_desc=("Once per game, when your turn is over, protect"
+                              " yourself from all damage until the start of"
+                              " your next turn."),
+                resource_id="gregor"
             ),
             character.Character(
                 name="George",

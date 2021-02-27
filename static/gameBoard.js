@@ -194,6 +194,9 @@ var GameBoard = new Phaser.Class ({
         this.load.image('Ellen', gfx + 'Ellen.png');
         this.load.image('Ultra Soul', gfx + 'Ultrasoul.png');
         this.load.image('Werewolf', gfx + 'Werewolf.png');
+        this.load.image('Gregor', gfx + 'anon.png');
+        this.load.image('Wight', gfx + 'anon.png');
+        this.load.image('Charles', gfx + 'anon.png');
         this.load.image('Anon', gfx + 'anon.png');
 
         //display pop ups

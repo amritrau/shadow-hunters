@@ -50,3 +50,7 @@ def catherine(gc, player):
     last_two = (player in gc.getLivePlayers()) and (
         len(gc.getLivePlayers()) <= 2)
     return first_to_die or last_two
+
+
+def charles(gc, player):
+    return any([num_died_after > 2 for _, num_died_after in player.kills])

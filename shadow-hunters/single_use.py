@@ -230,9 +230,9 @@ def banana_peel(args):
 
     else:
         # Take 1 damage
-        args['self'].moveDamage(-1, args['self'])
+        change = args['self'].moveDamage(-1, args['self'])
         args['self'].gc.tell_h("{} took {} damage.", [
-                               args['self'].user_id, "1"])
+                               args['self'].user_id, change])
 
 
 def dynamite(args):
@@ -280,10 +280,10 @@ def spiritual_doll(args):
 
     # If roll is >= 5, user takes 3 damage. Otherwise, target takes 3 damage.
     if roll_result >= 5:
-        args['self'].moveDamage(-3, args['self'])
         args['self'].gc.tell_h('The {} backfired on {}!', [
                                args['card'].title, args['self'].user_id])
+        args['self'].moveDamage(-3, args['self'])
     else:
-        target.moveDamage(-3, args['self'])
         args['self'].gc.tell_h('The {} cursed {}!', [
                                args['card'].title, target.user_id])
+        target.moveDamage(-3, args['self'])

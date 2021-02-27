@@ -15,6 +15,7 @@ class Player:
         self.character = None
         self.equipment = []
         self.damage = 0
+        self.kills = []
         self.location = None
         self.modifiers = defaultdict(lambda: False)
         self.modifiers['attack_dice_type'] = "attack"
@@ -157,9 +158,9 @@ class Player:
             return
 
         # Attack
-        self.attackSequence(dice_type=self.modifiers['attack_dice_type'])
+        self.initiateAttack(dice_type=self.modifiers['attack_dice_type'])
 
-    def attackSequence(self, dice_type="attack"):
+    def initiateAttack(self, dice_type="attack"):
 
         # Give player option to attack or decline
         self.gc.tell_h("{} is deciding to attack...", [self.user_id])
@@ -173,17 +174,17 @@ class Player:
         if answer != "Decline":
             # Get attackable players
             live_players = self.gc.getLivePlayers(lambda p: p.location)
-            targets = [p for p in live_players if (
+            in_range = [p for p in live_players if (
                 p.location.zone == self.location.zone and p != self)]
 
             if self.hasEquipment("Handgun"):
                 self.gc.tell_h("{}'s {} reverses their attack range.", [
                                self.user_id, "Handgun"])
-                targets = [p for p in live_players if (
+                in_range = [p for p in live_players if (
                     p.location.zone != self.location.zone and p != self)]
 
             # If player has Masamune, can't decline unless there are no options
-            opts = [t.user_id for t in targets]
+            opts = [t.user_id for t in in_range]
             if not self.hasEquipment("Cursed Sword Masamune") or not len(opts):
                 opts.append("Decline")
 
@@ -192,80 +193,122 @@ class Player:
 
             if answer != 'Decline':
 
-                # Get target
-                target_name = answer
-                target_Player = self.gc.getLivePlayers(
-                    lambda x: x.user_id == target_name
+                target = self.gc.getLivePlayers(
+                    lambda x: x.user_id == answer
                 )[0]
-                self.gc.tell_h(
-                    "{} is attacking {}!",
-                    [self.user_id, target_name]
-                )
+                self.attackTarget(target, in_range, dice_type)
 
-                # Roll with the 4-sided die if the player has masamune
-                roll_result = 0
-                if self.hasEquipment("Cursed Sword Masamune"):
-                    self.gc.tell_h(
-                        "{} rolls with the 4-sided die using the {}!",
-                        [self.user_id, "Cursed Sword Masamune"]
-                    )
-                    roll_result = self.rollDice('4')
-                else:
-                    roll_result = self.rollDice(dice_type)
-
-                # If player has Machine Gun, launch attack on everyone in the
-                # zone. Otherwise, attack the target
-                if self.hasEquipment("Machine Gun"):
-                    self.gc.tell_h(
-                        "{}'s {} hits everyone in their attack range!",
-                        [self.user_id, "Machine Gun"]
-                    )
-                else:
-                    targets = [target_Player]
-
-                for t in targets:
-                    # Dry run the attack if we're Bob
-                    if self.modifiers['steal_for_damage']:
-                        potential_damage = self.attack(
-                            t,
-                            roll_result,
-                            dryrun=True
+                # Charles' special ability lets him attack the same character
+                # repeatedly, at the cost of 2 damage per attack
+                if self.modifiers['bloody_feast']:
+                    while C.PlayerState.Dead not in [self.state, target.state]:
+                        self.gc.tell_h(
+                            ("{} ({}) is deciding whether to suffer 2 damage"
+                             " to attack {} again in a Bloody Feast!"),
+                            [self.user_id, self.character.name, answer]
                         )
-                        if potential_damage >= 2 and len(t.equipment):
-                            # Ask whether to steal equipment or deal damage
-                            data = {
-                                'options': [
-                                    "Steal equipment",
-                                    "Deal {} damage".format(potential_damage)
-                                ]
-                            }
-                            choose_steal = self.gc.ask_h(
-                                'yesno', data, self.user_id
-                            )['value'] == "Steal equipment"
 
-                            if choose_steal:
-                                desired_eq = self.chooseEquipment(t)
-                                t.giveEquipment(self, desired_eq)
-                                self.gc.tell_h(
-                                    ("{} stole {}'s {} instead "
-                                     "of dealing {} damage!"),
-                                    [self.user_id, t.user_id, desired_eq.title,
-                                     potential_damage]
-                                )
-                            else:
-                                # Actually deal damage
-                                damage_dealt = self.attack(t, roll_result)
-                        else:
-                            # Actually deal damage
-                            damage_dealt = self.attack(t, roll_result)
-                    else:
-                        # Actually deal damage
-                        damage_dealt = self.attack(t, roll_result)
+                        data = {
+                            'options': [
+                                "Take 2 damage and attack {}".format(
+                                    answer
+                                ),
+                                "End the feast"
+                            ]
+                        }
+                        stop = self.gc.ask_h(
+                            'yesno', data, self.user_id
+                        )['value'] == 'End the feast'
+                        if stop:
+                            self.gc.tell_h(
+                                "{} declined to feast.",
+                                [self.user_id]
+                            )
+                            break
+
+                        self.gc.tell_h(
+                            "{} will take 2 damage to continue the feast!",
+                            [self.user_id]
+                        )
+                        self.moveDamage(-2, self)
+                        if self.state == C.PlayerState.Dead:
+                            break
+
+                        self.attackTarget(target, in_range, dice_type)
 
             else:
                 self.gc.tell_h("{} declined to attack.", [self.user_id])
         else:
             self.gc.tell_h("{} declined to attack.", [self.user_id])
+
+    def attackTarget(self, target_Player, targets_in_range, dice_type):
+
+        # Get target
+        self.gc.tell_h(
+            "{} is attacking {}!",
+            [self.user_id, target_Player.user_id]
+        )
+
+        # Roll with the 4-sided die if the player has masamune
+        roll_result = 0
+        if self.hasEquipment("Cursed Sword Masamune"):
+            self.gc.tell_h(
+                "{} rolls with the 4-sided die using the {}!",
+                [self.user_id, "Cursed Sword Masamune"]
+            )
+            roll_result = self.rollDice('4')
+        else:
+            roll_result = self.rollDice(dice_type)
+
+        # If player has Machine Gun, launch attack on everyone in the
+        # zone. Otherwise, attack the target
+        if self.hasEquipment("Machine Gun"):
+            self.gc.tell_h(
+                "{}'s {} hits everyone in their attack range!",
+                [self.user_id, "Machine Gun"]
+            )
+            targets = targets_in_range
+        else:
+            targets = [target_Player]
+
+        for t in targets:
+            # Dry run the attack if we're Bob
+            if self.modifiers['steal_for_damage']:
+                potential_damage = self.attack(
+                    t,
+                    roll_result,
+                    dryrun=True
+                )
+                if potential_damage >= 2 and len(t.equipment):
+                    # Ask whether to steal equipment or deal damage
+                    data = {
+                        'options': [
+                            "Steal equipment",
+                            "Deal {} damage".format(potential_damage)
+                        ]
+                    }
+                    choose_steal = self.gc.ask_h(
+                        'yesno', data, self.user_id
+                    )['value'] == "Steal equipment"
+
+                    if choose_steal:
+                        desired_eq = self.chooseEquipment(t)
+                        t.giveEquipment(self, desired_eq)
+                        self.gc.tell_h(
+                            ("{} stole {}'s {} instead "
+                             "of dealing {} damage!"),
+                            [self.user_id, t.user_id, desired_eq.title,
+                             potential_damage]
+                        )
+                    else:
+                        # Actually deal damage
+                        damage_dealt = self.attack(t, roll_result)
+                else:
+                    # Actually deal damage
+                    damage_dealt = self.attack(t, roll_result)
+            else:
+                # Actually deal damage
+                damage_dealt = self.attack(t, roll_result)
 
     def drawCard(self, deck):
 
@@ -407,7 +450,7 @@ class Player:
         dealt = other.defend(self, amount, dryrun)
 
         # If we dealt damage, some specials might have external effects
-        if dealt > 0:
+        if dealt > 0 and not dryrun:
             if self.modifiers['damage_dealt_fn']:
                 self.modifiers['damage_dealt_fn'](self)
 
@@ -432,11 +475,14 @@ class Player:
         # Return damage dealt
         dealt = amount
         if dryrun:
-            return dealt
+            if self.modifiers['barrier']:
+                return 0
+            else:
+                return dealt
 
-        self.moveDamage(-dealt, attacker=other)
+        change = self.moveDamage(-dealt, attacker=other)
         self.gc.tell_h("{} hit {} for {} damage!", [
-                       other.user_id, self.user_id, dealt])
+                       other.user_id, self.user_id, change])
 
         if self.state != C.PlayerState.Dead:
             # Check for counterattack
@@ -473,19 +519,37 @@ class Player:
 
     def moveDamage(self, damage_change, attacker):
 
+        # Gregor's special block's damage
+        if damage_change < 0 and self.modifiers['barrier']:
+            self.gc.tell_h(
+                "The Ghostly Barrier protected {} from damage!",
+                [self.user_id]
+            )
+            return 0
+
         # Tell frontend to animate sprite
         if damage_change < 0:
             self.gc.show_h({'type': 'damage', 'player': self.dump()})
 
         # Set new damage
+        old = self.damage
         self.damage = min(self.damage - damage_change,
                           self.character.max_damage)
         self.damage = max(0, self.damage)
         self.checkDeath(attacker)
-        return self.damage
+        return abs(old - self.damage)
 
     def setDamage(self, damage, attacker):
-        if damage < self.damage:
+
+        # Gregor's special block's damage
+        if damage > self.damage and self.modifiers['barrier']:
+            self.gc.tell_h(
+                "The Ghostly Barrier protected {} from damage!",
+                [self.user_id]
+            )
+            return
+
+        if damage > self.damage:
             self.gc.show_h({'type': 'damage', 'player': self.dump()})
         self.damage = damage
         self.checkDeath(attacker)
@@ -506,6 +570,11 @@ class Player:
         # Report to console
         display_data = {'type': 'die', 'player': self.dump()}
         self.gc.show_h(display_data)
+
+        # Update the attacker's kills (if it wasn't a self kill)
+        if self != attacker:
+            num_dead = len(self.gc.getDeadPlayers())
+            attacker.kills.append((self, num_dead))
 
         # Equipment stealing if dead player has equipment
         if self.equipment and self != attacker:

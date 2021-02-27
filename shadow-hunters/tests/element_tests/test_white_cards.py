@@ -138,11 +138,10 @@ def test_chocolate():
 
     for _ in range(C.N_ELEMENT_TESTS):
         # Setup rigged game context
-        gc, ef = H.fresh_gc_ef(n_players=7)
-        weak = [p for p in gc.players if p.character.name in [
-            "Allie", "Ellen", "Ultra Soul"]][0]
-        strong = [p for p in gc.players if p.character.name not in [
-            "Allie", "Ellen", "Ultra Soul"]][0]
+        gc, ef, _ = H.get_game_with_character("Allie", n_players=7)
+        weak_c = ["Allie", "Ellen", "Ultra Soul"]
+        weak = [p for p in gc.players if p.character.name in weak_c][0]
+        strong = [p for p in gc.players if p.character.name not in weak_c][0]
         c = H.get_card_by_title(ef, "Chocolate")
 
         # Strong player do nothing
