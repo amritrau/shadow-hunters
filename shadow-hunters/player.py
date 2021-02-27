@@ -157,9 +157,9 @@ class Player:
             return
 
         # Attack
-        self.attackSequence(dice_type=self.modifiers['attack_dice_type'])
+        self.initiateAttack(dice_type=self.modifiers['attack_dice_type'])
 
-    def attackSequence(self, dice_type="attack"):
+    def initiateAttack(self, dice_type="attack"):
 
         # Give player option to attack or decline
         self.gc.tell_h("{} is deciding to attack...", [self.user_id])
@@ -173,17 +173,17 @@ class Player:
         if answer != "Decline":
             # Get attackable players
             live_players = self.gc.getLivePlayers(lambda p: p.location)
-            targets = [p for p in live_players if (
+            in_range = [p for p in live_players if (
                 p.location.zone == self.location.zone and p != self)]
 
             if self.hasEquipment("Handgun"):
                 self.gc.tell_h("{}'s {} reverses their attack range.", [
                                self.user_id, "Handgun"])
-                targets = [p for p in live_players if (
+                in_range = [p for p in live_players if (
                     p.location.zone != self.location.zone and p != self)]
 
             # If player has Masamune, can't decline unless there are no options
-            opts = [t.user_id for t in targets]
+            opts = [t.user_id for t in in_range]
             if not self.hasEquipment("Cursed Sword Masamune") or not len(opts):
                 opts.append("Decline")
 
@@ -192,80 +192,86 @@ class Player:
 
             if answer != 'Decline':
 
-                # Get target
-                target_name = answer
-                target_Player = self.gc.getLivePlayers(
-                    lambda x: x.user_id == target_name
-                )[0]
-                self.gc.tell_h(
-                    "{} is attacking {}!",
-                    [self.user_id, target_name]
-                )
-
-                # Roll with the 4-sided die if the player has masamune
-                roll_result = 0
-                if self.hasEquipment("Cursed Sword Masamune"):
-                    self.gc.tell_h(
-                        "{} rolls with the 4-sided die using the {}!",
-                        [self.user_id, "Cursed Sword Masamune"]
-                    )
-                    roll_result = self.rollDice('4')
-                else:
-                    roll_result = self.rollDice(dice_type)
-
-                # If player has Machine Gun, launch attack on everyone in the
-                # zone. Otherwise, attack the target
-                if self.hasEquipment("Machine Gun"):
-                    self.gc.tell_h(
-                        "{}'s {} hits everyone in their attack range!",
-                        [self.user_id, "Machine Gun"]
-                    )
-                else:
-                    targets = [target_Player]
-
-                for t in targets:
-                    # Dry run the attack if we're Bob
-                    if self.modifiers['steal_for_damage']:
-                        potential_damage = self.attack(
-                            t,
-                            roll_result,
-                            dryrun=True
-                        )
-                        if potential_damage >= 2 and len(t.equipment):
-                            # Ask whether to steal equipment or deal damage
-                            data = {
-                                'options': [
-                                    "Steal equipment",
-                                    "Deal {} damage".format(potential_damage)
-                                ]
-                            }
-                            choose_steal = self.gc.ask_h(
-                                'yesno', data, self.user_id
-                            )['value'] == "Steal equipment"
-
-                            if choose_steal:
-                                desired_eq = self.chooseEquipment(t)
-                                t.giveEquipment(self, desired_eq)
-                                self.gc.tell_h(
-                                    ("{} stole {}'s {} instead "
-                                     "of dealing {} damage!"),
-                                    [self.user_id, t.user_id, desired_eq.title,
-                                     potential_damage]
-                                )
-                            else:
-                                # Actually deal damage
-                                damage_dealt = self.attack(t, roll_result)
-                        else:
-                            # Actually deal damage
-                            damage_dealt = self.attack(t, roll_result)
-                    else:
-                        # Actually deal damage
-                        damage_dealt = self.attack(t, roll_result)
+                self.attackTarget(answer, in_range, dice_type)
 
             else:
                 self.gc.tell_h("{} declined to attack.", [self.user_id])
         else:
             self.gc.tell_h("{} declined to attack.", [self.user_id])
+
+    def attackTarget(self, target_name, targets_in_range, dice_type):
+
+        # Get target
+        target_Player = self.gc.getLivePlayers(
+            lambda x: x.user_id == target_name
+        )[0]
+        self.gc.tell_h(
+            "{} is attacking {}!",
+            [self.user_id, target_name]
+        )
+
+        # Roll with the 4-sided die if the player has masamune
+        roll_result = 0
+        if self.hasEquipment("Cursed Sword Masamune"):
+            self.gc.tell_h(
+                "{} rolls with the 4-sided die using the {}!",
+                [self.user_id, "Cursed Sword Masamune"]
+            )
+            roll_result = self.rollDice('4')
+        else:
+            roll_result = self.rollDice(dice_type)
+
+        # If player has Machine Gun, launch attack on everyone in the
+        # zone. Otherwise, attack the target
+        if self.hasEquipment("Machine Gun"):
+            self.gc.tell_h(
+                "{}'s {} hits everyone in their attack range!",
+                [self.user_id, "Machine Gun"]
+            )
+            targets = targets_in_range
+        else:
+            targets = [target_Player]
+
+        for t in targets:
+            # Dry run the attack if we're Bob
+            if self.modifiers['steal_for_damage']:
+                potential_damage = self.attack(
+                    t,
+                    roll_result,
+                    dryrun=True
+                )
+                if potential_damage >= 2 and len(t.equipment):
+                    # Ask whether to steal equipment or deal damage
+                    data = {
+                        'options': [
+                            "Steal equipment",
+                            "Deal {} damage".format(potential_damage)
+                        ]
+                    }
+                    choose_steal = self.gc.ask_h(
+                        'yesno', data, self.user_id
+                    )['value'] == "Steal equipment"
+
+                    if choose_steal:
+                        desired_eq = self.chooseEquipment(t)
+                        t.giveEquipment(self, desired_eq)
+                        self.gc.tell_h(
+                            ("{} stole {}'s {} instead "
+                             "of dealing {} damage!"),
+                            [self.user_id, t.user_id, desired_eq.title,
+                             potential_damage]
+                        )
+                    else:
+                        # Actually deal damage
+                        damage_dealt = self.attack(t, roll_result)
+                else:
+                    # Actually deal damage
+                    damage_dealt = self.attack(t, roll_result)
+            else:
+                # Actually deal damage
+                damage_dealt = self.attack(t, roll_result)
+
+        return target_Player, targets_in_range, dice_type
 
     def drawCard(self, deck):
 
