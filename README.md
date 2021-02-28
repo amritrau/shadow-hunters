@@ -11,4 +11,4 @@ Play the game at http://shadowhunters.live.
 Contributions and feedback are welcome. Before opening pull requests or issues, please read the [contribution guidelines](https://github.com/amritrau/shadow-hunters/blob/master/CONTRIBUTING.md).
 
 ## Support Us
-Shadow Hunters is supported by [donations](https://www.paypal.com/donate?token=2Hzl9uC9E-VN9jwnoWTIoCqpdFGo0VWiLLOHVRWUaiQrTlGD6ljZKGGVsAaldlt6xGJTN0zZxmmD6BEY) from its users.
+Shadow Hunters is supported by [donations](https://www.paypal.com/donate?token=rRhdIfZ_zV-WP77FVuWgq-IMgW_35CrBGSKYLLvOw7f7ScqddgbsQzCVihpGfPSELjOi_lyiJ9i5ZWIE) from its users.
