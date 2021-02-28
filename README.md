@@ -5,7 +5,7 @@ Shadow Hunters is an online multiplayer game (based on the [board game](https://
 
 As night settles on the ruins of abandoned town at the edge of a mysterious forest, the identities of ally and enemy alike are obscured by a shifting fog, and players must discover who is friend and who is foe before striking from the darkness!
 
-Play the game at http://shadowhunters.live.
+Play the game at https://shadowhunters.live.
 
 ## Contributing
 Contributions and feedback are welcome. Before opening pull requests or issues, please read the [contribution guidelines](https://github.com/amritrau/shadow-hunters/blob/master/CONTRIBUTING.md).
