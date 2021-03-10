@@ -307,10 +307,8 @@ class Player:
 
         # Preprocess all rolls
         assert four or six
-        r4 = self.gc.die4.roll()
-        r6 = self.gc.die6.roll()
-        r4 = r4 if four else 0
-        r6 = r6 if six else 0
+        r4 = self.gc.die4.roll() if four else 0
+        r6 = self.gc.die6.roll() if six else 0
         result = binop(max(r4, r6), min(r4, r6))
 
         # Set prompt based on type of roll
