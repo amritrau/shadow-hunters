@@ -30,6 +30,9 @@ class Player:
         self.modifiers = defaultdict(lambda: False)
         self.modifiers['attack_dice_type'] = "attack"
 
+    def isAlive(self):
+        return self.state != C.PlayerState.Dead
+
     def reveal(self):
 
         # Set state
@@ -48,7 +51,6 @@ class Player:
         self.gc.tell_h("It's {}'s turn!", [self.user_id])
 
         # Guardian Angel wears off
-        # if "guardian_angel" in self.modifiers:
         if self.modifiers['guardian_angel']:
             self.gc.tell_h("The effect of {}\'s {} wore off!",
                            [self.user_id, "Guardian Angel"])
@@ -73,30 +75,23 @@ class Player:
         if self.special_active:
             self.character.special(self.gc, self, turn_pos='start')
 
-        # Someone could have died here, so check win conditions
-        if self.gc.checkWinConditions(tell=False):
-            return  # let the win conditions check in GameContext.play() handle
+        # If anything causes the current player to die or someone to win,
+        # the turn ends early
+        def abortTurn():
+            return self.gc.checkWinConditions(tell=False) or not self.isAlive()
 
-        # The current player could have died -- if so end their turn
-        if self.state == C.PlayerState.Dead:
-            return
-
-        # takeTurn
-        self._takeTurn()
-
-        # Someone could have died here, so check win conditions
-        if self.gc.checkWinConditions(tell=False):
-            return  # let the win conditions check in GameContext.play() handle
-
-        # The current player could have died -- if so end their turn
-        if self.state == C.PlayerState.Dead:
-            return
+        if abortTurn(): return
+        self.movementPhase()
+        self.areaPhase()
+        if abortTurn(): return
+        self.attackPhase()
+        if abortTurn(): return
 
         # After turn check for special ability
         if self.special_active:
             self.character.special(self.gc, self, turn_pos='end')
 
-    def _takeTurn(self):
+    def movementPhase(self):
 
         # Roll dice
         self.gc.tell_h("{} is rolling for movement...", [self.user_id])
@@ -139,8 +134,10 @@ class Player:
         self.move(dst)
         self.gc.tell_h("{} moves to {}!", [self.user_id, dst_name])
 
+    def areaPhase(self):
+
         # Take area action
-        data = {'options': [dst.desc, 'Decline']}
+        data = {'options': [self.location.desc, 'Decline']}
         answer = self.gc.ask_h('yesno', data, self.user_id)['value']
         if answer != 'Decline':
             self.location.action(self.gc, self)
@@ -148,18 +145,7 @@ class Player:
             self.gc.tell_h(
                 '{} declined to perform their area action.', [self.user_id])
 
-        # Someone could have died here, so check win conditions
-        if self.gc.checkWinConditions(tell=False):
-            return  # let the win conditions check in GameContext.play() handle
-
-        # The current player could have died -- if so end their turn
-        if self.state == C.PlayerState.Dead:
-            return
-
-        # Attack
-        self.attackSequence(dice_type=self.modifiers['attack_dice_type'])
-
-    def attackSequence(self, dice_type="attack"):
+    def attackPhase(self):
 
         # Give player option to attack or decline
         self.gc.tell_h("{} is deciding to attack...", [self.user_id])
@@ -204,14 +190,14 @@ class Player:
 
                 # Roll with the 4-sided die if the player has masamune
                 roll_result = 0
+                dice_type = self.modifiers['attack_dice_type']
                 if self.hasEquipment("Cursed Sword Masamune"):
+                    dice_type = '4'
                     self.gc.tell_h(
                         "{} rolls with the 4-sided die using the {}!",
                         [self.user_id, "Cursed Sword Masamune"]
                     )
-                    roll_result = self.rollDice('4')
-                else:
-                    roll_result = self.rollDice(dice_type)
+                roll_result = self.rollDice(dice_type)
 
                 # If player has Machine Gun, launch attack on everyone in the
                 # zone. Otherwise, attack the target
@@ -438,7 +424,7 @@ class Player:
         self.gc.tell_h("{} hit {} for {} damage!", [
                        other.user_id, self.user_id, dealt])
 
-        if self.state != C.PlayerState.Dead:
+        if self.isAlive():
             # Check for counterattack
             if self.modifiers['counterattack']:
                 # Ask if player wants to counterattack
