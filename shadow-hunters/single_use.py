@@ -84,7 +84,7 @@ def blessing(args):
     target = args['self'].choosePlayer()
 
     # Roll dice to get value to heal by
-    roll_result = args['self'].rollDice('6')
+    roll_result = args['self'].rollDice(four=False, six=True)
 
     # Heal target player
     target.moveDamage(roll_result, args['self'])
@@ -243,7 +243,7 @@ def dynamite(args):
         'confirm', {'options': ["Light the fuse"]}, args['self'].user_id)
     args['self'].gc.tell_h("{} is rolling for where the dynamite lands...", [
                            args['self'].user_id])
-    roll_result = args['self'].rollDice('area')
+    roll_result = args['self'].rollDice()
 
     # Hit area corresponding to roll number
     if roll_result == 7:
@@ -276,7 +276,7 @@ def spiritual_doll(args):
     target = args['self'].choosePlayer()
 
     # Roll 6-sided die
-    roll_result = args['self'].rollDice('6')
+    roll_result = args['self'].rollDice(four=False, six=True)
 
     # If roll is >= 5, user takes 3 damage. Otherwise, target takes 3 damage.
     if roll_result >= 5:

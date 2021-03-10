@@ -3,6 +3,7 @@ from agent import Agent
 import constants as C
 import concurrency as R
 from collections import defaultdict
+from operator import add, sub
 
 
 class Player:
@@ -16,19 +17,18 @@ class Player:
         self.equipment = []
         self.damage = 0
         self.location = None
-        self.modifiers = defaultdict(lambda: False)
-        self.modifiers['attack_dice_type'] = "attack"
         self.special_active = False
         self.ai = ai
         self.agent = Agent()
         self.delexicalizations = dict()
+        self.resetModifiers()
 
     def setCharacter(self, character):
         self.character = character
 
     def resetModifiers(self):
         self.modifiers = defaultdict(lambda: False)
-        self.modifiers['attack_dice_type'] = "attack"
+        self.modifiers['attack_dice_type'] = {'four': True, 'six': True}
 
     def isAlive(self):
         return self.state != C.PlayerState.Dead
@@ -198,12 +198,12 @@ class Player:
                 roll_result = 0
                 dice_type = self.modifiers['attack_dice_type']
                 if self.hasEquipment("Cursed Sword Masamune"):
-                    dice_type = '4'
+                    dice_type = {'four': True, 'six': False}
                     self.gc.tell_h(
                         "{} rolls with the 4-sided die using the {}!",
                         [self.user_id, "Cursed Sword Masamune"]
                     )
-                roll_result = self.rollDice(dice_type)
+                roll_result = self.rollDice(**dice_type, binop=sub)
 
                 # If player has Machine Gun, launch attack on everyone in the
                 # zone. Otherwise, attack the target
@@ -294,52 +294,36 @@ class Player:
             valid.remove(self.location.name)
 
         # Continue re-rolling until a valid area is rolled
-        roll = self.rollDice('area')
+        roll = self.rollDice()
         while not (roll == 7 or self.gc.getAreaFromRoll(roll).name in valid):
             re = "The {} must be re-rolled because {} is already at {}..."
             self.gc.tell_h(re, [roll, self.user_id, self.location.name])
-            roll = self.rollDice('area')
+            roll = self.rollDice()
 
         # Return final result
         return roll
 
-    def rollDice(self, type):
+    def rollDice(self, four=True, six=True, binop=add):
 
         # Preprocess all rolls
-        assert type in ["area", "attack", "6", "4"]
-        roll_4 = self.gc.die4.roll()
-        roll_6 = self.gc.die6.roll()
-        diff = abs(roll_4 - roll_6)
-        sum = roll_4 + roll_6
+        assert four or six
+        r4 = self.gc.die4.roll()
+        r6 = self.gc.die6.roll()
+        r4 = r4 if four else 0
+        r6 = r6 if six else 0
+        result = binop(max(r4, r6), min(r4, r6))
 
-        # Set values based on type of roll
-        if type == "area":
-            ask_data = {'options': ['Roll the dice!']}
-            display_data = {'type': 'roll',
-                            '4-sided': roll_4, '6-sided': roll_6}
-            message = ("{} rolled {}!", [self.user_id, sum])
-            result = sum
-        elif type == "attack":
-            ask_data = {'options': ['Roll for damage!']}
-            display_data = {'type': 'roll',
-                            '4-sided': roll_4, '6-sided': roll_6}
-            message = ("{} rolled {}!", [self.user_id, diff])
-            result = diff
-        elif type == "6":
-            ask_data = {'options': ['Roll the 6-sided die!']}
-            display_data = {'type': 'roll', '4-sided': 0, '6-sided': roll_6}
-            message = ("{} rolled a {}!", [self.user_id, roll_6])
-            result = roll_6
-        elif type == "4":
-            ask_data = {'options': ['Roll the 4-sided die!']}
-            display_data = {'type': 'roll', '4-sided': roll_4, '6-sided': 0}
-            message = ("{} rolled a {}!", [self.user_id, roll_4])
-            result = roll_4
+        # Set prompt based on type of roll
+        prompt = 'Roll the dice!'
+        if not six:
+            prompt = 'Roll the 4-sided die!'
+        elif not four:
+            prompt = 'Roll the 6-sided die!'
 
         # Ask for confirmation and display results
-        self.gc.ask_h('confirm', ask_data, self.user_id)
-        self.gc.show_h(display_data)
-        self.gc.tell_h(message[0], message[1])
+        self.gc.ask_h('confirm', {'options': [prompt]}, self.user_id)
+        self.gc.show_h({'type': 'roll', '4-sided': r4, '6-sided': r6})
+        self.gc.tell_h("{} rolled a {}!", [self.user_id, result])
         return result
 
     def chooseArea(self):
@@ -480,16 +464,15 @@ class Player:
                 if answer != "Decline":
                     self.gc.tell_h("{} is counterattacking!", [self.user_id])
                     # Roll with the 4-sided die if the player has masamune
-                    roll_result = 0
+
+                    dice_type = self.modifiers['attack_dice_type']
                     if self.hasEquipment("Cursed Sword Masamune"):
                         self.gc.tell_h(
                             "{} rolls with the 4-sided die using the {}!",
                             [self.user_id, "Cursed Sword Masamune"]
                         )
-                        roll_result = self.rollDice('4')
-                    else:
-                        roll_result = self.rollDice(
-                            self.modifiers['attack_dice_type'])
+                        dice_type = {'four': True, 'six': False}
+                    roll_result = self.rollDice(**dice_type, binop=sub)
                     self.attack(other, roll_result)
                 else:
                     self.gc.tell_h(

@@ -59,7 +59,7 @@ def george(gc, player, turn_pos):
             target_Player = player.choosePlayer()
 
             # Roll and give damage to target
-            roll_result = player.rollDice('4')
+            roll_result = player.rollDice(four=True, six=False)
             target_Player.moveDamage(-1 * roll_result, player)
             gc.tell_h("{}'s Hammer gave {} {} damage!", [
                       player.user_id, target_Player.user_id, roll_result])
@@ -104,7 +104,7 @@ def franklin(gc, player, turn_pos):
             target_Player = player.choosePlayer()
 
             # Roll and give damage to target
-            roll_result = player.rollDice('6')
+            roll_result = player.rollDice(four=False, six=True)
             target_Player.moveDamage(-1 * roll_result, player)
             gc.tell_h("{}'s Lightning gave {} {} damage!", [
                       player.user_id, target_Player.user_id, roll_result])
@@ -143,7 +143,7 @@ def valkyrie(gc, player, turn_pos):
         gc.tell_h("{} ({}) used their special ability: {}", [
                   player.user_id, player.character.name,
                   player.character.special_desc])
-        player.modifiers['attack_dice_type'] = "4"
+        player.modifiers['attack_dice_type'] = {'four': True, 'six': False}
         player.modifiers['special_active'] = True
 
 

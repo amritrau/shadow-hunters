@@ -6,6 +6,7 @@ from character import Character
 import helpers as H
 import constants as C
 import copy
+import operator
 
 
 # test_player.py
@@ -26,7 +27,7 @@ def test_fields():
     assert not p.character
     assert not p.location
     assert not p.equipment
-    assert p.modifiers['attack_dice_type'] == 'attack'
+    assert p.modifiers['attack_dice_type'] == {'four': True, 'six': True}
     assert p.damage == 0
     assert not p.ai
 
@@ -103,19 +104,19 @@ def test_rollDice():
 
     # Check 4-sided rolls
     for _ in range(C.N_ELEMENT_TESTS):
-        assert 1 <= p1.rollDice('4') <= 4
+        assert 1 <= p1.rollDice(four=True, six=False) <= 4
 
     # Check 6-sided rolls
     for _ in range(C.N_ELEMENT_TESTS):
-        assert 1 <= p1.rollDice('6') <= 6
+        assert 1 <= p1.rollDice(four=False, six=True) <= 6
 
     # Check movement rolls
     for _ in range(C.N_ELEMENT_TESTS):
-        assert 2 <= p1.rollDice('area') <= 10
+        assert 2 <= p1.rollDice(binop=operator.add) <= 10
 
     # Check attack rolls
     for _ in range(C.N_ELEMENT_TESTS):
-        assert 0 <= p1.rollDice('attack') <= 5
+        assert 0 <= p1.rollDice(binop=operator.sub) <= 5
 
 
 def test_choosePlayer():
