@@ -80,12 +80,19 @@ class Player:
         def abortTurn():
             return self.gc.checkWinConditions(tell=False) or not self.isAlive()
 
-        if abortTurn(): return
+        if abortTurn():
+            return
+
         self.movementPhase()
         self.areaPhase()
-        if abortTurn(): return
+
+        if abortTurn():
+            return
+
         self.attackPhase()
-        if abortTurn(): return
+
+        if abortTurn():
+            return
 
         # After turn check for special ability
         if self.special_active:
@@ -93,46 +100,45 @@ class Player:
 
     def movementPhase(self):
 
-        # Roll dice
+        # Make area roll
         self.gc.tell_h("{} is rolling for movement...", [self.user_id])
-        roll_result = self.rollDice('area')
+        roll_result = self.areaRoll()
 
-        if self.hasEquipment("Mystic Compass"):
+        # Decide which area to move to
+        dst = None
+        if roll_result == 7:
+
+            dst = self.chooseArea()
+
+        elif self.hasEquipment("Mystic Compass"):
 
             # If player has mystic compass, roll again
             self.gc.tell_h("{}'s {} lets them roll again!",
                            [self.user_id, "Mystic Compass"])
-            second_roll = self.rollDice('area')
+            second_roll = self.areaRoll()
 
-            # Pick the preferred roll
-            data = {'options': ["Use {}".format(
-                roll_result), "Use {}".format(second_roll)]}
-            answer = self.gc.ask_h('yesno', data, self.user_id)['value']
-            roll_result = int(answer[4:])
+            # 7 short-circuits making a choice
+            if second_roll == 7:
 
-        # Figure out area to move to
-        if roll_result == 7:
+                dst = self.chooseArea()
 
-            # Select an area
-            self.gc.tell_h("{} is selecting an area...", [self.user_id])
-            data = {'options': self.gc.getAreas()}
-            dst_name = self.gc.ask_h('select', data, self.user_id)['value']
+            else:
 
-            # Get Area object from area name
-            zs = self.gc.zones
-            dst = [a for z in zs for a in z.areas if a.name == dst_name][0]
+                # Pick the preferred roll
+                data = {'options': ["Use {}".format(roll_result),
+                                    "Use {}".format(second_roll)]}
+                answer = self.gc.ask_h('yesno', data, self.user_id)['value']
+                dst = self.gc.getAreaFromRoll(int(answer[4:]))
 
         else:
 
             # Get area from roll
             dst = self.gc.getAreaFromRoll(roll_result)
 
-            # Get string from area
-            dst_name = dst.name
-
         # Move to area
+        assert dst
         self.move(dst)
-        self.gc.tell_h("{} moves to {}!", [self.user_id, dst_name])
+        self.gc.tell_h("{} moves to {}!", [self.user_id, dst.name])
 
     def areaPhase(self):
 
@@ -280,6 +286,23 @@ class Player:
             args = {'self': self, 'card': drawn}
             drawn.use(args)
 
+    def areaRoll(self):
+
+        # Valid areas
+        valid = self.gc.getAreas()
+        if self.location:
+            valid.remove(self.location.name)
+
+        # Continue re-rolling until a valid area is rolled
+        roll = self.rollDice('area')
+        while not (roll == 7 or self.gc.getAreaFromRoll(roll).name in valid):
+            re = "The {} must be re-rolled because {} is already at {}..."
+            self.gc.tell_h(re, [roll, self.user_id, self.location.name])
+            roll = self.rollDice('area')
+
+        # Return final result
+        return roll
+
     def rollDice(self, type):
 
         # Preprocess all rolls
@@ -318,6 +341,25 @@ class Player:
         self.gc.show_h(display_data)
         self.gc.tell_h(message[0], message[1])
         return result
+
+    def chooseArea(self):
+
+        self.gc.tell_h("{} is selecting an area...", [self.user_id])
+
+        # Set of valid area choices
+        areas = self.gc.getAreas()
+        if self.location:
+            areas.remove(self.location.name)
+
+        # Ask for choice
+        data = {'options': areas}
+        name = self.gc.ask_h('select', data, self.user_id)['value']
+
+        # Retrieve area from name
+        for z in self.gc.zones:
+            for a in z.areas:
+                if a.name == name:
+                    return a
 
     def choosePlayer(self, include_self=False, filter_fn=(lambda x: True)):
 
