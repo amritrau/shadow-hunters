@@ -3,6 +3,7 @@ from agent import Agent
 import constants as C
 import concurrency as R
 from collections import defaultdict
+from operator import add, sub
 
 
 class Player:
@@ -16,19 +17,21 @@ class Player:
         self.equipment = []
         self.damage = 0
         self.location = None
-        self.modifiers = defaultdict(lambda: False)
-        self.modifiers['attack_dice_type'] = "attack"
         self.special_active = False
         self.ai = ai
         self.agent = Agent()
         self.delexicalizations = dict()
+        self.resetModifiers()
 
     def setCharacter(self, character):
         self.character = character
 
     def resetModifiers(self):
         self.modifiers = defaultdict(lambda: False)
-        self.modifiers['attack_dice_type'] = "attack"
+        self.modifiers['attack_dice_type'] = {'four': True, 'six': True}
+
+    def isAlive(self):
+        return self.state != C.PlayerState.Dead
 
     def reveal(self):
 
@@ -48,7 +51,6 @@ class Player:
         self.gc.tell_h("It's {}'s turn!", [self.user_id])
 
         # Guardian Angel wears off
-        # if "guardian_angel" in self.modifiers:
         if self.modifiers['guardian_angel']:
             self.gc.tell_h("The effect of {}\'s {} wore off!",
                            [self.user_id, "Guardian Angel"])
@@ -73,74 +75,75 @@ class Player:
         if self.special_active:
             self.character.special(self.gc, self, turn_pos='start')
 
-        # Someone could have died here, so check win conditions
-        if self.gc.checkWinConditions(tell=False):
-            return  # let the win conditions check in GameContext.play() handle
+        # If anything causes the current player to die or someone to win,
+        # the turn ends early
+        def abortTurn():
+            return self.gc.checkWinConditions(tell=False) or not self.isAlive()
 
-        # The current player could have died -- if so end their turn
-        if self.state == C.PlayerState.Dead:
+        if abortTurn():
             return
 
-        # takeTurn
-        self._takeTurn()
+        self.movementPhase()
+        self.areaPhase()
 
-        # Someone could have died here, so check win conditions
-        if self.gc.checkWinConditions(tell=False):
-            return  # let the win conditions check in GameContext.play() handle
+        if abortTurn():
+            return
 
-        # The current player could have died -- if so end their turn
-        if self.state == C.PlayerState.Dead:
+        self.attackPhase()
+
+        if abortTurn():
             return
 
         # After turn check for special ability
         if self.special_active:
             self.character.special(self.gc, self, turn_pos='end')
 
-    def _takeTurn(self):
+    def movementPhase(self):
 
-        # Roll dice
+        # Make area roll
         self.gc.tell_h("{} is rolling for movement...", [self.user_id])
-        roll_result = self.rollDice('area')
+        roll_result = self.areaRoll()
 
-        if self.hasEquipment("Mystic Compass"):
+        # Decide which area to move to
+        dst = None
+        if roll_result == 7:
+
+            dst = self.chooseArea()
+
+        elif self.hasEquipment("Mystic Compass"):
 
             # If player has mystic compass, roll again
             self.gc.tell_h("{}'s {} lets them roll again!",
                            [self.user_id, "Mystic Compass"])
-            second_roll = self.rollDice('area')
+            second_roll = self.areaRoll()
 
-            # Pick the preferred roll
-            data = {'options': ["Use {}".format(
-                roll_result), "Use {}".format(second_roll)]}
-            answer = self.gc.ask_h('yesno', data, self.user_id)['value']
-            roll_result = int(answer[4:])
+            # 7 short-circuits making a choice
+            if second_roll == 7:
 
-        # Figure out area to move to
-        if roll_result == 7:
+                dst = self.chooseArea()
 
-            # Select an area
-            self.gc.tell_h("{} is selecting an area...", [self.user_id])
-            data = {'options': self.gc.getAreas()}
-            dst_name = self.gc.ask_h('select', data, self.user_id)['value']
+            else:
 
-            # Get Area object from area name
-            zs = self.gc.zones
-            dst = [a for z in zs for a in z.areas if a.name == dst_name][0]
+                # Pick the preferred roll
+                data = {'options': ["Use {}".format(roll_result),
+                                    "Use {}".format(second_roll)]}
+                answer = self.gc.ask_h('yesno', data, self.user_id)['value']
+                dst = self.gc.getAreaFromRoll(int(answer[4:]))
 
         else:
 
             # Get area from roll
             dst = self.gc.getAreaFromRoll(roll_result)
 
-            # Get string from area
-            dst_name = dst.name
-
         # Move to area
+        assert dst
         self.move(dst)
-        self.gc.tell_h("{} moves to {}!", [self.user_id, dst_name])
+        self.gc.tell_h("{} moves to {}!", [self.user_id, dst.name])
+
+    def areaPhase(self):
 
         # Take area action
-        data = {'options': [dst.desc, 'Decline']}
+        data = {'options': [self.location.desc, 'Decline']}
         answer = self.gc.ask_h('yesno', data, self.user_id)['value']
         if answer != 'Decline':
             self.location.action(self.gc, self)
@@ -148,18 +151,7 @@ class Player:
             self.gc.tell_h(
                 '{} declined to perform their area action.', [self.user_id])
 
-        # Someone could have died here, so check win conditions
-        if self.gc.checkWinConditions(tell=False):
-            return  # let the win conditions check in GameContext.play() handle
-
-        # The current player could have died -- if so end their turn
-        if self.state == C.PlayerState.Dead:
-            return
-
-        # Attack
-        self.attackSequence(dice_type=self.modifiers['attack_dice_type'])
-
-    def attackSequence(self, dice_type="attack"):
+    def attackPhase(self):
 
         # Give player option to attack or decline
         self.gc.tell_h("{} is deciding to attack...", [self.user_id])
@@ -204,14 +196,14 @@ class Player:
 
                 # Roll with the 4-sided die if the player has masamune
                 roll_result = 0
+                dice_type = self.modifiers['attack_dice_type']
                 if self.hasEquipment("Cursed Sword Masamune"):
+                    dice_type = {'four': True, 'six': False}
                     self.gc.tell_h(
                         "{} rolls with the 4-sided die using the {}!",
                         [self.user_id, "Cursed Sword Masamune"]
                     )
-                    roll_result = self.rollDice('4')
-                else:
-                    roll_result = self.rollDice(dice_type)
+                roll_result = self.rollDice(**dice_type, binop=sub)
 
                 # If player has Machine Gun, launch attack on everyone in the
                 # zone. Otherwise, attack the target
@@ -294,44 +286,62 @@ class Player:
             args = {'self': self, 'card': drawn}
             drawn.use(args)
 
-    def rollDice(self, type):
+    def areaRoll(self):
+
+        # Valid areas
+        valid = self.gc.getAreas()
+        if self.location:
+            valid.remove(self.location.name)
+
+        # Continue re-rolling until a valid area is rolled
+        roll = self.rollDice()
+        while not (roll == 7 or self.gc.getAreaFromRoll(roll).name in valid):
+            re = "The {} must be re-rolled because {} is already at {}..."
+            self.gc.tell_h(re, [roll, self.user_id, self.location.name])
+            roll = self.rollDice()
+
+        # Return final result
+        return roll
+
+    def rollDice(self, four=True, six=True, binop=add):
 
         # Preprocess all rolls
-        assert type in ["area", "attack", "6", "4"]
-        roll_4 = self.gc.die4.roll()
-        roll_6 = self.gc.die6.roll()
-        diff = abs(roll_4 - roll_6)
-        sum = roll_4 + roll_6
+        assert four or six
+        r4 = self.gc.die4.roll() if four else 0
+        r6 = self.gc.die6.roll() if six else 0
+        result = binop(max(r4, r6), min(r4, r6))
 
-        # Set values based on type of roll
-        if type == "area":
-            ask_data = {'options': ['Roll the dice!']}
-            display_data = {'type': 'roll',
-                            '4-sided': roll_4, '6-sided': roll_6}
-            message = ("{} rolled {}!", [self.user_id, sum])
-            result = sum
-        elif type == "attack":
-            ask_data = {'options': ['Roll for damage!']}
-            display_data = {'type': 'roll',
-                            '4-sided': roll_4, '6-sided': roll_6}
-            message = ("{} rolled {}!", [self.user_id, diff])
-            result = diff
-        elif type == "6":
-            ask_data = {'options': ['Roll the 6-sided die!']}
-            display_data = {'type': 'roll', '4-sided': 0, '6-sided': roll_6}
-            message = ("{} rolled a {}!", [self.user_id, roll_6])
-            result = roll_6
-        elif type == "4":
-            ask_data = {'options': ['Roll the 4-sided die!']}
-            display_data = {'type': 'roll', '4-sided': roll_4, '6-sided': 0}
-            message = ("{} rolled a {}!", [self.user_id, roll_4])
-            result = roll_4
+        # Set prompt based on type of roll
+        prompt = 'Roll the dice!'
+        if not six:
+            prompt = 'Roll the 4-sided die!'
+        elif not four:
+            prompt = 'Roll the 6-sided die!'
 
         # Ask for confirmation and display results
-        self.gc.ask_h('confirm', ask_data, self.user_id)
-        self.gc.show_h(display_data)
-        self.gc.tell_h(message[0], message[1])
+        self.gc.ask_h('confirm', {'options': [prompt]}, self.user_id)
+        self.gc.show_h({'type': 'roll', '4-sided': r4, '6-sided': r6})
+        self.gc.tell_h("{} rolled a {}!", [self.user_id, result])
         return result
+
+    def chooseArea(self):
+
+        self.gc.tell_h("{} is selecting an area...", [self.user_id])
+
+        # Set of valid area choices
+        areas = self.gc.getAreas()
+        if self.location:
+            areas.remove(self.location.name)
+
+        # Ask for choice
+        data = {'options': areas}
+        name = self.gc.ask_h('select', data, self.user_id)['value']
+
+        # Retrieve area from name
+        for z in self.gc.zones:
+            for a in z.areas:
+                if a.name == name:
+                    return a
 
     def choosePlayer(self, include_self=False, filter_fn=(lambda x: True)):
 
@@ -438,7 +448,7 @@ class Player:
         self.gc.tell_h("{} hit {} for {} damage!", [
                        other.user_id, self.user_id, dealt])
 
-        if self.state != C.PlayerState.Dead:
+        if self.isAlive():
             # Check for counterattack
             if self.modifiers['counterattack']:
                 # Ask if player wants to counterattack
@@ -452,16 +462,15 @@ class Player:
                 if answer != "Decline":
                     self.gc.tell_h("{} is counterattacking!", [self.user_id])
                     # Roll with the 4-sided die if the player has masamune
-                    roll_result = 0
+
+                    dice_type = self.modifiers['attack_dice_type']
                     if self.hasEquipment("Cursed Sword Masamune"):
                         self.gc.tell_h(
                             "{} rolls with the 4-sided die using the {}!",
                             [self.user_id, "Cursed Sword Masamune"]
                         )
-                        roll_result = self.rollDice('4')
-                    else:
-                        roll_result = self.rollDice(
-                            self.modifiers['attack_dice_type'])
+                        dice_type = {'four': True, 'six': False}
+                    roll_result = self.rollDice(**dice_type, binop=sub)
                     self.attack(other, roll_result)
                 else:
                     self.gc.tell_h(
