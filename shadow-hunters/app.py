@@ -4,7 +4,7 @@ import re
 import secrets
 import html
 
-from flask import Flask, render_template, url_for, redirect, request, flash
+from flask import Flask, render_template, url_for, redirect, request, flash, send_from_directory
 from flask_socketio import SocketIO, join_room, leave_room
 
 from game_context import GameContext
@@ -36,6 +36,11 @@ def after_request(response):
     response.headers["Pragma"] = "no-cache"
     return response
 
+# favicon handler
+@app.route('/favicon.ico')
+def favicon():
+    base = os.path.join(os.path.dirname(app.root_path), 'static')
+    return send_from_directory(base, 'favicon.ico')
 
 # sleep times after socket emissions (to pace frontend)
 SOCKET_SLEEP = float(os.getenv('SOCKET_SLEEP', 0.25))
