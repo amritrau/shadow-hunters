@@ -4,7 +4,10 @@ import re
 import secrets
 import html
 
-from flask import Flask, render_template, url_for, redirect, request, flash, send_from_directory
+from flask import (
+    Flask, render_template, url_for, redirect,
+    request, flash, send_from_directory
+)
 from flask_socketio import SocketIO, join_room, leave_room
 
 from game_context import GameContext
