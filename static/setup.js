@@ -20,7 +20,7 @@ $('document').ready(function() {
         reconnection: false,
         'sync disconnect on unload': true
     });
-    socket.on('connect', async function() {
+    socket.on('connect', function() {
 
         // Receive a message
         socket.on('message', function(msg) {
@@ -97,11 +97,6 @@ $('document').ready(function() {
                   "where you may reconnect if you were in a game.");
             window.location = "/";
         });
-
-        // Close window handler
-        window.onbeforeunload = function() {
-            socket.close();
-        }
 
         // User joins the room
         socket.emit('join', usrctx );
