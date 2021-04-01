@@ -20,62 +20,7 @@ $('document').ready(function() {
         reconnection: false,
         'sync disconnect on unload': true
     });
-    socket.on('connect', function() {
-
-        // User joins the room
-        socket.emit('join', usrctx );
-
-        // Set up message posting with button presses
-        var chat_form = $('#chat').on('submit', function(e) {
-            e.preventDefault();
-            var user_input = $('#message').val();
-            socket.emit('message', { 'data': user_input });
-            $('#message').val('').focus();
-        });
-
-        // Start game button
-        var start_form = $('#start').on('submit', function(e) {
-            e.preventDefault();
-            socket.emit('start', { 'n_players': $('#nPlayers').val() });
-        });
-
-        // Reveal button
-        var reveal_form = $('#reveal').on('submit', function(e) {
-            e.preventDefault();
-            $('#reveal').hide();
-            socket.emit('reveal');
-        });
-
-        // Special ability button
-        var special_form = $('#special').on('submit', function(e) {
-            e.preventDefault();
-            $('#special').hide();
-            socket.emit('special');
-        });
-
-        // Form type 1
-        var confirm_form = $('#confirm').on('submit', function(e) {
-            e.preventDefault();
-            socket.emit('answer', { 'value': $('#confirm [name="inputs"][clicked=true]').val() });
-            $('#confirm').hide();
-            $('#confirm').empty();
-        });
-
-        // Form type 2
-        var yesno_form = $('#yesno').on('submit', function(e) {
-            e.preventDefault();
-            socket.emit('answer', { 'value': $('#yesno [name="inputs"][clicked=true]').val() });
-            $('#yesno').hide();
-            $('#yesno').empty();
-        });
-
-        // Form type 3
-        var select_form = $('#select').on('submit', function(e) {
-            e.preventDefault();
-            socket.emit('answer', { 'value': $('#select [name="inputs"][clicked=true]').val() });
-            $('#select').hide();
-            $('#select').empty();
-        });
+    socket.on('connect', async function() {
 
         // Receive a message
         socket.on('message', function(msg) {
@@ -157,6 +102,61 @@ $('document').ready(function() {
         window.onbeforeunload = function() {
             socket.close();
         }
+
+        // User joins the room
+        socket.emit('join', usrctx );
+
+        // Set up message posting with button presses
+        var chat_form = $('#chat').on('submit', function(e) {
+            e.preventDefault();
+            var user_input = $('#message').val();
+            socket.emit('message', { 'data': user_input });
+            $('#message').val('').focus();
+        });
+
+        // Start game button
+        var start_form = $('#start').on('submit', function(e) {
+            e.preventDefault();
+            socket.emit('start', { 'n_players': $('#nPlayers').val() });
+        });
+
+        // Reveal button
+        var reveal_form = $('#reveal').on('submit', function(e) {
+            e.preventDefault();
+            $('#reveal').hide();
+            socket.emit('reveal');
+        });
+
+        // Special ability button
+        var special_form = $('#special').on('submit', function(e) {
+            e.preventDefault();
+            $('#special').hide();
+            socket.emit('special');
+        });
+
+        // Form type 1
+        var confirm_form = $('#confirm').on('submit', function(e) {
+            e.preventDefault();
+            socket.emit('answer', { 'value': $('#confirm [name="inputs"][clicked=true]').val() });
+            $('#confirm').hide();
+            $('#confirm').empty();
+        });
+
+        // Form type 2
+        var yesno_form = $('#yesno').on('submit', function(e) {
+            e.preventDefault();
+            socket.emit('answer', { 'value': $('#yesno [name="inputs"][clicked=true]').val() });
+            $('#yesno').hide();
+            $('#yesno').empty();
+        });
+
+        // Form type 3
+        var select_form = $('#select').on('submit', function(e) {
+            e.preventDefault();
+            socket.emit('answer', { 'value': $('#select [name="inputs"][clicked=true]').val() });
+            $('#select').hide();
+            $('#select').empty();
+        });
 
         // Configure game
         var config = {
