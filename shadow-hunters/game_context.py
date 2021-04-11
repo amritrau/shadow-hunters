@@ -182,7 +182,7 @@ class GameContext:
                 self.round_count += 1
                 self.turn_order = list(self.players)
 
-        # TODO(analytics) Game ended with winnners `winners` after
+        # TODO(analytics) Game ended with winners `winners` after
         # `self.round_count` turns
 
         if debug:

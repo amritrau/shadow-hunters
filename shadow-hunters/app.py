@@ -489,6 +489,7 @@ def on_disconnect():
         socketio.close_room(room_id)
         rooms.pop(room_id)
         R.connection_lock.release()
+        # ANALYTICS Room `room_id` closed
 
     elif gc and not gc.game_over:
 
