@@ -473,9 +473,10 @@ def on_disconnect():
     gc = rooms[room_id]['gc']
     socket_tell('{} has left the room', [name], gc, room_id)
 
-    # Remove user from the room
+    # Remove user from the room, gracefully handling duplicate disconnects
     R.connection_lock.acquire()
-    rooms[room_id]['connections'].pop(request.sid)
+    if request.sid in rooms[room_id]['connections']:
+        rooms[room_id]['connections'].pop(request.sid)
 
     # Close room if it is now empty, or replace player with AI if it's in game
     if not rooms[room_id]['connections'].keys():
