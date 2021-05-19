@@ -488,7 +488,8 @@ def on_disconnect():
             gc.show_h = lambda x, *y: 0
             gc.update_h = lambda: 0
         socketio.close_room(room_id)
-        rooms.pop(room_id)
+        if room_id in rooms:
+            rooms.pop(room_id)
         R.connection_lock.release()
 
     elif gc and not gc.game_over:
