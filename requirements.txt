@@ -33,4 +33,4 @@ tqdm==4.51.0
 virtualenv==16.4.3
 virtualenv-clone==0.5.3
 virtualenvwrapper==4.8.4
-Werkzeug==0.15.5
+Werkzeug==2.2.3
