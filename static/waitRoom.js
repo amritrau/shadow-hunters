@@ -13,7 +13,7 @@ var WaitingRoom = new Phaser.Class ({
         if(usrctx.spectate) return;
 
         // url where gfx resources are stored
-        var gfx = "https://d2naeox1pchp13.cloudfront.net/";
+        var gfx = "/static/gfx/";
         this.load.svg('background', gfx + 'background.svg', {width: 1066, height: 600});
     },
 
