@@ -4,7 +4,7 @@
   "description": "Online multiplayer deduction-based survival game",
   "main": "setup.js",
   "dependencies": {
-    "testcafe": "^1.20.1"
+    "testcafe": "^15.1.317922"
   },
   "devDependencies": {},
   "scripts": {
